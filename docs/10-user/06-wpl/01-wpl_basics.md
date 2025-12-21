@@ -2,14 +2,14 @@
 
 本文档介绍 Warp Parse 中的 WPL 规则语言的基础元素与常用写法，内容与 `crates/wp-lang` 的解析实现保持一致。
 
-WPL 用于定义“规则（rule）”，每条规则由一个或多个“分组（group）”构成，分组内包含若干“字段（field）”抽取项。可选地，规则也可通过 `plg_pipe` 委托给外部实现。
+WPL 用于定义“规则（rule）”，每条规则由一个或多个“分组（group）”构成，分组内包含若干“字段（field）”抽取项。
 
-提示：完整的形式化语法见《WPL 语法（EBNF）》：`./02-wpl_grammar.md`。
+提示：完整的形式化语法见《WPL 语法（EBNF）》：`./03-wpl_grammar.md`。
 
 ## 最小示例
 
 ```wpl
-package test {
+package net {
   rule nginx_access {
     (
       digit:status,
@@ -25,7 +25,7 @@ package test {
 ## 基本结构
 
 - package：包名作为作用域；一个包内包含多条 rule
-- rule：规则名可包含路径分隔符（`/a/b`），规则体为表达式或 `plg_pipe(...)`
+- rule：规则名可包含路径分隔符（`/a/b`）,
 - 表达式（Express）：可含“预处理管道”与一个或多个“分组”
 
 ```wpl

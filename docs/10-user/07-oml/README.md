@@ -1,6 +1,6 @@
 # OML 对象模型语言
 
-OML（Object Modeling Language）用于在 Warp Flow 中对解析后的记录进行组装与聚合，提供 read/take 取值、对象与数组聚合（object/collect）、条件匹配（match）、字符串格式化（fmt）、管道转换（pipe）与 SQL 查询拼装等能力。
+OML（Object Modeling Language）用于在 Warp Parse 中对解析后的记录进行组装与聚合，提供 read/take 取值、对象与数组聚合（object/collect）、条件匹配（match）、字符串格式化（fmt）、管道转换（pipe）与 SQL 查询拼装等能力。
 
 注意：从当前版本起，引擎默认不启用“隐私/脱敏”运行期处理；本章中涉及“隐私段”的语法仅作为 DSL 能力说明，若需要脱敏，请在业务侧或自定义插件/管道中实现。
 

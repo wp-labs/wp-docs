@@ -1,6 +1,6 @@
 # WPL 规则语言
 
-WPL (Warp Processing Language) 是 Warp Flow 解析子系统（warp-parse）使用的规则语言，主要用于描述字段抽取、协议解析与简单判定逻辑。该目录文档与 `crates/wp-lang` 的解析实现保持一致。
+WPL (Warp Processing Language) 是 Warp Parse 解析子系统（warp-parse）使用的规则语言，主要用于描述字段抽取、协议解析与简单判定逻辑。该目录文档与 `crates/wp-lang` 的解析实现保持一致。
 
 ## 内容概览
 

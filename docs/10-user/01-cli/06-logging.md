@@ -1,6 +1,6 @@
 # 日志设置与问题定位（wparse/wpgen/wproj/wprescue）
 
-本文面向使用者与一线开发，给出在 Warp Flow 中开启/调整日志与进行常见问题定位的实操指南。日志实现基于 `log + log4rs`，初始化入口为 `wp_log::conf::log_init`，统一输出格式为：
+本文面向使用者与一线开发，给出在 Warp Parse 中开启/调整日志与进行常见问题定位的实操指南。日志实现基于 `log + log4rs`，初始化入口为 `wp_log::conf::log_init`，统一输出格式为：
 
 ```
 {YYYY-mm-dd HH:MM:SS.ssssss} [LEVEL] [target] message

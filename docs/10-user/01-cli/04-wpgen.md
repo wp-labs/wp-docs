@@ -1,7 +1,7 @@
 # wpgen CLI
-<!-- 角色：使用配置者 | 最近验证：2025-12-12 -->
+<!-- 角色：使用配置者 | 最近验证：2025-12-21 -->
 
-wpgen 是数据生成工具，用于基于 WPL 规则或样本文件生成测试数据。
+wpgen 是 WarpParse 数据生成器（兼容壳），用于基于 WPL 规则或样本文件生成测试数据。
 
 ## 命令概览
 
@@ -9,10 +9,10 @@ wpgen 是数据生成工具，用于基于 WPL 规则或样本文件生成测试
 wpgen <COMMAND>
 
 Commands:
-  rule    基于 WPL 规则生成数据
-  sample  基于样本文件生成数据
-  conf    配置管理（init/clean/check）
-  data    数据管理（clean/check）
+  rule    Generate data by rule/基于规则生成数据
+  sample  Generate data from sample files/基于样本文件生成数据
+  conf    Configuration commands/配置相关命令
+  data    Data management commands/数据管理相关命令
 ```
 
 ## 子命令详解
@@ -66,15 +66,15 @@ Subcommands:
 wpgen data <SUBCOMMAND>
 
 Subcommands:
-  clean  清理已生成的输出数据
-  check  数据检查（暂不支持）
+  clean  Clean generated output data according to wpgen config/根据 wpgen 配置清理已生成输出数据
+  check  Not supported; reserved for future/暂不支持；保留供未来使用
 ```
 
 | 参数 | 短选项 | 长选项 | 默认值 | 说明 |
 |------|--------|--------|--------|------|
 | work_root | `-w` | `--work-root` | `.` | 工作根目录 |
 | conf_name | `-c` | `--conf` | `wpgen.toml` | 配置文件名 |
-| local | - | `--local` | false | 仅本地清理 |
+| local | - | `--local` | true | 仅清理本地输出（不触达远端） |
 
 ## 运行语义
 
@@ -90,10 +90,6 @@ Subcommands:
 ### parallel（并行数）
 
 生成 worker 的并行数。对 `blackhole_sink` 消费端也会并行，其它 sink 默认单消费者。
-
-### 退出行为
-
-生成组先完成 → 向 router/sinks/monitor 广播 Stop → 各组件自然退出。
 
 ## 使用示例
 
@@ -120,23 +116,7 @@ wpgen sample -w . -n 50000 -s 5000 --stat 5 -p
 wpgen data clean -w . -c wpgen.toml --local
 ```
 
-## 诊断日志
-
-关键日志标记：
-
-| 组件 | 启动 | 结束 |
-|------|------|------|
-| Worker | `gen worker start …` | `gen worker end` |
-| Router | `router start` | `router exit` |
-| Sink | `sink recv cmd …` | `sink dat channel closed; exit` |
-| Monitor | `monitor proc start …` | `monitor proc end` |
-
 ## 常见问题
-
-**Q：生成不能退出？**
-
-A：检查是否出现 `… channel closed; exit` 或 `router recv stop … / router exit` 日志。确保运行的是 release 版本。
-
 **Q：产出不足预期？**
 
 A：`count` 被精确分配给每个 worker。检查日志中 `limit : …` 是否符合预期。

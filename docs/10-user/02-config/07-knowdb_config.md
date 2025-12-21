@@ -1,5 +1,5 @@
 # KnowDB 配置指南
-<!-- 角色：使用配置者 | 最近验证：2025-12-11 -->
+<!-- 角色：使用配置者 | 最近验证：2025-12-21 -->
 
 本指南描述知识库（KnowDB）的目录式配置与装载规范。
 
@@ -18,7 +18,6 @@ models/knowledge/
   example/
     create.sql
     insert.sql
-    # clean.sql                  # 可选；默认 DELETE FROM {table}
     data.csv                     # 单一数据文件（表目录根）
   address/
     create.sql

@@ -1,7 +1,7 @@
 # wproj CLI
-<!-- 角色：使用配置者 | 最近验证：2025-12-12 -->
+<!-- 角色：使用配置者 | 最近验证：2025-12-21 -->
 
-wproj 是项目管理工具，用于项目初始化、配置检查、数据管理和模型管理。
+wproj 是 Warp Flow Engine 项目管理工具，提供完整的项目生命周期管理功能，包括项目初始化和配置管理、数据源的检查和统计、模型管理和知识库创建维护。
 
 ## 命令概览
 
@@ -9,28 +9,12 @@ wproj 是项目管理工具，用于项目初始化、配置检查、数据管�
 wproj <COMMAND>
 
 Commands:
-  rule   规则工具（离线解析测试）
-  init   一键初始化项目骨架
-  check  批量检查项目配置和文件完整性
-  data   数据管理工具
-  model  模型管理工具
+  rule   规则工具：解析规则的管理和调试 | Rule tools: management and debugging of parsing rules
+  init   一键初始化完整工程骨架 | Initialize complete project skeleton
+  check  批量检查项目配置和文件完整性 | Batch check project configuration and file integrity
+  data   数据管理工具：清理、统计、验证 | Data management tools: cleanup, statistics, validation
+  model  模型管理工具：规则、源、汇、知识库 | Model management tools: rules, sources, sinks, knowledge base
 ```
-
-## 全局参数
-
-| 参数 | 短选项 | 长选项 | 默认值 | 说明 |
-|------|--------|--------|--------|------|
-| work_root | `-w` | `--work-root` | `.` | 工作根目录 |
-| quiet | `-q` | `--quiet` | false | 隐藏启动 Banner |
-
-## 退出码
-
-| 代码 | 含义 |
-|------|------|
-| 0 | 成功 |
-| 2 | 参数错误 |
-| 3 | 执行错误 |
-| 4 | 校验失败 |
 
 ---
 
@@ -78,7 +62,8 @@ wproj init [OPTIONS]
 
 | 模式 | 说明 |
 |------|------|
-| `full` | 完整项目（配置+模型+数据+示例） |
+| `full` | 完整项目（配置+模型+数据+示例+链接器） |
+| `normal` | 完整项目（配置+模型+数据+示例） |
 | `model` | 仅模型文件 |
 | `conf` | 仅配置文件（默认） |
 | `data` | 仅数据目录 |

@@ -1,9 +1,6 @@
-# wparse 运行模式
-<!-- 角色：使用配置者 | 最近验证：2025-12-12 -->
+# wparse 
 
-本文档说明 wparse 的运行模式（daemon/batch）、命令行参数和退出策略。
-
-## TL;DR
+## 运行模式
 
 - 两种运行模式：`wparse daemon`（常驻服务）和 `wparse batch`（批处理）
 - 批处理模式读完文件后自动退出，daemon 模式需信号触发退出
@@ -24,15 +21,9 @@ Commands:
 | 参数 | 短选项 | 长选项 | 默认值 | 说明 |
 |------|--------|--------|--------|------|
 | work_root | - | `--work-root` | `.` | 工作根目录 |
-| mode | `-m` | `--mode` | `p` | 解析模式 |
-| max_line | `-n` | `--max-line` | - | 最大处理行数 |
 | parse_workers | `-w` | `--parse-workers` | - | 解析线程数 |
-| check_stop | `-S` | `--check-stop` | - | 停止检查阈值 |
-| check_continue | `-s` | `--check-continue` | - | 继续检查阈值 |
 | stat_sec | - | `--stat` | - | 统计输出间隔（秒） |
-| robust | - | `--robust` | - | 鲁棒性模式 |
 | stat_print | `-p` | `--print_stat` | false | 周期打印统计信息 |
-| log_profile | - | `--log-profile` | - | 日志配置文件 |
 | wpl_dir | - | `--wpl` | - | WPL 规则目录覆盖 |
 
 ## 使用示例
@@ -93,15 +84,3 @@ wparse daemon --log-profile custom.toml --wpl /custom/rules
 **Q：为什么 batch 下不启动 acceptor？**
 
 A：acceptor 是常驻组件（监听网络），会阻塞主组完成。batch 目标是"源结束 → 主组完成 → 进程退出"。
-
-**Q：如何限制最大处理条数？**
-
-A：使用 `-n <line_max>`。达到上限后该源结束，所有源结束即退出。
-
-**Q：如何验证 batch 是否生效？**
-
-A：观察日志中的"picker 正常结束"与"all routine group await end!"。
-
-**Q：Prometheus sink 在 batch 模式下如何处理？**
-
-A：Prometheus 需要常驻 HTTP 服务，batch 模式下建议改用文件输出。

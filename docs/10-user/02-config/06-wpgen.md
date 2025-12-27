@@ -1,4 +1,4 @@
-# wpgen（生成器配置）
+# Wpgen
 
 配置写法（新）
 - conf/wpgen.toml（关键字段）

@@ -1,4 +1,4 @@
-# wpgen 
+# Wpgen 
 
 wpgen 是 WarpParse 数据生成器，用于基于WPL规则或样本文件生成测试数据。
 
@@ -30,7 +30,7 @@ wpgen rule [OPTIONS]
 | conf_name | `-c` | `--conf` | `wpgen.toml` | 配置文件名 |
 | stat_print | `-p` | `--print_stat` | false | 周期打印统计信息 |
 | line_cnt | `-n` | - | - | 总行数覆盖 |
-| gen_speed | `-s` | - | - | 生成速度（行/秒）覆盖 |
+| speed | `-s` | - | - | 生成速度（行/秒）覆盖 |
 | stat_sec | - | `--stat` | 1 | 统计输出间隔（秒） |
 
 ### sample - 基于样本生成

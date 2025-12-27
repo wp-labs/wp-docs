@@ -122,8 +122,8 @@ def process_directory(dir_path, docs_root, indent_level=0, parent_has_header=Tru
             if has_md:
                 subdirs.append(item)
 
-    # Add files in this directory
-    for title, link in sorted(files, key=lambda x: x[0]):
+    # Add files in this directory (sorted by link/path for proper numerical order)
+    for title, link in sorted(files, key=lambda x: x[1]):
         lines.append(f"{content_indent}- [{title}]({link})")
 
     # Recursively process subdirectories

@@ -1,4 +1,4 @@
-# WPL 语法（EBNF）
+# WPL语法
 
 本页给出 WPL 的形式化语法。权威实现以 `crates/wp-lang` 解析器为准；此处与源代码保持同步，并在必要处补充备注。
 
@@ -93,16 +93,17 @@ sep_char         = '\\' , any_char ;
 pipe             = "|" ws? ( fun_call | group ) ;
 
 ; 预置函数（wpl_fun）：
-fun_call         = exists | exists_chars | chars_not_exists | exists_chars_in
-                   | exists_digit | exists_digit_in | exists_ip_in | str_mode ;
-exists           = "exists" "(" ws? key ws? ")" ;
-exists_chars     = "exists_chars" "(" ws? key ws? "," ws? path ws? ")" ;
-chars_not_exists = "chars_not_exists" "(" ws? key ws? "," ws? path ws? ")" ;
-exists_chars_in  = "exists_chars_in" "(" ws? key ws? "," ws? path_array ws? ")" ;
-exists_digit     = "exists_digit" "(" ws? key ws? "," ws? number ws? ")" ;
-exists_digit_in  = "exists_digit_in" "(" ws? key ws? "," ws? number_array ws? ")" ;
-exists_ip_in     = "exists_ip_in" "(" ws? key ws? "," ws? ip_array ws? ")" ;
-str_mode         = "str_mode" "(" ws? free_string ws? ")" ;    ; 读到 ',' 或 ')' 截止
+; f_ 前缀表示字段集合操作，无前缀表示直接函数
+fun_call         = f_has | f_chars_has | f_chars_not_has | f_chars_in
+                   | f_digit_has | f_digit_in | f_ip_in | chars_unescape ;
+f_has            = "f_has" "(" ws? key ws? ")" ;
+f_chars_has      = "f_chars_has" "(" ws? key ws? "," ws? path ws? ")" ;
+f_chars_not_has  = "f_chars_not_has" "(" ws? key ws? "," ws? path ws? ")" ;
+f_chars_in       = "f_chars_in" "(" ws? key ws? "," ws? path_array ws? ")" ;
+f_digit_has      = "f_digit_has" "(" ws? key ws? "," ws? number ws? ")" ;
+f_digit_in       = "f_digit_in" "(" ws? key ws? "," ws? number_array ws? ")" ;
+f_ip_in          = "f_ip_in" "(" ws? key ws? "," ws? ip_array ws? ")" ;
+chars_unescape   = "chars_unescape" "(" ws? free_string ws? ")" ; ; 支持 json/url/html 等
 
 path_array       = "[" ws? path { ws? "," ws? path } ws? "]" ;
 number_array     = "[" ws? number { ws? "," ws? number } ws? "]" ;

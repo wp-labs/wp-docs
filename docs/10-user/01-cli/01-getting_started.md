@@ -1,4 +1,9 @@
 # GettingStarted
+<<<<<<< HEAD
+=======
+
+本文基于 `wp-example/core/getting_started` 用例，梳理一次从初始化到运行、统计与校验的完整配置流程，适合首次接入与本地自测。
+>>>>>>> 67a6813c4c73265246df81e69b2f9addd4e01b62
 
 ## 前置准备
 - [下载 wparse](https://github.com/wp-labs/warp-parse/releases)
@@ -35,8 +40,14 @@
 
 ## 二、生成数据与清理
 ```bash
+<<<<<<< HEAD
 wproj data clean 
 wpgen data clean 
+=======
+# 清理输出（文件型 sink、本地数据）
+wproj data clean 
+wpgen  data clean 
+>>>>>>> 67a6813c4c73265246df81e69b2f9addd4e01b62
 
 # 生成样本（示例 3000 行，3 秒统计间隔）
 wpgen sample -n 3000 --stat 3
@@ -49,5 +60,10 @@ wparse batch --stat 3 -p
 ```
 ## 四、统计与校验
 ```bash
+<<<<<<< HEAD
 wproj stat file
+=======
+# 同时统计源与文件型 sink
+wproj  data stat
+>>>>>>> 67a6813c4c73265246df81e69b2f9addd4e01b62
 ```

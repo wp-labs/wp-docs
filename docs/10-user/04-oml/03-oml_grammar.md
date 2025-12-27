@@ -1,4 +1,4 @@
-# OML 语法（EBNF）
+# OML语法
 
 本文基于源码 crates/wp-oml 的解析实现（winnow 解析器组合器）梳理了 OML 的实际可用语法，并以 EBNF 形式给出。词法细节（如数据类型、JSON 路径、SQL 运算符等）复用 `wp_parser` 与 `wpl` 的既有解析能力，本文在必要处做抽象约定。
 
@@ -55,11 +55,10 @@ gen_acq          = take_expr | read_expr | value_expr | fun_call ;
 (* 常量值：类型名+括号包裹的字面量 *)
 value_expr       = data_type, "(", literal, ")" ;
 
-(* 内置函数（零参占位）：Time::* 家族 *)
-fun_call         = ("Time::now"
-                   |"Time::now_date"
-                   |"Time::now_time"
-                   |"Time::now_hour"), "(", ")" ;
+(* 内置函数（零参占位）：Now::* 家族 *)
+fun_call         = ("Now::time"
+                   |"Now::date"
+                   |"Now::hour"), "(", ")" ;
 
 (* 字符串格式化，至少 1 个参数 *)
 fmt_expr         = "fmt", "(", string, ",", var_get, { ",", var_get }, ")" ;
@@ -68,17 +67,17 @@ var_get          = ("read" | "take"), "(", [ arg_list ], ")"
 
 (* 管道 *)
 pipe_expr        = ["pipe"], var_get, "|", pipe_fun, { "|", pipe_fun } ;   (* var_get 支持 '@ref' *)
-pipe_fun         = "arr_get",    "(", unsigned, ")"
-                 | "obj_get",    "(", ident,   ")"
-                 | "base64_de",  "(", [ encode_type ], ")"
-                 | "sxf_get",    "(", alnum*,  ")"
-                 | "path_get",   "(", ("name"|"path"|"default"), ")"
-                 | "url_get",    "(", ("domain"|"host"|"uri"|"path"|"params"|"default"), ")"
-                 | "to_timestamp_zone", "(", [ "-" ], unsigned, ",", ("ms"|"us"|"ss"|"s"), ")"
-                 | "base64_en" | "html_escape_en" | "html_escape_de"
-                 | "str_escape_en" | "json_escape_en" | "json_escape_de"
-                 | "to_timestamp" | "to_timestamp_ms" | "to_timestamp_us"
-                 | "to_json" | "to_string" | "skip_if_empty" ;
+pipe_fun         = "nth",           "(", unsigned, ")"
+                 | "get",           "(", ident,   ")"
+                 | "base64_decode", "(", [ encode_type ], ")"
+                 | "sxf_get",       "(", alnum*,  ")"
+                 | "path",          "(", ("name"|"stem"|"ext"|"dir"|"parent"), ")"
+                 | "url",           "(", ("domain"|"host"|"uri"|"path"|"params"), ")"
+                 | "Time::to_ts_zone", "(", [ "-" ], unsigned, ",", ("ms"|"us"|"ss"|"s"), ")"
+                 | "base64_encode" | "html_escape" | "html_unescape"
+                 | "str_escape" | "json_escape" | "json_unescape"
+                 | "Time::to_ts" | "Time::to_ts_ms" | "Time::to_ts_us"
+                 | "to_json" | "to_str" | "skip_empty" | "ip4_to_int" ;
 
 encode_type      = ident ;                     (* 例如: Utf8/Gbk/... *)
 
@@ -172,7 +171,7 @@ alnum           = letter | digit ;
 name : csv_example
 ---
 # 基本取值与缺省
-version : chars = Time::now() ;
+version : chars = Now::time() ;
 pos_sn           = read() { _ : chars(FALLBACK) };
 
 # map 聚合
@@ -183,7 +182,7 @@ values : obj = object {
 # collect 数组聚合 + 管道
 ports : array = collect read(keys:[sport,dport]);
 ports_json      = pipe read(ports) | to_json ;
-first_port      = pipe read(ports) | arr_get(0) ;
+first_port      = pipe read(ports) | nth(0) ;
 
 # match
 quarter : chars = match read(month) {

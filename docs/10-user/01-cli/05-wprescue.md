@@ -1,4 +1,4 @@
-# wprescue CLI
+# wprescue 
 
 wprescue 是数据恢复工具，用于从救援目录中恢复数据并按照项目配置的 Sink 路由输出到目标。
 

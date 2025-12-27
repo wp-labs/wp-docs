@@ -1,4 +1,4 @@
-# wpgen CLI
+# wpgen 
 
 wpgen 是 WarpParse 数据生成器，用于基于WPL规则或样本文件生成测试数据。
 

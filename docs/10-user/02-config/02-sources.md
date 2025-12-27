@@ -1,4 +1,4 @@
-# 源配置（Sources）
+# Sources配置
 
 ## 概览
 

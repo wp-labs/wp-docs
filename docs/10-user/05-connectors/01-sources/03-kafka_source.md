@@ -1,47 +1,28 @@
 # Kafka 源配置
 
-本文档详细介绍如何配置和使用 warpparse 系统的 Kafka 数据源。
+本文档详细介绍如何配置和使用 Warp Parse 系统的 Kafka 数据源。
 
 ## 概述
 
 Kafka 源用于从 Apache Kafka 消息队列消费数据，支持消费单个主题和灵活的配置选项。
 
-> **注意**：系统会自动创建配置的主题（如果不存在），消费者组 ID 自动生成为 `{source_name}_group`。
+> **注意**：系统会自动创建配置的主题（如果不存在），消费者组 ID 可以通过 `group_id` 参数配置，默认为 `wparse_default_group`。
 
 ## 连接器定义
 
 ### 基础 Kafka 连接器
 
 ```toml
-# connectors/source.d/kafka_main.toml
+# connectors/source.d/30-kafka.toml
 [[connectors]]
-id = "kafka_main"
+id = "kafka_src"
 type = "kafka"
-allow_override = ["topic", "config"]
+allow_override = ["topic", "group_id", "config"]
 
 [connectors.params]
 brokers = "localhost:9092"
-topic = "access_log"
-```
-
-### 高可用 Kafka 连接器
-
-```toml
-# connectors/source.d/kafka_ha.toml
-[[connectors]]
-id = "kafka_ha_cluster"
-type = "kafka"
-allow_override = ["topic", "config"]
-
-[connectors.params]
-brokers = "kafka1:9092,kafka2:9092,kafka3:9092"
-config = [
-    "security_protocol=SASL_SSL",
-    "sasl_mechanisms=PLAIN",
-    "sasl_username=consumer_user",
-    "sasl_password=consumer_pass"
-]
-topic = "events"
+topic = ["access_log"]
+group_id = "wparse_default_group"
 ```
 
 ## 支持的参数
@@ -49,27 +30,28 @@ topic = "events"
 ### 基础连接参数
 
 #### brokers (必需)
-Kafka 集群地址，支持单个或多个 broker（逗号分隔）
+Kafka 集群地址，支持字符串格式
 
 ```toml
-[sources.params_override]
+[[sources.params]]
 brokers = "localhost:9092"
-# 或者多节点
-brokers = "kafka1:9092,kafka2:9092,kafka3:9092"
 ```
 
 #### topic (必需)
-消费的主题名称（单个主题）
+消费的主题名称（数组形式）
 
 ```toml
-[sources.params_override]
-topic = "access_log"
+[[sources.params]]
+topic = ["access_log"]
 ```
 
-#### group_id (自动生成)
-消费者组 ID 由系统自动生成，格式为 `{source_name}_group`，无需手动配置。
+#### group_id (可选)
+消费者组 ID
 
-如需消费多个主题，请创建多个数据源实例。
+```toml
+[[sources.params]]
+group_id = "my_consumer_group"
+```
 
 ### 安全配置
 
@@ -77,7 +59,7 @@ topic = "access_log"
 
 #### SSL/TLS 配置
 ```toml
-[sources.params_override]
+[[sources.params]]
 config = [
     "security_protocol=SSL",
     "ssl_ca_location=/path/to/ca.pem",
@@ -89,7 +71,7 @@ config = [
 
 #### SASL 认证
 ```toml
-[sources.params_override]
+[[sources.params]]
 config = [
     "security_protocol=SASL_PLAINTEXT",
     "sasl_mechanisms=PLAIN",
@@ -100,7 +82,7 @@ config = [
 
 #### SASL/SCRAM 认证
 ```toml
-[sources.params_override]
+[[sources.params]]
 config = [
     "security_protocol=SASL_SSL",
     "sasl_mechanisms=SCRAM-SHA-256",
@@ -113,7 +95,7 @@ config = [
 
 #### 消费策略
 ```toml
-[sources.params_override]
+[[sources.params]]
 config = [
     "auto_offset_reset=earliest",
     "enable_auto_commit=false",
@@ -123,7 +105,7 @@ config = [
 
 #### 会话和心跳配置
 ```toml
-[sources.params_override]
+[[sources.params]]
 config = [
     "session_timeout_ms=30000",
     "heartbeat_interval_ms=3000",
@@ -133,7 +115,7 @@ config = [
 
 #### 批量消费配置
 ```toml
-[sources.params_override]
+[[sources.params]]
 config = [
     "max_poll_records=500",
     "fetch_min_bytes=1",
@@ -149,11 +131,11 @@ config = [
 [[sources]]
 enable = true
 key = "kafka_access_logs"
-connect = "kafka_main"
+connect = "kafka_src"
 tags = ["env:production", "type:access_log"]
 
-[sources.params_override]
-topic = "nginx_access_log"
+[[sources.params]]
+topic = ["nginx_access_log"]
 ```
 
 ### 高级配置
@@ -162,11 +144,11 @@ topic = "nginx_access_log"
 [[sources]]
 enable = true
 key = "kafka_advanced"
-connect = "kafka_main"
+connect = "kafka_src"
 tags = ["env:production", "type:advanced"]
 
-[sources.params_override]
-topic = "access_log"
+[[sources.params]]
+topic = ["access_log"]
 config = [
     "auto_offset_reset=earliest",
     "enable_auto_commit=false"
@@ -179,11 +161,11 @@ config = [
 [[sources]]
 enable = true
 key = "kafka_secure_logs"
-connect = "kafka_ha_cluster"
+connect = "kafka_src"
 tags = ["env:production", "security:tls"]
 
-[sources.params_override]
-topic = "secure_events"
+[[sources.params]]
+topic = ["secure_events"]
 config = [
     "auto_offset_reset=latest",
     "enable_auto_commit=true",
@@ -197,12 +179,12 @@ config = [
 [[sources]]
 enable = true
 key = "kafka_dev_logs"
-connect = "kafka_main"
+connect = "kafka_src"
 tags = ["env:development", "team:backend"]
 
-[sources.params_override]
+[[sources.params]]
 brokers = "dev-kafka:9092"
-topic = "dev_events"
+topic = ["dev_events"]
 ```
 
 ## 数据处理特性
@@ -228,7 +210,7 @@ topic = "dev_events"
 ```
 
 ### 3. 消费语义
-- **消费者组 ID**: 自动生成为 `{source_name}_group`
+- **消费者组 ID**: 通过 `group_id` 参数配置
 - **Topic 自动创建**: 配置的主题不存在时会自动创建（1 个分区，复制因子为 1）
 - **偏移量提交**: 由底层 rdkafka 库处理，可通过 config 参数配置
 
@@ -236,7 +218,7 @@ topic = "dev_events"
 
 ### 1. 批量消费
 ```toml
-[sources.params_override]
+[[sources.params]]
 config = [
     "max_poll_records=1000",
     "fetch_min_bytes=1024",
@@ -246,10 +228,15 @@ config = [
 
 ### 2. 连接优化
 ```toml
-[sources.params_override]
+[[sources.params]]
 config = [
     "session_timeout_ms=60000",
     "heartbeat_interval_ms=5000",
     "max_poll_interval_ms=600000"
 ]
 ```
+
+## 相关文档
+
+- [源配置基础](./01-sources_basics.md)
+- [连接器管理](../README.md)

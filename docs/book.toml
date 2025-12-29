@@ -1,0 +1,15 @@
+[book]
+title = "Warp Parse 文档"
+authors = ["Warp Parse Team"]
+language = "zh-CN"
+src = "."
+
+[build]
+build-dir = "../book/zh"
+
+[output.html]
+default-theme = "ayu"
+git-repository-url = "https://github.com/wp-labs/warp-parse"
+git-repository-icon = "fa-github"
+additional-css = ["../theme/lang-switch.css"]
+additional-js = ["../theme/lang-switch.js"]

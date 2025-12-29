@@ -1,0 +1,15 @@
+[book]
+title = "Warp Parse Documentation"
+authors = ["Warp Parse Team"]
+language = "en"
+src = "."
+
+[build]
+build-dir = "../book/en"
+
+[output.html]
+default-theme = "ayu"
+git-repository-url = "https://github.com/wp-labs/warp-parse"
+git-repository-icon = "fa-github"
+additional-css = ["../theme/lang-switch.css"]
+additional-js = ["../theme/lang-switch.js"]

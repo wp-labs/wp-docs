@@ -1,12 +1,17 @@
 # Makefile for mdbook documentation management
 
-.PHONY: help build serve install clean summary summary-simple validate
+.PHONY: help build serve install clean summary summary-simple validate build-zh build-en build-all serve-zh serve-en
 
 # Default target
 help:
 	@echo "Available targets:"
-	@echo "  build         - Build the mdbook documentation"
-	@echo "  serve         - Serve documentation locally (http://localhost:3000)"
+	@echo "  build         - Build all language versions"
+	@echo "  build-zh      - Build Chinese version only"
+	@echo "  build-en      - Build English version only"
+	@echo "  build-all     - Build all language versions (same as build)"
+	@echo "  serve         - Serve Chinese version (http://localhost:3000)"
+	@echo "  serve-zh      - Serve Chinese version (http://localhost:3000)"
+	@echo "  serve-en      - Serve English version (http://localhost:3001)"
 	@echo "  install       - Install required tools"
 	@echo "  summary       - Generate structured SUMMARY.md"
 	@echo "  summary-simple- Generate simple SUMMARY.md"
@@ -28,15 +33,44 @@ install:
 		npm install -g markdown-link-check; \
 	fi
 
-# Build documentation
-build:
-	@echo "Building mdbook..."
-	mdbook build
+# Build all language versions
+build: build-zh build-en copy-assets
+	@echo "All documentation built successfully!"
 
-# Serve documentation locally
-serve:
-	@echo "Starting mdbook server on http://localhost:3000..."
-	mdbook serve --hostname 0.0.0.0 --port 3000
+# Build Chinese version
+build-zh:
+	@echo "Building Chinese documentation..."
+	cd docs && mdbook build
+	@mkdir -p book/zh/theme
+	@cp theme/lang-switch.css book/zh/theme/
+	@cp theme/lang-switch.js book/zh/theme/
+
+# Build English version
+build-en:
+	@echo "Building English documentation..."
+	cd en && mdbook build
+	@mkdir -p book/en/theme
+	@cp theme/lang-switch.css book/en/theme/
+	@cp theme/lang-switch.js book/en/theme/
+
+# Copy index.html and assets
+copy-assets:
+	@echo "Copying language selection page..."
+	@mkdir -p book
+	@cp book/index.html book/ 2>/dev/null || true
+
+# Serve documentation locally (Chinese, default port 3000)
+serve: serve-zh
+
+# Serve Chinese version
+serve-zh:
+	@echo "Starting Chinese documentation server on http://localhost:3000..."
+	cd docs && mdbook serve --hostname 0.0.0.0 --port 3000
+
+# Serve English version
+serve-en:
+	@echo "Starting English documentation server on http://localhost:3001..."
+	cd en && mdbook serve --hostname 0.0.0.0 --port 3001
 
 # Generate structured SUMMARY.md
 summary:

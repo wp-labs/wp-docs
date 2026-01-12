@@ -40,6 +40,10 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
+      - name: Install mermaid support for Chinese docs
+        run: cd docs && mdbook-mermaid install .
+      - name: Install mermaid support for English docs
+        run: cd en && mdbook-mermaid install .
       - name: Build Chinese version
         run: cd docs && mdbook build
       - name: Build English version

@@ -2,7 +2,7 @@
 
 
 ## 目录与文件组织
-- sink_root：用例内通常为 <case>/sink
+- sink_root：用例内通常为 `<case>/sink`
   - business.d/**/*.toml：业务组路由（场景输出，支持子目录）
   - infra.d/**/*.toml：基础组路由（default/miss/residue/intercept/error/monitor，支持子目录）
   - defaults.toml：默认组级期望 [defaults.expect]

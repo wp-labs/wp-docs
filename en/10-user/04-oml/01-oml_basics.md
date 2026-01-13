@@ -10,7 +10,7 @@ This document introduces the basic syntax and core concepts of OML (Object Model
 4. [Data Types](#data-types)
 5. [Expressions and Operators](#expressions-and-operators)
 6. [Core Constructs](#core-constructs)
-   - [map/object Object Aggregation](#mapobject-object-aggregation)
+   - [object Object Aggregation](#object-object-aggregation)
    - [collect Array Aggregation](#collect-array-aggregation)
    - [match Pattern Matching](#match-pattern-matching)
    - [pipe Pipeline Operations](#pipe-pipeline-operations)
@@ -178,8 +178,11 @@ flag = bool(true) ;
 ### Pipeline Operations
 
 ```oml
-# Pipeline must use pipe keyword
+# Pipeline can use pipe keyword
 result = pipe read(value) | to_json ;
+
+# Pipe keyword can also be omitted
+result = read(value) | to_json ;
 ```
 
 ### Conditional Expressions
@@ -194,7 +197,7 @@ quarter = match read(month) {
 
 ## Core Constructs
 
-### map/object Object Aggregation
+### object Object Aggregation
 
 Create structured objects, aggregating multiple fields:
 
@@ -271,10 +274,13 @@ ports_json = pipe read(ports) | to_json ;
 first_port = pipe read(ports) | nth(0) ;
 # URL parsing
 host = pipe read(http_uri) | url(host) ;
-# Timestamp conversion
+# Timestamp conversion (with specified timezone)
 occur_ms = pipe read(occur_time) | Time::to_ts_zone(0,ms) ;
 # Base64 encoding
 raw_b64 = pipe read(payload) | base64_encode ;
+
+# Omitting the pipe keyword
+host2 = read(http_uri) | url(host) ;
 ```
 
 ## Advanced Features
@@ -288,6 +294,9 @@ name : sql_example
 ---
 # Where clause can use read/take/Now::time/constants
 name,pinying = select name,pinying from example where pinying = read(py) ;
+
+# Use string constant
+_,_ = select name,pinying from example where pinying = 'xiaolongnu' ;
 
 # Use built-in UDF (e.g., IPv4 range matching)
 from_zone = select zone from zone
@@ -305,7 +314,9 @@ Process multiple targets using wildcards:
 name : batch_example
 ---
 # When target name contains *, enters batch mode; right-hand side only supports take/read
-aler* : auto = take() ;
+* = take() ;           # Take all fields
+*/path = take() ;      # Take all fields ending with /path
+aler* : auto = take() ; # Take all fields starting with aler
 ```
 
 ### Format Strings
@@ -325,6 +336,8 @@ Used for data masking (not enabled by default in the engine):
 
 ```oml
 name : privacy_example
+---
+field = read() ;
 ---
 # Privacy processing
 src_ip : privacy_ip
@@ -347,6 +360,7 @@ version = chars(1.0.0) ;
 3. **match branches**: Both commas and semicolons are optional; using semicolons consistently is recommended
 4. **Batch mode**: When target contains `*`, enters batch mode; right-hand side limited to `take/read`
 5. **@ref limitations**: Only used as syntactic sugar in specific positions; does not support default body
+6. **Timestamp timezone**: `Time::to_ts`/`Time::to_ts_ms`/`Time::to_ts_us` use UTC+8 timezone by default
 
 ## Best Practices
 
@@ -404,11 +418,9 @@ summary = object {
 ```oml
 # Recommended: Use take to reduce data copying
 temp = take(data) ;
-result = pipe read(temp) | transform ;
+result = pipe read(temp) | to_json ;
 
-# Avoid: Multiple reads of the same field
-# bad: value1 = read(large_data) ;
-#      value2 = read(large_data) ;
+# Avoid: Multiple reads of the same field (consider storing to target field first for reuse)
 ```
 
 ### 6. SQL Usage
@@ -417,8 +429,8 @@ result = pipe read(temp) | transform ;
 # Recommended: Use parameterized queries
 name = select name from users where id = read(user_id) ;
 
-# Avoid: String concatenation (SQL injection risk)
-# bad: name = select ... where id = '" + read(id) + "'" ;
+# Also supports string constants
+name = select name from users where type = 'admin' ;
 ```
 
 ### 7. Pipeline Chain Length

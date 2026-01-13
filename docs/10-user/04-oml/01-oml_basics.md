@@ -10,7 +10,7 @@
 4. [数据类型](#数据类型)
 5. [表达式与操作符](#表达式与操作符)
 6. [核心构造](#核心构造)
-   - [map/object 对象聚合](#mapobject-对象聚合)
+   - [object 对象聚合](#object-对象聚合)
    - [collect 数组聚合](#collect-数组聚合)
    - [match 模式匹配](#match-模式匹配)
    - [pipe 管道操作](#pipe-管道操作)
@@ -178,8 +178,11 @@ flag = bool(true) ;
 ### 管道操作
 
 ```oml
-# 管道必须使用 pipe 关键字
+# 管道可以使用 pipe 关键字
 result = pipe read(value) | to_json ;
+
+# 也可以省略 pipe 关键字
+result = read(value) | to_json ;
 ```
 
 ### 条件表达式
@@ -194,7 +197,7 @@ quarter = match read(month) {
 
 ## 核心构造
 
-### map/object 对象聚合
+### object 对象聚合
 
 创建结构化对象，聚合多个字段：
 
@@ -271,10 +274,13 @@ ports_json = pipe read(ports) | to_json ;
 first_port = pipe read(ports) | nth(0) ;
 # URL 解析
 host = pipe read(http_uri) | url(host) ;
-# 时间戳转换
+# 时间戳转换（使用指定时区）
 occur_ms = pipe read(occur_time) | Time::to_ts_zone(0,ms) ;
 # Base64 编码
 raw_b64 = pipe read(payload) | base64_encode ;
+
+# 省略 pipe 关键字的写法
+host2 = read(http_uri) | url(host) ;
 ```
 
 ## 高级特性
@@ -288,6 +294,9 @@ name : sql_example
 ---
 # where 中可使用 read/take/Now::time/常量
 name,pinying = select name,pinying from example where pinying = read(py) ;
+
+# 使用字符串常量
+_,_ = select name,pinying from example where pinying = 'xiaolongnu' ;
 
 # 使用内置 UDF（例如 IPv4 区间匹配）
 from_zone = select zone from zone
@@ -305,7 +314,9 @@ from_zone = select zone from zone
 name : batch_example
 ---
 # 目标名含 * 时进入批量模式；右值仅支持 take/read
-aler* : auto = take() ;
+* = take() ;           # 取走所有字段
+*/path = take() ;      # 取走所有以 /path 结尾的字段
+aler* : auto = take() ; # 取走所有以 aler 开头的字段
 ```
 
 ### 格式化字符串
@@ -325,6 +336,8 @@ full = fmt("{}-{}", @user, read(city)) ;
 
 ```oml
 name : privacy_example
+---
+field = read() ;
 ---
 # 隐私处理
 src_ip : privacy_ip
@@ -347,6 +360,7 @@ version = chars(1.0.0) ;
 3. **match 分支**：逗号与分号都可选，建议统一使用分号
 4. **批量模式**：目标带 `*` 时进入批量模式，右值限定为 `take/read`
 5. **@ref 限制**：仅在特定位置作为语法糖使用，不支持缺省体
+6. **时间戳时区**：`Time::to_ts`/`Time::to_ts_ms`/`Time::to_ts_us` 默认使用 UTC+8 时区
 
 ## 最佳实践
 
@@ -404,11 +418,9 @@ summary = object {
 ```oml
 # 推荐：使用 take 减少数据复制
 temp = take(data) ;
-result = pipe read(temp) | transform ;
+result = pipe read(temp) | to_json ;
 
-# 避免：多次 read 同一字段
-# bad: value1 = read(large_data) ;
-#      value2 = read(large_data) ;
+# 避免：多次 read 同一字段（如需复用可考虑先存到目标字段）
 ```
 
 ### 6. SQL 使用
@@ -417,8 +429,8 @@ result = pipe read(temp) | transform ;
 # 推荐：使用参数化查询
 name = select name from users where id = read(user_id) ;
 
-# 避免：字符串拼接（有 SQL 注入风险）
-# bad: name = select ... where id = '" + read(id) + "'" ;
+# 也支持字符串常量
+name = select name from users where type = 'admin' ;
 ```
 
 ### 7. 管道链长度

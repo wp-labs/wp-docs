@@ -2,7 +2,7 @@
 
 本文基于源码 crates/wp-oml 的解析实现（winnow 解析器组合器）梳理了 OML 的实际可用语法，并以 EBNF 形式给出。词法细节（如数据类型、JSON 路径、SQL 运算符等）复用 `wp_parser` 与 `wpl` 的既有解析能力，本文在必要处做抽象约定。
 
-> 相关实现入口：`crates/wp-oml/src/parser/oml_conf.rs`、`oml_aggregate.rs`、`match_prm.rs`、`map_prm.rs`、`pipe_prm.rs`、`sql_prm.rs`、`fmt_prm.rs` 等。
+> 相关实现入口：`crates/wp-oml/src/parser/oml_conf.rs`、`oml_aggregate.rs`、`match_prm.rs`、`map_prm.rs`、`pipe_prm.rs`、`sql_prm.rs`、`fmt_prm.rs`、`fun_prm.rs` 等。
 
 ## 顶层结构
 
@@ -21,7 +21,7 @@ aggregate_item   = target_list, "=", eval, ";" ;
 target_list      = target, { ",", target } ;
 target           = target_name, [ ":", data_type ] ;
 target_name      = wild_key | "_" ;            (* 允许带通配符 '*'；'_' 表示匿名/丢弃 *)
-data_type        = type_ident ;                 (* 复用 wpl::take_datatype: auto|ip|chars|digit|time|obj|array|... *)
+data_type        = type_ident ;                 (* 复用 wpl::take_datatype: auto|ip|chars|digit|float|time|bool|obj|array|... *)
 ```
 
 ## 求值（右侧表达式）
@@ -65,13 +65,13 @@ fmt_expr         = "fmt", "(", string, ",", var_get, { ",", var_get }, ")" ;
 var_get          = ("read" | "take"), "(", [ arg_list ], ")"
                  | "@", ident ;                  (* '@ref' 等价 read(ref)，不支持缺省体 *)
 
-(* 管道 *)
-pipe_expr        = ["pipe"], var_get, "|", pipe_fun, { "|", pipe_fun } ;   (* var_get 支持 '@ref' *)
+(* 管道：可省略 pipe 关键字 *)
+pipe_expr        = ["pipe"], var_get, "|", pipe_fun, { "|", pipe_fun } ;
 pipe_fun         = "nth",           "(", unsigned, ")"
                  | "get",           "(", ident,   ")"
                  | "base64_decode", "(", [ encode_type ], ")"
                  | "sxf_get",       "(", alnum*,  ")"
-                 | "path",          "(", ("name"|"stem"|"ext"|"dir"|"parent"), ")"
+                 | "path",          "(", ("name"|"path"), ")"
                  | "url",           "(", ("domain"|"host"|"uri"|"path"|"params"), ")"
                  | "Time::to_ts_zone", "(", [ "-" ], unsigned, ",", ("ms"|"us"|"ss"|"s"), ")"
                  | "base64_encode" | "html_escape" | "html_unescape"
@@ -79,18 +79,18 @@ pipe_fun         = "nth",           "(", unsigned, ")"
                  | "Time::to_ts" | "Time::to_ts_ms" | "Time::to_ts_us"
                  | "to_json" | "to_str" | "skip_empty" | "ip4_to_int" ;
 
-encode_type      = ident ;                     (* 例如: Utf8/Gbk/... *)
+encode_type      = ident ;                     (* 例如: Utf8/Gbk/Imap/... 见函数参考文档 *)
 
-(* 聚合到对象：map 内部为子赋值序列；分号可选但推荐 *)
+(* 聚合到对象：object 内部为子赋值序列；分号可选但推荐 *)
 map_expr         = "object", "{", map_item, { map_item }, "}" ;
 map_item         = map_targets, "=", sub_acq, [ ";" ] ;
 map_targets      = ident, { ",", ident }, [ ":", data_type ] ;
 sub_acq          = take_expr | read_expr | value_expr | fun_call ;
 
-(* 聚合到数组：从 VarGet 收集（支持 in/option 通配） *)
+(* 聚合到数组：从 VarGet 收集（支持 keys/option 通配） *)
 collect_expr     = "collect", var_get ;
 
-(* 模式匹配：单源/双源两种形态，支持 in/!=/== 与缺省分支 *)
+(* 模式匹配：单源/双源两种形态，支持 in/!= 与缺省分支 *)
 match_expr       = "match", match_source, "{", case1, { case1 }, [ default_case ], "}"
                  | "match", "(", var_get, ",", var_get, ")", "{", case2, { case2 }, [ default_case ], "}" ;
 match_source     = var_get ;
@@ -150,10 +150,11 @@ privacy_type    = "privacy_ip" | "privacy_specify_ip" | "privacy_id_card" | "pri
 path            = ident, { ("/" | "."), ident } ;
 wild_path       = path | path, "*" ;          (* 允许通配 *)
 wild_key        = ident, { ident | "*" } ;    (* 允许 '*' 出现在键名中 *)
-type_ident      = ident ;                      (* 如 auto/ip/chars/digit/time/obj/array/... *)
+type_ident      = ident ;                      (* 如 auto/ip/chars/digit/float/time/bool/obj/array/... *)
 ident           = letter, { letter | digit | "_" } ;
 key             = ident ;
-string          = "\"", { any-but-quote }, "\"" ;
+string          = "\"", { any-but-quote }, "\""
+                | "'", { any-but-quote }, "'" ;
 literal         = string | number | ip | bool | datetime | ... ;
 json_path       = "/" , ... ;                 (* 如 /a/b/[0]/1 *)
 simple          = ident | number | string ;
@@ -165,6 +166,22 @@ digit           = "0" | ... | "9" ;
 alnum           = letter | digit ;
 ```
 
+## 数据类型
+
+OML 支持以下数据类型：
+
+| 类型 | 说明 | 示例 |
+|------|------|------|
+| `auto` | 自动推断（默认） | `field = read() ;` |
+| `chars` | 字符串 | `name : chars = read() ;` |
+| `digit` | 整数 | `count : digit = read() ;` |
+| `float` | 浮点数 | `ratio : float = read() ;` |
+| `ip` | IP 地址 | `addr : ip = read() ;` |
+| `time` | 时间 | `occur_time : time = Now::time() ;` |
+| `bool` | 布尔值 | `flag : bool = read() ;` |
+| `obj` | 对象 | `info : obj = object { ... } ;` |
+| `array` | 数组 | `items : array = collect read(keys:[...]) ;` |
+
 ## 典型示例（与实现一致）
 
 ```oml
@@ -174,7 +191,7 @@ name : csv_example
 version : chars = Now::time() ;
 pos_sn           = read() { _ : chars(FALLBACK) };
 
-# map 聚合
+# object 聚合
 values : obj = object {
   cpu_free, memory_free : digit = read();
 };
@@ -183,6 +200,9 @@ values : obj = object {
 ports : array = collect read(keys:[sport,dport]);
 ports_json      = pipe read(ports) | to_json ;
 first_port      = pipe read(ports) | nth(0) ;
+
+# 省略 pipe 关键字的管道写法
+url_host        = read(http_url) | url(host) ;
 
 # match
 quarter : chars = match read(month) {
@@ -193,17 +213,50 @@ quarter : chars = match read(month) {
   _ => chars(QX) ;
 };
 
-# SQL（where 中可混用 read/take/Time::now/常量）
+# 双源 match
+X : chars = match (read(city1), read(city2)) {
+    (ip(127.0.0.1), ip(127.0.0.100)) => chars(bj) ;
+    _ => chars(sz) ;
+};
+
+# SQL（where 中可混用 read/take/Now::time/常量）
 name,pinying = select name,pinying from example where pinying = read(py) ;
+_,_ = select name,pinying from example where pinying = 'xiaolongnu' ;
 ---
 # 隐私配置（按键绑定处理器枚举）
 src_ip : privacy_ip
 pos_sn : privacy_keymsg
 ```
 
+## 管道函数速查
+
+| 函数 | 语法 | 说明 |
+|------|------|------|
+| `base64_encode` | `base64_encode` | Base64 编码 |
+| `base64_decode` | `base64_decode` / `base64_decode(编码)` | Base64 解码 |
+| `html_escape` | `html_escape` | HTML 转义 |
+| `html_unescape` | `html_unescape` | HTML 反转义 |
+| `json_escape` | `json_escape` | JSON 转义 |
+| `json_unescape` | `json_unescape` | JSON 反转义 |
+| `str_escape` | `str_escape` | 字符串转义 |
+| `Time::to_ts` | `Time::to_ts` | 时间转时间戳（秒，UTC+8） |
+| `Time::to_ts_ms` | `Time::to_ts_ms` | 时间转时间戳（毫秒，UTC+8） |
+| `Time::to_ts_us` | `Time::to_ts_us` | 时间转时间戳（微秒，UTC+8） |
+| `Time::to_ts_zone` | `Time::to_ts_zone(时区,单位)` | 时间转指定时区时间戳 |
+| `nth` | `nth(索引)` | 获取数组元素 |
+| `get` | `get(字段名)` | 获取对象字段 |
+| `path` | `path(name\|path)` | 提取文件路径部分 |
+| `url` | `url(domain\|host\|uri\|path\|params)` | 提取 URL 部分 |
+| `sxf_get` | `sxf_get(字段名)` | 提取特殊格式字段 |
+| `to_str` | `to_str` | 转换为字符串 |
+| `to_json` | `to_json` | 转换为 JSON |
+| `ip4_to_int` | `ip4_to_int` | IPv4 转整数 |
+| `skip_empty` | `skip_empty` | 跳过空值 |
+
 ## 备注
 - 注释：源码通过 CommentParser 预处理支持 `//` 单行注释。
 - 目标通配：当目标名含 `*` 时走批量模式（BatchEval），对应实现见 `oml_aggregate.rs`。
+- 管道省略：从当前版本起，管道表达式可省略 `pipe` 前缀，直接写 `read(...) | func` 形式。
 - 语法错误提示：关键位置均带上下文与期望串，以便定位（参见 `keyword.rs` 与各 parser `.context(...)`）。
 - 本文档仅刻画实际生效语法；示例与 tests 完整对齐，可参阅 `crates/wp-oml/tests/test_case.rs`。
 - 读取语义：`read` 为非破坏性（可反复读取，不从 src 移除）；`take` 为破坏性（取走后从 src 移除，后续不可再取）。

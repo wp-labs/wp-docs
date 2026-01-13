@@ -177,9 +177,9 @@ now_hour = Now::hour() ;
 
 **Output Result**:
 ```
-now = "2024-01-15 14:30:45"  # Current time
-now_date = "2024-01-15"       # Current date
-now_hour = "14"               # Current hour
+now = "2024-01-15 14:30:45"   # Current time (time type)
+now_date = 20240115           # Current date (digit type, format YYYYMMDD)
+now_hour = 2024011514         # Current hour (digit type, format YYYYMMDDHH)
 ```
 
 ## Pipeline Operations Examples
@@ -195,11 +195,11 @@ occur_time = "2024-01-15 14:30:00"
 ```oml
 name : timestamp_conversion
 ---
-# Different precision timestamps
+# Use Time::to_ts_zone to specify timezone and precision
 ts_ss = pipe read(occur_time) | Time::to_ts_zone(0, ss) ;
 ts_ms = pipe read(occur_time) | Time::to_ts_zone(0, ms) ;
 ts_us = pipe read(occur_time) | Time::to_ts_zone(0, us) ;
-# With timezone
+# Use s as shorthand for seconds
 ts_utc8 = pipe read(occur_time) | Time::to_ts_zone(8, s) ;
 ```
 
@@ -208,8 +208,12 @@ ts_utc8 = pipe read(occur_time) | Time::to_ts_zone(8, s) ;
 ts_ss = 1705318200          # Seconds
 ts_ms = 1705318200000       # Milliseconds
 ts_us = 1705318200000000    # Microseconds
-ts_utc8 = 1705285800        # UTC+8 timezone seconds
+ts_utc8 = 1705289400        # UTC+8 timezone seconds
 ```
+
+**Notes**:
+- `Time::to_ts`, `Time::to_ts_ms`, `Time::to_ts_us` use UTC+8 timezone by default
+- `Time::to_ts_zone(timezone, unit)` can specify timezone and precision, unit supports `s`/`ss` (seconds), `ms` (milliseconds), `us` (microseconds)
 
 ### 2. Array Operations Pipeline
 
@@ -230,8 +234,6 @@ ports = collect read(keys:[sport, dport]) ;
 ports_json = pipe read(ports) | to_json ;
 # Get first port
 first_port = pipe read(ports) | nth(0) ;
-# Count array length
-port_count = pipe read(ports) | arr_len ;
 ```
 
 **Output Result**:
@@ -239,7 +241,6 @@ port_count = pipe read(ports) | arr_len ;
 ports = [8080, 443]                    # Array
 ports_json = "[8080,443]"              # JSON string
 first_port = 8080                      # First element
-port_count = 2                         # Array length
 ```
 
 ### 3. URL Parsing Pipeline
@@ -253,24 +254,20 @@ url = "https://www.example.com:8080/path/to/resource?param1=value1&param2=value2
 ```oml
 name : url_parsing
 ---
-scheme = pipe read(url) | url(scheme) ;
 domain = pipe read(url) | url(domain) ;
 host = pipe read(url) | url(host) ;
-port = pipe read(url) | url(port) ;
 path = pipe read(url) | url(path) ;
+uri = pipe read(url) | url(uri) ;
 params = pipe read(url) | url(params) ;
-fragment = pipe read(url) | url(fragment) ;
 ```
 
 **Output Result**:
 ```
-scheme = "https"
 domain = "www.example.com"
-host = "www.example.com"
-port = "8080"
+host = "www.example.com:8080"
 path = "/path/to/resource"
+uri = "/path/to/resource?param1=value1&param2=value2#section"
 params = "param1=value1&param2=value2"
-fragment = "section"
 ```
 
 ### 4. Encoding Conversion Pipeline
@@ -279,7 +276,6 @@ fragment = "section"
 ```
 message = "Hello, OML!"
 html = "<script>alert('xss')</script>"
-json_text = '{"key":"value with \"quotes\""}'
 ```
 
 **OML Configuration**:
@@ -288,7 +284,11 @@ name : encoding_pipe
 ---
 # Base64 encode/decode
 b64_encoded = pipe read(message) | base64_encode ;
-b64_decoded = pipe read(b64_encoded) | base64_decode(Utf8) ;
+b64_decoded = pipe read(b64_encoded) | base64_decode ;
+
+# Use specified encoding for Base64 decode (supports multiple character encodings)
+gbk_decoded = pipe read(gbk_data) | base64_decode(Gbk) ;
+imap_decoded = pipe read(binary_data) | base64_decode(Imap) ;
 
 # HTML escape
 html_escaped = pipe read(html) | html_escape ;
@@ -303,11 +303,15 @@ json_unescaped = pipe read(json_escaped) | json_unescape ;
 ```
 b64_encoded = "SGVsbG8sIE9NTCE="
 b64_decoded = "Hello, OML!"
-html_escaped = "&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;"
+html_escaped = "&lt;script&gt;alert(&#x27;xss&#x27;)&lt;/script&gt;"
 html_unescaped = "<script>alert('xss')</script>"
-json_escaped = "{\"key\":\"value with \\\"quotes\\\"\"}"
-json_unescaped = "{\"key\":\"value with \"quotes\""}"
 ```
+
+**Notes**:
+`base64_decode` supports multiple character encodings, see [Functions Reference](./03-oml_functions.md#base64_decode). Common ones include:
+- `Utf8` (default): Standard UTF-8 encoding
+- `Gbk`: GBK Chinese encoding
+- `Imap`: Escapes non-ASCII bytes to `\xNN` format, suitable for binary data processing
 
 ## Conditional Matching Examples
 
@@ -456,30 +460,29 @@ memory_metrics = [2048, 4096]
 disk_metrics = [102400, 204800]
 ```
 
-### 2. Array Transformation and Filtering
+### 2. Multi-Field Collection
 
 **Input Data**:
 ```
-ports = "80,443,8080,22,3306"
+port_http = "80"
+port_https = "443"
+port_ssh = "22"
 ```
 
 **OML Configuration**:
 ```oml
-name : array_transform
+name : array_collect
 ---
-# Split string into array
-port_list = pipe read(ports) | split(',') ;
-# Filter well-known ports
-well_known_ports = pipe read(port_list) | filter([80, 443, 22]) ;
-# Convert to integer type
-port_ints = pipe read(port_list) | to_digit ;
+# Collect multiple port fields into array
+all_ports = collect read(keys:[port_http, port_https, port_ssh]) ;
+# Convert to JSON
+ports_json = pipe read(all_ports) | to_json ;
 ```
 
 **Output Result**:
 ```
-port_list = ["80", "443", "8080", "22", "3306"]
-well_known_ports = ["80", "443", "22"]
-port_ints = [80, 443, 8080, 22, 3306]
+all_ports = ["80", "443", "22"]
+ports_json = "[\"80\",\"443\",\"22\"]"
 ```
 
 ## Object Aggregation Examples
@@ -804,41 +807,6 @@ first_order_id = "ORD001"
 first_order_amount = "100"
 ```
 
-### 2. Complex String Processing
-
-**Input Data**:
-```
-log_line = '192.168.1.100 - - [15/Jan/2024:14:30:00 +0800] "GET /api/users HTTP/1.1" 200 1234 "https://example.com" "Mozilla/5.0"'
-```
-
-**OML Configuration**:
-```oml
-name : log_processing
----
-# Extract IP (using regex or string split)
-ip = pipe read(log_line) | split(' ') | nth(0) ;
-
-# Extract timestamp
-timestamp = pipe read(log_line) | split('[') | nth(1) | split(']') | nth(0) ;
-
-# Extract HTTP method
-method = pipe read(log_line) | split('"') | nth(2) | split(' ') | nth(0) ;
-
-# Extract URL
-url = pipe read(log_line) | split('"') | nth(2) | split(' ') | nth(1) ;
-
-# Extract status code
-status = pipe read(log_line) | split('"') | nth(2) | split(' ') | nth(2) ;
-```
-
-**Output Result**:
-```
-ip = "192.168.1.100"
-timestamp = "15/Jan/2024:14:30:00 +0800"
-method = "GET"
-url = "/api/users"
-status = "200"
-```
 
 ### 3. IP Address Operations
 
@@ -853,8 +821,8 @@ dst_ip = "10.0.0.50"
 name : ip_operations
 ---
 # IP to integer
-src_ip_int = pipe read(src_ip) | to_ip4_int ;
-dst_ip_int = pipe read(dst_ip) | to_ip4_int ;
+src_ip_int = pipe read(src_ip) | ip4_to_int ;
+dst_ip_int = pipe read(dst_ip) | ip4_to_int ;
 
 # Check if in specific subnet
 is_private = match (take(src_ip)) {
@@ -901,7 +869,6 @@ response_code = read(status) ;
 size = read(response_size) ;
 
 # URL parsing
-protocol = pipe read(request_uri) | url(scheme) ;
 host = pipe read(request_uri) | url(host) ;
 path = pipe read(request_uri) | url(path) ;
 query = pipe read(request_uri) | url(params) ;
@@ -924,7 +891,6 @@ access_log = object {
     } ;
     request : object {
         method : chars = read(http_method) ;
-        protocol : chars = read(protocol) ;
         host : chars = read(host) ;
         path : chars = read(path) ;
         query : chars = read(query) ;
@@ -949,7 +915,6 @@ access_log = object {
         },
         "request": {
             "method": "GET",
-            "protocol": "",
             "host": "",
             "path": "/api/users",
             "query": "page=1&limit=10"
@@ -991,32 +956,19 @@ name : system_monitoring
 ---
 # Time processing
 event_ts = pipe read(timestamp) | Time::to_ts_zone(8, ss) ;
-event_hour = pipe read(timestamp) | Time::to_ts_zone(8, hh) ;
 
-# CPU metrics calculation
-cpu_total = pipe read(cpu_user) | add(read(cpu_system)) | add(read(cpu_idle)) ;
-cpu_usage_percent = pipe read(cpu_user) | add(read(cpu_system)) ;
-
-# Memory metrics calculation
-mem_usage_percent = pipe read(mem_used) | div(read(mem_total)) | mul(100) ;
-
-# I/O rate (assuming 5-second interval data)
-disk_read_rate = pipe read(disk_read) | div(5) ;
-disk_write_rate = pipe read(disk_write) | div(5) ;
-net_in_rate = pipe read(net_in) | div(5) ;
-net_out_rate = pipe read(net_out) | div(5) ;
-
-# Alert evaluation
-cpu_alert = match read(cpu_usage_percent) {
-    in (digit(0), digit(80)) => chars(Normal) ;
-    in (digit(80), digit(90)) => chars(Warning) ;
-    digit(_) => chars(Critical) ;
+# Alert evaluation (based on CPU user usage)
+cpu_alert = match read(cpu_user) {
+    in (digit(0), digit(60)) => chars(Normal) ;
+    in (digit(60), digit(80)) => chars(Warning) ;
+    _ => chars(Critical) ;
 } ;
 
-mem_alert = match read(mem_usage_percent) {
-    in (digit(0), digit(80)) => chars(Normal) ;
-    in (digit(80), digit(90)) => chars(Warning) ;
-    digit(_) => chars(Critical) ;
+# Alert evaluation (based on memory usage)
+mem_alert = match read(mem_used) {
+    in (digit(0), digit(6000)) => chars(Normal) ;
+    in (digit(6000), digit(7000)) => chars(Warning) ;
+    _ => chars(Critical) ;
 } ;
 
 # Final output
@@ -1024,39 +976,36 @@ metrics = object {
     host : object {
         name : chars = read(hostname) ;
         timestamp : digit = read(event_ts) ;
-        hour : digit = read(event_hour) ;
     } ;
 
     cpu : object {
-        user : float = read() ;
-        system : float = read() ;
-        idle : float = read() ;
-        usage_percent : float = read() ;
+        user : float = read(cpu_user) ;
+        system : float = read(cpu_system) ;
+        idle : float = read(cpu_idle) ;
         alert : chars = read(cpu_alert) ;
     } ;
 
     memory : object {
-        total : digit = read() ;
-        used : digit = read() ;
-        free : digit = read() ;
-        usage_percent : float = read() ;
+        total : digit = read(mem_total) ;
+        used : digit = read(mem_used) ;
+        free : digit = read(mem_free) ;
         alert : chars = read(mem_alert) ;
     } ;
 
     disk : object {
-        read_rate : digit = read() ;
-        write_rate : digit = read() ;
+        read_bytes : digit = read(disk_read) ;
+        write_bytes : digit = read(disk_write) ;
     } ;
 
     network : object {
-        in_rate : digit = read() ;
-        out_rate : digit = read() ;
+        in_bytes : digit = read(net_in) ;
+        out_bytes : digit = read(net_out) ;
     } ;
 
     load : object {
-        avg_1m : float = read() ;
-        avg_5m : float = read() ;
-        avg_15m : float = read() ;
+        avg_1m : float = read(load_1m) ;
+        avg_5m : float = read(load_5m) ;
+        avg_15m : float = read(load_15m) ;
     } ;
 } ;
 ```
@@ -1067,30 +1016,27 @@ metrics = object {
     "metrics": {
         "host": {
             "name": "prod-web-01",
-            "timestamp": 1705285800,
-            "hour": 14
+            "timestamp": 1705285800
         },
         "cpu": {
             "user": 65.5,
             "system": 15.2,
             "idle": 19.3,
-            "usage_percent": 80.7,
             "alert": "Warning"
         },
         "memory": {
             "total": 8192,
             "used": 6144,
             "free": 2048,
-            "usage_percent": 75.0,
-            "alert": "Normal"
+            "alert": "Warning"
         },
         "disk": {
-            "read_rate": 209715,
-            "write_rate": 104857
+            "read_bytes": 1048576,
+            "write_bytes": 524288
         },
         "network": {
-            "in_rate": 2097152,
-            "out_rate": 1048576
+            "in_bytes": 10485760,
+            "out_bytes": 5242880
         },
         "load": {
             "avg_1m": 2.5,
@@ -1138,8 +1084,8 @@ event_date = Now::date() ;
 
 # === Network Information Processing ===
 # IP address conversion
-src_ip_int = pipe read(src_ip) | to_ip4_int ;
-dst_ip_int = pipe read(dst_ip) | to_ip4_int ;
+src_ip_int = pipe read(src_ip) | ip4_to_int ;
+dst_ip_int = pipe read(dst_ip) | ip4_to_int ;
 
 # Port processing
 src_port : digit = read() ;

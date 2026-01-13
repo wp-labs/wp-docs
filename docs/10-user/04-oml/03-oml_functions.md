@@ -44,7 +44,7 @@ occur_time : time = Now::time() ;
 **示例**:
 ```oml
 today : digit = Now::date() ;
-# 输出示例: 20251225
+# 输出示例: 20251225（表示 2025 年 12 月 25 日）
 ```
 
 #### `Now::hour()`
@@ -56,7 +56,7 @@ today : digit = Now::date() ;
 **示例**:
 ```oml
 current_hour : digit = Now::hour() ;
-# 输出示例: 2025122515
+# 输出示例: 2025122515（表示 2025 年 12 月 25 日 15 时）
 ```
 
 ---
@@ -95,7 +95,7 @@ encoded = pipe read(payload) | base64_encode ;
 **语法**: `base64_decode` | `base64_decode(<encoding>)`
 
 **参数**:
-- `encoding` (可选): 解码后的字符编码，支持 `Utf8`（默认）、`Imap`（IMAP 变体，处理非 ASCII 字符）
+- `encoding` (可选): 解码后的字符编码，默认为 `Utf8`
 
 **输入**: `chars`
 **输出**: `chars`
@@ -106,7 +106,10 @@ encoded = pipe read(payload) | base64_encode ;
 decoded = pipe read(data) | base64_decode ;
 decoded = pipe read(data) | base64_decode(Utf8) ;
 
-# IMAP 变体解码（处理二进制/非 ASCII 数据）
+# GBK 中文解码
+gbk_text = pipe read(gbk_data) | base64_decode(Gbk) ;
+
+# IMAP 变体解码（处理二进制/非 ASCII 数据，转义为可读格式）
 raw = pipe read(binary_data) | base64_decode(Imap) ;
 ```
 
@@ -201,7 +204,7 @@ escaped = pipe read(raw_string) | str_escape ;
 
 #### `Time::to_ts`
 
-将时间转换为 Unix 时间戳（秒）。
+将时间转换为 Unix 时间戳（秒）。使用 UTC+8 时区。
 
 **语法**: `Time::to_ts`
 
@@ -216,7 +219,7 @@ timestamp = pipe read(occur_time) | Time::to_ts ;
 
 #### `Time::to_ts_ms`
 
-将时间转换为 Unix 时间戳（毫秒）。
+将时间转换为 Unix 时间戳（毫秒）。使用 UTC+8 时区。
 
 **语法**: `Time::to_ts_ms`
 
@@ -231,7 +234,7 @@ timestamp_ms = pipe read(occur_time) | Time::to_ts_ms ;
 
 #### `Time::to_ts_us`
 
-将时间转换为 Unix 时间戳（微秒）。
+将时间转换为 Unix 时间戳（微秒）。使用 UTC+8 时区。
 
 **语法**: `Time::to_ts_us`
 
@@ -251,7 +254,7 @@ timestamp_us = pipe read(occur_time) | Time::to_ts_us ;
 **语法**: `Time::to_ts_zone(<timezone_offset>, <unit>)`
 
 **参数**:
-- `timezone_offset`: 时区偏移（小时），如 `0` 表示 UTC，`8` 表示 UTC+8
+- `timezone_offset`: 时区偏移（小时），如 `0` 表示 UTC，`8` 表示 UTC+8，`-5` 表示 UTC-5
 - `unit`: 时间戳单位
   - `s` 或 `ss`: 秒
   - `ms`: 毫秒
@@ -267,6 +270,9 @@ utc_ts = pipe read(occur_time) | Time::to_ts_zone(0, ss) ;
 
 # UTC+8 时间戳（毫秒）
 beijing_ts_ms = pipe read(occur_time) | Time::to_ts_zone(8, ms) ;
+
+# UTC-5 时间戳（秒）
+eastern_ts = pipe read(occur_time) | Time::to_ts_zone(-5, s) ;
 
 # UTC 时间戳（微秒）
 utc_ts_us = pipe read(occur_time) | Time::to_ts_zone(0, us) ;
@@ -296,20 +302,20 @@ third_item = pipe read(items) | nth(2) ;
 
 #### `get`
 
-获取对象中指定路径的值。
+获取对象中指定键的值。
 
-**语法**: `get(<path>)`
+**语法**: `get(<key>)`
 
 **参数**:
-- `path`: 对象路径，使用 `/` 分隔嵌套层级
+- `key`: 对象字段名
 
 **输入**: `obj`
 **输出**: 字段值类型
 
 **示例**:
 ```oml
-# 获取嵌套对象的值
-name = pipe read(user) | get(profile/name) ;
+# 获取对象的字段值
+name = pipe read(user) | get(name) ;
 
 # 结合 nth 使用
 first_name = pipe read(users) | nth(0) | get(name) ;
@@ -324,10 +330,7 @@ first_name = pipe read(users) | nth(0) | get(name) ;
 **参数**:
 - `part`: 要提取的部分
   - `name`: 文件名（含扩展名）
-  - `stem`: 文件名（不含扩展名）
-  - `ext`: 扩展名
-  - `dir`: 目录路径
-  - `parent`: 父目录
+  - `path`: 父目录路径
 
 **输入**: `chars`
 **输出**: `chars`
@@ -336,9 +339,7 @@ first_name = pipe read(users) | nth(0) | get(name) ;
 ```oml
 # 输入: "C:\Users\test\file.txt"
 filename = pipe read(file_path) | path(name) ;   # "file.txt"
-stem = pipe read(file_path) | path(stem) ;       # "file"
-ext = pipe read(file_path) | path(ext) ;         # "txt"
-dir = pipe read(file_path) | path(dir) ;         # "C:\Users\test"
+parent = pipe read(file_path) | path(path) ;     # "C:/Users/test"
 ```
 
 #### `url`
@@ -375,7 +376,7 @@ params = pipe read(http_url) | url(params) ;  # "id=1"
 **语法**: `sxf_get(<field_name>)`
 
 **参数**:
-- `field_name`: 要提取的字段名
+- `field_name`: 要提取的字段名（仅支持字母和数字）
 
 **输入**: `chars`
 **输出**: `chars`
@@ -384,7 +385,7 @@ params = pipe read(http_url) | url(params) ;  # "id=1"
 ```oml
 # 从格式化文本中提取字段
 status = pipe read(log_line) | sxf_get(statusCode) ;
-password = pipe read(log_line) | sxf_get(password) ;
+username = pipe read(log_line) | sxf_get(username) ;
 ```
 
 ---
@@ -432,7 +433,7 @@ user_json = pipe read(user) | to_json ;
 
 **语法**: `ip4_to_int`
 
-**输入**: `ip`
+**输入**: `ip` 或 `chars`
 **输出**: `digit`
 
 **示例**:
@@ -476,7 +477,7 @@ name : time_processing
 # 获取当前时间
 occur_time : time = Now::time() ;
 
-# 转换为各种时间戳格式
+# 转换为各种时间戳格式（使用默认 UTC+8 时区）
 ts_seconds = pipe read(occur_time) | Time::to_ts ;
 ts_millis = pipe read(occur_time) | Time::to_ts_ms ;
 
@@ -496,7 +497,6 @@ request_path = pipe read(http_url) | url(path) ;
 
 # 文件路径处理
 file_name = pipe read(file_path) | path(name) ;
-file_ext = pipe read(file_path) | path(ext) ;
 
 # 数组处理
 first_port = pipe read(ports) | nth(0) ;
@@ -511,6 +511,9 @@ name : encoding_example
 # Base64 编解码
 encoded_payload = pipe read(raw_data) | base64_encode ;
 decoded_data = pipe read(b64_data) | base64_decode ;
+
+# 使用 GBK 编码解码中文
+gbk_decoded = pipe read(gbk_b64) | base64_decode(Gbk) ;
 
 # HTML 安全处理
 safe_content = pipe read(user_input) | html_escape ;
@@ -536,30 +539,37 @@ ip_int = pipe read(src_ip) | ip4_to_int | skip_empty ;
 
 ---
 
-## 版本说明
+## 函数一览表
 
-以下是函数命名的历史变更记录：
+### 内置函数
 
-| 旧名称 | 新名称 | 说明 |
-|--------|--------|------|
-| `Time::now` | `Now::time` | 移至 Now 命名空间 |
-| `Time::now_date` | `Now::date` | 移至 Now 命名空间 |
-| `Time::now_hour` | `Now::hour` | 移至 Now 命名空间 |
-| `to_timestamp` | `Time::to_ts` | 移至 Time 命名空间 |
-| `to_timestamp_ms` | `Time::to_ts_ms` | 移至 Time 命名空间 |
-| `to_timestamp_us` | `Time::to_ts_us` | 移至 Time 命名空间 |
-| `to_timestamp_zone` | `Time::to_ts_zone` | 移至 Time 命名空间 |
-| `arr_get` | `nth` | 简化命名 |
-| `obj_get` | `get` | 简化命名 |
-| `path_get` | `path` | 简化命名 |
-| `url_get` | `url` | 简化命名 |
-| `base64_en` | `base64_encode` | 更清晰的命名 |
-| `base64_de` | `base64_decode` | 更清晰的命名 |
-| `html_escape_en` | `html_escape` | 简化命名 |
-| `html_escape_de` | `html_unescape` | 使用 unescape 更准确 |
-| `json_escape_en` | `json_escape` | 简化命名 |
-| `json_escape_de` | `json_unescape` | 使用 unescape 更准确 |
-| `str_escape_en` | `str_escape` | 简化命名 |
-| `skip_if_empty` | `skip_empty` | 简化命名 |
-| `to_string` | `to_str` | 简化命名 |
-| `to_ip4_int` | `ip4_to_int` | 统一命名风格 |
+| 函数 | 说明 | 返回类型 |
+|------|------|----------|
+| `Now::time()` | 获取当前时间 | `time` |
+| `Now::date()` | 获取当前日期（YYYYMMDD） | `digit` |
+| `Now::hour()` | 获取当前时间精确到小时（YYYYMMDDHH） | `digit` |
+
+### 管道函数
+
+| 函数 | 说明 | 输入类型 | 输出类型 |
+|------|------|----------|----------|
+| `base64_encode` | Base64 编码 | `chars` | `chars` |
+| `base64_decode` | Base64 解码 | `chars` | `chars` |
+| `html_escape` | HTML 转义 | `chars` | `chars` |
+| `html_unescape` | HTML 反转义 | `chars` | `chars` |
+| `json_escape` | JSON 转义 | `chars` | `chars` |
+| `json_unescape` | JSON 反转义 | `chars` | `chars` |
+| `str_escape` | 字符串转义 | `chars` | `chars` |
+| `Time::to_ts` | 时间转时间戳（秒） | `time` | `digit` |
+| `Time::to_ts_ms` | 时间转时间戳（毫秒） | `time` | `digit` |
+| `Time::to_ts_us` | 时间转时间戳（微秒） | `time` | `digit` |
+| `Time::to_ts_zone` | 时间转指定时区时间戳 | `time` | `digit` |
+| `nth` | 获取数组元素 | `array` | 元素类型 |
+| `get` | 获取对象字段 | `obj` | 字段类型 |
+| `path` | 提取文件路径部分 | `chars` | `chars` |
+| `url` | 提取 URL 部分 | `chars` | `chars` |
+| `sxf_get` | 提取特殊格式字段 | `chars` | `chars` |
+| `to_str` | 转换为字符串 | 任意 | `chars` |
+| `to_json` | 转换为 JSON | 任意 | `chars` |
+| `ip4_to_int` | IPv4 转整数 | `ip`/`chars` | `digit` |
+| `skip_empty` | 跳过空值 | 任意 | 任意 |

@@ -44,7 +44,7 @@ Get the current date as an integer in `YYYYMMDD` format.
 **Example**:
 ```oml
 today : digit = Now::date() ;
-# Output example: 20251225
+# Output example: 20251225 (represents December 25, 2025)
 ```
 
 #### `Now::hour()`
@@ -56,7 +56,7 @@ Get the current time precise to the hour as an integer in `YYYYMMDDHH` format.
 **Example**:
 ```oml
 current_hour : digit = Now::hour() ;
-# Output example: 2025122515
+# Output example: 2025122515 (represents December 25, 2025 at 15:00)
 ```
 
 ---
@@ -95,7 +95,7 @@ Decode a Base64 encoded string.
 **Syntax**: `base64_decode` | `base64_decode(<encoding>)`
 
 **Parameters**:
-- `encoding` (optional): Character encoding after decoding, supports `Utf8` (default), `Imap` (IMAP variant, handles non-ASCII characters)
+- `encoding` (optional): Character encoding after decoding, default is `Utf8`
 
 **Input**: `chars`
 **Output**: `chars`
@@ -106,7 +106,10 @@ Decode a Base64 encoded string.
 decoded = pipe read(data) | base64_decode ;
 decoded = pipe read(data) | base64_decode(Utf8) ;
 
-# IMAP variant decoding (handles binary/non-ASCII data)
+# GBK Chinese decoding
+gbk_text = pipe read(gbk_data) | base64_decode(Gbk) ;
+
+# IMAP variant decoding (handles binary/non-ASCII data, escapes to readable format)
 raw = pipe read(binary_data) | base64_decode(Imap) ;
 ```
 
@@ -124,11 +127,11 @@ Escape HTML special characters.
 **Output**: `chars`
 
 **Escape Rules**:
-- `<` -> `&lt;`
-- `>` -> `&gt;`
-- `&` -> `&amp;`
-- `"` -> `&quot;`
-- `'` -> `&#x27;`
+- `<` → `&lt;`
+- `>` → `&gt;`
+- `&` → `&amp;`
+- `"` → `&quot;`
+- `'` → `&#x27;`
 
 **Example**:
 ```oml
@@ -201,7 +204,7 @@ escaped = pipe read(raw_string) | str_escape ;
 
 #### `Time::to_ts`
 
-Convert time to Unix timestamp (seconds).
+Convert time to Unix timestamp (seconds). Uses UTC+8 timezone.
 
 **Syntax**: `Time::to_ts`
 
@@ -216,7 +219,7 @@ timestamp = pipe read(occur_time) | Time::to_ts ;
 
 #### `Time::to_ts_ms`
 
-Convert time to Unix timestamp (milliseconds).
+Convert time to Unix timestamp (milliseconds). Uses UTC+8 timezone.
 
 **Syntax**: `Time::to_ts_ms`
 
@@ -231,7 +234,7 @@ timestamp_ms = pipe read(occur_time) | Time::to_ts_ms ;
 
 #### `Time::to_ts_us`
 
-Convert time to Unix timestamp (microseconds).
+Convert time to Unix timestamp (microseconds). Uses UTC+8 timezone.
 
 **Syntax**: `Time::to_ts_us`
 
@@ -251,7 +254,7 @@ Convert time to Unix timestamp with specified timezone.
 **Syntax**: `Time::to_ts_zone(<timezone_offset>, <unit>)`
 
 **Parameters**:
-- `timezone_offset`: Timezone offset (hours), e.g., `0` for UTC, `8` for UTC+8
+- `timezone_offset`: Timezone offset (hours), e.g., `0` for UTC, `8` for UTC+8, `-5` for UTC-5
 - `unit`: Timestamp unit
   - `s` or `ss`: Seconds
   - `ms`: Milliseconds
@@ -267,6 +270,9 @@ utc_ts = pipe read(occur_time) | Time::to_ts_zone(0, ss) ;
 
 # UTC+8 timestamp (milliseconds)
 beijing_ts_ms = pipe read(occur_time) | Time::to_ts_zone(8, ms) ;
+
+# UTC-5 timestamp (seconds)
+eastern_ts = pipe read(occur_time) | Time::to_ts_zone(-5, s) ;
 
 # UTC timestamp (microseconds)
 utc_ts_us = pipe read(occur_time) | Time::to_ts_zone(0, us) ;
@@ -296,20 +302,20 @@ third_item = pipe read(items) | nth(2) ;
 
 #### `get`
 
-Get the value at a specified path in an object.
+Get the value of a specified key in an object.
 
-**Syntax**: `get(<path>)`
+**Syntax**: `get(<key>)`
 
 **Parameters**:
-- `path`: Object path, using `/` to separate nested levels
+- `key`: Object field name
 
 **Input**: `obj`
 **Output**: Field value type
 
 **Example**:
 ```oml
-# Get value from nested object
-name = pipe read(user) | get(profile/name) ;
+# Get object field value
+name = pipe read(user) | get(name) ;
 
 # Combined with nth
 first_name = pipe read(users) | nth(0) | get(name) ;
@@ -324,10 +330,7 @@ Extract a specified part from a file path.
 **Parameters**:
 - `part`: Part to extract
   - `name`: Filename (with extension)
-  - `stem`: Filename (without extension)
-  - `ext`: Extension
-  - `dir`: Directory path
-  - `parent`: Parent directory
+  - `path`: Parent directory path
 
 **Input**: `chars`
 **Output**: `chars`
@@ -336,9 +339,7 @@ Extract a specified part from a file path.
 ```oml
 # Input: "C:\Users\test\file.txt"
 filename = pipe read(file_path) | path(name) ;   # "file.txt"
-stem = pipe read(file_path) | path(stem) ;       # "file"
-ext = pipe read(file_path) | path(ext) ;         # "txt"
-dir = pipe read(file_path) | path(dir) ;         # "C:\Users\test"
+parent = pipe read(file_path) | path(path) ;     # "C:/Users/test"
 ```
 
 #### `url`
@@ -375,7 +376,7 @@ Extract field values from specially formatted text (used to parse special format
 **Syntax**: `sxf_get(<field_name>)`
 
 **Parameters**:
-- `field_name`: Field name to extract
+- `field_name`: Field name to extract (only letters and numbers supported)
 
 **Input**: `chars`
 **Output**: `chars`
@@ -384,7 +385,7 @@ Extract field values from specially formatted text (used to parse special format
 ```oml
 # Extract fields from formatted text
 status = pipe read(log_line) | sxf_get(statusCode) ;
-password = pipe read(log_line) | sxf_get(password) ;
+username = pipe read(log_line) | sxf_get(username) ;
 ```
 
 ---
@@ -432,7 +433,7 @@ Convert IPv4 address to integer.
 
 **Syntax**: `ip4_to_int`
 
-**Input**: `ip`
+**Input**: `ip` or `chars`
 **Output**: `digit`
 
 **Example**:
@@ -476,11 +477,11 @@ name : time_processing
 # Get current time
 occur_time : time = Now::time() ;
 
-# Convert to various timestamp formats
+# Convert to various timestamp formats (using default UTC+8 timezone)
 ts_seconds = pipe read(occur_time) | Time::to_ts ;
 ts_millis = pipe read(occur_time) | Time::to_ts_ms ;
 
-# With timezone
+# Specify timezone
 ts_utc = pipe read(occur_time) | Time::to_ts_zone(0, ss) ;
 ts_beijing = pipe read(occur_time) | Time::to_ts_zone(8, ms) ;
 ```
@@ -496,7 +497,6 @@ request_path = pipe read(http_url) | url(path) ;
 
 # File path processing
 file_name = pipe read(file_path) | path(name) ;
-file_ext = pipe read(file_path) | path(ext) ;
 
 # Array processing
 first_port = pipe read(ports) | nth(0) ;
@@ -511,6 +511,9 @@ name : encoding_example
 # Base64 encode/decode
 encoded_payload = pipe read(raw_data) | base64_encode ;
 decoded_data = pipe read(b64_data) | base64_decode ;
+
+# Use GBK encoding to decode Chinese
+gbk_decoded = pipe read(gbk_b64) | base64_decode(Gbk) ;
 
 # HTML safety processing
 safe_content = pipe read(user_input) | html_escape ;
@@ -536,30 +539,37 @@ ip_int = pipe read(src_ip) | ip4_to_int | skip_empty ;
 
 ---
 
-## Version Notes
+## Function Summary Table
 
-The following is a historical changelog for function naming:
+### Built-in Functions
 
-| Old Name | New Name | Description |
-|----------|----------|-------------|
-| `Time::now` | `Now::time` | Moved to Now namespace |
-| `Time::now_date` | `Now::date` | Moved to Now namespace |
-| `Time::now_hour` | `Now::hour` | Moved to Now namespace |
-| `to_timestamp` | `Time::to_ts` | Moved to Time namespace |
-| `to_timestamp_ms` | `Time::to_ts_ms` | Moved to Time namespace |
-| `to_timestamp_us` | `Time::to_ts_us` | Moved to Time namespace |
-| `to_timestamp_zone` | `Time::to_ts_zone` | Moved to Time namespace |
-| `arr_get` | `nth` | Simplified naming |
-| `obj_get` | `get` | Simplified naming |
-| `path_get` | `path` | Simplified naming |
-| `url_get` | `url` | Simplified naming |
-| `base64_en` | `base64_encode` | Clearer naming |
-| `base64_de` | `base64_decode` | Clearer naming |
-| `html_escape_en` | `html_escape` | Simplified naming |
-| `html_escape_de` | `html_unescape` | Using unescape is more accurate |
-| `json_escape_en` | `json_escape` | Simplified naming |
-| `json_escape_de` | `json_unescape` | Using unescape is more accurate |
-| `str_escape_en` | `str_escape` | Simplified naming |
-| `skip_if_empty` | `skip_empty` | Simplified naming |
-| `to_string` | `to_str` | Simplified naming |
-| `to_ip4_int` | `ip4_to_int` | Unified naming style |
+| Function | Description | Return Type |
+|----------|-------------|-------------|
+| `Now::time()` | Get current time | `time` |
+| `Now::date()` | Get current date (YYYYMMDD) | `digit` |
+| `Now::hour()` | Get current time to the hour (YYYYMMDDHH) | `digit` |
+
+### Pipe Functions
+
+| Function | Description | Input Type | Output Type |
+|----------|-------------|------------|-------------|
+| `base64_encode` | Base64 encoding | `chars` | `chars` |
+| `base64_decode` | Base64 decoding | `chars` | `chars` |
+| `html_escape` | HTML escape | `chars` | `chars` |
+| `html_unescape` | HTML unescape | `chars` | `chars` |
+| `json_escape` | JSON escape | `chars` | `chars` |
+| `json_unescape` | JSON unescape | `chars` | `chars` |
+| `str_escape` | String escape | `chars` | `chars` |
+| `Time::to_ts` | Time to timestamp (seconds) | `time` | `digit` |
+| `Time::to_ts_ms` | Time to timestamp (milliseconds) | `time` | `digit` |
+| `Time::to_ts_us` | Time to timestamp (microseconds) | `time` | `digit` |
+| `Time::to_ts_zone` | Time to specified timezone timestamp | `time` | `digit` |
+| `nth` | Get array element | `array` | Element type |
+| `get` | Get object field | `obj` | Field type |
+| `path` | Extract file path part | `chars` | `chars` |
+| `url` | Extract URL part | `chars` | `chars` |
+| `sxf_get` | Extract special format field | `chars` | `chars` |
+| `to_str` | Convert to string | Any | `chars` |
+| `to_json` | Convert to JSON | Any | `chars` |
+| `ip4_to_int` | IPv4 to integer | `ip`/`chars` | `digit` |
+| `skip_empty` | Skip empty values | Any | Any |

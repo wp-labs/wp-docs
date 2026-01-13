@@ -8,8 +8,8 @@ Note: Starting from the current version, the engine does not enable "privacy/mas
 
 - [OML Basics](./01-oml_basics.md)
 - [OML Examples](./02-oml_examples.md)
-- [OML Grammar (EBNF)](./03-oml_grammar_ebnf.md)
-- [OML Functions Reference](./04-oml_functions.md)
+- [OML Functions Reference](./03-oml_functions.md)
+- [OML Grammar (EBNF)](./04-oml_grammar.md)
 
 ## Feature Overview
 
@@ -39,6 +39,50 @@ name,pinying   = select name,pinying from example where pinying = read(py) ;
 src_ip : privacy_ip
 pos_sn : privacy_keymsg
 ```
+
+## Built-in Functions
+
+| Function | Description | Return Type |
+|----------|-------------|-------------|
+| `Now::time()` | Get current time | `time` |
+| `Now::date()` | Get current date (YYYYMMDD) | `digit` |
+| `Now::hour()` | Get current time to the hour (YYYYMMDDHH) | `digit` |
+
+## Pipe Functions
+
+| Function | Description |
+|----------|-------------|
+| `base64_encode` | Base64 encoding |
+| `base64_decode` | Base64 decoding (supports multiple character encodings) |
+| `html_escape` / `html_unescape` | HTML escape/unescape |
+| `json_escape` / `json_unescape` | JSON escape/unescape |
+| `str_escape` | String escape |
+| `Time::to_ts` / `Time::to_ts_ms` / `Time::to_ts_us` | Time to timestamp (seconds/milliseconds/microseconds, UTC+8) |
+| `Time::to_ts_zone(timezone,unit)` | Time to specified timezone timestamp |
+| `nth(index)` | Get array element |
+| `get(field_name)` | Get object field |
+| `path(name\|path)` | Extract file path part |
+| `url(domain\|host\|uri\|path\|params)` | Extract URL part |
+| `sxf_get(field_name)` | Extract special format field |
+| `to_str` / `to_json` | Convert to string/JSON |
+| `ip4_to_int` | IPv4 to integer |
+| `skip_empty` | Skip empty values |
+
+For detailed descriptions, see [OML Functions Reference](./03-oml_functions.md).
+
+## Data Types
+
+| Type | Description |
+|------|-------------|
+| `auto` | Auto-infer (default) |
+| `chars` | String |
+| `digit` | Integer |
+| `float` | Floating point |
+| `ip` | IP address |
+| `time` | Time |
+| `bool` | Boolean |
+| `obj` | Object |
+| `array` | Array |
 
 ## Related Documentation
 

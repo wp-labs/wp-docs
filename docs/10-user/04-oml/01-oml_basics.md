@@ -314,7 +314,7 @@ aler* : auto = take() ;
 name : fmt_example
 ---
 # 支持 @ref（等价于 read(ref)）与 read/get 混用
-full = fmt("{}-{}", @user, read(city)) ;
+full = fmt("{user}-{city}", @user, read(city)) ;
 ```
 
 **说明**：`@ref` 仅作为 `read(ref)` 的语法糖，不支持缺省体。

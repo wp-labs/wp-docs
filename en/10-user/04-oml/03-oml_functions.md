@@ -31,6 +31,7 @@ Get the current time.
 **Return Type**: `time`
 
 **Example**:
+
 ```oml
 occur_time : time = Now::time() ;
 ```
@@ -42,6 +43,7 @@ Get the current date as an integer in `YYYYMMDD` format.
 **Return Type**: `digit`
 
 **Example**:
+
 ```oml
 today : digit = Now::date() ;
 # Output example: 20251225
@@ -54,6 +56,7 @@ Get the current time precise to the hour as an integer in `YYYYMMDDHH` format.
 **Return Type**: `digit`
 
 **Example**:
+
 ```oml
 current_hour : digit = Now::hour() ;
 # Output example: 2025122515
@@ -83,6 +86,7 @@ Encode a string to Base64.
 **Output**: `chars`
 
 **Example**:
+
 ```oml
 encoded = pipe read(payload) | base64_encode ;
 # "hello" -> "aGVsbG8="
@@ -95,12 +99,14 @@ Decode a Base64 encoded string.
 **Syntax**: `base64_decode` | `base64_decode(<encoding>)`
 
 **Parameters**:
+
 - `encoding` (optional): Character encoding after decoding, supports `Utf8` (default), `Imap` (IMAP variant, handles non-ASCII characters)
 
 **Input**: `chars`
 **Output**: `chars`
 
 **Example**:
+
 ```oml
 # Standard UTF-8 decoding
 decoded = pipe read(data) | base64_decode ;
@@ -124,6 +130,7 @@ Escape HTML special characters.
 **Output**: `chars`
 
 **Escape Rules**:
+
 - `<` -> `&lt;`
 - `>` -> `&gt;`
 - `&` -> `&amp;`
@@ -131,6 +138,7 @@ Escape HTML special characters.
 - `'` -> `&#x27;`
 
 **Example**:
+
 ```oml
 safe_html = pipe read(user_input) | html_escape ;
 # "<script>" -> "&lt;script&gt;"
@@ -146,6 +154,7 @@ Restore HTML entities to original characters.
 **Output**: `chars`
 
 **Example**:
+
 ```oml
 original = pipe read(escaped_html) | html_unescape ;
 # "&lt;div&gt;" -> "<div>"
@@ -161,6 +170,7 @@ Escape special characters in JSON strings.
 **Output**: `chars`
 
 **Example**:
+
 ```oml
 json_safe = pipe read(text) | json_escape ;
 # Escapes quotes, backslashes, control characters, etc.
@@ -176,6 +186,7 @@ Restore JSON escape sequences to original characters.
 **Output**: `chars`
 
 **Example**:
+
 ```oml
 original = pipe read(escaped_json) | json_unescape ;
 ```
@@ -190,6 +201,7 @@ Escape special characters in strings (mainly quotes and backslashes).
 **Output**: `chars`
 
 **Example**:
+
 ```oml
 escaped = pipe read(raw_string) | str_escape ;
 # 'hello"world' -> 'hello\"world'
@@ -209,6 +221,7 @@ Convert time to Unix timestamp (seconds).
 **Output**: `digit`
 
 **Example**:
+
 ```oml
 timestamp = pipe read(occur_time) | Time::to_ts ;
 # 2000-10-10 00:00:00 -> 971107200
@@ -224,6 +237,7 @@ Convert time to Unix timestamp (milliseconds).
 **Output**: `digit`
 
 **Example**:
+
 ```oml
 timestamp_ms = pipe read(occur_time) | Time::to_ts_ms ;
 # 2000-10-10 00:00:00 -> 971107200000
@@ -239,6 +253,7 @@ Convert time to Unix timestamp (microseconds).
 **Output**: `digit`
 
 **Example**:
+
 ```oml
 timestamp_us = pipe read(occur_time) | Time::to_ts_us ;
 # 2000-10-10 00:00:00 -> 971107200000000
@@ -251,6 +266,7 @@ Convert time to Unix timestamp with specified timezone.
 **Syntax**: `Time::to_ts_zone(<timezone_offset>, <unit>)`
 
 **Parameters**:
+
 - `timezone_offset`: Timezone offset (hours), e.g., `0` for UTC, `8` for UTC+8
 - `unit`: Timestamp unit
   - `s` or `ss`: Seconds
@@ -261,6 +277,7 @@ Convert time to Unix timestamp with specified timezone.
 **Output**: `digit`
 
 **Example**:
+
 ```oml
 # UTC timestamp (seconds)
 utc_ts = pipe read(occur_time) | Time::to_ts_zone(0, ss) ;
@@ -283,12 +300,14 @@ Get the element at a specified index in an array.
 **Syntax**: `nth(<index>)`
 
 **Parameters**:
+
 - `index`: Array index (starting from 0)
 
 **Input**: `array`
 **Output**: Element type of the array
 
 **Example**:
+
 ```oml
 first_item = pipe read(items) | nth(0) ;
 third_item = pipe read(items) | nth(2) ;
@@ -301,12 +320,14 @@ Get the value at a specified path in an object.
 **Syntax**: `get(<path>)`
 
 **Parameters**:
+
 - `path`: Object path, using `/` to separate nested levels
 
 **Input**: `obj`
 **Output**: Field value type
 
 **Example**:
+
 ```oml
 # Get value from nested object
 name = pipe read(user) | get(profile/name) ;
@@ -322,17 +343,16 @@ Extract a specified part from a file path.
 **Syntax**: `path(<part>)`
 
 **Parameters**:
+
 - `part`: Part to extract
   - `name`: Filename (with extension)
-  - `stem`: Filename (without extension)
-  - `ext`: Extension
-  - `dir`: Directory path
-  - `parent`: Parent directory
+  - `path`: Directory path
 
 **Input**: `chars`
 **Output**: `chars`
 
 **Example**:
+
 ```oml
 # Input: "C:\Users\test\file.txt"
 filename = pipe read(file_path) | path(name) ;   # "file.txt"
@@ -348,6 +368,7 @@ Extract a specified part from a URL.
 **Syntax**: `url(<part>)`
 
 **Parameters**:
+
 - `part`: Part to extract
   - `domain`: Domain (without port)
   - `host`: Host (with port)
@@ -359,6 +380,7 @@ Extract a specified part from a URL.
 **Output**: `chars`
 
 **Example**:
+
 ```oml
 # Input: "https://api.example.com:8080/v1/users?id=1#section"
 domain = pipe read(http_url) | url(domain) ;  # "api.example.com"
@@ -375,12 +397,14 @@ Extract field values from specially formatted text (used to parse special format
 **Syntax**: `sxf_get(<field_name>)`
 
 **Parameters**:
+
 - `field_name`: Field name to extract
 
 **Input**: `chars`
 **Output**: `chars`
 
 **Example**:
+
 ```oml
 # Extract fields from formatted text
 status = pipe read(log_line) | sxf_get(statusCode) ;
@@ -401,6 +425,7 @@ Convert a value to string.
 **Output**: `chars`
 
 **Example**:
+
 ```oml
 ip_str = pipe read(src_ip) | to_str ;
 num_str = pipe read(count) | to_str ;
@@ -416,6 +441,7 @@ Convert a value to JSON string.
 **Output**: `chars`
 
 **Example**:
+
 ```oml
 # Array to JSON
 ports_json = pipe read(ports) | to_json ;
@@ -436,6 +462,7 @@ Convert IPv4 address to integer.
 **Output**: `digit`
 
 **Example**:
+
 ```oml
 ip_int = pipe read(src_ip) | ip4_to_int ;
 # 127.0.0.1 -> 2130706433
@@ -456,6 +483,7 @@ Skip the field output if the input value is empty (empty string, empty array, ze
 **Output**: Original type or skipped
 
 **Example**:
+
 ```oml
 # If optional_field is empty, result field will not be output
 result = pipe read(optional_field) | skip_empty ;

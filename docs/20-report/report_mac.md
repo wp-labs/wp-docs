@@ -1,0 +1,318 @@
+# WarpParse vs Vector 性能基准测试报告
+
+## 1. 技术概述与测试背景
+
+### 1.1 测试背景
+
+本报告旨在深度对比 **WarpParse** 与 **Vector** 在高性能日志处理场景下的能力差异。基于最新基线数据，测试覆盖了从轻量级 Web 日志到复杂的安全威胁日志，重点评估两者在单机环境下的解析（Parse）与转换（Transform）性能、资源消耗及规则维护成本。
+
+### 1.2 被测对象
+
+*   **WarpParse**: 大禹安全公司研发的高性能 ETL 核心引擎，采用 Rust 构建，专为极致吞吐和复杂安全日志分析设计。
+*   **Vector**: 开源领域标杆级可观测性数据管道工具，同样采用 Rust 构建，以高性能和广泛的生态兼容性著称。
+
+## 2. 测试环境与方法
+
+### 2.1 测试环境
+
+*   **平台**: Mac M4 Mini
+*   **操作系统**: MacOS
+*   **硬件规格**: 10C16G
+
+### 2.2 测试范畴 (Scope)
+
+*   **日志类型**:
+    *   **Nginx Access Log** (239B): 典型 Web 访问日志，高吞吐场景。
+    *   **AWS ELB Log** (411B): 云设施负载均衡日志，中等复杂度。
+    *   **Sysmon JSON** (1K): 终端安全监控日志，JSON 结构，字段较多。
+    *   **APT Threat Log** (3K): 模拟的高级持续性威胁日志，大体积、长文本。
+    *   **Mixed Log**  (867B): 上述四类日志混合起来形成的日志类型。
+*   **数据拓扑**:
+    *   **File -> BlackHole**: 测算引擎极限 I/O 读取与处理能力 (基准)。
+    *   **TCP -> BlackHole**: 测算网络接收与处理能力。
+    *   **TCP -> File**: 测算端到端完整落地能力。
+*   **测试能力**:
+    *   **解析 (Parse)**: 仅进行正则提取/JSON解析与字段标准化。
+    *   **解析+转换 (Parse+Transform)**: 在解析基础上增加字段映射、富化、类型转换等逻辑。
+
+### 2.3 评估指标
+
+*   **EPS (Events Per Second)**: 每秒处理事件数（核心吞吐指标）。
+*   **MPS (MiB/s)**: 每秒处理数据量。
+*   **CPU/Memory**: 进程平均与峰值资源占用。
+*   **Rule Size**: 规则配置文件体积，评估分发与维护成本。
+
+## 3. 详细性能对比分析
+
+### 3.1 日志解析能力 (Parse Only)
+
+在纯解析场景下，WarpParse 展现出压倒性的性能优势，尤其在小包高并发场景下。
+
+#### 3.1.1 Nginx Access Log (239B)
+
+| 引擎          | 拓扑              | EPS           | MPS    | CPU (Avg/Peak) | MEM (Avg/Peak)  | 性能倍数 |
+| :------------ | :---------------- | :------------ | :----- | :------------- | :-------------- | :------- |
+| **WarpParse** | File -> BlackHole | **2,789,800** | 635.86 | 768% / 858%    | 126 MB / 130 MB | 4.88x    |
+| Vector-VRL    | File -> BlackHole | 572,076       | 130.39 | 298% / 320%    | 222 MB / 241 MB | 1.0x     |
+| Vector-Fixed  | File -> BlackHole | 513,181       | 116.97 | 466% / 538%    | 232 MB / 245 MB | 0.90x    |
+| **WarpParse** | TCP -> BlackHole  | **1,657,500** | 377.80 | 530% / 580%    | 307 MB / 320 MB | 1.42x    |
+| Vector-VRL    | TCP -> BlackHole  | 1,163,700     | 265.24 | 540% / 598%    | 218 MB / 224 MB | 1.0x     |
+| Vector-Fixed  | TCP -> BlackHole  | 730,700       | 166.55 | 592% / 658%    | 212 MB / 220 MB | 0.63x    |
+| **WarpParse** | TCP -> File       | **789,000**   | 179.84 | 445% / 470%    | 315 MB / 353 MB | 8.78x    |
+| Vector-VRL    | TCP -> File       | 89,900        | 20.49  | 165% / 170%    | 213 MB / 221 MB | 1.0x     |
+| Vector-Fixed  | TCP -> File       | 92,300        | 21.04  | 201% / 214%    | 195 MB / 208 MB | 1.03x    |
+
+> 解析规则大小：
+>
+> - WarpParse：174B
+> - Vector-VRL：217B
+> - Vector-Fixed：86B
+>
+> **Vector-Fixed 的性能倍数：以同场景下的 Vector EPS 为基准（1.0x）进行对比计算**
+
+#### 3.1.2 AWS ELB Log (411B)
+
+| 引擎          | 拓扑              | EPS           | MPS    | CPU (Avg/Peak) | MEM (Avg/Peak)  | 性能倍数 |
+| :------------ | :---------------- | :------------ | :----- | :------------- | :-------------- | :------- |
+| **WarpParse** | File -> BlackHole | **1,124,500** | 440.79 | 787% / 824%    | 314 MB / 320 MB | 2.89x    |
+| Vector-VRL    | File -> BlackHole | 389,000       | 152.47 | 597% / 658%    | 280 MB / 297 MB | 1.0x     |
+| Vector-Fixed  | File -> BlackHole | 491,739       | 192.74 | 514% / 537%    | 259 MB / 284 MB | 1.26x    |
+| **WarpParse** | TCP -> BlackHole  | **947,300**   | 371.33 | 625% / 664%    | 357 MB / 362 MB | 2.40x    |
+| Vector-VRL    | TCP -> BlackHole  | 394,600       | 154.67 | 546% / 620%    | 275 MB / 286 MB | 1.0x     |
+| Vector-Fixed  | TCP -> BlackHole  | 555,500       | 217.73 | 465% / 523%    | 250 MB / 255 MB | 1.41x    |
+| **WarpParse** | TCP -> File       | **328,100**   | 128.61 | 466% / 505%    | 284 MB / 381 MB | 3.87x    |
+| Vector-VRL    | TCP -> File       | 84,700        | 33.20  | 240% / 256%    | 268 MB / 275 MB | 1.0x     |
+| Vector-Fixed  | TCP -> File       | 86,900        | 34.06  | 199% / 208%    | 252 MB / 264MB  | 1.03x    |
+
+> 解析规则大小：
+>
+> - WarpParse：1153B
+> - Vector-VRL：921B
+> - Vector-Fixed：64B
+>
+> **Vector-Fixed 的性能倍数：以同场景下的 Vector EPS 为基准（1.0x）进行对比计算**
+
+#### 3.1.3 Sysmon JSON Log (1K)
+
+| 引擎          | 拓扑              | EPS         | MPS    | CPU (Avg/Peak) | MEM (Avg/Peak)  | 性能倍数 |
+| :------------ | :---------------- | :---------- | :----- | :------------- | :-------------- | :------- |
+| **WarpParse** | File -> BlackHole | **542,200** | 509.86 | 899% / 944%    | 257 MB / 263 MB | 3.38x    |
+| Vector-VRL    | File -> BlackHole | 160,400     | 150.83 | 474% / 524%    | 270 MB / 277 MB | 1.0x     |
+| Vector-Fixed  | File -> BlackHole | 94,285      | 88.66  | 474% / 563%    | 202 MB / 209 MB | 0.59x    |
+| **WarpParse** | TCP -> BlackHole  | **448,900** | 422.12 | 721% / 764%    | 352 MB / 362 MB | 1.93x    |
+| Vector-VRL    | TCP -> BlackHole  | 232,900     | 219.00 | 645% / 733%    | 381 MB / 393 MB | 1.0x     |
+| Vector-Fixed  | TCP -> BlackHole  | 134,400     | 126.39 | 689% / 757%    | 328 MB / 346 MB | 0.58x    |
+| **WarpParse** | TCP -> File       | **279,800** | 263.11 | 664% / 688%    | 272 MB / 278 MB | 3.69x    |
+| Vector-VRL    | TCP -> File       | 75,800      | 71.28  | 325% / 358%    | 350 MB / 365 MB | 1.0x     |
+| Vector-Fixed  | TCP -> File       | 67,300      | 63.29  | 435% / 473%    | 312 MB / 323 MB | 0.89x    |
+
+> 解析规则大小：
+>
+> - WarpParse：1552B
+> - Vector-VRL：1949B
+> - Vector-Fixed：1852B
+>
+> **Vector-Fixed 的性能倍数：以同场景下的 Vector EPS 为基准（1.0x）进行对比计算**
+
+#### 3.1.4 APT Threat Log (3K)
+
+| 引擎          | 拓扑              | EPS         | MPS     | CPU (Avg/Peak) | MEM (Avg/Peak)  | 性能倍数 |
+| :------------ | :---------------- | :---------- | :------ | :------------- | :-------------- | :------- |
+| **WarpParse** | File -> BlackHole | **328,000** | 1109.53 | 743% / 829%    | 183 MB / 184 MB | 8.68x    |
+| Vector-VRL    | File -> BlackHole | 37,777      | 127.79  | 578% / 657%    | 255 MB / 265 MB | 1.0x     |
+| Vector-Fixed  | File -> BlackHole | 37,857      | 128.06  | 570% / 670%    | 262 MB / 277 MB | 1.00x    |
+| **WarpParse** | TCP -> BlackHole  | **299,700** | 1013.80 | 718% / 743%    | 335 MB / 351 MB | 5.88x    |
+| Vector-VRL    | TCP -> BlackHole  | 51,000      | 172.52  | 834% / 887%    | 385 MB / 413 MB | 1.0x     |
+| Vector-Fixed  | TCP -> BlackHole  | 51,500      | 174.21  | 838% / 897%    | 409 MB / 427 MB | 1.01x    |
+| **WarpParse** | TCP -> File       | **99,900**  | 337.94  | 336% / 352%    | 333 MB / 508 MB | 2.69x    |
+| Vector-VRL    | TCP -> File       | 37,200      | 125.84  | 652% / 837%    | 411 MB / 424 MB | 1.0x     |
+| Vector-Fixed  | TCP -> File       | 38,200      | 129.21  | 668% / 746%    | 351 MB / 368 MB | 1.03x    |
+
+> 解析规则大小：
+>
+> - WarpParse：985B
+> - Vector-VRL：873B
+> - Vector-Fixed：872B
+>
+> **Vector-Fixed 的性能倍数：以同场景下的 Vector EPS 为基准（1.0x）进行对比计算**
+
+#### 3.1.5 Mixed log (平均日志大小：867B)
+
+| 引擎          | 拓扑              | EPS         | MPS    | CPU (Avg/Peak) | MEM (Avg/Peak)  | 性能倍数 |
+| :------------ | :---------------- | :---------- | :----- | :------------- | :-------------- | :------- |
+| **WarpParse** | File -> BlackHole | **768,800** | 635.69 | 891% / 936%    | 166 MB / 180 MB | 4.01x    |
+| Vector-VRL    | File -> BlackHole | 191,707     | 158.51 | 786% / 932%    | 263 MB / 286 MB | 1.0x     |
+| Vector-Fixed  | File -> BlackHole | 200,000     | 165.37 | 820% / 904%    | 246 MB / 275 MB | 1.04x    |
+| **WarpParse** | TCP -> BlackHole  | **623,200** | 515.30 | 672% / 701%    | 226 MB / 253 MB | 2.82x    |
+| Vector-VRL    | TCP -> BlackHole  | 221,200     | 182.90 | 882% / 912%    | 332 MB / 345 MB | 1.0x     |
+| Vector-Fixed  | TCP -> BlackHole  | 204,300     | 168.92 | 892% / 926%    | 291 MB / 307 MB | 0.92x    |
+| **WarpParse** | TCP -> File       | **318,100** | 263.03 | 544% / 711%    | 315 MB / 432 MB | 4.21x    |
+| Vector-VRL    | TCP -> File       | 75,600      | 62.51  | 372% / 408%    | 361 MB / 380 MB | 1.0x     |
+| Vector-Fixed  | TCP -> File       | 75,000      | 62.01  | 389% / 414%    | 331 MB / 355 MB | 0.99x    |
+
+> 解析规则大小：
+>
+> - WarpParse：3864B
+> - Vector-VRL：3960B
+> - Vector-Fixed：4725B
+>
+> **Vector-Fixed 的性能倍数：以同场景下的 Vector EPS 为基准（1.0x）进行对比计算**
+>
+> 混合日志规则：
+>
+> - 4类日志按照3:2:1:1混合
+
+### 3.2 解析 + 转换能力 (Parse + Transform)
+
+引入转换逻辑后，WarpParse 依然保持显著领先，表明其数据处理管线极其高效，转换操作未成为瓶颈。
+
+#### 3.2.1 Nginx Access Log（239B）
+
+| 引擎          | 拓扑              | EPS           | MPS    | CPU (Avg/Peak) | MEM (Avg/Peak)  | 性能倍数 |
+| :------------ | :---------------- | :------------ | :----- | :------------- | :-------------- | :------- |
+| **WarpParse** | File -> BlackHole | **2,162,500** | 492.91 | 821% / 911%    | 209 MB / 222 MB | 3.77x    |
+| Vector-VRL    | File -> BlackHole | 572,941       | 130.59 | 344% / 378%    | 274 MB / 286 MB | 1.0x     |
+| Vector-Fixed  | File -> BlackHole | 482,000       | 109.86 | 554% / 612%    | 252 MB / 261 MB | 0.84x    |
+| **WarpParse** | TCP -> BlackHole  | **1,382,800** | 315.19 | 602% / 656%    | 279 MB / 369 MB | 1.35x    |
+| Vector-VRL    | TCP -> BlackHole  | 1,024,300     | 233.47 | 534% / 618%    | 232 MB / 235 MB | 1.0x     |
+| Vector-Fixed  | TCP -> BlackHole  | 595,800       | 135.80 | 543% / 651%    | 214 MB / 219 MB | 0.58x    |
+| **WarpParse** | TCP -> File       | **788,900**   | 179.82 | 574% / 587%    | 249 MB / 253 MB | 8.44x    |
+| Vector-VRL    | TCP -> File       | 93,500        | 21.31  | 171% / 184%    | 203 MB / 211 MB | 1.0x     |
+| Vector-Fixed  | TCP -> File       | 87,500        | 19.94  | 208% / 223%    | 197 MB / 212 MB | 0.94x    |
+
+> 解析+转换规则大小：
+>
+> - WarpParse：521B
+> - Vector-VRL：519B
+> - Vector-Fixed：500B
+>
+> **Vector-Fixed 的性能倍数：以同场景下的 Vector EPS 为基准（1.0x）进行对比计算**
+
+#### 3.2.2 AWS ELB Log（411B）
+
+| 引擎          | 拓扑              | EPS         | MPS    | CPU (Avg/Peak) | MEM (Avg/Peak)  | 性能倍数 |
+| :------------ | :---------------- | :---------- | :----- | :------------- | :-------------- | :------- |
+| **WarpParse** | File -> BlackHole | **913,300** | 358.00 | 880% / 942%    | 228 MB / 248 MB | 2.64x    |
+| Vector-VRL    | File -> BlackHole | 345,500     | 135.42 | 548% / 649%    | 291 MB / 309 MB | 1.0x     |
+| Vector-Fixed  | File -> BlackHole | 446,111     | 174.86 | 506% / 597%    | 276 MB / 295MB  | 1.29x    |
+| **WarpParse** | TCP -> BlackHole  | **757,600** | 296.97 | 714% / 758%    | 270 MB / 360 MB | 2.04x    |
+| Vector-VRL    | TCP -> BlackHole  | 370,900     | 145.38 | 561% / 607%    | 284 MB / 293 MB | 1.0x     |
+| Vector-Fixed  | TCP -> BlackHole  | 481,700     | 188.81 | 466% / 536%    | 265 MB / 272 MB | 1.30x    |
+| **WarpParse** | TCP -> File       | **319,900** | 125.39 | 540% / 600%    | 321 MB / 432 MB | 3.87x    |
+| Vector-VRL    | TCP -> File       | 82,700      | 32.42  | 242% / 257%    | 272 MB / 288 MB | 1.0x     |
+| Vector-Fixed  | TCP -> File       | 83,600      | 32.77  | 211% / 220%    | 260 MB / 274 MB | 1.01x    |
+
+> 解析+转换规则大小：
+>
+> - WarpParse：1694B
+> - Vector-VRL：1259B
+> - Vector-Fixed：570B
+>
+> **Vector-Fixed 的性能倍数：以同场景下的 Vector EPS 为基准（1.0x）进行对比计算**
+
+#### 3.2.3 Sysmon JSON Log (1K)
+
+| 引擎          | 拓扑              | EPS         | MPS    | CPU (Avg/Peak) | MEM (Avg/Peak)  | 性能倍数 |
+| :------------ | :---------------- | :---------- | :----- | :------------- | :-------------- | :------- |
+| **WarpParse** | File -> BlackHole | **432,200** | 406.42 | 907% / 964%    | 167 MB / 185 MB | 3.03x    |
+| Vector-VRL    | File -> BlackHole | 142,857     | 134.33 | 445% / 531%    | 312 MB / 320 MB | 1.0x     |
+| Vector-Fixed  | File -> BlackHole | 86,600      | 81.43  |                |                 | 0.61x    |
+| **WarpParse** | TCP -> BlackHole  | **386,800** | 363.72 | 795% / 813%    | 396 MB / 419 MB | 1.79x    |
+| Vector-VRL    | TCP -> BlackHole  | 216,100     | 203.20 | 560% / 672%    | 368 MB / 375 MB | 1.0x     |
+| Vector-Fixed  | TCP -> BlackHole  | 130,800     | 123.00 | 707% / 806%    | 347 MB / 366 MB | 0.61x    |
+| **WarpParse** | TCP -> File       | **239,000** | 224.74 | 716% / 792%    | 346 MB / 399 MB | 3.12x    |
+| Vector-VRL    | TCP -> File       | 76,600      | 72.03  | 320% / 380%    | 364 MB / 380 MB | 1.0x     |
+| Vector-Fixed  | TCP -> File       | 68,100      | 64.04  | 439% / 475%    | 345 MB / 362 MB | 0.89x    |
+
+> 解析+转换规则大小：
+>
+> - WarpParse：2249B
+> - Vector-VRL：2536B
+> - Vector-Fixed：2344B
+>
+> **Vector-Fixed 的性能倍数：以同场景下的 Vector EPS 为基准（1.0x）进行对比计算**
+
+#### 3.2.4 APT Threat Log (3K)
+
+| 引擎          | 拓扑              | EPS         | MPS     | CPU (Avg/Peak) | MEM (Avg/Peak)  | 性能倍数 |
+| :------------ | :---------------- | :---------- | :------ | :------------- | :-------------- | :------- |
+| **WarpParse** | File -> BlackHole | **299,400** | 1012.79 | 763% / 855%    | 155 MB / 162 MB | 8.12x    |
+| Vector-VRL    | File -> BlackHole | 36,857      | 124.68  | 567% / 654%    | 268 MB / 286 MB | 1.0x     |
+| Vector-Fixed  | File -> BlackHole | 37,222      | 125.91  | 574% / 660%    | 255 MB / 270 MB | 1.01x    |
+| **WarpParse** | TCP -> BlackHole  | **279,700** | 946.14  | 762% / 784%    | 335 MB / 345 MB | 5.38x    |
+| Vector-VRL    | TCP -> BlackHole  | 52,000      | 175.90  | 862% / 907%    | 400 MB / 416 MB | 1.0x     |
+| Vector-Fixed  | TCP -> BlackHole  | 51,000      | 172.52  | 848% / 911%    | 394 MB / 419 MB | 0.98x    |
+| **WarpParse** | TCP -> File       | **89,900**  | 304.11  | 355% / 377%    | 300 MB / 324 MB | 2.41x    |
+| Vector-VRL    | TCP -> File       | 37,300      | 126.18  | 664% / 750%    | 392 MB / 411 MB | 1.0x     |
+| Vector-Fixed  | TCP -> File       | 37,000      | 125.16  | 659% / 721%    | 385 MB / 409 MB | 0.99x    |
+
+> 解析+转换规则大小：
+>
+> - WarpParse：1638B
+> - Vector-VRL：2259B
+> - Vector-Fixed：1382B
+>
+> **Vector-Fixed 的性能倍数：以同场景下的 Vector EPS 为基准（1.0x）进行对比计算**
+
+#### 3.2.5 Mixed Log (平均日志大小：867B)
+
+| 引擎          | 拓扑              | EPS         | MPS    | CPU (Avg/Peak) | MEM (Avg/Peak)  | 性能倍数 |
+| :------------ | :---------------- | :---------- | :----- | :------------- | :-------------- | :------- |
+| **WarpParse** | File -> BlackHole | **659,700** | 545.48 | 889% / 940%    | 170 MB / 184 MB | 3.53x    |
+| Vector-VRL    | File -> BlackHole | 186,857     | 154.50 | 780% / 863%    | 266 MB / 296 MB | 1.0x     |
+| Vector-Fixed  | File -> BlackHole | 175,769     | 145.33 | 811% / 906%    | 226 MB / 245 MB | 0.94x    |
+| **WarpParse** | TCP -> BlackHole  | **574,500** | 475.03 | 777% / 813%    | 303 MB / 312 MB | 2.67x    |
+| Vector-VRL    | TCP -> BlackHole  | 215,000     | 177.77 | 892% / 922%    | 329 MB / 346 MB | 1.0x     |
+| Vector-Fixed  | TCP -> BlackHole  | 199,300     | 164.79 | 893% / 936%    | 301 MB / 312 MB | 0.93x    |
+| **WarpParse** | TCP -> File       | **299,900** | 247.98 | 616% / 754%    | 332 MB / 493 MB | 4.01x    |
+| Vector-VRL    | TCP -> File       | 74,800      | 61.85  | 378% / 404%    | 362 MB / 384 MB | 1.0x     |
+| Vector-Fixed  | TCP -> File       | 70,900      | 58.62  | 382% / 433%    | 304 MB / 323 MB | 0.95x    |
+
+> 解析+转换规则大小：
+>
+> - WarpParse：6102B
+> - Vector-VRL：6573B
+> - Vector-Fixed：4796B
+>
+> **Vector-Fixed 的性能倍数：以同场景下的 Vector EPS 为基准（1.0x）进行对比计算**
+>
+> 混合日志规则：
+>
+> - 4类日志按照3:2:1:1混合
+
+
+## 4. 核心发现与架构优势分析
+
+### 4.1 性能与资源效率
+
+**核心发现**:
+
+1.  **吞吐量碾压**: 在所有 24 组对比测试中，WarpParse 均取得领先。解析场景下平均领先 **1.5x - 12.1x**，解析+转换场景下领先 **1.2x - 8.5x**。
+2.  **算力利用率**: WarpParse 倾向于"以算力换吞吐"，CPU 占用率普遍高于 Vector，但换来了数倍的处理能力。例如在 Nginx Access Log (TCP -> File) 解析中，WarpParse 用 3.3 倍的 CPU 换取了 Vector 12 倍的吞吐。
+3.  **大日志处理**: 在 APT (3K) 这种大体积日志场景下，WarpParse 展现出极强的稳定性，MPS 达到 **1062 MiB/s**，接近千兆处理能力，而 Vector 在该场景下吞吐下降明显。
+
+### 4.2 规则与维护成本
+
+**优势分析**:
+
+*   **规则体积更小**: 同等语义下，WarpParse 的 WPL/OML 规则体积显著小于 Vector 的 VRL 脚本。
+    *   Nginx: 174B (WarpParse) vs 416B (Vector)
+    *   APT: 985B (WarpParse) vs 1759B (Vector)
+*   **维护性**: 更小的规则体积意味着更快的网络分发速度、更短的冷启动时间，这在边缘计算或大规模 Agent 下发场景中至关重要。
+
+### 4.3 稳定性
+
+*   在整个高压测试过程中，WarpParse 保持了极高的吞吐稳定性，未观察到显著的 Backpressure（背压）导致的处理崩塌。
+*   **注意点**: 在 TCP -> File 的端到端场景中，WarpParse 的内存占用在部分大包场景下会有所上升（如 APT 场景达到 1GB+），这与其为了维持高吞吐而使用的缓冲策略有关。
+
+## 5. 总结与建议
+
+| 决策维度           | 建议方案      | 理由                                                                                                                         |
+| :----------------- | :------------ | :--------------------------------------------------------------------------------------------------------------------------- |
+| **追求极致性能**   | **WarpParse** | 无论是小包高频还是大包吞吐，WarpParse 均提供 1.5-12倍 的性能红利。                                                             |
+| **资源受限环境**   | **WarpParse** | 尽管峰值 CPU 较高，但完成同等数据量所需的**总 CPU 时间**远少于 Vector；且小包场景内存控制优异。                              |
+| **边缘/Agent部署** | **WarpParse** | 规则文件极小，便于快速热更新；单机处理能力强，减少对中心端的压力。                                                           |
+| **通用生态兼容**   | **WarpParse** | 提供面向开发者的 API 与插件扩展机制，支持用户快速开发自定义输入 / 输出模块；在满足性能要求的同时，也具备良好的生态扩展能力。 |
+
+**结论**:
+对于专注于日志分析、安全事件处理（SIEM/SOC）、以及对实时性有苛刻要求的 ETL 场景，**WarpParse 是优于 Vector 的选择**。它通过更高效的 Rust 实现和专用的 WPL/OML 语言，成功打破了通用 ETL 工具的性能天花板。

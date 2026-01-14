@@ -26,7 +26,7 @@
     - [OML 语言基础](10-user/04-oml/01-oml_basics.md)
     - [OML 实用示例集](10-user/04-oml/02-oml_examples.md)
     - [OML 函数参考](10-user/04-oml/03-oml_functions.md)
-    - [OML 应用](10-user/04-oml/04- oml_in_sinks.md)
+    - [OML 应用](10-user/04-oml/04-oml_in_sinks.md)
     - [OML 语法](10-user/04-oml/04-oml_grammar.md)
   - [连接器管理](10-user/05-connectors/README.md)
     - [Sources 配置指南](10-user/05-connectors/01-sources/README.md)

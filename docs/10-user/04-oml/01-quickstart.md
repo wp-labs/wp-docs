@@ -385,5 +385,5 @@ log_entry : obj = object {
 ## 相关资源
 
 - 完整功能示例：[07-complete-example.md](./07-complete-example.md)
-- WPL 规则语言：[../03-wpl-new/README.md](../03-wpl-new/README.md)
+- WPL 规则语言：[../03-wpl/README.md](../03-wpl/README.md)
 - 配置指南：[../02-config/README.md](../02-config/README.md)

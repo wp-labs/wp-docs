@@ -4,7 +4,10 @@
       "Bash(ls:*)",
       "Bash(mdbook build:*)",
       "Bash(make:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(while read file)",
+      "Bash(do grep -n '\\\\[.*\\\\]\\(./' \"$file\")",
+      "Bash(done)"
     ]
   }
 }

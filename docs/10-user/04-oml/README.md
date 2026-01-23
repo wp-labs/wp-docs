@@ -218,7 +218,7 @@ A: 参考 [05-integration.md § 故障排查](./05-integration.md#故障排查)�
 
 ## 📝 相关文档
 
-- [WPL 规则语言](../03-wpl-new/README.md) - 数据解析
+- [WPL 规则语言](../03-wpl/README.md) - 数据解析
 - [Sink 配置](../05-connectors/02-sinks/README.md) - 数据输出
 - [配置指南](../02-config/README.md) - 系统配置
 

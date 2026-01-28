@@ -66,7 +66,7 @@ builtin_type     = "auto" | "bool" | "chars" | "symbol" | "peek_symbol"
                    | "time" | "time/clf" | "time_iso" | "time_3339" | "time_2822" | "time_timestamp"
                    | "ip" | "ip_net" | "domain" | "email" | "port"
                    | "hex" | "base64"
-                   | "kv" | "json" | "exact_json"
+                   | "kv" | "kvarr" | "json" | "exact_json"
                    | "url"
                    | "proto_text" | "obj"
                    | "id_card" | "mobile_phone" ;

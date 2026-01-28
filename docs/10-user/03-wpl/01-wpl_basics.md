@@ -248,7 +248,7 @@ rule test_plugin {
 - 基础：`bool` `chars` `digit` `float` `_` `sn`
 - 时间：`time` `time_iso` `time_3339` `time_2822` `time_timestamp`
 - 网络：`ip` `ip_net` `domain` `email` `port`
-- 文本/协议：`hex` `base64` `kv` `json` `exact_json` `http/request` `http/status` `http/agent` `http/method` `url`
+- 文本/协议：`hex` `base64` `kv` `kvarr` `json` `exact_json` `http/request` `http/status` `http/agent` `http/method` `url`
 - 结构：`obj` `array[/subtype]` `symbol` `peek_symbol`
 
 更多产生式请参考《WPL 语法（EBNF）》：`./02-wpl_grammar.md`。
@@ -269,6 +269,55 @@ rule test_plugin {
 
   rule arr2 { (array/chars:items) }
   # "[\"hello\", \"_F]fe\", \"!@#$*&^\\\"123\"]" -> items/[0]="hello", items/[1]="_F]fe", items/[2]="!@#$*&^\"123"
+  ```
+
+## KvArr 类型（键值对数组）
+
+- 语法：`kvarr(subfield1, subfield2, ...)`
+- 作用：解析 `key=value` 或 `key:value` 格式的键值对数组，支持逗号或空格分隔。
+- 支持格式：
+  - 逗号分隔：`a="foo", b=bar, c=123`
+  - 空格分隔：`a="foo" b=bar c=123`
+  - 混合分隔：`a="foo", b=bar c=123`
+  - 键值分隔符：支持 `=` 或 `:` (如 `a=1` 或 `a:1`)
+- 值类型支持：
+  - 字符串：带引号或不带引号（如 `"value"` 或 `value`）
+  - 数字：整数和浮点数（如 `123` 或 `1.25`）
+  - 布尔值：`true` 或 `false`（不区分大小写）
+  - 自动类型推断：根据值的格式自动判断类型
+- 重复键处理：
+  - 当同一个键出现多次时，会自动添加数组索引
+  - 例如：`tag=alpha tag=beta tag=gamma` → `tag[0]="alpha"`, `tag[1]="beta"`, `tag[2]="gamma"`
+- 子字段配置：
+  - 支持在括号内定义子字段的类型和名称映射
+  - 支持元字段（`_@name`）来忽略特定键
+  - 支持嵌套解析器（通过子字段配置触发）
+- 示例：
+  ```wpl
+  # 基本用法
+  rule parse_kvarr { (kvarr(ip@sip, digit@cnt)) }
+  # 输入："sip=192.168.1.1, cnt=42"
+  # 输出：sip=192.168.1.1 (ip类型), cnt=42 (digit类型)
+
+  # 空格分隔
+  rule parse_whitespace { (kvarr(chars@a, chars@b, digit@c)) }
+  # 输入："a=\"foo\" b=bar c=1"
+  # 输出：a="foo", b="bar", c=1
+
+  # 重复键自动索引
+  rule parse_repeated { (kvarr(chars@tag)) }
+  # 输入："tag=alpha tag=beta tag=gamma"
+  # 输出：tag[0]="alpha", tag[1]="beta", tag[2]="gamma"
+
+  # 类型自动推断
+  rule parse_types { (kvarr(bool@flag, float@ratio, chars@raw)) }
+  # 输入："flag=true ratio=1.25 raw=value"
+  # 输出：flag=true (bool), ratio=1.25 (float), raw="value" (chars)
+
+  # 忽略元字段
+  rule parse_with_meta { (kvarr(_@note, digit@count)) }
+  # 输入："note=something count=7"
+  # 输出：note (ignored), count=7
   ```
 
 ## 分隔符优先级与合并（sep）

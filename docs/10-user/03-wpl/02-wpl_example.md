@@ -408,6 +408,109 @@ CID: "0x814f041e"
 vsys: "CSG_Security"
 ```
 
+### 2.1 KvArr 键值对数组解析
+
+`kvarr` 类型专门用于解析 `key=value` 格式的数组，支持逗号或空格分隔，并能自动处理重复键。
+
+**基础 KvArr 解析（逗号分隔）**:
+```wpl
+rule parse_kvarr {
+    (kvarr(ip@sip, digit@cnt))
+}
+```
+
+**测试数据**:
+```
+sip="192.168.1.1", cnt=42
+```
+
+**预期结果**:
+```
+sip: 192.168.1.1 (ip类型)
+cnt: 42 (digit类型)
+```
+
+**空格分隔的 KvArr**:
+```wpl
+rule parse_whitespace {
+    (kvarr(chars@a, chars@b, digit@c))
+}
+```
+
+**测试数据**:
+```
+a="foo" b=bar c=1
+```
+
+**预期结果**:
+```
+a: "foo"
+b: "bar"
+c: 1
+```
+
+**重复键的数组索引**:
+
+当同一个键出现多次时，`kvarr` 会自动为重复的键添加数组索引：
+
+```wpl
+rule parse_tags {
+    (kvarr(chars@tag, digit@count))
+}
+```
+
+**测试数据**:
+```
+tag=alpha tag=beta count=3
+```
+
+**预期结果**:
+```
+tag[0]: "alpha"
+tag[1]: "beta"
+count: 3
+```
+
+**类型自动推断**:
+
+`kvarr` 支持自动类型推断，可以识别布尔值、数字和字符串：
+
+```wpl
+rule parse_auto_types {
+    (kvarr(bool@flag, float@ratio, chars@raw))
+}
+```
+
+**测试数据**:
+```
+flag=true ratio=1.25 raw=value
+```
+
+**预期结果**:
+```
+flag: true (bool)
+ratio: 1.25 (float)
+raw: "value" (chars)
+```
+
+**使用元字段忽略特定键**:
+```wpl
+rule parse_with_ignore {
+    (kvarr(_@note, digit@count))
+}
+```
+
+**测试数据**:
+```
+note=something count=7
+```
+
+**预期结果**:
+```
+note: (忽略)
+count: 7
+```
+
 ### 3. 重复模式解析
 
 **重复固定次数**:

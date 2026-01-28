@@ -1,94 +1,228 @@
 # OML 对象模型语言
 
-OML（Object Modeling Language）用于在 Warp Parse 中对解析后的记录进行组装与聚合，提供 read/take 取值、对象与数组聚合（object/collect）、条件匹配（match）、字符串格式化（fmt）、管道转换（pipe）与 SQL 查询拼装等能力。
+OML (Object Modeling Language) 是 Warp Parse 使用的数据转换语言，用于对 WPL 解析后的结构化数据进行转换、聚合和富化。
 
-注意：从当前版本起，引擎默认不启用"隐私/脱敏"运行期处理；本章中涉及"隐私段"的语法仅作为 DSL 能力说明，若需要脱敏，请在业务侧或自定义插件/管道中实现。
-
-## 内容概览
-
-- [OML 语言基础](./01-oml_basics.md)
-- [OML 使用示例](./02-oml_examples.md)
-- [OML 函数参考](./03-oml_functions.md)
-- [OML 语法（EBNF）](./04-oml_grammar.md)
-- [OML 在Sink的使用](./05-oml_in_sinks.md) 
-
-## 特性概览
-
-- 取值与缺省：`read(...)`（非破坏）/`take(...)`（破坏）+ 默认体 `{ _ : <值/函数> }`
-- 对象/数组聚合：`object { ... }`、`collect read(keys:[...])`
-- 条件匹配：`match read(x) { ... }` 与二元匹配 `match (read(a), read(b)) { ... }`
-- 管道与格式化：`read(x) | to_json | base64_encode`，`fmt("{}-{}", @a, read(b))`
-- SQL：`select <cols from table> where <cond>;`（主体白名单校验，严格模式可通过 `OML_SQL_STRICT=0` 关闭）
-- 批量目标：目标名含 `*` 时按批量模式求值（仅支持 take/read）
-- 隐私段：末尾通过第二个 `---` 声明字段隐私处理器映射
-
-## 快速示例
-
-```oml
-name : example
 ---
-user_id        = read(user_id) ;
-occur_time:time= Now::time() ;
-values : obj   = object {
-  cpu_free, memory_free : digit = take() ;
-};
-ports : array  = collect read(keys:[sport,dport]) ;
-ports_json     = pipe read(ports) | to_json ;
-full           = fmt("{}-{}", @user, read(city)) ;
-name,pinying   = select name,pinying from example where pinying = read(py) ;
----
-src_ip : privacy_ip
-pos_sn : privacy_keymsg
+
+## 📚 文档导航
+
+### 按学习路径
+
+```
+🆕 新手入门
+   ↓
+01-quickstart.md ────────→ 5分钟上手，复制即用
+   ↓
+07-complete-example.md ──→ 🌟 完整功能演示（强烈推荐）
+   ↓
+02-core-concepts.md ─────→ 理解设计理念和核心概念
+   ↓
+03-practical-guide.md ───→ 按任务查找解决方案
+   ↓
+04-functions-reference.md → 查阅函数
+   ↓
+05-integration.md ───────→ 集成到数据流
 ```
 
-## 内置函数
+### 按用户角色
 
-| 函数 | 说明 | 返回类型 |
-|------|------|----------|
-| `Now::time()` | 获取当前时间 | `time` |
-| `Now::date()` | 获取当前日期（YYYYMMDD） | `digit` |
-| `Now::hour()` | 获取当前时间精确到小时（YYYYMMDDHH） | `digit` |
+| 我是... | 推荐阅读 |
+|---------|---------|
+| **OML 新手** | [01-quickstart.md](./01-quickstart.md) → [07-complete-example.md](./07-complete-example.md) |
+| **日常使用者** | [03-practical-guide.md](./03-practical-guide.md) - 按任务查找 |
+| **开发者/集成** | [07-complete-example.md](./07-complete-example.md) + [04-functions-reference.md](./04-functions-reference.md) |
+| **系统集成** | [05-integration.md](./05-integration.md) - WPL/OML/Sink 关联 |
 
-## 管道函数
+### 按任务查找
 
-| 函数 | 说明 |
-|------|------|
-| `base64_encode` | Base64 编码 |
-| `base64_decode` | Base64 解码（支持多种字符编码） |
-| `html_escape` / `html_unescape` | HTML 转义/反转义 |
-| `json_escape` / `json_unescape` | JSON 转义/反转义 |
-| `str_escape` | 字符串转义 |
-| `Time::to_ts` / `Time::to_ts_ms` / `Time::to_ts_us` | 时间转时间戳（秒/毫秒/微秒，UTC+8） |
-| `Time::to_ts_zone(时区,单位)` | 时间转指定时区时间戳 |
-| `nth(索引)` | 获取数组元素 |
-| `get(字段名)` | 获取对象字段 |
-| `path(name\|path)` | 提取文件路径部分 |
-| `url(domain\|host\|uri\|path\|params)` | 提取 URL 部分 |
-| `sxf_get(字段名)` | 提取特殊格式字段 |
-| `to_str` / `to_json` | 转换为字符串/JSON |
-| `ip4_to_int` | IPv4 转整数 |
-| `skip_empty` | 跳过空值 |
+| 我想... | 查看文档 |
+|---------|---------|
+| 🚀 快速上手 | [01-quickstart.md](./01-quickstart.md) |
+| 🌟 查看完整示例 | [07-complete-example.md](./07-complete-example.md) |
+| 💡 理解概念 | [02-core-concepts.md](./02-core-concepts.md) |
+| 📝 提取字段 | [03-practical-guide.md § 数据提取](./03-practical-guide.md#数据提取) |
+| 🔄 类型转换 | [03-practical-guide.md § 数据转换](./03-practical-guide.md#数据转换) |
+| 📦 创建对象/数组 | [03-practical-guide.md § 数据聚合](./03-practical-guide.md#数据聚合) |
+| ✅ 条件判断 | [03-practical-guide.md § 条件处理](./03-practical-guide.md#条件处理) |
+| 🔍 SQL 查询 | [03-practical-guide.md § 数据富化](./03-practical-guide.md#数据富化-sql-查询) |
+| ⚙️ 查某个函数 | [04-functions-reference.md](./04-functions-reference.md) |
+| 🔗 集成到流水线 | [05-integration.md](./05-integration.md) |
+| 📖 查语法规则 | [06-grammar-reference.md](./06-grammar-reference.md) |
 
-详细说明请参阅 [OML 函数参考](./03-oml_functions.md)。
+---
 
-## 数据类型
+## 📖 文档列表
 
-| 类型 | 说明 |
-|------|------|
-| `auto` | 自动推断（默认） |
-| `chars` | 字符串 |
-| `digit` | 整数 |
-| `float` | 浮点数 |
-| `ip` | IP 地址 |
-| `time` | 时间 |
-| `bool` | 布尔值 |
-| `obj` | 对象 |
-| `array` | 数组 |
+| 文档 | 内容 | 适合人群 |
+|------|------|---------|
+| [01-quickstart.md](./01-quickstart.md) | 5 分钟快速入门 + 3 个最常用操作 | 所有人 |
+| [🌟 07-complete-example.md](./07-complete-example.md) | 完整功能演示（强烈推荐） | 所有人 |
+| [02-core-concepts.md](./02-core-concepts.md) | 设计理念 + 类型系统 + 读取语义 | 想深入理解的用户 |
+| [03-practical-guide.md](./03-practical-guide.md) | 按任务组织的实战示例 | 日常使用者 |
+| [04-functions-reference.md](./04-functions-reference.md) | 所有函数的标准化参考 | 开发者 |
+| [05-integration.md](./05-integration.md) | WPL/OML/Sink 集成指南 | 系统集成者 |
+| [06-grammar-reference.md](./06-grammar-reference.md) | EBNF 形式化语法定义 | 编译器开发者 |
 
-## 相关文档
+---
 
-- [WPL 规则语言](../06-wpl/README.md)
-- [配置指南概述](../02-config/README.md)
-- [Schema 参考文档](../../80-reference/schemas/README.md)
+## ⚡ 快速示例
 
-提示：read/take 的差异见《OML 语言基础》；完整语法见《OML 语法（EBNF）》；端到端示例见《OML 使用示例》。
+### 基础字段提取
+
+```oml
+name : nginx_access
+rule : /nginx/access_log
+---
+user_id = read(user_id) ;
+uri = read(request_uri) ;
+status : digit = read(status) ;
+```
+
+### 数据聚合
+
+```oml
+name : system_metrics
+rule : /system/metrics
+---
+metrics : obj = object {
+    hostname : chars = read(hostname) ;
+    cpu : float = read(cpu_usage) ;
+    memory : float = read(mem_usage) ;
+} ;
+```
+
+### 条件处理
+
+```oml
+name : log_classifier
+rule : /app/logs
+---
+level = match read(status_code) {
+    in (digit(200), digit(299)) => chars(success) ;
+    in (digit(400), digit(499)) => chars(client_error) ;
+    in (digit(500), digit(599)) => chars(server_error) ;
+    _ => chars(unknown) ;
+} ;
+```
+
+### 管道转换
+
+```oml
+name : data_transform
+rule : /data/raw
+---
+# 时间转时间戳
+ts = read(event_time) | Time::to_ts_zone(0, ms) ;
+
+# URL 解析
+domain = read(url) | url(domain) ;
+path = read(url) | url(path) ;
+
+# Base64 解码
+decoded = read(base64_data) | base64_decode(Utf8) ;
+```
+
+### SQL 数据富化
+
+```oml
+name : user_enrichment
+rule : /app/user_activity
+---
+user_id = read(user_id) ;
+
+# 从数据库查询用户信息
+user_name, user_level =
+    select name, level
+    from users
+    where id = read(user_id) ;
+```
+
+更多示例请查看：[🌟 完整功能示例](./07-complete-example.md) 和 [实战指南](./03-practical-guide.md)
+
+---
+
+## 🎯 核心特性
+
+- **声明式**：描述"想要什么"，而非"怎么做"
+- **类型安全**：8 种数据类型，自动推断或显式声明
+- **WPL 关联**：通过 `rule` 字段匹配 WPL 解析规则
+- **读取模式**：read（非破坏性）vs take（破坏性）
+- **强大的管道**：链式转换（时间/编解码/URL 解析等）
+- **条件匹配**：match 表达式支持范围、否定、多源匹配
+- **数据聚合**：object（对象）和 collect（数组）
+- **SQL 集成**：直接查询数据库进行数据富化
+
+---
+
+## 🔗 WPL 与 OML 关联
+
+OML 通过 `rule` 字段与 WPL 的 `package/rule` 建立关联：
+
+```
+原始数据
+    ↓
+[WPL 解析] → 生成结构化数据 + rule 标识
+    ↓
+数据携带: rule = "/nginx/access_log"
+    ↓
+[查找匹配的 OML] → 匹配 rule 字段
+    ↓
+[执行 OML 转换]
+    ↓
+[输出到 Sink]
+```
+
+**示例**：
+
+WPL 规则：
+```wpl
+package nginx {
+    rule access_log {
+        (ip:client_ip, chars:uri, digit:status)
+    }
+}
+```
+
+OML 配置：
+```oml
+name : nginx_handler
+rule : /nginx/access_log    # 匹配 WPL 的 package/rule
+---
+client : ip = read(client_ip) ;
+uri : chars = read(uri) ;
+status : digit = read(status) ;
+```
+
+---
+
+## 💬 快速帮助
+
+### 常见问题
+
+**Q: 从哪里开始学习？**
+A: 从 [01-quickstart.md](./01-quickstart.md) 开始，然后查看 [🌟 完整功能示例](./07-complete-example.md)。
+
+**Q: 如何将 OML 与 WPL 关联？**
+A: 使用 `rule` 字段匹配 WPL 的 `package/rule` 值，详见 [05-integration.md](./05-integration.md)。
+
+**Q: read 和 take 有什么区别？**
+A: `read` 是非破坏性的（可重复读取），`take` 是破坏性的（读取后移除），详见 [02-core-concepts.md](./02-core-concepts.md#读取语义read-vs-take)。
+
+**Q: 某个函数怎么用？**
+A: 查看 [04-functions-reference.md](./04-functions-reference.md) 或 [🌟 完整功能示例](./07-complete-example.md)。
+
+**Q: 如何调试 OML 转换？**
+A: 参考 [05-integration.md § 故障排查](./05-integration.md#故障排查)。
+
+---
+
+## 📝 相关文档
+
+- [WPL 规则语言](../03-wpl/README.md) - 数据解析
+- [Sink 配置](../05-connectors/02-sinks/README.md) - 数据输出
+- [配置指南](../02-config/README.md) - 系统配置
+
+---
+
+**开始学习：** [01-quickstart.md](./01-quickstart.md) - 5分钟快速入门  
+**完整示例：** [🌟 07-complete-example.md](./07-complete-example.md) - 所有功能演示

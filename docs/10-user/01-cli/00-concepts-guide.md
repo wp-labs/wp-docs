@@ -168,15 +168,15 @@ ETL 是 Extract（提取）、Transform（转换）、Load（加载）的缩写�
 
 阅读完本文档后，建议按以下顺序学习：
 
-1. **[快速入门](./01-cli/01-getting_started.md)**：10 分钟跑通第一个示例
-2. **[WPL 语言基础](./03-wpl/01-wpl_basics.md)**：学习数据提取规则
-3. **[OML 语言基础](./04-oml/README.md)**：学习数据组装规则
+1. **[快速入门](./01-getting_started.md)**：10 分钟跑通第一个示例
+2. **[WPL 语言基础](../03-wpl/01-quickstart.md)**：学习数据提取规则
+3. **[OML 语言基础](../04-oml/README.md)**：学习数据组装规则
 
 ---
 
 ## 相关文档
 
-- [快速入门](./01-cli/01-getting_started.md)
-- [CLI 工具集](./01-cli/README.md)
-- [WPL 语言](./03-wpl/README.md)
-- [OML 语言](./04-oml/README.md)
+- [快速入门](./01-getting_started.md)
+- [CLI 工具集](./README.md)
+- [WPL 语言](../03-wpl/README.md)
+- [OML 语言](../04-oml/README.md)

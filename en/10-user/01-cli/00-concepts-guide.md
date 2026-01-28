@@ -167,15 +167,15 @@ workspace/
 
 After reading this document, we recommend learning in the following order:
 
-1. **[Getting Started](./01-cli/01-getting_started.md)**: Run your first example in 10 minutes
-2. **[WPL Language Basics](./03-wpl/01-wpl_basics.md)**: Learn data extraction rules
-3. **[OML Language Basics](./04-oml/README.md)**: Learn data assembly rules
+1. **[Getting Started](./01-getting_started.md)**: Run your first example in 10 minutes
+2. **[WPL Language Basics](../03-wpl/01-quickstart.md)**: Learn data extraction rules
+3. **[OML Language Basics](../04-oml/README.md)**: Learn data assembly rules
 
 ---
 
 ## Related Documentation
 
-- [Getting Started](./01-cli/01-getting_started.md)
-- [CLI Tools](./01-cli/README.md)
-- [WPL Language](./03-wpl/README.md)
-- [OML Language](./04-oml/README.md)
+- [Getting Started](./01-getting_started.md)
+- [CLI Tools](./README.md)
+- [WPL Language](../03-wpl/README.md)
+- [OML Language](../04-oml/README.md)

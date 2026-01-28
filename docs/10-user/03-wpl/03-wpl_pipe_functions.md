@@ -15,9 +15,18 @@ WPL 管道函数分为四类：
 
 > **活跃字段说明**：管道中的操作默认作用于"活跃字段"。可以使用选择器函数切换活跃字段，或在 `f_` 前缀函数中用 `_` 表示当前活跃字段。
 
----
+
+### Selector 函数
+
+在使用无前缀别名前，需要先选定活动字段：
+
+| 函数名 | 参数 | 说明 |
+|--------|------|------|
+| `take` | 1 | 选定指定字段作为活动字段 |
+| `last` | 0 | 选定最后一个字段作为活动字段 |
 
 ## 函数概览
+
 
 ### 选择器函数
 
@@ -57,8 +66,6 @@ WPL 管道函数分为四类：
 | `json_unescape` | 0 | 对 chars 类型字段进行 JSON 反转义 |
 | `base64_decode` | 0 | 对 chars 类型字段进行 Base64 解码 |
 
----
-
 ## 选择器函数详解
 
 ### `take`
@@ -84,7 +91,6 @@ rule select_field {
 }
 ```
 
----
 
 ### `last`
 
@@ -106,7 +112,6 @@ rule use_last {
 }
 ```
 
----
 
 ## 字段存在检查函数详解
 
@@ -139,10 +144,12 @@ rule check_active {
 **语法：**
 ```
 f_has(<field_name>)
+has()
 ```
 
 **参数：**
-- `field_name`：要检查的字段名
+- `field_name`：要检查的字段名（`f_has` 使用）
+- 无参数（`has` 使用，需先通过 `take()` 选定活动字段）
 
 **示例：**
 ```wpl
@@ -151,9 +158,14 @@ rule check_field {
     json |f_has(age)
   )
 }
+
+rule check_field_with_take {
+  (
+    json(chars@code) |take(code) |has()
+  )
+}
 ```
 
----
 
 ## 字符串操作函数详解
 
@@ -178,9 +190,16 @@ rule check_value {
     |chars_has(success)
   )
 }
+
+rule check_error_with_take {
+  (
+    json(chars@msg) |take(msg) |chars_has(error)
+  )
+}
 ```
 
 ---
+
 
 ### `f_chars_has`
 
@@ -260,11 +279,17 @@ rule filter_success {
     json |f_chars_not_has(status, failed)
   )
 }
+
+rule filter_success_with_take {
+  (
+    json(chars@status) |take(status) |chars_not_has(failed)
+  )
+}
 ```
 
----
 
 ### `chars_in`
+>>>>>>> 805600da457bb0fcfd70e2d5ce70e7774105068b
 
 检查当前活跃字段的值是否在给定的字符串列表中。
 
@@ -296,11 +321,13 @@ rule check_method {
 **语法：**
 ```
 f_chars_in(<field_name>, [<value1>, <value2>, ...])
+chars_in([<value1>, <value2>, ...])
 ```
 
 **参数：**
-- `field_name`：要检查的字段名
+- `field_name`：要检查的字段名（`f_chars_in` 使用）
 - `[...]`：允许的字符串值列表
+- 无前缀形式需先通过 `take()` 选定活动字段
 
 **示例：**
 ```wpl
@@ -309,9 +336,14 @@ rule check_method {
     json |f_chars_in(method, [GET, POST, PUT])
   )
 }
+
+rule check_method_with_take {
+  (
+    json(chars@method) |take(method) |chars_in([GET, POST, PUT])
+  )
+}
 ```
 
----
 
 ## 数字操作函数详解
 
@@ -347,17 +379,25 @@ rule check_code {
 **语法：**
 ```
 f_digit_has(<field_name>, <number>)
+digit_has(<number>)
 ```
 
 **参数：**
-- `field_name`：要检查的字段名
+- `field_name`：要检查的字段名（`f_digit_has` 使用）
 - `number`：要匹配的数字
+- 无前缀形式需先通过 `take()` 选定活动字段
 
 **示例：**
 ```wpl
 rule check_status {
   (
     json |f_digit_has(code, 200)
+  )
+}
+
+rule check_status_with_take {
+  (
+    json(digit@code) |take(code) |digit_has(200)
   )
 }
 ```
@@ -396,11 +436,13 @@ rule check_success {
 **语法：**
 ```
 f_digit_in(<field_name>, [<num1>, <num2>, ...])
+digit_in([<num1>, <num2>, ...])
 ```
 
 **参数：**
-- `field_name`：要检查的字段名
+- `field_name`：要检查的字段名（`f_digit_in` 使用）
 - `[...]`：允许的数字值列表
+- 无前缀形式需先通过 `take()` 选定活动字段
 
 **示例：**
 ```wpl
@@ -409,9 +451,14 @@ rule check_success_codes {
     json |f_digit_in(status, [200, 201, 204])
   )
 }
+
+rule check_success_codes_with_take {
+  (
+    json(digit@status) |take(status) |digit_in([200, 201, 204])
+  )
+}
 ```
 
----
 
 ## IP 地址操作函数详解
 
@@ -447,20 +494,19 @@ rule check_ipv6 {
 }
 ```
 
----
-
-### `f_ip_in`
 
 检查字段集合中指定 IP 地址是否在给定的 IP 列表中。支持 IPv4 和 IPv6。
 
 **语法：**
 ```
 f_ip_in(<field_name>, [<ip1>, <ip2>, ...])
+ip_in([<ip1>, <ip2>, ...])
 ```
 
 **参数：**
-- `field_name`：要检查的字段名
+- `field_name`：要检查的字段名（`f_ip_in` 使用）
 - `[...]`：允许的 IP 地址列表
+- 无前缀形式需先通过 `take()` 选定活动字段
 
 **示例：**
 ```wpl
@@ -473,6 +519,12 @@ rule check_trusted_ips {
 rule check_ipv6 {
   (
     json(ip@src) |f_ip_in(src, [::1, 2001:db8::1])
+  )
+}
+
+rule check_ip_with_take {
+  (
+    json(ip@client_ip) |take(client_ip) |ip_in([127.0.0.1, 192.168.1.1])
   )
 }
 ```
@@ -489,6 +541,7 @@ rule check_ipv6 {
 ```
 json_unescape()
 ```
+
 
 **转换效果：**
 | 输入 | 输出 |
@@ -520,18 +573,27 @@ base64_decode()
 ```
 
 **转换效果：**
-| 输入 | 输出 |
-|------|------|
-| `aGVsbG8=` | `hello` |
-| `Zm9vYmFy` | `foobar` |
+```
+"aGVsbG8gd29ybGQ="  →  "hello world"
+```
 
 **示例：**
 ```wpl
 rule decode_payload {
   (
+<<<<<<< HEAD
+    json(chars@payload) |last() |base64_decode()
+  )
+}
+
+rule decode_with_take {
+  (
+    json(chars@encoded_data) |take(encoded_data) |base64_decode()
+=======
     json(chars@payload)
     |take(payload)
     |base64_decode()
+>>>>>>> 805600da457bb0fcfd70e2d5ce70e7774105068b
   )
 }
 ```
@@ -541,6 +603,8 @@ rule decode_payload {
 ## 组合使用示例
 
 多个管道函数可以链式调用：
+
+### 使用 `f_` 前缀函数
 
 ```wpl
 rule complex_filter {
@@ -558,6 +622,41 @@ rule complex_filter {
 }
 ```
 
+<<<<<<< HEAD
+### 使用 `take()` + 无前缀别名
+
+```wpl
+rule filter_with_take {
+  (
+    json(
+      chars@method,
+      digit@status,
+      ip@client_ip
+    )
+  )
+  |take(method)
+  |has()
+  |chars_in([GET, POST])
+  |take(status)
+  |digit_in([200, 201, 204])
+  |take(client_ip)
+  |ip_in([10.0.0.1, 10.0.0.2])
+}
+```
+
+### 使用 `last()` 进行转换
+
+```wpl
+rule decode_last_field {
+  (
+    json(chars@payload)
+  )
+  |last()
+  |base64_decode()
+  |json_unescape()
+}
+```
+=======
 使用选择器和无前缀函数的组合：
 
 ```wpl
@@ -575,8 +674,9 @@ rule mixed_style {
 ```
 
 ---
+>>>>>>> 805600da457bb0fcfd70e2d5ce70e7774105068b
 
 ## 相关文档
 
-- 语法定义：[WPL 语法（EBNF）](./04-wpl_grammar.md)
+- 语法定义：[WPL 语法（EBNF）](./03-wpl_grammar.md)
 - 实现代码：`crates/wp-lang/src/parser/wpl_fun.rs`

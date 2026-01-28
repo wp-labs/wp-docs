@@ -1,93 +1,111 @@
-# OML Object Modeling Language
+# OML Object Model Language (New Version)
 
-OML (Object Modeling Language) is used in Warp Parse to assemble and aggregate parsed records. It provides capabilities including read/take value extraction, object and array aggregation (object/collect), conditional matching (match), string formatting (fmt), pipe transformations (pipe), and SQL query construction.
+> **Note**: This is the new comprehensive OML documentation. English translation is in progress.
+> 
+> For now, please refer to the Chinese version at `docs/10-user/04-oml-new/`
 
-Note: Starting from the current version, the engine does not enable "privacy/masking" runtime processing by default. The privacy section syntax mentioned in this chapter is only for DSL capability description. If you need data masking, please implement it in your business logic or custom plugins/pipelines.
+OML (Object Model Language) is a declarative transformation language that converts parsed data from WPL into the desired output format.
 
-## Table of Contents
+## Documentation Structure
 
-- [OML Basics](./01-oml_basics.md)
-- [OML Examples](./02-oml_examples.md)
-- [OML Functions Reference](./03-oml_functions.md)
-- [OML Grammar (EBNF)](./04-oml_grammar.md)
+- **🌟 [Complete Feature Example](./07-complete-example.md)** - Comprehensive example showcasing all OML features
+- **[Quick Start](./01-quickstart.md)** - Get started with OML in 5 minutes
+- **[Core Concepts](./02-core-concepts.md)** - Understand OML's design philosophy
+- **[Practical Guide](./03-practical-guide.md)** - Task-oriented solutions
+- **[Functions Reference](./04-functions-reference.md)** - All function documentation
+- **[Integration Guide](./05-integration.md)** - Integrate OML into data pipelines
+- **[Grammar Reference](./06-grammar-reference.md)** - Formal grammar definition
 
-## Feature Overview
+## Key Features
 
-- Value extraction with defaults: `read(...)` (non-destructive) / `take(...)` (destructive) + default body `{ _ : <value/function> }`
-- Object/Array aggregation: `object { ... }`, `collect read(keys:[...])`
-- Conditional matching: `match read(x) { ... }` and binary matching `match (read(a), read(b)) { ... }`
-- Pipe and formatting: `read(x) | to_json | base64_encode`, `fmt("{}-{}", @a, read(b))`
-- SQL: `select <cols from table> where <cond>;` (body whitelist validation, strict mode can be disabled via `OML_SQL_STRICT=0`)
-- Batch targets: When target name contains `*`, batch mode evaluation is used (only supports take/read)
-- Privacy section: Field privacy processor mapping declared through a second `---` at the end
+- **Declarative**: Describe "what you want" rather than "how to implement"
+- **Type System**: 8 data types with automatic inference and conversion
+- **Powerful Functions**: Built-in functions, pipeline functions, pattern matching
+- **Flexible Operations**: Field extraction, data aggregation, conditional processing
+- **SQL Integration**: Enrich data with database queries
 
 ## Quick Example
 
-```oml
-name : example
----
-user_id        = read(user_id) ;
-occur_time:time= Now::time() ;
-values : obj   = object {
-  cpu_free, memory_free : digit = take() ;
-};
-ports : array  = collect read(keys:[sport,dport]) ;
-ports_json     = pipe read(ports) | to_json ;
-full           = fmt("{}-{}", @user, read(city)) ;
-name,pinying   = select name,pinying from example where pinying = read(py) ;
----
-src_ip : privacy_ip
-pos_sn : privacy_keymsg
+**WPL Parsed Data:**
+```
+client_ip: 192.168.1.100
+status: 200
+timestamp: 2024-01-15 14:30:00
 ```
 
-## Built-in Functions
+**OML Configuration:**
+```oml
+name : web_log_processor
+rule : /nginx/access_log
+---
+# Extract fields
+ip : ip = read(client_ip) ;
+code : digit = read(status) ;
 
-| Function | Description | Return Type |
-|----------|-------------|-------------|
-| `Now::time()` | Get current time | `time` |
-| `Now::date()` | Get current date (YYYYMMDD) | `digit` |
-| `Now::hour()` | Get current time to the hour (YYYYMMDDHH) | `digit` |
+# Transform timestamp
+ts_ms = read(timestamp) | Time::to_ts_zone(0, ms) ;
 
-## Pipe Functions
+# Conditional processing
+level = match read(code) {
+    in (digit(200), digit(299)) => chars(success) ;
+    in (digit(400), digit(499)) => chars(error) ;
+    _ => chars(other) ;
+} ;
 
-| Function | Description |
-|----------|-------------|
-| `base64_encode` | Base64 encoding |
-| `base64_decode` | Base64 decoding (supports multiple character encodings) |
-| `html_escape` / `html_unescape` | HTML escape/unescape |
-| `json_escape` / `json_unescape` | JSON escape/unescape |
-| `str_escape` | String escape |
-| `Time::to_ts` / `Time::to_ts_ms` / `Time::to_ts_us` | Time to timestamp (seconds/milliseconds/microseconds, UTC+8) |
-| `Time::to_ts_zone(timezone,unit)` | Time to specified timezone timestamp |
-| `nth(index)` | Get array element |
-| `get(field_name)` | Get object field |
-| `path(name\|path)` | Extract file path part |
-| `url(domain\|host\|uri\|path\|params)` | Extract URL part |
-| `sxf_get(field_name)` | Extract special format field |
-| `to_str` / `to_json` | Convert to string/JSON |
-| `ip4_to_int` | IPv4 to integer |
-| `skip_empty` | Skip empty values |
+# Create structured output
+log : obj = object {
+    client : ip = read(ip) ;
+    status : digit = read(code) ;
+    timestamp : digit = read(ts_ms) ;
+    level : chars = read(level) ;
+} ;
+```
 
-For detailed descriptions, see [OML Functions Reference](./03-oml_functions.md).
+**Output:**
+```json
+{
+    "log": {
+        "client": "192.168.1.100",
+        "status": 200,
+        "timestamp": 1705318200000,
+        "level": "success"
+    }
+}
+```
 
-## Data Types
+## Translation Status
 
-| Type | Description |
-|------|-------------|
-| `auto` | Auto-infer (default) |
-| `chars` | String |
-| `digit` | Integer |
-| `float` | Floating point |
-| `ip` | IP address |
-| `time` | Time |
-| `bool` | Boolean |
-| `obj` | Object |
-| `array` | Array |
+| Document | Status |
+|----------|--------|
+| README.md | ✅ Completed |
+| 01-quickstart.md | 🔄 In Progress |
+| 02-core-concepts.md | 🔄 In Progress |
+| 03-practical-guide.md | 🔄 In Progress |
+| 04-functions-reference.md | 🔄 In Progress |
+| 05-integration.md | 🔄 In Progress |
+| 06-grammar-reference.md | 🔄 In Progress |
+| 07-complete-example.md | 🔄 In Progress |
+
+## How OML Works with WPL
+
+```
+1. WPL parses raw data
+   ↓
+2. Generates structured data + rule identifier (e.g., /nginx/access_log)
+   ↓
+3. System finds matching OML configuration (via rule field)
+   ↓
+4. Executes OML transformation
+   ↓
+5. Outputs to Sink
+```
 
 ## Related Documentation
 
-- [WPL Rule Language](../06-wpl/README.md)
-- [Configuration Guide Overview](../02-config/README.md)
-- [Schema Reference](../../80-reference/schemas/README.md)
+- [Legacy OML Documentation](../04-oml/README.md) - Previous version
+- [WPL Rule Language](../03-wpl-new/README.md) - Data parsing language
+- [Sinks Configuration](../05-connectors/02-sinks/README.md) - Output configuration
 
-Tip: For the difference between read/take, see "OML Basics"; for complete grammar, see "OML Grammar (EBNF)"; for end-to-end examples, see "OML Examples".
+---
+
+**For the latest Chinese documentation, please visit:** `docs/10-user/04-oml-new/`

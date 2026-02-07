@@ -40,7 +40,7 @@ build: build-zh build-en copy-assets
 # Build Chinese version
 build-zh:
 	@echo "Building Chinese documentation..."
-	cd docs && mdbook build
+	cd docs-zh && mdbook build
 	@mkdir -p book/zh/theme
 	@cp theme/lang-switch.css book/zh/theme/
 	@cp theme/lang-switch.js book/zh/theme/
@@ -48,7 +48,7 @@ build-zh:
 # Build English version
 build-en:
 	@echo "Building English documentation..."
-	cd en && mdbook build
+	cd docs-en && mdbook build
 	@mkdir -p book/en/theme
 	@cp theme/lang-switch.css book/en/theme/
 	@cp theme/lang-switch.js book/en/theme/
@@ -65,12 +65,12 @@ serve: serve-zh
 # Serve Chinese version
 serve-zh:
 	@echo "Starting Chinese documentation server on http://localhost:3000..."
-	cd docs && mdbook serve --hostname 0.0.0.0 --port 3000
+	cd docs-zh && mdbook serve --hostname 0.0.0.0 --port 3000
 
 # Serve English version
 serve-en:
 	@echo "Starting English documentation server on http://localhost:3001..."
-	cd en && mdbook serve --hostname 0.0.0.0 --port 3001
+	cd docs-en && mdbook serve --hostname 0.0.0.0 --port 3001
 
 # Generate structured SUMMARY.md
 summary:

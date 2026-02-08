@@ -53,7 +53,11 @@ jobs:
 
       - name: Fetch WarpParse version
         run: |
+          BRANCH_NAME=${{ steps.branch.outputs.name }}
+          # Use same branch from warp-parse repo, fallback to main if not exists
+          curl -s https://raw.githubusercontent.com/wp-labs/warp-parse/${BRANCH_NAME}/version.txt -o wp-version.txt || \
           curl -s https://raw.githubusercontent.com/wp-labs/warp-parse/main/version.txt -o wp-version.txt
+          echo "Fetching version from warp-parse/${BRANCH_NAME} branch"
           echo "WarpParse version: $(cat wp-version.txt)"
 
       - name: Install mermaid support for Chinese docs

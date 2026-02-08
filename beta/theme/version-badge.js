@@ -14,17 +14,23 @@
         const banner = document.createElement('div');
         banner.className = `version-banner ${version}`;
 
-        const versionText = version === 'alpha' ? 'ALPHA 开发版' : 'BETA 预发布版';
-        const versionTextEn = version === 'alpha' ? 'ALPHA Development Version' : 'BETA Pre-release Version';
-
-        // Detect language
+        let badgeText, descText, linkText;
         const isZh = document.documentElement.lang === 'zh-CN';
-        const displayText = isZh ? versionText : versionTextEn;
-        const stableText = isZh ? '查看稳定版' : 'View Stable Version';
+
+        if (version === 'alpha') {
+            badgeText = 'ALPHA';
+            descText = isZh ? '最新开发版 - 包含最新特性' : 'Latest Development Version - Contains newest features';
+            linkText = isZh ? '访问稳定版' : 'View Stable Version';
+        } else {
+            badgeText = 'BETA';
+            descText = isZh ? '预发布版 - 即将正式发布' : 'Pre-release Version - Coming soon to stable';
+            linkText = isZh ? '访问稳定版' : 'View Stable Version';
+        }
 
         banner.innerHTML = `
-            ⚠️ ${displayText} -
-            <a href="/">${stableText}</a>
+            <span class="badge">${badgeText}</span>
+            ${descText}
+            <a href="/">${linkText}</a>
         `;
 
         document.body.insertBefore(banner, document.body.firstChild);

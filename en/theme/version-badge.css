@@ -1,0 +1,94 @@
+.version-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    font-weight: 400;
+    font-size: 13px;
+    background: #2c3e50;
+    color: #ecf0f1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.version-banner .banner-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.version-banner .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.version-banner.alpha .badge {
+    background: #9b59b6;
+    color: #ffffff;
+}
+
+.version-banner.beta .badge {
+    background: #3498db;
+    color: #ffffff;
+}
+
+.version-banner.stable .badge {
+    background: #27ae60;
+    color: #ffffff;
+}
+
+.version-banner .version-switcher {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.version-banner .version-switcher::before {
+    content: '|';
+    margin: 0 8px;
+    opacity: 0.3;
+}
+
+.version-banner .version-link {
+    color: #ecf0f1;
+    text-decoration: none;
+    padding: 4px 10px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    font-weight: 400;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+.version-banner .version-link:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.version-banner .version-link.current {
+    background: rgba(255, 255, 255, 0.2);
+    font-weight: 500;
+}
+
+/* Adjust main content to account for banner */
+body.has-version-banner {
+    padding-top: 40px;
+}
+
+body.has-version-banner .sidebar {
+    top: 40px;
+    height: calc(100vh - 40px);
+}
+
+body.has-version-banner .page-wrapper {
+    margin-top: 40px;
+}

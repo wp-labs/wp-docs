@@ -1,0 +1,724 @@
+<!DOCTYPE HTML>
+<html lang="en" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>digit_range - Number Range - Warp Parse Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../../../../theme/lang-switch.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../../searchindex-cee6790d.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../../toc-ec81ad47.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Warp Parse Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wp-labs/warp-parse" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="digit_range-function-usage-guide"><a class="header" href="#digit_range-function-usage-guide">digit_range Function Usage Guide</a></h1>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p><code>digit_range</code> is a numeric range checking function in WPL (WP Language) used to determine whether a log field’s numeric value falls within a specified single range. This is a simple and efficient closed-interval checking function.</p>
+<h2 id="quick-start"><a class="header" href="#quick-start">Quick Start</a></h2>
+<h3 id="basic-syntax"><a class="header" href="#basic-syntax">Basic Syntax</a></h3>
+<pre><code class="language-wpl">digit_range(begin, end)
+</code></pre>
+<ul>
+<li><strong>begin</strong>: Lower bound of the range (scalar value)</li>
+<li><strong>end</strong>: Upper bound of the range (scalar value)</li>
+<li>Check method: <code>begin &lt;= value &lt;= end</code> (closed interval)</li>
+</ul>
+<h3 id="simple-examples"><a class="header" href="#simple-examples">Simple Examples</a></h3>
+<pre><code class="language-wpl"># Check if value is in [0, 100] range
+digit_range(0, 100)
+
+# Check HTTP success status codes (200-299)
+digit_range(200, 299)
+
+# Check if port number is in standard range (0-65535)
+digit_range(0, 65535)
+</code></pre>
+<h2 id="parameter-format"><a class="header" href="#parameter-format">Parameter Format</a></h2>
+<h3 id="1-single-range"><a class="header" href="#1-single-range">1. Single Range</a></h3>
+<p>Check a single continuous range:</p>
+<pre><code class="language-wpl"># Check if port number is in standard range (0-65535)
+digit_range(0, 65535)
+
+# Check HTTP success status codes (200-299)
+digit_range(200, 299)
+
+# Check if age is adult (18-150)
+digit_range(18, 150)
+</code></pre>
+<h3 id="2-range-limitation-explanation"><a class="header" href="#2-range-limitation-explanation">2. Range Limitation Explanation</a></h3>
+<p><strong>Note</strong>: Starting from version 1.13.1, <code>digit_range</code> only supports single range checking. For checking multiple discontinuous ranges, please use multiple rules or branching logic (see “Using with Branching Logic” section below).</p>
+<pre><code class="language-wpl"># ✅ Single range check
+digit_range(200, 299)  # 2xx status code
+
+# ❌ Multiple range array syntax no longer supported
+# digit_range([200, 300], [299, 399])  # Old syntax, deprecated
+</code></pre>
+<h3 id="3-boundary-value-handling"><a class="header" href="#3-boundary-value-handling">3. Boundary Value Handling</a></h3>
+<p>Range checking is a <strong>closed interval</strong>, including boundary values:</p>
+<pre><code class="language-wpl"># [100, 200] - includes both 100 and 200
+digit_range(100, 200)
+
+# Check value 100: ✅ Pass (equals lower bound)
+# Check value 200: ✅ Pass (equals upper bound)
+# Check value 150: ✅ Pass (within range)
+# Check value 99:  ❌ Fail (less than lower bound)
+# Check value 201: ❌ Fail (greater than upper bound)
+</code></pre>
+<h3 id="4-negative-number-ranges"><a class="header" href="#4-negative-number-ranges">4. Negative Number Ranges</a></h3>
+<p>Supports negative number ranges:</p>
+<pre><code class="language-wpl"># Temperature range check (-20°C to 40°C)
+digit_range(-20, 40)
+
+# Elevation range (Dead Sea -400m to Mount Everest 8848m)
+digit_range(-400, 8848)
+</code></pre>
+<h2 id="practical-application-scenarios"><a class="header" href="#practical-application-scenarios">Practical Application Scenarios</a></h2>
+<h3 id="scenario-1-http-status-code-classification"><a class="header" href="#scenario-1-http-status-code-classification">Scenario 1: HTTP Status Code Classification</a></h3>
+<pre><code class="language-wpl">rule http_success_check {
+    # Select status code field
+    | take(status_code)
+
+    # Check if it's a success status code (2xx)
+    | digit_range(200, 299)
+}
+
+# Example data:
+# status_code: 200  → ✅ Pass (in [200,299] range)
+# status_code: 204  → ✅ Pass (in [200,299] range)
+# status_code: 301  → ❌ Fail (not in range)
+# status_code: 404  → ❌ Fail (not in range)
+
+# To check multiple status code ranges (e.g., 2xx or 3xx), use branching logic:
+rule http_ok_or_redirect {
+    | take(status_code)
+    | (digit_range(200, 299) | digit_range(300, 399))
+}
+</code></pre>
+<h3 id="scenario-2-performance-metrics-monitoring"><a class="header" href="#scenario-2-performance-metrics-monitoring">Scenario 2: Performance Metrics Monitoring</a></h3>
+<pre><code class="language-wpl">rule response_time_check {
+    # Select response time field (milliseconds)
+    | take(response_time)
+
+    # Check if response time is in normal range (0-500ms)
+    | digit_range(0, 500)
+}
+
+# Example data:
+# response_time: 50   → ✅ Pass (fast response)
+# response_time: 200  → ✅ Pass (normal response)
+# response_time: 1000 → ❌ Fail (timeout)
+</code></pre>
+<h3 id="scenario-3-port-number-validation"><a class="header" href="#scenario-3-port-number-validation">Scenario 3: Port Number Validation</a></h3>
+<pre><code class="language-wpl">rule system_port_check {
+    # Select port field
+    | take(port)
+
+    # Check if it's a system reserved port (1-1023)
+    | digit_range(1, 1023)
+}
+
+# Example data:
+# port: 80    → ✅ Pass (HTTP default port)
+# port: 443   → ✅ Pass (HTTPS default port)
+# port: 8080  → ❌ Fail (user port)
+</code></pre>
+<h3 id="scenario-4-time-period-filtering"><a class="header" href="#scenario-4-time-period-filtering">Scenario 4: Time Period Filtering</a></h3>
+<pre><code class="language-wpl">rule morning_hours_check {
+    # Select hour field
+    | take(hour)
+
+    # Check if it's morning working hours (9-12)
+    | digit_range(9, 12)
+}
+
+# Example data:
+# hour: 10  → ✅ Pass (morning working hours)
+# hour: 11  → ✅ Pass (morning working hours)
+# hour: 15  → ❌ Fail (afternoon time)
+
+# Check multiple time periods, use branching logic:
+rule business_hours_check {
+    | take(hour)
+    | (digit_range(9, 12) | digit_range(14, 18))
+}
+</code></pre>
+<h3 id="scenario-5-age-segmentation"><a class="header" href="#scenario-5-age-segmentation">Scenario 5: Age Segmentation</a></h3>
+<pre><code class="language-wpl">rule adult_age_check {
+    # Select age field
+    | take(age)
+
+    # Adult age range (18-65)
+    | digit_range(18, 65)
+}
+
+# Example data:
+# age: 30  → ✅ Pass (adult)
+# age: 50  → ✅ Pass (adult)
+# age: 15  → ❌ Fail (minor)
+# age: 70  → ❌ Fail (elderly)
+</code></pre>
+<h3 id="scenario-6-priority-filtering"><a class="header" href="#scenario-6-priority-filtering">Scenario 6: Priority Filtering</a></h3>
+<pre><code class="language-wpl">rule high_priority_filter {
+    # Select priority field
+    | take(priority)
+
+    # Only process high priority (1-3)
+    | digit_range(1, 3)
+}
+
+# Example data:
+# priority: 1  → ✅ Pass (high priority)
+# priority: 3  → ✅ Pass (high priority)
+# priority: 5  → ❌ Fail (medium priority)
+</code></pre>
+<h3 id="scenario-7-data-quality-check"><a class="header" href="#scenario-7-data-quality-check">Scenario 7: Data Quality Check</a></h3>
+<pre><code class="language-wpl">rule data_quality_check {
+    # Check temperature sensor data
+    | take(temperature)
+
+    # Normal temperature range (-40°C to 80°C)
+    | digit_range(-40, 80)
+}
+
+# Example data:
+# temperature: 25   → ✅ Pass (normal room temperature)
+# temperature: -10  → ✅ Pass (winter temperature)
+# temperature: 100  → ❌ Fail (abnormal data)
+# temperature: -100 → ❌ Fail (sensor fault)
+</code></pre>
+<h2 id="usage-limitations"><a class="header" href="#usage-limitations">Usage Limitations</a></h2>
+<h3 id="type-restrictions"><a class="header" href="#type-restrictions">Type Restrictions</a></h3>
+<p><code>digit_range</code> can only process <strong>numeric type</strong> fields:</p>
+<pre><code class="language-wpl"># ✅ Correct - field is a number
+status_code: 200 -&gt; digit_range(200, 299)
+
+# ❌ Wrong - field is a string
+level: "200" -&gt; digit_range(200, 299)  # Will fail
+
+# ❌ Wrong - field is an IP address
+ip: 192.168.1.1 -&gt; digit_range(192, 200)  # Will fail
+</code></pre>
+<h3 id="parameter-requirements"><a class="header" href="#parameter-requirements">Parameter Requirements</a></h3>
+<ol>
+<li>
+<p><strong>Parameters must be scalar values</strong>:</p>
+<pre><code class="language-wpl"># ✅ Correct - using scalar values
+digit_range(1, 10)
+
+# ❌ Wrong - array parameters not supported (old syntax)
+digit_range([1], [10])  # Deprecated
+</code></pre>
+</li>
+<li>
+<p><strong>Lower bound should be less than or equal to upper bound</strong>:</p>
+<pre><code class="language-wpl"># ✅ Correct
+digit_range(1, 10)      # 1 &lt;= x &lt;= 10
+digit_range(10, 10)     # x == 10 (single point)
+
+# ⚠️ Logical error (won't match any value)
+digit_range(10, 1)      # 10 &lt;= x &lt;= 1 (always false)
+</code></pre>
+</li>
+</ol>
+<h3 id="unsupported-features"><a class="header" href="#unsupported-features">Unsupported Features</a></h3>
+<ol>
+<li>
+<p><strong>Does not support precise floating-point matching</strong>:</p>
+<pre><code class="language-wpl"># ⚠️ Note: Uses i64 internally, floating-point numbers are rounded
+digit_range(1, 10)  # Can only match integers
+</code></pre>
+</li>
+<li>
+<p><strong>Does not support infinite ranges</strong>:</p>
+<pre><code class="language-wpl"># ❌ Not supported
+digit_range(0, infinity)  # No infinite value
+</code></pre>
+</li>
+<li>
+<p><strong>Does not support multiple range arrays</strong>:</p>
+<pre><code class="language-wpl"># ❌ Not supported (old syntax deprecated)
+digit_range([1, 100], [10, 200])  # Use branching logic instead
+</code></pre>
+</li>
+</ol>
+<h2 id="complete-examples"><a class="header" href="#complete-examples">Complete Examples</a></h2>
+<h3 id="example-1-log-severity-filtering"><a class="header" href="#example-1-log-severity-filtering">Example 1: Log Severity Filtering</a></h3>
+<pre><code class="language-wpl">rule log_error_filter {
+    # Select severity level field
+    | take(severity)
+
+    # Filter ERROR level (1-2)
+    | digit_range(1, 2)
+
+    # Further processing...
+}
+
+# Log level definitions:
+# 1 = CRITICAL
+# 2 = ERROR
+# 3 = WARNING
+# 4 = WARN
+# 5 = INFO
+# 6 = DEBUG
+</code></pre>
+<h3 id="example-2-performance-monitoring-combination"><a class="header" href="#example-2-performance-monitoring-combination">Example 2: Performance Monitoring Combination</a></h3>
+<pre><code class="language-wpl">rule performance_monitor {
+    # Check response time
+    | take(response_ms)
+    | digit_range(0, 1000)  # 0-1000ms considered normal
+
+    # Check status code
+    | take(status)
+    | digit_range(200, 299)  # 2xx
+
+    # Both conditions must be satisfied to pass
+}
+</code></pre>
+<h3 id="example-3-time-window-analysis"><a class="header" href="#example-3-time-window-analysis">Example 3: Time Window Analysis</a></h3>
+<pre><code class="language-wpl">rule weekday_check {
+    # Weekday check (1=Monday, 7=Sunday)
+    | take(day_of_week)
+    | digit_range(1, 5)  # Monday to Friday
+
+    # Analyze only weekday data
+}
+</code></pre>
+<h2 id="performance-notes"><a class="header" href="#performance-notes">Performance Notes</a></h2>
+<ul>
+<li><strong>Time Complexity</strong>: O(1) - Single comparison</li>
+<li><strong>Space Complexity</strong>: O(1) - In-place check</li>
+<li><strong>Performance Characteristics</strong>:
+<ul>
+<li>Nanosecond-level execution time</li>
+<li>Simple integer comparison operation</li>
+<li>Excellent performance, suitable for high-frequency calls</li>
+</ul>
+</li>
+</ul>
+<h2 id="error-handling"><a class="header" href="#error-handling">Error Handling</a></h2>
+<h3 id="common-errors"><a class="header" href="#common-errors">Common Errors</a></h3>
+<ol>
+<li>
+<p><strong>Field does not exist</strong></p>
+<pre><code>Error: &lt;pipe&gt; | not in range
+Cause: No active field currently
+Solution: Use take() to select field first
+</code></pre>
+</li>
+<li>
+<p><strong>Field type mismatch</strong></p>
+<pre><code>Error: &lt;pipe&gt; | not in range
+Cause: Field is not a numeric type (Digit)
+Solution: Ensure field is numeric type
+</code></pre>
+</li>
+<li>
+<p><strong>Value not in any range</strong></p>
+<pre><code>Error: &lt;pipe&gt; | not in range
+Cause: Field value doesn't satisfy any range condition
+Solution: Check if range settings are correct
+</code></pre>
+</li>
+</ol>
+<h2 id="using-with-other-functions"><a class="header" href="#using-with-other-functions">Using with Other Functions</a></h2>
+<h3 id="with-field-selectors"><a class="header" href="#with-field-selectors">With Field Selectors</a></h3>
+<pre><code class="language-wpl"># Select field first, then check range
+| take(status_code)
+| digit_range(200, 299)
+</code></pre>
+<h3 id="with-conditional-checks"><a class="header" href="#with-conditional-checks">With Conditional Checks</a></h3>
+<pre><code class="language-wpl"># Check field exists first, then check range
+| has()
+| digit_range(0, 100)
+</code></pre>
+<h3 id="with-conversion-functions"><a class="header" href="#with-conversion-functions">With Conversion Functions</a></h3>
+<pre><code class="language-wpl"># Combine for complex validation
+| take(response_time)
+| digit_range(0, 1000)  # Response time normal
+| take(status_code)
+| digit_range(200, 299)  # Status code normal
+</code></pre>
+<h3 id="with-branching-logic"><a class="header" href="#with-branching-logic">With Branching Logic</a></h3>
+<pre><code class="language-wpl"># Use alt for "or" logic - check multiple discontinuous ranges
+(
+    # Branch 1: Check if success status code
+    | take(status)
+    | digit_range(200, 299)
+)
+|
+(
+    # Branch 2: Check if redirect status code
+    | take(status)
+    | digit_range(300, 399)
+)
+</code></pre>
+<h2 id="best-practices"><a class="header" href="#best-practices">Best Practices</a></h2>
+<h3 id="1-range-design-principles"><a class="header" href="#1-range-design-principles">1. Range Design Principles</a></h3>
+<pre><code class="language-wpl"># ✅ Recommended: Semantically clear range
+digit_range(200, 299)  # HTTP 2xx status code
+
+# ⚠️ Avoid: Using old array syntax
+# digit_range([200], [299])  # Deprecated
+</code></pre>
+<h3 id="2-concise-and-clear-single-range"><a class="header" href="#2-concise-and-clear-single-range">2. Concise and Clear Single Range</a></h3>
+<pre><code class="language-wpl"># ✅ Recommended: Simple and direct single range
+digit_range(0, 100)
+
+# ✅ Recommended: Multiple ranges use branching logic
+(digit_range(0, 50) | digit_range(100, 150))
+</code></pre>
+<h3 id="3-range-readability"><a class="header" href="#3-range-readability">3. Range Readability</a></h3>
+<pre><code class="language-wpl"># ✅ Recommended: Add comments explaining range meaning
+| digit_range(200, 299)  # HTTP success status codes
+
+# ✅ Recommended: Use meaningful ranges
+| digit_range(18, 65)  # Working age range
+</code></pre>
+<h3 id="4-boundary-value-testing"><a class="header" href="#4-boundary-value-testing">4. Boundary Value Testing</a></h3>
+<pre><code class="language-wpl"># Test if boundary values meet expectations
+digit_range(100, 200)
+# Test: 100 ✅, 200 ✅, 99 ❌, 201 ❌
+</code></pre>
+<h3 id="5-using-branching-for-discontinuous-ranges"><a class="header" href="#5-using-branching-for-discontinuous-ranges">5. Using Branching for Discontinuous Ranges</a></h3>
+<pre><code class="language-wpl"># ✅ Recommended: Clear branching logic
+(
+    digit_range(1, 10)   # First range
+    |
+    digit_range(50, 100) # Second range
+)
+
+# ❌ Avoid: Using deprecated array syntax
+# digit_range([1, 50], [10, 100])
+</code></pre>
+<h2 id="debugging-tips"><a class="header" href="#debugging-tips">Debugging Tips</a></h2>
+<h3 id="1-test-single-range"><a class="header" href="#1-test-single-range">1. Test Single Range</a></h3>
+<pre><code class="language-wpl"># Start with a simple single range
+| digit_range(0, 100)
+
+# For multiple ranges, use branching logic
+| (digit_range(0, 100) | digit_range(200, 300))
+</code></pre>
+<h3 id="2-verify-field-type"><a class="header" href="#2-verify-field-type">2. Verify Field Type</a></h3>
+<pre><code class="language-wpl"># Use digit_has() to confirm field is numeric type
+| take(my_field)
+| digit_has(0)  # If it fails, it's not a numeric field
+</code></pre>
+<h3 id="3-check-boundary-values"><a class="header" href="#3-check-boundary-values">3. Check Boundary Values</a></h3>
+<pre><code class="language-bash"># Prepare test data
+echo "value: 99" | wp-motor test.wpl    # Test lower bound-1
+echo "value: 100" | wp-motor test.wpl   # Test lower bound
+echo "value: 200" | wp-motor test.wpl   # Test upper bound
+echo "value: 201" | wp-motor test.wpl   # Test upper bound+1
+</code></pre>
+<h2 id="frequently-asked-questions-faq"><a class="header" href="#frequently-asked-questions-faq">Frequently Asked Questions (FAQ)</a></h2>
+<h3 id="q1-how-to-check-a-single-specific-value"><a class="header" href="#q1-how-to-check-a-single-specific-value">Q1: How to check a single specific value?</a></h3>
+<pre><code class="language-wpl"># Set lower and upper bounds to the same value
+digit_range(200, 200)  # Only matches 200
+</code></pre>
+<h3 id="q2-can-the-range-be-in-reverse-order"><a class="header" href="#q2-can-the-range-be-in-reverse-order">Q2: Can the range be in reverse order?</a></h3>
+<p>Technically yes, but logically meaningless:</p>
+<pre><code class="language-wpl">digit_range(100, 50)  # begin &gt; end, never matches
+</code></pre>
+<h3 id="q3-how-to-implement-not-in-range-logic"><a class="header" href="#q3-how-to-implement-not-in-range-logic">Q3: How to implement “not in range” logic?</a></h3>
+<p>Pipeline failure interrupts in WPL, can use branching logic:</p>
+<pre><code class="language-wpl"># Using negation logic (complex)
+# Recommendation: Use other field functions or handle in application layer
+</code></pre>
+<h3 id="q4-does-it-support-floating-point-numbers"><a class="header" href="#q4-does-it-support-floating-point-numbers">Q4: Does it support floating-point numbers?</a></h3>
+<p>Uses <code>i64</code> internally, floating-point numbers are converted:</p>
+<pre><code class="language-wpl"># Field value 3.14 will be treated as 3
+digit_range(3, 4)  # May match 3.14 (depending on parsing method)
+</code></pre>
+<h3 id="q5-how-to-check-multiple-discontinuous-ranges"><a class="header" href="#q5-how-to-check-multiple-discontinuous-ranges">Q5: How to check multiple discontinuous ranges?</a></h3>
+<p>Use branching logic (alt operator):</p>
+<pre><code class="language-wpl"># Check [1,10] or [100,200] ranges
+(digit_range(1, 10) | digit_range(100, 200))
+# Matches: any value in [1,10] or [100,200]
+</code></pre>
+<h3 id="q6-is-performance-sufficient"><a class="header" href="#q6-is-performance-sufficient">Q6: Is performance sufficient?</a></h3>
+<p>Very fast! Range checking is simple numeric comparison:</p>
+<ul>
+<li>O(1) time complexity</li>
+<li>Nanosecond-level execution time</li>
+<li>Suitable for high-frequency call scenarios</li>
+</ul>
+<h3 id="q7-can-the-old-array-syntax-still-be-used"><a class="header" href="#q7-can-the-old-array-syntax-still-be-used">Q7: Can the old array syntax still be used?</a></h3>
+<p>Not recommended, deprecated:</p>
+<pre><code class="language-wpl"># ❌ Old syntax (deprecated)
+digit_range([200], [299])
+
+# ✅ New syntax (recommended)
+digit_range(200, 299)
+</code></pre>
+<h2 id="comparison-with-digit_in"><a class="header" href="#comparison-with-digit_in">Comparison with digit_in</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Feature</th><th>digit_range</th><th>digit_in</th></tr>
+</thead>
+<tbody>
+<tr><td>Purpose</td><td>Single range check</td><td>Set membership check</td></tr>
+<tr><td>Parameters</td><td>Two scalars (begin, end)</td><td>One array (value list)</td></tr>
+<tr><td>Use Case</td><td>Continuous range</td><td>Discrete values</td></tr>
+<tr><td>Example</td><td><code>digit_range(0, 100)</code></td><td><code>digit_in([200, 404, 500])</code></td></tr>
+<tr><td>Complexity</td><td>O(1)</td><td>O(n)</td></tr>
+</tbody>
+</table>
+</div>
+<pre><code class="language-wpl"># digit_range - suitable for continuous ranges
+digit_range(200, 299)  # 200, 201, ..., 299
+
+# digit_in - suitable for discrete values
+digit_in([200, 404, 500])  # Only matches these three values
+
+# Multiple discontinuous ranges - use branching logic
+(digit_range(200, 299) | digit_range(300, 399))
+</code></pre>
+<h2 id="additional-resources"><a class="header" href="#additional-resources">Additional Resources</a></h2>
+<ul>
+<li><strong>Development Guide</strong>: <code>docs/guide/wpl_field_func_development_guide.md</code></li>
+<li><strong>Source Code</strong>: <code>crates/wp-lang/src/ast/processor/function.rs</code></li>
+<li><strong>Test Cases</strong>: <code>crates/wp-lang/src/eval/builtins/pipe_fun.rs</code></li>
+</ul>
+<h2 id="version-history"><a class="header" href="#version-history">Version History</a></h2>
+<ul>
+<li><strong>1.13.1</strong> (2026-02-02)
+<ul>
+<li>Refactored to two-parameter form: <code>digit_range(begin, end)</code></li>
+<li>Deprecated old array syntax: <code>digit_range([begins], [ends])</code></li>
+<li>Simplified to single range check, performance optimized to O(1)</li>
+<li>Support for negative number ranges</li>
+<li>Added complete test coverage</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p><strong>Tip</strong>: <code>digit_range</code> is now a simple and efficient single range checking function, suitable for handling continuous numeric range validation scenarios such as status codes, performance metrics, time periods, etc. For multiple discontinuous ranges, please use branching logic (alt operator). For discrete value checking, please use the <code>digit_in</code> function.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../../10-user/03-wpl/functions/regex_match.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../../10-user/03-wpl/functions/not.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../../10-user/03-wpl/functions/regex_match.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../../10-user/03-wpl/functions/not.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../../mark-09e88c2c.min.js"></script>
+        <script src="../../../searcher-c2a407aa.js"></script>
+
+        <script src="../../../clipboard-1626706a.min.js"></script>
+        <script src="../../../highlight-abc7f01d.js"></script>
+        <script src="../../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../../../../theme/lang-switch.js"></script>
+        <script src="../../../mermaid-eefea253.min.js"></script>
+        <script src="../../../mermaid-init-ccf746f1.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

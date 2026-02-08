@@ -1,0 +1,845 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>字段引用 - Warp Parse 文档</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../../../../theme/lang-switch.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../../searchindex-b509f17a.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../../toc-ca145d02.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Warp Parse 文档</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wp-labs/warp-parse" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="wpl-字段引用使用指南"><a class="header" href="#wpl-字段引用使用指南">WPL 字段引用使用指南</a></h1>
+<h2 id="概述"><a class="header" href="#概述">概述</a></h2>
+<p>在 WPL 中，使用 <code>@</code> 符号来引用集合中的字段。支持两种字段名格式：</p>
+<ul>
+<li><strong>普通标识符</strong>：<code>@field_name</code></li>
+<li><strong>单引号字符串</strong>：<code>@'@special-field'</code>（用于包含特殊字符的字段名）</li>
+</ul>
+<h2 id="快速开始"><a class="header" href="#快速开始">快速开始</a></h2>
+<h3 id="基本语法"><a class="header" href="#基本语法">基本语法</a></h3>
+<pre><code class="language-wpl"># 引用普通字段
+@field_name
+
+# 引用带特殊字符的字段
+@'special-field-name'
+
+# 指定字段类型和别名
+datatype@field_name: alias_name
+</code></pre>
+<h3 id="简单示例"><a class="header" href="#简单示例">简单示例</a></h3>
+<pre><code class="language-wpl"># JSON 解析 - 提取字段
+rule parse_json {
+    json(
+        @src_ip: source_ip,
+        @dst_ip: dest_ip,
+        @message: msg
+    )
+}
+
+# 使用单引号处理特殊字段名
+rule parse_json_special {
+    json(
+        @'@client-ip': client,
+        @'event.type': event,
+        @'log/level': level
+    )
+}
+</code></pre>
+<h2 id="普通字段引用"><a class="header" href="#普通字段引用">普通字段引用</a></h2>
+<h3 id="支持的字符"><a class="header" href="#支持的字符">支持的字符</a></h3>
+<p>普通字段名（不带引号）支持以下字符：</p>
+<ul>
+<li>字母和数字（a-z, A-Z, 0-9）</li>
+<li>下划线（<code>_</code>）</li>
+<li>斜杠（<code>/</code>）</li>
+<li>连字符（<code>-</code>）</li>
+<li>点号（<code>.</code>）</li>
+<li>方括号（<code>[</code>, <code>]</code>）- 用于数组索引</li>
+<li>星号（<code>*</code>）- 用于通配符</li>
+</ul>
+<h3 id="示例"><a class="header" href="#示例">示例</a></h3>
+<pre><code class="language-wpl"># 简单字段名
+@user_id
+@username
+@ip_address
+
+# 路径式字段名
+@process/name
+@parent/process/pid
+@network/protocol
+
+# 数组索引
+@items[0]
+@data[5]/value
+@process[0]/path
+
+# 通配符
+@items[*]
+@logs/*/message
+</code></pre>
+<h2 id="单引号字段引用"><a class="header" href="#单引号字段引用">单引号字段引用</a></h2>
+<h3 id="何时使用"><a class="header" href="#何时使用">何时使用</a></h3>
+<p>当字段名包含以下特殊字符时，必须使用单引号：</p>
+<ul>
+<li><code>@</code> 符号</li>
+<li>空格</li>
+<li>逗号（<code>,</code>）</li>
+<li>等号（<code>=</code>）</li>
+<li>括号（<code>(</code>, <code>)</code>）</li>
+<li>尖括号（<code>&lt;</code>, <code>&gt;</code>）</li>
+<li>井号（<code>#</code>）</li>
+<li>其他非标准字符</li>
+</ul>
+<h3 id="基本语法-1"><a class="header" href="#基本语法-1">基本语法</a></h3>
+<pre><code class="language-wpl">@'field name with spaces'
+@'@field-with-at-sign'
+@'field,with,commas'
+</code></pre>
+<h3 id="转义字符"><a class="header" href="#转义字符">转义字符</a></h3>
+<p><strong>双引号字符串</strong>支持以下转义序列：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>转义序列</th><th>含义</th><th>示例</th></tr>
+</thead>
+<tbody>
+<tr><td><code>\"</code></td><td>双引号</td><td><code>@"field\"name"</code></td></tr>
+<tr><td><code>\\</code></td><td>反斜杠</td><td><code>@"path\\to\\file"</code></td></tr>
+<tr><td><code>\n</code></td><td>换行符</td><td><code>@"multi\nline"</code></td></tr>
+<tr><td><code>\t</code></td><td>制表符</td><td><code>@"tab\tseparated"</code></td></tr>
+<tr><td><code>\r</code></td><td>回车符</td><td><code>@"carriage\rreturn"</code></td></tr>
+<tr><td><code>\xHH</code></td><td>十六进制字节</td><td><code>@"hex\x41value"</code></td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>单引号字符串</strong>是<strong>原始字符串</strong>（raw string）：</p>
+<ul>
+<li><strong>只支持</strong> <code>\'</code> 转义单引号本身</li>
+<li>其他所有反斜杠 <code>\</code> 都按字面意思处理</li>
+<li><code>\n</code>、<code>\t</code>、<code>\\</code> 等不会被转义</li>
+</ul>
+<h3 id="示例-1"><a class="header" href="#示例-1">示例</a></h3>
+<pre><code class="language-wpl"># 双引号 - 支持完整转义
+@"field\"name"      # 结果: field"name
+@"path\\file"       # 结果: path\file
+@"line\nbreak"      # 结果: line换行break
+
+# 单引号 - 原始字符串，只转义 \'
+@'field\'s name'    # 结果: field's name
+@'path\to\file'     # 结果: path\to\file (字面反斜杠)
+@'raw\nstring'      # 结果: raw\nstring (字面 \n)
+@'C:\Users\test'    # 结果: C:\Users\test (Windows 路径)
+</code></pre>
+<p><strong>推荐使用场景</strong>：</p>
+<ul>
+<li><strong>单引号</strong>：Windows 路径、Unix 路径、正则表达式、包含反斜杠的字符串</li>
+<li><strong>双引号</strong>：需要换行符、制表符等转义字符的场景</li>
+</ul>
+<h2 id="实际应用场景"><a class="header" href="#实际应用场景">实际应用场景</a></h2>
+<h3 id="场景-1解析-elasticsearch-日志"><a class="header" href="#场景-1解析-elasticsearch-日志">场景 1：解析 Elasticsearch 日志</a></h3>
+<pre><code class="language-wpl"># Elasticsearch 字段通常使用 @ 前缀
+rule elasticsearch_log {
+    json(
+        @'@timestamp': timestamp,
+        @'@version': version,
+        @message: msg,
+        @'log.level': level,
+        @'event.action': action
+    )
+}
+</code></pre>
+<h3 id="场景-2解析带空格的字段名"><a class="header" href="#场景-2解析带空格的字段名">场景 2：解析带空格的字段名</a></h3>
+<pre><code class="language-wpl"># CSV 或其他格式可能包含带空格的列名
+rule csv_with_spaces {
+    (
+        @'First Name': first_name,
+        @'Last Name': last_name,
+        @'Email Address': email,
+        @'Phone Number': phone
+    )
+}
+</code></pre>
+<h3 id="场景-3解析嵌套-json-字段"><a class="header" href="#场景-3解析嵌套-json-字段">场景 3：解析嵌套 JSON 字段</a></h3>
+<pre><code class="language-wpl"># JSON 字段路径包含特殊字符
+rule nested_json {
+    json(
+        @'user.id': uid,
+        @'user.profile.name': username,
+        @'event#metadata': metadata,
+        @'geo.location.lat': latitude,
+        @'geo.location.lon': longitude
+    )
+}
+</code></pre>
+<h3 id="场景-4处理-prometheus-指标"><a class="header" href="#场景-4处理-prometheus-指标">场景 4：处理 Prometheus 指标</a></h3>
+<pre><code class="language-wpl"># Prometheus 指标名称包含多种特殊字符
+rule prometheus_metrics {
+    (
+        @'http_requests_total{method="GET"}': get_requests,
+        @'http_requests_total{method="POST"}': post_requests,
+        @'process_cpu_seconds_total': cpu_usage
+    )
+}
+</code></pre>
+<h3 id="场景-5windows-事件日志"><a class="header" href="#场景-5windows-事件日志">场景 5：Windows 事件日志</a></h3>
+<pre><code class="language-wpl"># Windows 路径包含反斜杠
+rule windows_events {
+    json(
+        @'Event.System.Provider': provider,
+        @'Event.EventData.CommandLine': cmdline,
+        @'Process\\Path': process_path
+    )
+}
+</code></pre>
+<h3 id="场景-6混合使用普通和特殊字段名"><a class="header" href="#场景-6混合使用普通和特殊字段名">场景 6：混合使用普通和特殊字段名</a></h3>
+<pre><code class="language-wpl">rule mixed_fields {
+    json(
+        # 普通字段名
+        @username: user,
+        @ip_address: ip,
+        @timestamp: time,
+
+        # 特殊字段名
+        @'@client-ip': client,
+        @'user.email': email,
+        @'event#type': event_type,
+        @'log level': level
+    )
+}
+</code></pre>
+<h3 id="场景-7kv-解析带特殊字段"><a class="header" href="#场景-7kv-解析带特殊字段">场景 7：KV 解析带特殊字段</a></h3>
+<pre><code class="language-wpl"># 键值对中包含特殊字符的键
+rule kv_special_keys {
+    kv(
+        @'@timestamp': time,
+        @'event-type': type,
+        @'user/name': username,
+        @'session#id': session
+    )
+}
+</code></pre>
+<h2 id="take-函数引号支持"><a class="header" href="#take-函数引号支持">take() 函数引号支持</a></h2>
+<p><code>take()</code> 函数用于选择当前字段，同样支持单引号和双引号来处理包含特殊字符的字段名。</p>
+<h3 id="基本语法-2"><a class="header" href="#基本语法-2">基本语法</a></h3>
+<pre><code class="language-wpl"># 普通字段名
+| take(field_name)
+
+# 双引号字段名
+| take("@special-field")
+
+# 单引号字段名
+| take('@special-field')
+</code></pre>
+<h3 id="使用场景"><a class="header" href="#使用场景">使用场景</a></h3>
+<h4 id="1-选择带特殊字符的字段"><a class="header" href="#1-选择带特殊字符的字段">1. 选择带特殊字符的字段</a></h4>
+<pre><code class="language-wpl">rule select_special_fields {
+    # 双引号
+    | take("@timestamp")
+    | take("field with spaces")
+    | take("field,with,commas")
+
+    # 单引号
+    | take('@client-ip')
+    | take('event.type')
+    | take('log/level')
+}
+</code></pre>
+<h4 id="2-转义字符支持"><a class="header" href="#2-转义字符支持">2. 转义字符支持</a></h4>
+<pre><code class="language-wpl">rule escaped_fields {
+    # 双引号内转义
+    | take("field\"name")
+    | take("path\\with\\backslash")
+
+    # 单引号内转义
+    | take('field\'s name')
+    | take('path\\to\\file')
+}
+</code></pre>
+<h4 id="3-实际应用"><a class="header" href="#3-实际应用">3. 实际应用</a></h4>
+<pre><code class="language-wpl"># Elasticsearch 日志处理
+rule elasticsearch {
+    | take("@timestamp")
+    | take("@version")
+    | take("log.level")
+}
+
+# CSV 数据处理
+rule csv_processing {
+    | take('First Name')
+    | take('Last Name')
+    | take('Email Address')
+}
+
+# 混合使用
+rule mixed_usage {
+    | take(user_id)          # 普通字段
+    | take("@timestamp")     # 双引号
+    | take('event.type')     # 单引号
+}
+</code></pre>
+<h3 id="支持的转义字符"><a class="header" href="#支持的转义字符">支持的转义字符</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>转义序列</th><th>含义</th><th>双引号</th><th>单引号</th></tr>
+</thead>
+<tbody>
+<tr><td><code>\"</code></td><td>双引号</td><td>✅</td><td>❌ (字面 <code>\"</code>)</td></tr>
+<tr><td><code>\'</code></td><td>单引号</td><td>❌ (字面 <code>\'</code>)</td><td>✅</td></tr>
+<tr><td><code>\\</code></td><td>反斜杠</td><td>✅</td><td>❌ (字面 <code>\\</code>)</td></tr>
+<tr><td><code>\n</code></td><td>换行符</td><td>✅</td><td>❌ (字面 <code>\n</code>)</td></tr>
+<tr><td><code>\t</code></td><td>制表符</td><td>✅</td><td>❌ (字面 <code>\t</code>)</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>说明</strong>：</p>
+<ul>
+<li><strong>双引号</strong>：支持完整转义，类似 C/Java/JavaScript 字符串</li>
+<li><strong>单引号</strong>：原始字符串（raw string），只支持 <code>\'</code> 转义单引号本身，其他反斜杠都是字面字符</li>
+</ul>
+<h3 id="最佳实践"><a class="header" href="#最佳实践">最佳实践</a></h3>
+<pre><code class="language-wpl"># ✅ 推荐 - 优先使用不带引号
+| take(field_name)
+
+# ✅ 推荐 - 特殊字符使用引号
+| take("@timestamp")
+| take('@client-ip')
+
+# ✅ 推荐 - 根据内容选择引号类型
+| take("field with spaces")         # 双引号，适合简单字符串
+| take('it\'s a field')              # 单引号，只需转义 \'
+| take('C:\Windows\System32')       # 单引号，Windows 路径
+| take("line\nbreak")                # 双引号，需要换行符转义
+</code></pre>
+<h2 id="字段类型指定"><a class="header" href="#字段类型指定">字段类型指定</a></h2>
+<p>可以为字段指定数据类型：</p>
+<pre><code class="language-wpl"># 不带引号的字段
+ip@source_ip: src
+digit@port: port_num
+time@timestamp: time
+
+# 带引号的字段
+ip@'@client-ip': client
+digit@'user.age': age
+chars@'event message': msg
+</code></pre>
+<p>支持的类型包括：</p>
+<ul>
+<li><code>ip</code> - IP 地址</li>
+<li><code>digit</code> - 整数</li>
+<li><code>float</code> - 浮点数</li>
+<li><code>time</code> - 时间戳</li>
+<li><code>chars</code> - 字符串</li>
+<li><code>json</code> - JSON 对象</li>
+<li><code>kv</code> - 键值对</li>
+<li>等等</li>
+</ul>
+<h2 id="字段别名"><a class="header" href="#字段别名">字段别名</a></h2>
+<p>使用 <code>:</code> 为字段指定别名：</p>
+<pre><code class="language-wpl"># 普通字段别名
+@source_ip: src
+@destination_ip: dst
+@user_id: uid
+
+# 特殊字段别名
+@'@timestamp': time
+@'event.type': event
+@'log/level': level
+
+# 带类型和别名
+ip@'@client-ip': client_ip
+digit@'user.age': age
+chars@'user name': username
+</code></pre>
+<h2 id="使用限制"><a class="header" href="#使用限制">使用限制</a></h2>
+<h3 id="1-不支持双引号"><a class="header" href="#1-不支持双引号">1. 不支持双引号</a></h3>
+<p>只支持单引号，不支持双引号：</p>
+<pre><code class="language-wpl"># ✅ 正确
+@'@field-name'
+
+# ❌ 错误
+@"@field-name"
+</code></pre>
+<h3 id="2-转义字符限制"><a class="header" href="#2-转义字符限制">2. 转义字符限制</a></h3>
+<p>转义字符只在单引号字符串内有效：</p>
+<pre><code class="language-wpl"># ✅ 正确 - 单引号内转义
+@'user\'s name'
+
+# ❌ 错误 - 普通字段名不支持转义
+@user\'s_name
+</code></pre>
+<h3 id="3-空字段名"><a class="header" href="#3-空字段名">3. 空字段名</a></h3>
+<p>字段名不能为空：</p>
+<pre><code class="language-wpl"># ❌ 错误
+@''
+
+# ✅ 正确
+@'_'  # 使用下划线作为字段名
+</code></pre>
+<h3 id="4-嵌套引用"><a class="header" href="#4-嵌套引用">4. 嵌套引用</a></h3>
+<p>单引号不支持嵌套：</p>
+<pre><code class="language-wpl"># ❌ 错误
+@'field\'nested\''
+
+# ✅ 正确 - 使用转义
+@'field\'nested'
+</code></pre>
+<h2 id="性能说明"><a class="header" href="#性能说明">性能说明</a></h2>
+<h3 id="解析性能"><a class="header" href="#解析性能">解析性能</a></h3>
+<ul>
+<li>
+<p><strong>普通字段名</strong>：零拷贝，性能最优</p>
+<pre><code class="language-wpl">@field_name  # 直接引用，无需分配
+</code></pre>
+</li>
+<li>
+<p><strong>单引号字段名</strong>：需要解码转义字符</p>
+<pre><code class="language-wpl">@'@field'    # 无转义字符，性能接近普通字段
+@'field\'s'  # 有转义字符，需要额外处理
+</code></pre>
+</li>
+</ul>
+<h3 id="性能对比"><a class="header" href="#性能对比">性能对比</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>字段名类型</th><th>解析时间</th><th>内存分配</th><th>推荐场景</th></tr>
+</thead>
+<tbody>
+<tr><td>普通字段名</td><td>~10ns</td><td>零拷贝</td><td>优先使用</td></tr>
+<tr><td>单引号（无转义）</td><td>~15ns</td><td>一次分配</td><td>特殊字符</td></tr>
+<tr><td>单引号（有转义）</td><td>~30ns</td><td>一次分配</td><td>必要时使用</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="优化建议"><a class="header" href="#优化建议">优化建议</a></h3>
+<ol>
+<li>
+<p><strong>优先使用普通字段名</strong></p>
+<pre><code class="language-wpl"># ✅ 推荐
+@user_id
+@timestamp
+
+# ⚠️ 仅在必要时使用
+@'@timestamp'
+</code></pre>
+</li>
+<li>
+<p><strong>避免不必要的转义</strong></p>
+<pre><code class="language-wpl"># ✅ 推荐
+@'simple-field'
+
+# ⚠️ 避免
+@'field\twith\tescape'  # 仅在确实需要制表符时使用
+</code></pre>
+</li>
+<li>
+<p><strong>批量操作时考虑性能</strong></p>
+<pre><code class="language-wpl"># 大量字段解析时，优先使用普通字段名
+json(
+    @user_id,      # 快
+    @username,     # 快
+    @'@metadata'   # 稍慢
+)
+</code></pre>
+</li>
+</ol>
+<h2 id="错误处理"><a class="header" href="#错误处理">错误处理</a></h2>
+<h3 id="常见错误"><a class="header" href="#常见错误">常见错误</a></h3>
+<h4 id="1-字段名包含特殊字符但未使用引号"><a class="header" href="#1-字段名包含特殊字符但未使用引号">1. 字段名包含特殊字符但未使用引号</a></h4>
+<pre><code>错误: 解析失败，意外的字符 '@'
+原因: 字段名包含 @ 但未使用单引号
+解决: @'@field-name'
+</code></pre>
+<h4 id="2-单引号未闭合"><a class="header" href="#2-单引号未闭合">2. 单引号未闭合</a></h4>
+<pre><code>错误: 字符串未闭合
+原因: 缺少结束的单引号
+解决: 确保引号成对出现 @'field-name'
+</code></pre>
+<h4 id="3-转义字符错误"><a class="header" href="#3-转义字符错误">3. 转义字符错误</a></h4>
+<pre><code>错误: 无效的转义序列
+原因: 使用了不支持的转义字符
+解决: 只使用支持的转义序列 \', \\, \n, \t, \r, \xHH
+</code></pre>
+<h4 id="4-空字段名"><a class="header" href="#4-空字段名">4. 空字段名</a></h4>
+<pre><code>错误: 字段名不能为空
+原因: @'' 或 @ 后无内容
+解决: 提供有效的字段名
+</code></pre>
+<h2 id="最佳实践-1"><a class="header" href="#最佳实践-1">最佳实践</a></h2>
+<h3 id="1-命名规范"><a class="header" href="#1-命名规范">1. 命名规范</a></h3>
+<pre><code class="language-wpl"># ✅ 推荐 - 使用下划线分隔
+@user_id
+@client_ip
+@event_timestamp
+
+# ⚠️ 避免 - 除非必要
+@'user id'
+@'client-ip'
+</code></pre>
+<h3 id="2-保持一致性"><a class="header" href="#2-保持一致性">2. 保持一致性</a></h3>
+<pre><code class="language-wpl"># ✅ 推荐 - 统一风格
+rule consistent_naming {
+    json(
+        @user_id,
+        @user_name,
+        @user_email
+    )
+}
+
+# ⚠️ 避免 - 混合风格
+rule inconsistent_naming {
+    json(
+        @user_id,
+        @'user name',
+        @userEmail
+    )
+}
+</code></pre>
+<h3 id="3-文档化特殊字段"><a class="header" href="#3-文档化特殊字段">3. 文档化特殊字段</a></h3>
+<pre><code class="language-wpl"># ✅ 推荐 - 添加注释说明
+rule documented {
+    json(
+        # Elasticsearch 的 @timestamp 字段
+        @'@timestamp': time,
+
+        # 日志级别（包含空格）
+        @'log level': level
+    )
+}
+</code></pre>
+<h3 id="4-使用类型前缀"><a class="header" href="#4-使用类型前缀">4. 使用类型前缀</a></h3>
+<pre><code class="language-wpl"># ✅ 推荐 - 明确指定类型
+time@'@timestamp': time
+ip@'@client-ip': client
+chars@'event message': msg
+</code></pre>
+<h3 id="5-别名使用规范"><a class="header" href="#5-别名使用规范">5. 别名使用规范</a></h3>
+<pre><code class="language-wpl"># ✅ 推荐 - 使用简短的别名
+@'very.long.nested.field.name': short_name
+@'@timestamp': time
+@'event.action': action
+
+# ⚠️ 避免 - 别名过长
+@'@timestamp': timestamp_value_from_elasticsearch
+</code></pre>
+<h2 id="调试技巧"><a class="header" href="#调试技巧">调试技巧</a></h2>
+<h3 id="1-逐步验证字段引用"><a class="header" href="#1-逐步验证字段引用">1. 逐步验证字段引用</a></h3>
+<pre><code class="language-wpl"># 第一步：验证单个字段
+rule test_single {
+    json(@'@timestamp')
+}
+
+# 第二步：添加更多字段
+rule test_multiple {
+    json(
+        @'@timestamp',
+        @'event.type'
+    )
+}
+
+# 第三步：添加类型和别名
+rule test_complete {
+    time@'@timestamp': time,
+    chars@'event.type': event
+}
+</code></pre>
+<h3 id="2-检查字段名拼写"><a class="header" href="#2-检查字段名拼写">2. 检查字段名拼写</a></h3>
+<pre><code class="language-bash"># 使用 JSON 工具查看原始字段名
+echo '{"@timestamp": "2024-01-01"}' | jq 'keys'
+
+# 输出: ["@timestamp"]
+# WPL 中使用: @'@timestamp'
+</code></pre>
+<h3 id="3-测试转义字符"><a class="header" href="#3-测试转义字符">3. 测试转义字符</a></h3>
+<pre><code class="language-wpl"># 逐个测试转义字符
+@'test\'quote'      # 单引号
+@'test\\backslash'  # 反斜杠
+@'test\nnewline'    # 换行符
+</code></pre>
+<h3 id="4-使用调试模式"><a class="header" href="#4-使用调试模式">4. 使用调试模式</a></h3>
+<pre><code class="language-bash"># 使用 WP-Motor 调试模式查看解析结果
+wp-motor --debug rule.wpl &lt; test.log
+</code></pre>
+<h2 id="常见问题-faq"><a class="header" href="#常见问题-faq">常见问题 (FAQ)</a></h2>
+<h3 id="q1-何时必须使用单引号"><a class="header" href="#q1-何时必须使用单引号">Q1: 何时必须使用单引号？</a></h3>
+<p>当字段名包含以下字符时必须使用单引号：</p>
+<ul>
+<li><code>@</code>、空格、逗号、等号、括号、尖括号、井号等特殊字符</li>
+</ul>
+<h3 id="q2-单引号和双引号有什么区别"><a class="header" href="#q2-单引号和双引号有什么区别">Q2: 单引号和双引号有什么区别？</a></h3>
+<p>WPL 只支持单引号 <code>'</code> 用于字段名引用。双引号 <code>"</code> 用于其他语法元素（如作用域标记）。</p>
+<h3 id="q3-如何在字段名中包含单引号"><a class="header" href="#q3-如何在字段名中包含单引号">Q3: 如何在字段名中包含单引号？</a></h3>
+<p>使用反斜杠转义：<code>@'user\'s name'</code></p>
+<h3 id="q4-性能影响有多大"><a class="header" href="#q4-性能影响有多大">Q4: 性能影响有多大？</a></h3>
+<p>对于大多数应用场景，性能影响可忽略不计（纳秒级差异）。只在极高性能要求时才需要考虑。</p>
+<h3 id="q5-可以使用变量作为字段名吗"><a class="header" href="#q5-可以使用变量作为字段名吗">Q5: 可以使用变量作为字段名吗？</a></h3>
+<p>不可以，字段名必须是静态的字面量。</p>
+<h3 id="q6-如何处理动态字段名"><a class="header" href="#q6-如何处理动态字段名">Q6: 如何处理动态字段名？</a></h3>
+<p>使用通配符或字段组合：</p>
+<pre><code class="language-wpl">@items[*]/name     # 匹配所有数组元素的 name 字段
+@'prefix*'         # 匹配以 prefix 开头的字段（如果支持）
+</code></pre>
+<h3 id="q7-支持-unicode-字符吗"><a class="header" href="#q7-支持-unicode-字符吗">Q7: 支持 Unicode 字符吗？</a></h3>
+<p>支持，字段名可以包含任意 Unicode 字符：</p>
+<pre><code class="language-wpl">@'用户名称'
+@'événement'
+@'フィールド'
+</code></pre>
+<h2 id="更多资源"><a class="header" href="#更多资源">更多资源</a></h2>
+<ul>
+<li><strong>分隔符使用指南</strong>: <code>docs/usage/wpl/separator.md</code></li>
+<li><strong>chars_replace 使用指南</strong>: <code>docs/usage/wpl/chars_replace.md</code></li>
+<li><strong>WPL Field Function 开发指南</strong>: <code>docs/guide/wpl_field_func_development_guide.md</code></li>
+<li><strong>源代码</strong>:
+<ul>
+<li><code>crates/wp-lang/src/parser/utils.rs</code> (take_ref_path_or_quoted)</li>
+<li><code>crates/wp-lang/src/parser/wpl_field.rs</code> (wpl_id_field)</li>
+</ul>
+</li>
+</ul>
+<h2 id="版本历史"><a class="header" href="#版本历史">版本历史</a></h2>
+<ul>
+<li><strong>1.11.0</strong> (2026-01-29)
+<ul>
+<li>新增单引号字段名支持（<code>@'@special-field'</code>）</li>
+<li>新增 <code>take()</code> 函数单引号和双引号支持</li>
+<li>支持 <code>take("@field")</code> 和 <code>take('@field')</code> 语法</li>
+<li>添加转义字符支持（<code>\"</code>, <code>\'</code>, <code>\\</code>, <code>\n</code>, <code>\t</code>）</li>
+<li>添加完整的测试覆盖</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p><strong>提示</strong>: 优先使用普通字段名以获得最佳性能，仅在字段名包含特殊字符时使用引号。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../../10-user/03-wpl/functions/function_index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../../10-user/03-wpl/functions/separator.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../../10-user/03-wpl/functions/function_index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../../10-user/03-wpl/functions/separator.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../../mark-09e88c2c.min.js"></script>
+        <script src="../../../searcher-c2a407aa.js"></script>
+
+        <script src="../../../clipboard-1626706a.min.js"></script>
+        <script src="../../../highlight-abc7f01d.js"></script>
+        <script src="../../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../../../../theme/lang-switch.js"></script>
+        <script src="../../../mermaid-eefea253.min.js"></script>
+        <script src="../../../mermaid-init-ccf746f1.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

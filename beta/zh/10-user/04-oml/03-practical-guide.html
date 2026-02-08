@@ -1,0 +1,756 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>实战指南 - Warp Parse 文档</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../../../theme/lang-switch.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../searchindex-b509f17a.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-ca145d02.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Warp Parse 文档</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wp-labs/warp-parse" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="oml-实战指南"><a class="header" href="#oml-实战指南">OML 实战指南</a></h1>
+<p>按任务导向组织的实用指南，帮助你快速找到解决方案。</p>
+<hr>
+<h2 id="-任务导航"><a class="header" href="#-任务导航">📚 任务导航</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>任务类型</th><th>跳转</th></tr>
+</thead>
+<tbody>
+<tr><td><a href="#wpl-与-oml-关联">WPL 与 OML 关联</a></td><td>理解关联机制、一对一/一对多关联</td></tr>
+<tr><td><a href="#数据提取">数据提取</a></td><td>字段提取的各种方式</td></tr>
+<tr><td><a href="#数据转换">数据转换</a></td><td>类型转换、时间、URL、Base64 等</td></tr>
+<tr><td><a href="#数据聚合">数据聚合</a></td><td>创建对象、数组</td></tr>
+<tr><td><a href="#条件处理">条件处理</a></td><td>状态码分类、端口识别、IP 范围等</td></tr>
+<tr><td><a href="#数据富化-sql-查询">数据富化</a></td><td>SQL 查询、多表关联</td></tr>
+<tr><td><a href="#复杂场景">复杂场景</a></td><td>Web 日志、系统监控完整处理</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="wpl-与-oml-关联"><a class="header" href="#wpl-与-oml-关联">WPL 与 OML 关联</a></h2>
+<h3 id="任务理解关联机制"><a class="header" href="#任务理解关联机制">任务：理解关联机制</a></h3>
+<p><strong>核心概念</strong>：OML 通过 <code>rule</code> 字段匹配 WPL 的 <code>package/rule</code> 路径来建立关联。</p>
+<p><strong>WPL 规则</strong>：</p>
+<pre><code class="language-wpl">package nginx {
+  rule access_log {
+    (ip:client_ip, time:timestamp, chars:request_uri, digit:status)
+  }
+}
+</code></pre>
+<p><strong>完整路径</strong>：<code>/nginx/access_log</code>（格式：<code>/package/rule</code>）</p>
+<p><strong>OML 配置</strong>：</p>
+<pre><code class="language-oml">name : nginx_processor
+rule : /nginx/access_log    # 匹配 WPL 的 package/rule
+---
+client : ip = read(client_ip) ;
+time : time = read(timestamp) ;
+uri = read(request_uri) ;
+status : digit = read(status) ;
+</code></pre>
+<p><strong>说明</strong>：只有 WPL rule 为 <code>/nginx/access_log</code> 的数据会被这个 OML 处理。</p>
+<hr>
+<h3 id="任务一对多关联通配符匹配"><a class="header" href="#任务一对多关联通配符匹配">任务：一对多关联（通配符匹配）</a></h3>
+<p><strong>场景</strong>：一个 WPL 规则可以被多个 OML 配置处理</p>
+<p><strong>WPL 规则</strong>：</p>
+<pre><code>package : nginx
+rule : access_log
+# 完整路径：/nginx/access_log
+</code></pre>
+<p><strong>OML 配置 1</strong>（基础处理）：</p>
+<pre><code class="language-oml">name : nginx_basic
+rule : /nginx/*    # 匹配所有 nginx 相关规则
+---
+timestamp : time = Now::time() ;
+source = chars(nginx) ;
+</code></pre>
+<p><strong>OML 配置 2</strong>（访问日志专用）：</p>
+<pre><code class="language-oml">name : nginx_access_detail
+rule : /nginx/access_log    # 精确匹配访问日志
+---
+user_id = read(user_id) ;
+uri = read(request_uri) ;
+status : digit = read(status) ;
+</code></pre>
+<p><strong>说明</strong>：同一条数据可以被多个 OML 配置处理（如果在不同的 Sink Group 中）。</p>
+<hr>
+<h3 id="任务通配符模式匹配"><a class="header" href="#任务通配符模式匹配">任务：通配符模式匹配</a></h3>
+<p><strong>场景</strong>：使用通配符处理多种类型的数据</p>
+<p><strong>支持的通配符模式</strong>：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>OML rule</th><th>匹配的 WPL rule</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><code>/nginx/*</code></td><td><code>/nginx/access_log</code><br /><code>/nginx/error_log</code></td><td>前缀匹配</td></tr>
+<tr><td><code>*/access_log</code></td><td><code>/nginx/access_log</code><br /><code>/apache/access_log</code></td><td>后缀匹配</td></tr>
+<tr><td><code>/nginx/access*</code></td><td><code>/nginx/access_log</code><br /><code>/nginx/access_v2</code></td><td>部分匹配</td></tr>
+<tr><td><code>*</code></td><td>任意规则</td><td>全匹配</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>示例</strong>：处理所有访问日志</p>
+<pre><code class="language-oml">name : all_access_logs
+rule : */access_log    # 匹配所有 access_log
+---
+timestamp : time = Now::time() ;
+uri = read(request_uri) ;
+status : digit = read(status) ;
+</code></pre>
+<hr>
+<h3 id="任务多个-wpl-规则共享一个-oml"><a class="header" href="#任务多个-wpl-规则共享一个-oml">任务：多个 WPL 规则共享一个 OML</a></h3>
+<p><strong>场景</strong>：不同来源的数据使用相同的转换逻辑</p>
+<p><strong>WPL 规则 1</strong>：</p>
+<pre><code>package : nginx
+rule : access_log
+# 路径：/nginx/access_log
+</code></pre>
+<p><strong>WPL 规则 2</strong>：</p>
+<pre><code>package : apache
+rule : access_log
+# 路径：/apache/access_log
+</code></pre>
+<p><strong>共享的 OML 配置</strong>：</p>
+<pre><code class="language-oml">name : web_access_handler
+rule : */access_log    # 匹配所有 access_log
+---
+# 统一的字段映射
+timestamp : time = read(time) ;
+client_ip : ip = read(option:[remote_addr, client_ip]) ;
+uri = read(option:[request_uri, request]) ;
+status : digit = read(option:[status, status_code]) ;
+
+# 统一的输出格式
+access : obj = object {
+    time : time = read(timestamp) ;
+    ip : ip = read(client_ip) ;
+    uri : chars = read(uri) ;
+    status : digit = read(status) ;
+} ;
+</code></pre>
+<p><strong>说明</strong>：使用 <code>option</code> 参数处理不同来源的字段名差异。</p>
+<hr>
+<h2 id="数据提取"><a class="header" href="#数据提取">数据提取</a></h2>
+<h3 id="综合示例字段提取的各种方式"><a class="header" href="#综合示例字段提取的各种方式">综合示例：字段提取的各种方式</a></h3>
+<pre><code class="language-oml">name : data_extraction
+rule : /app/data
+---
+# 1. 简单提取
+user_id = read(user_id) ;
+
+# 2. 提供默认值
+country = read(country) { _ : chars(CN) } ;
+
+# 3. 按优先级尝试多个字段
+user_id = read(option:[id, user_id, uid]) ;
+
+# 4. 提取嵌套数据
+username = read(/user/info/name) ;
+
+# 5. 批量提取匹配模式
+cpu_metrics = collect read(keys:[cpu_*]) ;
+</code></pre>
+<hr>
+<h2 id="数据转换"><a class="header" href="#数据转换">数据转换</a></h2>
+<h3 id="综合示例常用类型转换"><a class="header" href="#综合示例常用类型转换">综合示例：常用类型转换</a></h3>
+<pre><code class="language-oml">name : type_conversion
+rule : /app/data
+---
+# 字符串转各种类型
+port : digit = read(port) ;                    # 转整数
+ip : ip = read(ip_addr) ;                      # 转 IP
+cpu : float = read(cpu_usage) ;                # 转浮点数
+active : bool = read(is_active) ;              # 转布尔值
+
+# 时间转时间戳
+ts_sec = read(event_time) | Time::to_ts_zone(0, s) ;    # 秒
+ts_ms = read(event_time) | Time::to_ts_zone(8, ms) ;    # 毫秒（UTC+8）
+
+# URL 解析
+domain = read(url) | url(domain) ;
+path = read(url) | url(path) ;
+params = read(url) | url(params) ;
+
+# Base64 编解码
+decoded = read(encoded) | base64_decode(Utf8) ;
+encoded = read(message) | base64_encode ;
+
+# IP 转整数
+ip_int = read(src_ip) | ip4_to_int ;
+</code></pre>
+<hr>
+<h2 id="数据聚合"><a class="header" href="#数据聚合">数据聚合</a></h2>
+<h3 id="任务创建对象"><a class="header" href="#任务创建对象">任务：创建对象</a></h3>
+<pre><code class="language-oml">name : create_object
+rule : /system/metrics
+---
+system_info : obj = object {
+    host : chars = read(hostname) ;
+    cpu : float = read(cpu_usage) ;
+    memory : float = read(mem_usage) ;
+} ;
+</code></pre>
+<hr>
+<h3 id="任务创建嵌套对象"><a class="header" href="#任务创建嵌套对象">任务：创建嵌套对象</a></h3>
+<pre><code class="language-oml">name : nested_object
+rule : /app/deployment
+---
+deployment : obj = object {
+    application : obj = object {
+        name : chars = read(app_name) ;
+        version : chars = read(version) ;
+    } ;
+    infrastructure : obj = object {
+        region : chars = read(region) ;
+        instance_id : chars = read(instance_id) ;
+    } ;
+} ;
+</code></pre>
+<hr>
+<h3 id="任务创建数组"><a class="header" href="#任务创建数组">任务：创建数组</a></h3>
+<pre><code class="language-oml">name : create_array
+rule : /network/ports
+---
+# 收集多个端口
+ports : array = collect read(keys:[sport, dport]) ;
+
+# 转换为 JSON 字符串
+ports_json = read(ports) | to_json ;
+
+# 获取数组元素
+first_port = read(ports) | nth(0) ;
+</code></pre>
+<hr>
+<h2 id="条件处理"><a class="header" href="#条件处理">条件处理</a></h2>
+<h3 id="任务状态码分类"><a class="header" href="#任务状态码分类">任务：状态码分类</a></h3>
+<pre><code class="language-oml">name : status_classification
+rule : /http/response
+---
+status_level = match read(status_code) {
+    in (digit(200), digit(299)) =&gt; chars(success) ;
+    in (digit(400), digit(499)) =&gt; chars(client_error) ;
+    in (digit(500), digit(599)) =&gt; chars(server_error) ;
+    _ =&gt; chars(unknown) ;
+} ;
+</code></pre>
+<hr>
+<h3 id="任务端口服务识别"><a class="header" href="#任务端口服务识别">任务：端口服务识别</a></h3>
+<pre><code class="language-oml">name : port_service
+rule : /network/traffic
+---
+service = match read(port) {
+    digit(22) =&gt; chars(SSH) ;
+    digit(80) =&gt; chars(HTTP) ;
+    digit(443) =&gt; chars(HTTPS) ;
+    digit(3306) =&gt; chars(MySQL) ;
+    _ =&gt; chars(Unknown) ;
+} ;
+</code></pre>
+<hr>
+<h3 id="任务ip-地址范围匹配"><a class="header" href="#任务ip-地址范围匹配">任务：IP 地址范围匹配</a></h3>
+<pre><code class="language-oml">name : ip_zone_match
+rule : /network/connection
+---
+zone = match read(src_ip) {
+    in (ip(10.0.0.0), ip(10.255.255.255)) =&gt; chars(Private) ;
+    in (ip(172.16.0.0), ip(172.31.255.255)) =&gt; chars(Private) ;
+    in (ip(192.168.0.0), ip(192.168.255.255)) =&gt; chars(Private) ;
+    _ =&gt; chars(Public) ;
+} ;
+</code></pre>
+<hr>
+<h3 id="任务多条件组合判断"><a class="header" href="#任务多条件组合判断">任务：多条件组合判断</a></h3>
+<pre><code class="language-oml">name : multi_condition
+rule : /firewall/rule
+---
+traffic_type = match (read(protocol), read(port)) {
+    (chars(tcp), digit(22)) =&gt; chars(SSH) ;
+    (chars(tcp), digit(443)) =&gt; chars(HTTPS) ;
+    (chars(udp), digit(53)) =&gt; chars(DNS) ;
+    _ =&gt; chars(Other) ;
+} ;
+</code></pre>
+<hr>
+<h2 id="数据富化sql-查询"><a class="header" href="#数据富化sql-查询">数据富化（SQL 查询）</a></h2>
+<h3 id="任务用户信息查询"><a class="header" href="#任务用户信息查询">任务：用户信息查询</a></h3>
+<p><strong>场景</strong>：根据 user_id 查询用户详细信息</p>
+<p><strong>输入</strong>：</p>
+<pre><code>user_id = "1001"
+</code></pre>
+<p><strong>数据库表 (users)</strong>：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>id</th><th>name</th><th>email</th><th>department</th></tr>
+</thead>
+<tbody>
+<tr><td>1001</td><td>张三</td><td>zhangsan@example.com</td><td>研发部</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>OML</strong>：</p>
+<pre><code class="language-oml">name : user_lookup
+---
+user_name, user_email, user_dept =
+    select name, email, department
+    from users
+    where id = read(user_id) ;
+</code></pre>
+<p><strong>输出</strong>：</p>
+<pre><code>user_name = "张三"
+user_email = "zhangsan@example.com"
+user_dept = "研发部"
+</code></pre>
+<hr>
+<h3 id="任务ip-地理位置查询"><a class="header" href="#任务ip-地理位置查询">任务：IP 地理位置查询</a></h3>
+<p><strong>场景</strong>：查询 IP 地址的地理位置信息</p>
+<p><strong>输入</strong>：</p>
+<pre><code>src_ip = "203.0.113.1"
+</code></pre>
+<p><strong>数据库表 (ip_geo)</strong>：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>ip_start_int</th><th>ip_end_int</th><th>country</th><th>city</th></tr>
+</thead>
+<tbody>
+<tr><td>3405803776</td><td>3405804031</td><td>US</td><td>Los Angeles</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>OML</strong>：</p>
+<pre><code class="language-oml">name : ip_geolocation
+---
+# 先将 IP 转为整数
+ip_int = pipe read(src_ip) | ip4_to_int ;
+
+# 查询地理位置
+country, city =
+    select country, city
+    from ip_geo
+    where ip_start_int &lt;= read(ip_int)
+      and ip_end_int &gt;= read(ip_int) ;
+</code></pre>
+<p><strong>输出</strong>：</p>
+<pre><code>ip_int = 3405803777
+country = "US"
+city = "Los Angeles"
+</code></pre>
+<hr>
+<h3 id="任务多表关联查询"><a class="header" href="#任务多表关联查询">任务：多表关联查询</a></h3>
+<p><strong>场景</strong>：通过多次查询关联多个表的数据</p>
+<p><strong>输入</strong>：</p>
+<pre><code>order_id = "ORD-2024-001"
+</code></pre>
+<p><strong>OML</strong>：</p>
+<pre><code class="language-oml">name : multi_table_lookup
+---
+# 第一步：查询订单信息
+user_id, amount =
+    select user_id, amount
+    from orders
+    where id = read(order_id) ;
+
+# 第二步：查询用户信息
+user_name, level =
+    select name, level
+    from users
+    where id = read(user_id) ;
+
+# 第三步：查询折扣信息
+discount =
+    select discount
+    from user_levels
+    where level = read(level) ;
+</code></pre>
+<p><strong>输出</strong>：</p>
+<pre><code>user_id = "U1001"
+amount = "199.99"
+user_name = "王五"
+level = "VIP"
+discount = "0.9"
+</code></pre>
+<hr>
+<h2 id="复杂场景"><a class="header" href="#复杂场景">复杂场景</a></h2>
+<h3 id="场景web-访问日志完整处理"><a class="header" href="#场景web-访问日志完整处理">场景：Web 访问日志完整处理</a></h3>
+<p><strong>任务</strong>：处理 Web 访问日志，包含字段提取、类型转换、条件判断、数据聚合</p>
+<p><strong>输入</strong>：</p>
+<pre><code>timestamp = "15/Jan/2024:14:30:00 +0800"
+src_ip = "203.0.113.1"
+method = "GET"
+url = "/api/users?page=1"
+status = "200"
+size = "1234"
+</code></pre>
+<p><strong>OML</strong>：</p>
+<pre><code class="language-oml">name : web_log_processing
+---
+# 时间处理
+event_ts = pipe read(timestamp) | Time::to_ts_zone(0, s) ;
+
+# 字段提取
+source_ip : ip = read(src_ip) ;
+http_method = read(method) ;
+status_code : digit = read(status) ;
+response_size : digit = read(size) ;
+
+# URL 解析
+request_path = pipe read(url) | url(path) ;
+query_params = pipe read(url) | url(params) ;
+
+# 状态码分类
+status_category = match read(status_code) {
+    in (digit(200), digit(299)) =&gt; chars(Success) ;
+    in (digit(400), digit(499)) =&gt; chars(Client_Error) ;
+    in (digit(500), digit(599)) =&gt; chars(Server_Error) ;
+    _ =&gt; chars(Unknown) ;
+} ;
+
+# 数据聚合
+access_log : obj = object {
+    timestamp : digit = read(event_ts) ;
+    client : obj = object {
+        ip : ip = read(source_ip) ;
+    } ;
+    request : obj = object {
+        method : chars = read(http_method) ;
+        path : chars = read(request_path) ;
+        query : chars = read(query_params) ;
+    } ;
+    response : obj = object {
+        status : digit = read(status_code) ;
+        category : chars = read(status_category) ;
+        size : digit = read(response_size) ;
+    } ;
+} ;
+</code></pre>
+<p><strong>输出</strong>：</p>
+<pre><code class="language-json">{
+    "access_log": {
+        "timestamp": 1705318200,
+        "client": {
+            "ip": "203.0.113.1"
+        },
+        "request": {
+            "method": "GET",
+            "path": "/api/users",
+            "query": "page=1"
+        },
+        "response": {
+            "status": 200,
+            "category": "Success",
+            "size": 1234
+        }
+    }
+}
+</code></pre>
+<hr>
+<h3 id="场景系统监控数据处理"><a class="header" href="#场景系统监控数据处理">场景：系统监控数据处理</a></h3>
+<p><strong>任务</strong>：处理系统监控数据，包含数据提取、告警判断、嵌套对象创建</p>
+<p><strong>输入</strong>：</p>
+<pre><code>hostname = "prod-web-01"
+cpu_user = "65.5"
+cpu_system = "15.2"
+mem_used = "6144"
+mem_total = "8192"
+</code></pre>
+<p><strong>OML</strong>：</p>
+<pre><code class="language-oml">name : system_monitoring
+---
+# 时间戳
+event_time = Now::time() ;
+
+# 告警判断
+cpu_alert = match read(cpu_user) {
+    in (digit(0), digit(60)) =&gt; chars(Normal) ;
+    in (digit(60), digit(80)) =&gt; chars(Warning) ;
+    _ =&gt; chars(Critical) ;
+} ;
+
+mem_alert = match read(mem_used) {
+    in (digit(0), digit(6000)) =&gt; chars(Normal) ;
+    in (digit(6000), digit(7000)) =&gt; chars(Warning) ;
+    _ =&gt; chars(Critical) ;
+} ;
+
+# 数据聚合
+metrics : obj = object {
+    host : obj = object {
+        name : chars = read(hostname) ;
+        timestamp : time = read(event_time) ;
+    } ;
+    cpu : obj = object {
+        user : float = read(cpu_user) ;
+        system : float = read(cpu_system) ;
+        alert : chars = read(cpu_alert) ;
+    } ;
+    memory : obj = object {
+        used : digit = read(mem_used) ;
+        total : digit = read(mem_total) ;
+        alert : chars = read(mem_alert) ;
+    } ;
+} ;
+</code></pre>
+<p><strong>输出</strong>：</p>
+<pre><code class="language-json">{
+    "metrics": {
+        "host": {
+            "name": "prod-web-01",
+            "timestamp": "2024-01-15 14:30:00"
+        },
+        "cpu": {
+            "user": 65.5,
+            "system": 15.2,
+            "alert": "Warning"
+        },
+        "memory": {
+            "used": 6144,
+            "total": 8192,
+            "alert": "Warning"
+        }
+    }
+}
+</code></pre>
+<hr>
+<hr>
+<h2 id="下一步"><a class="header" href="#下一步">下一步</a></h2>
+<ul>
+<li><strong><a href="./07-complete-example.html">🌟 完整功能示例</a></strong> - 查看所有 OML 功能的完整演示</li>
+<li><a href="./04-functions-reference.html">函数参考</a> - 查阅所有可用函数</li>
+<li><a href="./02-core-concepts.html">核心概念</a> - 深入理解 OML 设计</li>
+<li><a href="./05-integration.html">集成指南</a> - 将 OML 集成到数据流</li>
+<li><a href="./06-grammar-reference.html">语法参考</a> - 查看完整语法定义</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../10-user/04-oml/02-core-concepts.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../10-user/04-oml/04-functions-reference.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../10-user/04-oml/02-core-concepts.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../10-user/04-oml/04-functions-reference.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../mark-09e88c2c.min.js"></script>
+        <script src="../../searcher-c2a407aa.js"></script>
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../../../theme/lang-switch.js"></script>
+        <script src="../../mermaid-eefea253.min.js"></script>
+        <script src="../../mermaid-init-ccf746f1.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

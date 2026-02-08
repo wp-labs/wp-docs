@@ -1,0 +1,1004 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>实战指南 - Warp Parse 文档</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../../../theme/lang-switch.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../searchindex-b509f17a.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-ca145d02.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Warp Parse 文档</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wp-labs/warp-parse" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="wpl-实战指南"><a class="header" href="#wpl-实战指南">WPL 实战指南</a></h1>
+<p>本文档采用任务导向的方式，帮助你快速找到解决方案。</p>
+<hr>
+<h2 id="-任务导航"><a class="header" href="#-任务导航">📚 任务导航</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>任务类型</th><th>跳转</th></tr>
+</thead>
+<tbody>
+<tr><td><a href="#1-解析-web-服务器日志">解析 Web 服务器日志</a></td><td>Nginx/Apache 访问日志、错误日志</td></tr>
+<tr><td><a href="#2-解析-json-数据">解析 JSON 数据</a></td><td>提取 JSON 字段、嵌套 JSON</td></tr>
+<tr><td><a href="#3-解析-kv-键值对">解析 KV 键值对</a></td><td>基础 KV、嵌套 KV、混合格式</td></tr>
+<tr><td><a href="#4-处理编码数据">处理编码数据</a></td><td>Base64、Hex 解码</td></tr>
+<tr><td><a href="#5-字段验证与过滤">字段验证与过滤</a></td><td>检查字段、IP 范围、端口范围</td></tr>
+<tr><td><a href="#6-复杂场景">复杂场景</a></td><td>可变字段、多格式、嵌套结构</td></tr>
+<tr><td><a href="#7-常见问题">常见问题</a></td><td>调试技巧、性能优化</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="-快速参考"><a class="header" href="#-快速参考">📋 快速参考</a></h2>
+<h3 id="常用模式速查"><a class="header" href="#常用模式速查">常用模式速查</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>模式</th><th>语法</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>可选字段</strong></td><td><code>opt(type:name)</code></td><td>字段可能不存在</td></tr>
+<tr><td><strong>重复字段</strong></td><td><code>some_of(type:name)</code></td><td>匹配 1 到多个</td></tr>
+<tr><td><strong>跳过字段</strong></td><td><code>_</code> 或 <code>n*_</code></td><td>跳过 1 个或 n 个字段</td></tr>
+<tr><td><strong>JSON 提取</strong></td><td><code>json(type@path:name)</code></td><td>提取 JSON 字段</td></tr>
+<tr><td><strong>KV 提取</strong></td><td><code>kvarr</code></td><td>解析键值对</td></tr>
+<tr><td><strong>Base64 解码</strong></td><td><code>|decode/base64|</code></td><td>预处理管道</td></tr>
+<tr><td><strong>字段验证</strong></td><td><code>type/check</code></td><td>验证字段值</td></tr>
+<tr><td><strong>择一匹配</strong></td><td><code>one_of(...)</code></td><td>多个模式选一个</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="常用类型速查"><a class="header" href="#常用类型速查">常用类型速查</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>类型</th><th>说明</th><th>示例</th></tr>
+</thead>
+<tbody>
+<tr><td><code>ip</code></td><td>IP 地址</td><td><code>192.168.1.1</code></td></tr>
+<tr><td><code>digit</code></td><td>整数</td><td><code>8080</code></td></tr>
+<tr><td><code>chars</code></td><td>字符串</td><td><code>hello</code></td></tr>
+<tr><td><code>time/clf</code></td><td>Apache 时间格式</td><td><code>[06/Aug/2019:12:12:19 +0800]</code></td></tr>
+<tr><td><code>http/request</code></td><td>HTTP 请求</td><td><code>GET /index.html HTTP/1.1</code></td></tr>
+<tr><td><code>json</code></td><td>JSON 数据</td><td><code>{"key":"value"}</code></td></tr>
+<tr><td><code>kvarr</code></td><td>键值对数组</td><td><code>key1=val1;key2=val2</code></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="-如何使用本指南"><a class="header" href="#-如何使用本指南">📖 如何使用本指南</a></h2>
+<p>根据你的任务，找到对应章节，复制规则并根据实际情况调整。</p>
+<hr>
+<h2 id="1-解析-web-服务器日志"><a class="header" href="#1-解析-web-服务器日志">1. 解析 Web 服务器日志</a></h2>
+<h3 id="任务-11解析-nginxapache-访问日志"><a class="header" href="#任务-11解析-nginxapache-访问日志">任务 1.1：解析 Nginx/Apache 访问日志</a></h3>
+<p><strong>场景：</strong> 标准 Nginx/Apache 访问日志</p>
+<p><strong>输入：</strong></p>
+<pre><code>192.168.1.2 - - [06/Aug/2019:12:12:19 +0800] "GET /index.html HTTP/1.1" 200 1024 "http://example.com/" "Mozilla/5.0"
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package nginx {
+  rule access_log {
+    (
+      ip:client_ip,
+      2*_,
+      time/clf&lt;[,]&gt;:time,
+      http/request":request,
+      http/status:status,
+      digit:bytes,
+      chars":referer,
+      http/agent":user_agent
+    )
+  }
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<pre><code>client_ip: 192.168.1.2
+time: 2019-08-06 12:12:19
+request: GET /index.html HTTP/1.1
+status: 200
+bytes: 1024
+referer: http://example.com/
+user_agent: Mozilla/5.0
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li><code>2*_</code> 忽略两个 <code>-</code> 字段</li>
+<li><code>time/clf&lt;[,]&gt;</code> 解析方括号包裹的 CLF 时间</li>
+<li><code>http/request"</code> 自动解析引号包裹的 HTTP 请求并提取方法、路径、协议</li>
+<li><code>chars"</code> 提取引号包裹的字符串</li>
+</ul>
+<hr>
+<h3 id="任务-12解析带变量的-nginx-日志"><a class="header" href="#任务-12解析带变量的-nginx-日志">任务 1.2：解析带变量的 Nginx 日志</a></h3>
+<p><strong>场景：</strong> 自定义 Nginx log_format</p>
+<p><strong>输入：</strong></p>
+<pre><code>2023-01-01T12:00:00+08:00|INFO|192.168.1.1|GET|/api/users|200|0.123
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package nginx {
+  rule custom_log {
+    (
+      time_3339:timestamp,
+      chars:level,
+      ip:client_ip,
+      http/method:method,
+      chars:path,
+      http/status:status,
+      float:response_time
+    )\|
+  }
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<pre><code>timestamp: 2023-01-01 12:00:00
+level: INFO
+client_ip: 192.168.1.1
+method: GET
+path: /api/users
+status: 200
+response_time: 0.123
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li><code>)\|</code> 指定组级分隔符为管道符 <code>|</code></li>
+<li><code>time_3339</code> 解析 RFC 3339 时间格式</li>
+<li><code>http/method</code> 专门解析 HTTP 方法</li>
+<li><code>float</code> 解析浮点数（响应时间）</li>
+</ul>
+<hr>
+<h3 id="任务-13解析带-referer-为空的日志"><a class="header" href="#任务-13解析带-referer-为空的日志">任务 1.3：解析带 referer 为空的日志</a></h3>
+<p><strong>场景：</strong> referer 可能为 <code>-</code> 或空</p>
+<p><strong>输入：</strong></p>
+<pre><code>192.168.1.1 [06/Aug/2019:12:12:19 +0800] "GET /index.html" 200 1024 "-"
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package nginx {
+  rule access_log_optional {
+    (
+      ip:client_ip,
+      time/clf&lt;[,]&gt;:time,
+      http/request":request,
+      http/status:status,
+      digit:bytes,
+      opt(chars"):referer
+    )
+  }
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<pre><code>client_ip: 192.168.1.1
+time: 2019-08-06 12:12:19
+request: GET /index.html
+status: 200
+bytes: 1024
+referer: -
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li><code>opt(chars")</code> 将 referer 标记为可选字段</li>
+<li>即使 referer 解析失败，其他字段仍能正常提取</li>
+</ul>
+<hr>
+<h2 id="2-解析-json-数据"><a class="header" href="#2-解析-json-数据">2. 解析 JSON 数据</a></h2>
+<h3 id="任务-21提取-json-字段"><a class="header" href="#任务-21提取-json-字段">任务 2.1：提取 JSON 字段</a></h3>
+<p><strong>场景：</strong> API 响应日志</p>
+<p><strong>输入：</strong></p>
+<pre><code class="language-json">{"user":"admin","code":200,"message":"success","timestamp":"2023-01-01T12:00:00"}
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package api {
+  rule response {
+    (json(
+      chars@user,
+      digit@code,
+      chars@message,
+      time_3339@timestamp
+    ))
+  }
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<pre><code>user: admin
+code: 200
+message: success
+timestamp: 2023-01-01 12:00:00
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li><code>json(type@key)</code> 语法提取指定键的值</li>
+<li>类型自动验证和转换（<code>time_3339</code> 转换时间格式）</li>
+</ul>
+<hr>
+<h3 id="任务-22处理嵌套-json"><a class="header" href="#任务-22处理嵌套-json">任务 2.2：处理嵌套 JSON</a></h3>
+<p><strong>场景：</strong> 嵌套的 JSON 结构</p>
+<p><strong>输入：</strong></p>
+<pre><code class="language-json">{"user":{"name":"Alice","age":25,"profile":{"city":"Beijing"}},"status":"active"}
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package api {
+  rule nested_json {
+    (json(
+      chars@user/name,
+      digit@user/age,
+      chars@user/profile/city,
+      chars@status
+    ))
+  }
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<pre><code>user/name: Alice
+user/age: 25
+user/profile/city: Beijing
+status: active
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li>使用 <code>/</code> 分隔嵌套路径：<code>@user/name</code>, <code>@user/profile/city</code></li>
+<li>路径层级无限制</li>
+</ul>
+<hr>
+<h3 id="任务-23json-反转义"><a class="header" href="#任务-23json-反转义">任务 2.3：JSON 反转义</a></h3>
+<p><strong>场景：</strong> JSON 字符串包含转义字符</p>
+<p><strong>输入：</strong></p>
+<pre><code class="language-json">{"path":"c:\\users\\admin\\file.txt","message":"line1\nline2"}
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package api {
+  rule json_unescape {
+    (json(chars@path, chars@message) |json_unescape())
+  }
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<pre><code>path: c:\users\admin\file.txt
+message: line1
+line2
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li><code>|json_unescape()</code> 将 <code>\\n</code> 转换为实际换行符</li>
+<li><code>\\\\</code> 转换为 <code>\</code></li>
+<li><code>\\\"</code> 转换为 <code>"</code></li>
+</ul>
+<hr>
+<h3 id="任务-24可选-json-字段"><a class="header" href="#任务-24可选-json-字段">任务 2.4：可选 JSON 字段</a></h3>
+<p><strong>场景：</strong> 某些字段可能不存在</p>
+<p><strong>输入：</strong></p>
+<pre><code class="language-json">{"user":"admin","code":200}
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package api {
+  rule optional_fields {
+    (json(
+      chars@user,
+      digit@code,
+      opt(chars)@message,
+      opt(chars)@data
+    ))
+  }
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<pre><code>user: admin
+code: 200
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li><code>opt(type)@key</code> 标记字段为可选</li>
+<li>不存在的字段不会导致解析失败</li>
+</ul>
+<hr>
+<h2 id="3-解析-kv-键值对"><a class="header" href="#3-解析-kv-键值对">3. 解析 KV 键值对</a></h2>
+<h3 id="任务-31基础-kv-解析分号分隔"><a class="header" href="#任务-31基础-kv-解析分号分隔">任务 3.1：基础 KV 解析（分号分隔）</a></h3>
+<p><strong>场景：</strong> 简单的 KV 格式日志</p>
+<p><strong>输入：</strong></p>
+<pre><code>host=server1;port=8080;user=admin;status=online
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package config {
+  rule kv_semicolon {
+    (kvarr)
+  }
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<pre><code>host: server1
+port: 8080
+user: admin
+status: online
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li><code>kvarr</code> 自动解析所有KV对</li>
+<li>自动识别分隔符</li>
+</ul>
+<hr>
+<h3 id="任务-32固定数量-kv逗号分隔"><a class="header" href="#任务-32固定数量-kv逗号分隔">任务 3.2：固定数量 KV（逗号分隔）</a></h3>
+<p><strong>场景：</strong> 华为防火墙日志（12 个固定 KV）</p>
+<p><strong>输入：</strong></p>
+<pre><code>k1=v1,k2=v2,k3=v3,k4=v4,k5=v5,k6=v6,k7=v7,k8=v8,k9=v9,k10=v10,k11=v11,k12=v12
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package firewall {
+  rule fixed_kv {
+    (kvarr)
+  }
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<pre><code>k1: v1
+k2: v2
+...
+k12: v12
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li><code>kvarr</code> 自动解析所有KV对</li>
+<li>不需要指定数量</li>
+</ul>
+<hr>
+<h3 id="任务-33提取指定-kv-字段"><a class="header" href="#任务-33提取指定-kv-字段">任务 3.3：提取指定 KV 字段</a></h3>
+<p><strong>场景：</strong> 只提取需要的字段</p>
+<p><strong>输入：</strong></p>
+<pre><code>hostname=server1 port=3306 user=root db=test timeout=30
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package database {
+  rule extract_kv {
+    (kvarr(
+      chars@hostname,
+      digit@port,
+      chars@user,
+      opt(chars)@db
+    ))
+  }
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<pre><code>hostname: server1
+port: 3306
+user: root
+db: test
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li><code>kvarr(type@key)</code> 提取指定键的值</li>
+<li>未列出的键（如 <code>timeout</code>）被忽略</li>
+<li><code>opt(type)@key</code> 标记可选字段</li>
+</ul>
+<hr>
+<h3 id="任务-34混合-kv-格式"><a class="header" href="#任务-34混合-kv-格式">任务 3.4：混合 KV 格式</a></h3>
+<p><strong>场景：</strong> 可选 KV + 多个 KV</p>
+<p><strong>输入：</strong></p>
+<pre><code>1234,2023-01-01T12:00:00,ABC123,LOGIN:host=server;user=admin,port=8080,action=success
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package firewall {
+  rule mixed_kv {
+    (
+      digit:id,
+      time:timestamp,
+      sn:serial,
+      chars:type\:,
+      opt(kvarr),
+      kvarr
+    )
+  }
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<pre><code>id: 1234
+timestamp: 2023-01-01 12:00:00
+serial: ABC123
+type: LOGIN
+host: server
+user: admin
+port: 8080
+action: success
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li><code>chars:type\:</code> 冒号作为分隔符</li>
+<li><code>opt(kvarr)</code> 可选的KV</li>
+<li><code>kvarr</code> 自动解析KV</li>
+</ul>
+<hr>
+<h2 id="4-处理编码数据"><a class="header" href="#4-处理编码数据">4. 处理编码数据</a></h2>
+<h3 id="任务-41base64-解码"><a class="header" href="#任务-41base64-解码">任务 4.1：Base64 解码</a></h3>
+<p><strong>场景：</strong> 华为防火墙日志（整行 Base64 编码）</p>
+<p><strong>输入（Base64）：</strong></p>
+<pre><code>MTIzNCwyMDIzLTAxLTAxVDEyOjAwOjAwLEFCQzEyMyxMT0dJTjpob3N0PXNlcnZlcjt1c2VyPWFkbWluLHBvcnQ9ODA4MCxhY3Rpb249c3VjY2Vzcw==
+</code></pre>
+<p><strong>解码后：</strong></p>
+<pre><code>1234,2023-01-01T12:00:00,ABC123,LOGIN:host=server;user=admin,port=8080,action=success
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package firewall {
+  rule huawei_log {
+    |decode/base64|
+    (
+      digit:id,
+      time:timestamp,
+      sn:serial,
+      chars:type\:,
+      opt(kvarr),
+      kvarr
+    )
+  }
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<pre><code>id: 1234
+timestamp: 2023-01-01 12:00:00
+serial: ABC123
+type: LOGIN
+host: server
+user: admin
+port: 8080
+action: success
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li><code>|decode/base64|</code> 预处理管道，对整行进行 Base64 解码</li>
+<li>解码后再进行字段解析</li>
+</ul>
+<hr>
+<h3 id="任务-42十六进制解码"><a class="header" href="#任务-42十六进制解码">任务 4.2：十六进制解码</a></h3>
+<p><strong>场景：</strong> 二进制数据的十六进制表示</p>
+<p><strong>输入：</strong></p>
+<pre><code>48656c6c6f20576f726c64
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package binary {
+  rule hex_decode {
+    |decode/hex|
+    (chars:data)
+  }
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<pre><code>data: Hello World
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li><code>|decode/hex|</code> 将十六进制字符串解码为原始文本</li>
+</ul>
+<hr>
+<h3 id="任务-43组合多步预处理"><a class="header" href="#任务-43组合多步预处理">任务 4.3：组合多步预处理</a></h3>
+<p><strong>场景：</strong> Base64 + JSON 反转义</p>
+<p><strong>输入（Base64）：</strong></p>
+<pre><code>eyJwYXRoIjoiY1xcXFx1c2Vyc1xcXFxmaWxlIiwidGV4dCI6ImxpbmUxXG5saW5lMiJ9
+</code></pre>
+<p><strong>解码后：</strong></p>
+<pre><code class="language-json">{"path":"c:\\users\\file","text":"line1\nline2"}
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package security {
+  rule multi_step {
+    |decode/base64|unquote/unescape|
+    (json(chars@path, chars@text))
+  }
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<pre><code>path: c:\users\file
+text: line1
+line2
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li>可以链接多个预处理步骤</li>
+<li>执行顺序：从左到右</li>
+</ul>
+<hr>
+<h2 id="5-字段验证与过滤"><a class="header" href="#5-字段验证与过滤">5. 字段验证与过滤</a></h2>
+<h3 id="任务-51检查字段存在"><a class="header" href="#任务-51检查字段存在">任务 5.1：检查字段存在</a></h3>
+<p><strong>场景：</strong> 确保必需字段存在</p>
+<p><strong>输入：</strong></p>
+<pre><code class="language-json">{"status":"ok","message":"success","data":null}
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package api {
+  rule check_required {
+    (json |f_has(status) |f_has(message))
+  }
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<pre><code>status: ok
+message: success
+data: null
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li><code>|f_has(field)</code> 检查字段是否存在</li>
+<li>字段不存在时解析失败</li>
+</ul>
+<hr>
+<h3 id="任务-52验证状态码"><a class="header" href="#任务-52验证状态码">任务 5.2：验证状态码</a></h3>
+<p><strong>场景：</strong> 只处理成功的响应（200/201/204）</p>
+<p><strong>输入：</strong></p>
+<pre><code class="language-json">{"code":200,"status":"success","data":"result"}
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package api {
+  rule validate_success {
+    (json |f_digit_in(code, [200, 201, 204]))
+  }
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<pre><code>code: 200
+status: success
+data: result
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li><code>|f_digit_in(field, [list])</code> 验证数字字段值在列表中</li>
+<li>不在列表中时解析失败</li>
+</ul>
+<hr>
+<h3 id="任务-53过滤特定方法"><a class="header" href="#任务-53过滤特定方法">任务 5.3：过滤特定方法</a></h3>
+<p><strong>场景：</strong> 只处理 GET/POST 请求</p>
+<p><strong>输入：</strong></p>
+<pre><code class="language-json">{"method":"GET","path":"/api/users","status":200}
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package api {
+  rule filter_methods {
+    (json |f_chars_in(method, [GET, POST]))
+  }
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<pre><code>method: GET
+path: /api/users
+status: 200
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li><code>|f_chars_in(field, [list])</code> 验证字符串字段值在列表中</li>
+</ul>
+<hr>
+<h3 id="任务-54链式验证"><a class="header" href="#任务-54链式验证">任务 5.4：链式验证</a></h3>
+<p><strong>场景：</strong> 多个条件组合</p>
+<p><strong>输入：</strong></p>
+<pre><code class="language-json">{"user":"admin","age":25,"status":"active"}
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package api {
+  rule chain_validation {
+    (json(chars@user, digit@age, chars@status)
+      |take(user)
+      |chars_has(admin)
+      |take(age)
+      |digit_in([18, 25, 30])
+      |take(status)
+      |chars_has(active)
+    )
+  }
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<pre><code>user: admin
+age: 25
+status: active
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li><code>take(field)</code> 选择字段为活跃字段</li>
+<li>然后对活跃字段进行验证</li>
+<li>可以链式调用多个验证</li>
+</ul>
+<hr>
+<h2 id="6-复杂场景"><a class="header" href="#6-复杂场景">6. 复杂场景</a></h2>
+<h3 id="任务-61可变数量字段some_of"><a class="header" href="#任务-61可变数量字段some_of">任务 6.1：可变数量字段（some_of）</a></h3>
+<p><strong>场景：</strong> 字段数量和顺序不固定</p>
+<p><strong>输入：</strong></p>
+<pre><code>192.168.1.1 k1=v1 200 k2=v2 300 k3=v3
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package mixed {
+  rule variable_fields {
+    some_of(ip, kv, digit)
+  }
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<pre><code>ip: 192.168.1.1
+k1: v1
+digit: 200
+k2: v2
+digit: 300
+k3: v3
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li><code>some_of(...)</code> 循环匹配所有可能的类型</li>
+<li>尽可能多地消费字段</li>
+</ul>
+<hr>
+<h3 id="任务-62择一匹配alt"><a class="header" href="#任务-62择一匹配alt">任务 6.2：择一匹配（alt）</a></h3>
+<p><strong>场景：</strong> 某个位置可能是不同类型</p>
+<p><strong>输入：</strong></p>
+<pre><code>user_id:12345 action:login
+user_id:admin action:logout
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package auth {
+  rule flexible_user_id {
+    (
+      chars:key1,
+      alt(digit, chars):user_id,
+      chars:key2,
+      chars:action
+    )
+  }
+}
+</code></pre>
+<p><strong>输出（输入 1）：</strong></p>
+<pre><code>key1: user_id
+user_id: 12345
+key2: action
+action: login
+</code></pre>
+<p><strong>输出（输入 2）：</strong></p>
+<pre><code>key1: user_id
+user_id: admin
+key2: action
+action: logout
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li><code>alt(type1, type2)</code> 尝试多种类型</li>
+<li>匹配第一个成功的类型</li>
+</ul>
+<hr>
+<h3 id="任务-63读到行尾"><a class="header" href="#任务-63读到行尾">任务 6.3：读到行尾</a></h3>
+<p><strong>场景：</strong> 最后一个字段包含所有剩余内容</p>
+<p><strong>输入：</strong></p>
+<pre><code>2023-01-01 ERROR This is a very long error message with many details
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package log {
+  rule read_to_end {
+    (
+      time:timestamp,
+      chars:level,
+      chars\0:message
+    )
+  }
+}
+</code></pre>
+<p><strong>输出：</strong></p>
+<pre><code>timestamp: 2023-01-01
+level: ERROR
+message: This is a very long error message with many details
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li><code>\0</code> 表示读到行尾</li>
+<li>常用于日志的 message 字段</li>
+</ul>
+<hr>
+<h2 id="7-常见问题"><a class="header" href="#7-常见问题">7. 常见问题</a></h2>
+<h3 id="q1-如何处理可变数量的字段"><a class="header" href="#q1-如何处理可变数量的字段">Q1: 如何处理可变数量的字段？</a></h3>
+<p><strong>答案：</strong> 使用 <code>N*type</code> 或 <code>some_of</code></p>
+<pre><code class="language-wpl"># KV 自动解析
+kvarr
+
+# 混合类型
+some_of(ip, digit, kvarr)
+</code></pre>
+<hr>
+<h3 id="q2-如何忽略某些字段"><a class="header" href="#q2-如何忽略某些字段">Q2: 如何忽略某些字段？</a></h3>
+<p><strong>答案：</strong> 使用 <code>_</code> 或 <code>N*_</code></p>
+<pre><code class="language-wpl"># 忽略 1 个字段
+(ip, _, time)
+
+# 忽略 3 个字段
+(ip, 3*_, time)
+</code></pre>
+<hr>
+<h3 id="q3-分隔符不一致怎么办"><a class="header" href="#q3-分隔符不一致怎么办">Q3: 分隔符不一致怎么办？</a></h3>
+<p><strong>答案：</strong> 使用字段级分隔符优先级</p>
+<pre><code class="language-wpl"># 不同字段不同分隔符
+(digit\;, ip\,, chars\s)
+
+# 或使用组级分隔符
+(digit, ip, chars)\,
+</code></pre>
+<hr>
+<h3 id="q4-json-字段可能不存在怎么办"><a class="header" href="#q4-json-字段可能不存在怎么办">Q4: JSON 字段可能不存在怎么办？</a></h3>
+<p><strong>答案：</strong> 使用 <code>opt(type)@key</code></p>
+<pre><code class="language-wpl">json(
+  chars@user,
+  opt(chars)@email,
+  opt(digit)@age
+)
+</code></pre>
+<hr>
+<h3 id="q5-如何提取嵌套-json-字段"><a class="header" href="#q5-如何提取嵌套-json-字段">Q5: 如何提取嵌套 JSON 字段？</a></h3>
+<p><strong>答案：</strong> 使用路径语法 <code>@path/to/field</code></p>
+<pre><code class="language-wpl">json(
+  chars@user/name,
+  digit@user/age,
+  chars@data/result
+)
+</code></pre>
+<hr>
+<h3 id="q6-预处理管道失败怎么办"><a class="header" href="#q6-预处理管道失败怎么办">Q6: 预处理管道失败怎么办？</a></h3>
+<p><strong>答案：</strong> 检查以下几点</p>
+<ol>
+<li>管道名称是否正确</li>
+<li>是否以 <code>|</code> 结尾</li>
+<li>输入数据格式是否正确</li>
+</ol>
+<pre><code class="language-wpl"># 正确
+|decode/base64|
+
+# 错误：缺少结尾 |
+|decode/base64
+</code></pre>
+<hr>
+<h3 id="q7-如何调试解析失败的规则"><a class="header" href="#q7-如何调试解析失败的规则">Q7: 如何调试解析失败的规则？</a></h3>
+<p><strong>步骤：</strong></p>
+<ol>
+<li>简化规则，从最简单的字段开始</li>
+<li>使用 <code>opt()</code> 标记可疑字段</li>
+<li>检查分隔符是否正确</li>
+<li>检查格式控制符（引号、括号等）</li>
+</ol>
+<pre><code class="language-wpl"># 原规则（失败）
+(digit, time, chars, json)
+
+# 调试规则
+(digit, opt(time), opt(chars), opt(json))
+# 逐步确定哪个字段导致失败
+</code></pre>
+<hr>
+<h2 id="下一步"><a class="header" href="#下一步">下一步</a></h2>
+<h3 id="查阅参考"><a class="header" href="#查阅参考">查阅参考</a></h3>
+<p>→ <a href="./04-language-reference.html">04-language-reference.md</a> - 完整类型和语法
+→ <a href="./05-functions-reference.html">05-functions-reference.md</a> - 所有函数详解</p>
+<h3 id="深入理解"><a class="header" href="#深入理解">深入理解</a></h3>
+<p>→ <a href="./02-core-concepts.html">02-core-concepts.md</a> - 理解 WPL 设计理念</p>
+<hr>
+<h2 id="相关资源"><a class="header" href="#相关资源">相关资源</a></h2>
+<ul>
+<li>快速入门：<a href="./01-quickstart.html">01-quickstart.md</a></li>
+<li>核心概念：<a href="./02-core-concepts.html">02-core-concepts.md</a></li>
+<li>语言参考：<a href="./04-language-reference.html">04-language-reference.md</a></li>
+<li>函数参考：<a href="./05-functions-reference.html">05-functions-reference.md</a></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../10-user/03-wpl/02-core-concepts.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../10-user/03-wpl/04-language-reference.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../10-user/03-wpl/02-core-concepts.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../10-user/03-wpl/04-language-reference.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../mark-09e88c2c.min.js"></script>
+        <script src="../../searcher-c2a407aa.js"></script>
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../../../theme/lang-switch.js"></script>
+        <script src="../../mermaid-eefea253.min.js"></script>
+        <script src="../../mermaid-init-ccf746f1.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

@@ -15,46 +15,69 @@
         currentLang = 'en';
     }
 
-    // Create banner for all versions
-    const banner = document.createElement('div');
-    banner.className = `version-banner ${currentVersion}`;
+    // Fetch WarpParse version from wp-version.txt
+    const versionPath = currentVersion === 'stable'
+        ? '/wp-version.txt'
+        : `/${currentVersion}/wp-version.txt`;
 
-    let badgeText, descText;
-    const isZh = document.documentElement.lang === 'zh-CN';
+    fetch(versionPath)
+        .then(response => response.ok ? response.text() : Promise.reject())
+        .then(wpVersion => {
+            wpVersion = wpVersion.trim();
+            renderBanner(wpVersion);
+        })
+        .catch(() => {
+            // Fallback if version file not found
+            renderBanner(null);
+        });
 
-    if (currentVersion === 'alpha') {
-        badgeText = 'ALPHA';
-        descText = isZh ? '最新开发版 - 包含最新特性' : 'Latest Development Version - Contains newest features';
-    } else if (currentVersion === 'beta') {
-        badgeText = 'BETA';
-        descText = isZh ? '预发布版 - 即将正式发布' : 'Pre-release Version - Coming soon to stable';
-    } else {
-        badgeText = isZh ? '稳定版' : 'STABLE';
-        descText = isZh ? '生产环境推荐使用' : 'Recommended for production';
-    }
+    function renderBanner(wpVersion) {
+        const banner = document.createElement('div');
+        banner.className = `version-banner ${currentVersion}`;
 
-    // Build version switcher links
-    const versions = [
-        { key: 'stable', label: isZh ? '稳定版' : 'Stable', path: `/${currentLang}/` },
-        { key: 'beta', label: 'Beta', path: `/beta/${currentLang}/` },
-        { key: 'alpha', label: 'Alpha', path: `/alpha/${currentLang}/` }
-    ];
+        let badgeText, descText;
+        const isZh = document.documentElement.lang === 'zh-CN';
 
-    const versionLinks = versions.map(v => {
-        const currentClass = v.key === currentVersion ? ' current' : '';
-        return `<a href="${v.path}" class="version-link${currentClass}">${v.label}</a>`;
-    }).join('');
+        if (currentVersion === 'alpha') {
+            badgeText = 'ALPHA';
+            descText = isZh ? '最新开发版 - 包含最新特性' : 'Latest Development Version - Contains newest features';
+        } else if (currentVersion === 'beta') {
+            badgeText = 'BETA';
+            descText = isZh ? '预发布版 - 即将正式发布' : 'Pre-release Version - Coming soon to stable';
+        } else {
+            badgeText = isZh ? '稳定版' : 'STABLE';
+            descText = isZh ? '生产环境推荐使用' : 'Recommended for production';
+        }
 
-    banner.innerHTML = `
-        <div class="banner-content">
-            <span class="badge">${badgeText}</span>
-            <span>${descText}</span>
-            <div class="version-switcher">
-                ${versionLinks}
+        // Add version info if available
+        const versionInfo = wpVersion
+            ? `<span class="version-info">WarpParse ${wpVersion}</span>`
+            : '';
+
+        // Build version switcher links
+        const versions = [
+            { key: 'stable', label: isZh ? '稳定版' : 'Stable', path: `/${currentLang}/` },
+            { key: 'beta', label: 'Beta', path: `/beta/${currentLang}/` },
+            { key: 'alpha', label: 'Alpha', path: `/alpha/${currentLang}/` }
+        ];
+
+        const versionLinks = versions.map(v => {
+            const currentClass = v.key === currentVersion ? ' current' : '';
+            return `<a href="${v.path}" class="version-link${currentClass}">${v.label}</a>`;
+        }).join('');
+
+        banner.innerHTML = `
+            <div class="banner-content">
+                <span class="badge">${badgeText}</span>
+                ${versionInfo}
+                <span class="desc-text">${descText}</span>
+                <div class="version-switcher">
+                    ${versionLinks}
+                </div>
             </div>
-        </div>
-    `;
+        `;
 
-    document.body.insertBefore(banner, document.body.firstChild);
-    document.body.classList.add('has-version-banner');
+        document.body.insertBefore(banner, document.body.firstChild);
+        document.body.classList.add('has-version-banner');
+    }
 })();

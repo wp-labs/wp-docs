@@ -57,6 +57,19 @@ jobs:
       - name: Install mermaid support for English docs
         run: cd docs-en && mdbook-mermaid install .
 
+      # Add version badge to title for non-main branches
+      - name: Add version badge to documentation title
+        if: steps.branch.outputs.name != 'main'
+        run: |
+          BRANCH_NAME=${{ steps.branch.outputs.name }}
+          BADGE_UPPER=$(echo $BRANCH_NAME | tr '[:lower:]' '[:upper:]')
+
+          # Update Chinese version title
+          sed -i "s/title = \"Warp Parse 文档\"/title = \"Warp Parse 文档 [$BADGE_UPPER]\"/" docs-zh/book.toml
+
+          # Update English version title
+          sed -i "s/title = \"Warp Parse Documentation\"/title = \"Warp Parse Documentation [$BADGE_UPPER]\"/" docs-en/book.toml
+
       - name: Build Chinese version
         run: cd docs-zh && mdbook build
 
@@ -69,8 +82,12 @@ jobs:
           mkdir -p book/en/theme
           cp theme/lang-switch.css book/zh/theme/
           cp theme/lang-switch.js book/zh/theme/
+          cp theme/version-badge.css book/zh/theme/
+          cp theme/version-badge.js book/zh/theme/
           cp theme/lang-switch.css book/en/theme/
           cp theme/lang-switch.js book/en/theme/
+          cp theme/version-badge.css book/en/theme/
+          cp theme/version-badge.js book/en/theme/
 
       - name: Copy language selection page
         run: |

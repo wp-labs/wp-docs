@@ -1,0 +1,47 @@
+.version-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 8px 20px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.version-banner.alpha {
+    background: linear-gradient(135deg, #e06c75 0%, #c94855 100%);
+    color: #ffffff;
+}
+
+.version-banner.beta {
+    background: linear-gradient(135deg, #e5c07b 0%, #d4a960 100%);
+    color: #1a1a1a;
+}
+
+.version-banner a {
+    color: inherit;
+    text-decoration: underline;
+    margin-left: 10px;
+    font-weight: 500;
+}
+
+.version-banner a:hover {
+    opacity: 0.8;
+}
+
+/* Adjust main content to account for banner */
+body.has-version-banner {
+    padding-top: 40px;
+}
+
+body.has-version-banner .sidebar {
+    top: 40px;
+    height: calc(100vh - 40px);
+}
+
+body.has-version-banner .page-wrapper {
+    margin-top: 40px;
+}

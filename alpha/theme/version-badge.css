@@ -4,32 +4,48 @@
     left: 0;
     right: 0;
     z-index: 1000;
-    padding: 8px 20px;
+    padding: 10px 20px;
     text-align: center;
-    font-weight: 600;
-    font-size: 14px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    font-weight: 500;
+    font-size: 13px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(10px);
 }
 
 .version-banner.alpha {
-    background: linear-gradient(135deg, #e06c75 0%, #c94855 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #ffffff;
 }
 
 .version-banner.beta {
-    background: linear-gradient(135deg, #e5c07b 0%, #d4a960 100%);
-    color: #1a1a1a;
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: #ffffff;
+}
+
+.version-banner .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.25);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-right: 12px;
 }
 
 .version-banner a {
-    color: inherit;
-    text-decoration: underline;
-    margin-left: 10px;
+    color: #ffffff;
+    text-decoration: none;
+    margin-left: 15px;
+    padding: 3px 12px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.2);
     font-weight: 500;
+    transition: background 0.2s;
 }
 
 .version-banner a:hover {
-    opacity: 0.8;
+    background: rgba(255, 255, 255, 0.3);
 }
 
 /* Adjust main content to account for banner */

@@ -1,0 +1,17 @@
+[book]
+title = "Warp Parse 文档"
+authors = ["Warp Parse Team"]
+language = "zh-CN"
+src = "."
+
+[build]
+build-dir = "../book/zh"
+
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
+
+[output.html]
+default-theme = "ayu"
+git-repository-url = "https://github.com/wp-labs/warp-parse"
+additional-css = ["../theme/lang-switch.css"]
+additional-js = ["../theme/lang-switch.js", "mermaid.min.js", "mermaid-init.js"]

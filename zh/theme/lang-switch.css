@@ -1,0 +1,27 @@
+/* Language Switcher Styles */
+.lang-switcher {
+    position: fixed;
+    top: 50px;
+    right: 15px;
+    z-index: 100;
+    background: var(--sidebar-bg);
+    border: 1px solid var(--sidebar-fg);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 14px;
+}
+
+.lang-switcher a {
+    color: var(--sidebar-fg);
+    text-decoration: none;
+    padding: 2px 8px;
+}
+
+.lang-switcher a:hover {
+    color: var(--sidebar-active);
+}
+
+.lang-switcher .current {
+    font-weight: bold;
+    color: var(--sidebar-active);
+}

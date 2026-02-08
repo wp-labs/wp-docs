@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WP-Docs - Version Select</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            max-width: 800px;
+            margin: 80px auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #e6e6e6;
+        }
+        h1 { color: #61afef; margin-bottom: 40px; }
+        .version-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .version-card {
+            background: #2c313c;
+            padding: 30px;
+            border-radius: 8px;
+            border-left: 4px solid;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .version-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .version-card.stable { border-left-color: #98c379; }
+        .version-card.beta { border-left-color: #e5c07b; }
+        .version-card.alpha { border-left-color: #e06c75; }
+        .version-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .version-desc {
+            color: #abb2bf;
+            font-size: 14px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 10px;
+            font-weight: 600;
+        }
+        .badge.stable { background: #98c379; color: #1a1a1a; }
+        .badge.beta { background: #e5c07b; color: #1a1a1a; }
+        .badge.alpha { background: #e06c75; color: #1a1a1a; }
+    </style>
+</head>
+<body>
+    <h1>📚 WP-Docs Documentation</h1>
+    <div class="version-list">
+        <a href="/" class="version-card stable">
+            <div class="version-title">
+                Stable Version
+                <span class="badge stable">MAIN</span>
+            </div>
+            <div class="version-desc">生产环境文档 (main branch)</div>
+        </a>
+        <a href="/beta/" class="version-card beta">
+            <div class="version-title">
+                Beta Version
+                <span class="badge beta">BETA</span>
+            </div>
+            <div class="version-desc">预发布文档 (beta branch)</div>
+        </a>
+        <a href="/alpha/" class="version-card alpha">
+            <div class="version-title">
+                Alpha Version
+                <span class="badge alpha">ALPHA</span>
+            </div>
+            <div class="version-desc">开发版文档 (alpha branch)</div>
+        </a>
+    </div>
+</body>
+</html>

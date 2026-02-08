@@ -1,0 +1,845 @@
+<!DOCTYPE HTML>
+<html lang="en" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Field Reference - Warp Parse Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../../../../theme/lang-switch.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../../searchindex-cee6790d.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../../toc-ec81ad47.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Warp Parse Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wp-labs/warp-parse" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="wpl-field-reference-guide"><a class="header" href="#wpl-field-reference-guide">WPL Field Reference Guide</a></h1>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>In WPL, the <code>@</code> symbol is used to reference fields in collections. Two field name formats are supported:</p>
+<ul>
+<li><strong>Plain identifiers</strong>: <code>@field_name</code></li>
+<li><strong>Single-quoted strings</strong>: <code>@'@special-field'</code> (for field names containing special characters)</li>
+</ul>
+<h2 id="quick-start"><a class="header" href="#quick-start">Quick Start</a></h2>
+<h3 id="basic-syntax"><a class="header" href="#basic-syntax">Basic Syntax</a></h3>
+<pre><code class="language-wpl"># Reference plain field
+@field_name
+
+# Reference field with special characters
+@'special-field-name'
+
+# Specify field type and alias
+datatype@field_name: alias_name
+</code></pre>
+<h3 id="simple-examples"><a class="header" href="#simple-examples">Simple Examples</a></h3>
+<pre><code class="language-wpl"># JSON parsing - extract fields
+rule parse_json {
+    json(
+        @src_ip: source_ip,
+        @dst_ip: dest_ip,
+        @message: msg
+    )
+}
+
+# Use single quotes for special field names
+rule parse_json_special {
+    json(
+        @'@client-ip': client,
+        @'event.type': event,
+        @'log/level': level
+    )
+}
+</code></pre>
+<h2 id="plain-field-references"><a class="header" href="#plain-field-references">Plain Field References</a></h2>
+<h3 id="supported-characters"><a class="header" href="#supported-characters">Supported Characters</a></h3>
+<p>Plain field names (without quotes) support the following characters:</p>
+<ul>
+<li>Letters and numbers (a-z, A-Z, 0-9)</li>
+<li>Underscore (<code>_</code>)</li>
+<li>Slash (<code>/</code>)</li>
+<li>Hyphen (<code>-</code>)</li>
+<li>Dot (<code>.</code>)</li>
+<li>Brackets (<code>[</code>, <code>]</code>) - for array indexing</li>
+<li>Asterisk (<code>*</code>) - for wildcards</li>
+</ul>
+<h3 id="examples"><a class="header" href="#examples">Examples</a></h3>
+<pre><code class="language-wpl"># Simple field names
+@user_id
+@username
+@ip_address
+
+# Path-style field names
+@process/name
+@parent/process/pid
+@network/protocol
+
+# Array indexing
+@items[0]
+@data[5]/value
+@process[0]/path
+
+# Wildcards
+@items[*]
+@logs/*/message
+</code></pre>
+<h2 id="single-quoted-field-references"><a class="header" href="#single-quoted-field-references">Single-Quoted Field References</a></h2>
+<h3 id="when-to-use"><a class="header" href="#when-to-use">When to Use</a></h3>
+<p>Single quotes are required when field names contain the following special characters:</p>
+<ul>
+<li><code>@</code> symbol</li>
+<li>Spaces</li>
+<li>Commas (<code>,</code>)</li>
+<li>Equal signs (<code>=</code>)</li>
+<li>Parentheses (<code>(</code>, <code>)</code>)</li>
+<li>Angle brackets (<code>&lt;</code>, <code>&gt;</code>)</li>
+<li>Hash symbol (<code>#</code>)</li>
+<li>Other non-standard characters</li>
+</ul>
+<h3 id="basic-syntax-1"><a class="header" href="#basic-syntax-1">Basic Syntax</a></h3>
+<pre><code class="language-wpl">@'field name with spaces'
+@'@field-with-at-sign'
+@'field,with,commas'
+</code></pre>
+<h3 id="escape-sequences"><a class="header" href="#escape-sequences">Escape Sequences</a></h3>
+<p><strong>Double-quoted strings</strong> support the following escape sequences:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Escape Sequence</th><th>Meaning</th><th>Example</th></tr>
+</thead>
+<tbody>
+<tr><td><code>\"</code></td><td>Double quote</td><td><code>@"field\"name"</code></td></tr>
+<tr><td><code>\\</code></td><td>Backslash</td><td><code>@"path\\to\\file"</code></td></tr>
+<tr><td><code>\n</code></td><td>Newline</td><td><code>@"multi\nline"</code></td></tr>
+<tr><td><code>\t</code></td><td>Tab</td><td><code>@"tab\tseparated"</code></td></tr>
+<tr><td><code>\r</code></td><td>Carriage return</td><td><code>@"carriage\rreturn"</code></td></tr>
+<tr><td><code>\xHH</code></td><td>Hexadecimal byte</td><td><code>@"hex\x41value"</code></td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Single-quoted strings</strong> are <strong>raw strings</strong>:</p>
+<ul>
+<li><strong>Only supports</strong> <code>\'</code> to escape the single quote itself</li>
+<li>All other backslashes <code>\</code> are treated literally</li>
+<li><code>\n</code>, <code>\t</code>, <code>\\</code>, etc. are NOT escaped</li>
+</ul>
+<h3 id="examples-1"><a class="header" href="#examples-1">Examples</a></h3>
+<pre><code class="language-wpl"># Double quotes - full escape support
+@"field\"name"      # Result: field"name
+@"path\\file"       # Result: path\file
+@"line\nbreak"      # Result: line(newline)break
+
+# Single quotes - raw string, only escapes \'
+@'field\'s name'    # Result: field's name
+@'path\to\file'     # Result: path\to\file (literal backslashes)
+@'raw\nstring'      # Result: raw\nstring (literal \n)
+@'C:\Users\test'    # Result: C:\Users\test (Windows path)
+</code></pre>
+<p><strong>Recommended use cases</strong>:</p>
+<ul>
+<li><strong>Single quotes</strong>: Windows paths, Unix paths, regular expressions, strings containing backslashes</li>
+<li><strong>Double quotes</strong>: Scenarios requiring escape characters like newlines, tabs, etc.</li>
+</ul>
+<h2 id="practical-use-cases"><a class="header" href="#practical-use-cases">Practical Use Cases</a></h2>
+<h3 id="scenario-1-parsing-elasticsearch-logs"><a class="header" href="#scenario-1-parsing-elasticsearch-logs">Scenario 1: Parsing Elasticsearch Logs</a></h3>
+<pre><code class="language-wpl"># Elasticsearch fields typically use @ prefix
+rule elasticsearch_log {
+    json(
+        @'@timestamp': timestamp,
+        @'@version': version,
+        @message: msg,
+        @'log.level': level,
+        @'event.action': action
+    )
+}
+</code></pre>
+<h3 id="scenario-2-parsing-fields-with-spaces"><a class="header" href="#scenario-2-parsing-fields-with-spaces">Scenario 2: Parsing Fields with Spaces</a></h3>
+<pre><code class="language-wpl"># CSV or other formats may contain column names with spaces
+rule csv_with_spaces {
+    (
+        @'First Name': first_name,
+        @'Last Name': last_name,
+        @'Email Address': email,
+        @'Phone Number': phone
+    )
+}
+</code></pre>
+<h3 id="scenario-3-parsing-nested-json-fields"><a class="header" href="#scenario-3-parsing-nested-json-fields">Scenario 3: Parsing Nested JSON Fields</a></h3>
+<pre><code class="language-wpl"># JSON field paths containing special characters
+rule nested_json {
+    json(
+        @'user.id': uid,
+        @'user.profile.name': username,
+        @'event#metadata': metadata,
+        @'geo.location.lat': latitude,
+        @'geo.location.lon': longitude
+    )
+}
+</code></pre>
+<h3 id="scenario-4-handling-prometheus-metrics"><a class="header" href="#scenario-4-handling-prometheus-metrics">Scenario 4: Handling Prometheus Metrics</a></h3>
+<pre><code class="language-wpl"># Prometheus metric names contain various special characters
+rule prometheus_metrics {
+    (
+        @'http_requests_total{method="GET"}': get_requests,
+        @'http_requests_total{method="POST"}': post_requests,
+        @'process_cpu_seconds_total': cpu_usage
+    )
+}
+</code></pre>
+<h3 id="scenario-5-windows-event-logs"><a class="header" href="#scenario-5-windows-event-logs">Scenario 5: Windows Event Logs</a></h3>
+<pre><code class="language-wpl"># Windows paths contain backslashes
+rule windows_events {
+    json(
+        @'Event.System.Provider': provider,
+        @'Event.EventData.CommandLine': cmdline,
+        @'Process\\Path': process_path
+    )
+}
+</code></pre>
+<h3 id="scenario-6-mixed-use-of-plain-and-special-field-names"><a class="header" href="#scenario-6-mixed-use-of-plain-and-special-field-names">Scenario 6: Mixed Use of Plain and Special Field Names</a></h3>
+<pre><code class="language-wpl">rule mixed_fields {
+    json(
+        # Plain field names
+        @username: user,
+        @ip_address: ip,
+        @timestamp: time,
+
+        # Special field names
+        @'@client-ip': client,
+        @'user.email': email,
+        @'event#type': event_type,
+        @'log level': level
+    )
+}
+</code></pre>
+<h3 id="scenario-7-kv-parsing-with-special-fields"><a class="header" href="#scenario-7-kv-parsing-with-special-fields">Scenario 7: KV Parsing with Special Fields</a></h3>
+<pre><code class="language-wpl"># Key-value pairs containing special characters in keys
+rule kv_special_keys {
+    kv(
+        @'@timestamp': time,
+        @'event-type': type,
+        @'user/name': username,
+        @'session#id': session
+    )
+}
+</code></pre>
+<h2 id="take-function-quote-support"><a class="header" href="#take-function-quote-support">take() Function Quote Support</a></h2>
+<p>The <code>take()</code> function is used to select the current field and also supports single and double quotes for handling field names with special characters.</p>
+<h3 id="basic-syntax-2"><a class="header" href="#basic-syntax-2">Basic Syntax</a></h3>
+<pre><code class="language-wpl"># Plain field name
+| take(field_name)
+
+# Double-quoted field name
+| take("@special-field")
+
+# Single-quoted field name
+| take('@special-field')
+</code></pre>
+<h3 id="use-cases"><a class="header" href="#use-cases">Use Cases</a></h3>
+<h4 id="1-selecting-fields-with-special-characters"><a class="header" href="#1-selecting-fields-with-special-characters">1. Selecting Fields with Special Characters</a></h4>
+<pre><code class="language-wpl">rule select_special_fields {
+    # Double quotes
+    | take("@timestamp")
+    | take("field with spaces")
+    | take("field,with,commas")
+
+    # Single quotes
+    | take('@client-ip')
+    | take('event.type')
+    | take('log/level')
+}
+</code></pre>
+<h4 id="2-escape-character-support"><a class="header" href="#2-escape-character-support">2. Escape Character Support</a></h4>
+<pre><code class="language-wpl">rule escaped_fields {
+    # Escaping within double quotes
+    | take("field\"name")
+    | take("path\\with\\backslash")
+
+    # Escaping within single quotes
+    | take('field\'s name')
+    | take('path\\to\\file')
+}
+</code></pre>
+<h4 id="3-practical-applications"><a class="header" href="#3-practical-applications">3. Practical Applications</a></h4>
+<pre><code class="language-wpl"># Elasticsearch log processing
+rule elasticsearch {
+    | take("@timestamp")
+    | take("@version")
+    | take("log.level")
+}
+
+# CSV data processing
+rule csv_processing {
+    | take('First Name')
+    | take('Last Name')
+    | take('Email Address')
+}
+
+# Mixed usage
+rule mixed_usage {
+    | take(user_id)          # Plain field
+    | take("@timestamp")     # Double quotes
+    | take('event.type')     # Single quotes
+}
+</code></pre>
+<h3 id="supported-escape-characters"><a class="header" href="#supported-escape-characters">Supported Escape Characters</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Escape Sequence</th><th>Meaning</th><th>Double Quotes</th><th>Single Quotes</th></tr>
+</thead>
+<tbody>
+<tr><td><code>\"</code></td><td>Double quote</td><td>✅</td><td>❌ (literal <code>\"</code>)</td></tr>
+<tr><td><code>\'</code></td><td>Single quote</td><td>❌ (literal <code>\'</code>)</td><td>✅</td></tr>
+<tr><td><code>\\</code></td><td>Backslash</td><td>✅</td><td>❌ (literal <code>\\</code>)</td></tr>
+<tr><td><code>\n</code></td><td>Newline</td><td>✅</td><td>❌ (literal <code>\n</code>)</td></tr>
+<tr><td><code>\t</code></td><td>Tab</td><td>✅</td><td>❌ (literal <code>\t</code>)</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Explanation</strong>:</p>
+<ul>
+<li><strong>Double quotes</strong>: Full escape support, similar to C/Java/JavaScript strings</li>
+<li><strong>Single quotes</strong>: Raw string, only supports <code>\'</code> to escape the single quote itself, all other backslashes are literal characters</li>
+</ul>
+<h3 id="best-practices"><a class="header" href="#best-practices">Best Practices</a></h3>
+<pre><code class="language-wpl"># ✅ Recommended - prefer unquoted
+| take(field_name)
+
+# ✅ Recommended - use quotes for special characters
+| take("@timestamp")
+| take('@client-ip')
+
+# ✅ Recommended - choose quote type based on content
+| take("field with spaces")         # Double quotes, suitable for simple strings
+| take('it\'s a field')              # Single quotes, only need to escape \'
+| take('C:\Windows\System32')       # Single quotes, Windows paths
+| take("line\nbreak")                # Double quotes, need newline escape
+</code></pre>
+<h2 id="field-type-specification"><a class="header" href="#field-type-specification">Field Type Specification</a></h2>
+<p>You can specify data types for fields:</p>
+<pre><code class="language-wpl"># Unquoted fields
+ip@source_ip: src
+digit@port: port_num
+time@timestamp: time
+
+# Quoted fields
+ip@'@client-ip': client
+digit@'user.age': age
+chars@'event message': msg
+</code></pre>
+<p>Supported types include:</p>
+<ul>
+<li><code>ip</code> - IP address</li>
+<li><code>digit</code> - Integer</li>
+<li><code>float</code> - Floating point</li>
+<li><code>time</code> - Timestamp</li>
+<li><code>chars</code> - String</li>
+<li><code>json</code> - JSON object</li>
+<li><code>kv</code> - Key-value pair</li>
+<li>etc.</li>
+</ul>
+<h2 id="field-aliases"><a class="header" href="#field-aliases">Field Aliases</a></h2>
+<p>Use <code>:</code> to specify aliases for fields:</p>
+<pre><code class="language-wpl"># Plain field aliases
+@source_ip: src
+@destination_ip: dst
+@user_id: uid
+
+# Special field aliases
+@'@timestamp': time
+@'event.type': event
+@'log/level': level
+
+# With type and alias
+ip@'@client-ip': client_ip
+digit@'user.age': age
+chars@'user name': username
+</code></pre>
+<h2 id="usage-limitations"><a class="header" href="#usage-limitations">Usage Limitations</a></h2>
+<h3 id="1-double-quotes-not-supported"><a class="header" href="#1-double-quotes-not-supported">1. Double Quotes Not Supported</a></h3>
+<p>Only single quotes are supported, double quotes are not supported:</p>
+<pre><code class="language-wpl"># ✅ Correct
+@'@field-name'
+
+# ❌ Wrong
+@"@field-name"
+</code></pre>
+<h3 id="2-escape-character-limitations"><a class="header" href="#2-escape-character-limitations">2. Escape Character Limitations</a></h3>
+<p>Escape characters are only valid within single-quoted strings:</p>
+<pre><code class="language-wpl"># ✅ Correct - escaping within single quotes
+@'user\'s name'
+
+# ❌ Wrong - plain field names don't support escaping
+@user\'s_name
+</code></pre>
+<h3 id="3-empty-field-names"><a class="header" href="#3-empty-field-names">3. Empty Field Names</a></h3>
+<p>Field names cannot be empty:</p>
+<pre><code class="language-wpl"># ❌ Wrong
+@''
+
+# ✅ Correct
+@'_'  # Use underscore as field name
+</code></pre>
+<h3 id="4-nested-references"><a class="header" href="#4-nested-references">4. Nested References</a></h3>
+<p>Single quotes don’t support nesting:</p>
+<pre><code class="language-wpl"># ❌ Wrong
+@'field\'nested\''
+
+# ✅ Correct - use escaping
+@'field\'nested'
+</code></pre>
+<h2 id="performance-notes"><a class="header" href="#performance-notes">Performance Notes</a></h2>
+<h3 id="parsing-performance"><a class="header" href="#parsing-performance">Parsing Performance</a></h3>
+<ul>
+<li>
+<p><strong>Plain field names</strong>: Zero-copy, optimal performance</p>
+<pre><code class="language-wpl">@field_name  # Direct reference, no allocation
+</code></pre>
+</li>
+<li>
+<p><strong>Single-quoted field names</strong>: Requires decoding escape characters</p>
+<pre><code class="language-wpl">@'@field'    # No escape characters, performance close to plain fields
+@'field\'s'  # Has escape characters, requires additional processing
+</code></pre>
+</li>
+</ul>
+<h3 id="performance-comparison"><a class="header" href="#performance-comparison">Performance Comparison</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Field Name Type</th><th>Parse Time</th><th>Memory Allocation</th><th>Recommended Use</th></tr>
+</thead>
+<tbody>
+<tr><td>Plain field name</td><td>~10ns</td><td>Zero-copy</td><td>Use first</td></tr>
+<tr><td>Single-quoted (no escaping)</td><td>~15ns</td><td>One allocation</td><td>Special characters</td></tr>
+<tr><td>Single-quoted (with escaping)</td><td>~30ns</td><td>One allocation</td><td>When necessary</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="optimization-recommendations"><a class="header" href="#optimization-recommendations">Optimization Recommendations</a></h3>
+<ol>
+<li>
+<p><strong>Prefer plain field names</strong></p>
+<pre><code class="language-wpl"># ✅ Recommended
+@user_id
+@timestamp
+
+# ⚠️ Only when necessary
+@'@timestamp'
+</code></pre>
+</li>
+<li>
+<p><strong>Avoid unnecessary escaping</strong></p>
+<pre><code class="language-wpl"># ✅ Recommended
+@'simple-field'
+
+# ⚠️ Avoid
+@'field\twith\tescape'  # Only when you really need tabs
+</code></pre>
+</li>
+<li>
+<p><strong>Consider performance in bulk operations</strong></p>
+<pre><code class="language-wpl"># When parsing many fields, prefer plain field names
+json(
+    @user_id,      # Fast
+    @username,     # Fast
+    @'@metadata'   # Slightly slower
+)
+</code></pre>
+</li>
+</ol>
+<h2 id="error-handling"><a class="header" href="#error-handling">Error Handling</a></h2>
+<h3 id="common-errors"><a class="header" href="#common-errors">Common Errors</a></h3>
+<h4 id="1-field-name-contains-special-characters-but-no-quotes-used"><a class="header" href="#1-field-name-contains-special-characters-but-no-quotes-used">1. Field name contains special characters but no quotes used</a></h4>
+<pre><code>Error: Parse failed, unexpected character '@'
+Reason: Field name contains @ but single quotes not used
+Solution: @'@field-name'
+</code></pre>
+<h4 id="2-unclosed-single-quote"><a class="header" href="#2-unclosed-single-quote">2. Unclosed single quote</a></h4>
+<pre><code>Error: Unterminated string
+Reason: Missing closing single quote
+Solution: Ensure quotes are paired @'field-name'
+</code></pre>
+<h4 id="3-invalid-escape-sequence"><a class="header" href="#3-invalid-escape-sequence">3. Invalid escape sequence</a></h4>
+<pre><code>Error: Invalid escape sequence
+Reason: Used unsupported escape character
+Solution: Only use supported escape sequences \', \\, \n, \t, \r, \xHH
+</code></pre>
+<h4 id="4-empty-field-name"><a class="header" href="#4-empty-field-name">4. Empty field name</a></h4>
+<pre><code>Error: Field name cannot be empty
+Reason: @'' or @ with no content
+Solution: Provide a valid field name
+</code></pre>
+<h2 id="best-practices-1"><a class="header" href="#best-practices-1">Best Practices</a></h2>
+<h3 id="1-naming-conventions"><a class="header" href="#1-naming-conventions">1. Naming Conventions</a></h3>
+<pre><code class="language-wpl"># ✅ Recommended - use underscore separator
+@user_id
+@client_ip
+@event_timestamp
+
+# ⚠️ Avoid - unless necessary
+@'user id'
+@'client-ip'
+</code></pre>
+<h3 id="2-maintain-consistency"><a class="header" href="#2-maintain-consistency">2. Maintain Consistency</a></h3>
+<pre><code class="language-wpl"># ✅ Recommended - unified style
+rule consistent_naming {
+    json(
+        @user_id,
+        @user_name,
+        @user_email
+    )
+}
+
+# ⚠️ Avoid - mixed styles
+rule inconsistent_naming {
+    json(
+        @user_id,
+        @'user name',
+        @userEmail
+    )
+}
+</code></pre>
+<h3 id="3-document-special-fields"><a class="header" href="#3-document-special-fields">3. Document Special Fields</a></h3>
+<pre><code class="language-wpl"># ✅ Recommended - add comments
+rule documented {
+    json(
+        # Elasticsearch's @timestamp field
+        @'@timestamp': time,
+
+        # Log level (contains spaces)
+        @'log level': level
+    )
+}
+</code></pre>
+<h3 id="4-use-type-prefixes"><a class="header" href="#4-use-type-prefixes">4. Use Type Prefixes</a></h3>
+<pre><code class="language-wpl"># ✅ Recommended - explicitly specify types
+time@'@timestamp': time
+ip@'@client-ip': client
+chars@'event message': msg
+</code></pre>
+<h3 id="5-alias-usage-guidelines"><a class="header" href="#5-alias-usage-guidelines">5. Alias Usage Guidelines</a></h3>
+<pre><code class="language-wpl"># ✅ Recommended - use short aliases
+@'very.long.nested.field.name': short_name
+@'@timestamp': time
+@'event.action': action
+
+# ⚠️ Avoid - aliases too long
+@'@timestamp': timestamp_value_from_elasticsearch
+</code></pre>
+<h2 id="debugging-tips"><a class="header" href="#debugging-tips">Debugging Tips</a></h2>
+<h3 id="1-validate-field-references-step-by-step"><a class="header" href="#1-validate-field-references-step-by-step">1. Validate field references step by step</a></h3>
+<pre><code class="language-wpl"># Step 1: Validate single field
+rule test_single {
+    json(@'@timestamp')
+}
+
+# Step 2: Add more fields
+rule test_multiple {
+    json(
+        @'@timestamp',
+        @'event.type'
+    )
+}
+
+# Step 3: Add types and aliases
+rule test_complete {
+    time@'@timestamp': time,
+    chars@'event.type': event
+}
+</code></pre>
+<h3 id="2-check-field-name-spelling"><a class="header" href="#2-check-field-name-spelling">2. Check field name spelling</a></h3>
+<pre><code class="language-bash"># Use JSON tools to view original field names
+echo '{"@timestamp": "2024-01-01"}' | jq 'keys'
+
+# Output: ["@timestamp"]
+# Use in WPL: @'@timestamp'
+</code></pre>
+<h3 id="3-test-escape-characters"><a class="header" href="#3-test-escape-characters">3. Test escape characters</a></h3>
+<pre><code class="language-wpl"># Test escape characters one by one
+@'test\'quote'      # Single quote
+@'test\\backslash'  # Backslash
+@'test\nnewline'    # Newline
+</code></pre>
+<h3 id="4-use-debug-mode"><a class="header" href="#4-use-debug-mode">4. Use debug mode</a></h3>
+<pre><code class="language-bash"># Use WP-Motor debug mode to view parse results
+wp-motor --debug rule.wpl &lt; test.log
+</code></pre>
+<h2 id="frequently-asked-questions-faq"><a class="header" href="#frequently-asked-questions-faq">Frequently Asked Questions (FAQ)</a></h2>
+<h3 id="q1-when-must-single-quotes-be-used"><a class="header" href="#q1-when-must-single-quotes-be-used">Q1: When must single quotes be used?</a></h3>
+<p>Single quotes are required when field names contain the following characters:</p>
+<ul>
+<li><code>@</code>, spaces, commas, equal signs, parentheses, angle brackets, hash symbols, and other special characters</li>
+</ul>
+<h3 id="q2-whats-the-difference-between-single-quotes-and-double-quotes"><a class="header" href="#q2-whats-the-difference-between-single-quotes-and-double-quotes">Q2: What’s the difference between single quotes and double quotes?</a></h3>
+<p>WPL only supports single quotes <code>'</code> for field name references. Double quotes <code>"</code> are used for other syntax elements (such as scope markers).</p>
+<h3 id="q3-how-to-include-a-single-quote-in-a-field-name"><a class="header" href="#q3-how-to-include-a-single-quote-in-a-field-name">Q3: How to include a single quote in a field name?</a></h3>
+<p>Use backslash escaping: <code>@'user\'s name'</code></p>
+<h3 id="q4-how-significant-is-the-performance-impact"><a class="header" href="#q4-how-significant-is-the-performance-impact">Q4: How significant is the performance impact?</a></h3>
+<p>For most application scenarios, the performance impact is negligible (nanosecond-level difference). Only consider this when extremely high performance is required.</p>
+<h3 id="q5-can-i-use-variables-as-field-names"><a class="header" href="#q5-can-i-use-variables-as-field-names">Q5: Can I use variables as field names?</a></h3>
+<p>No, field names must be static literals.</p>
+<h3 id="q6-how-to-handle-dynamic-field-names"><a class="header" href="#q6-how-to-handle-dynamic-field-names">Q6: How to handle dynamic field names?</a></h3>
+<p>Use wildcards or field combinations:</p>
+<pre><code class="language-wpl">@items[*]/name     # Match name field of all array elements
+@'prefix*'         # Match fields starting with prefix (if supported)
+</code></pre>
+<h3 id="q7-are-unicode-characters-supported"><a class="header" href="#q7-are-unicode-characters-supported">Q7: Are Unicode characters supported?</a></h3>
+<p>Yes, field names can contain any Unicode characters:</p>
+<pre><code class="language-wpl">@'用户名称'
+@'événement'
+@'フィールド'
+</code></pre>
+<h2 id="additional-resources"><a class="header" href="#additional-resources">Additional Resources</a></h2>
+<ul>
+<li><strong>Separator Usage Guide</strong>: <code>docs/usage/wpl/en/separator.md</code></li>
+<li><strong>chars_replace Usage Guide</strong>: <code>docs/usage/wpl/en/chars_replace.md</code></li>
+<li><strong>WPL Field Function Development Guide</strong>: <code>docs/guide/en/wpl_field_func_development_guide.md</code></li>
+<li><strong>Source Code</strong>:
+<ul>
+<li><code>crates/wp-lang/src/parser/utils.rs</code> (take_ref_path_or_quoted)</li>
+<li><code>crates/wp-lang/src/parser/wpl_field.rs</code> (wpl_id_field)</li>
+</ul>
+</li>
+</ul>
+<h2 id="version-history"><a class="header" href="#version-history">Version History</a></h2>
+<ul>
+<li><strong>1.11.0</strong> (2026-01-29)
+<ul>
+<li>Added single-quoted field name support (<code>@'@special-field'</code>)</li>
+<li>Added <code>take()</code> function single and double quote support</li>
+<li>Support for <code>take("@field")</code> and <code>take('@field')</code> syntax</li>
+<li>Added escape character support (<code>\"</code>, <code>\'</code>, <code>\\</code>, <code>\n</code>, <code>\t</code>)</li>
+<li>Added comprehensive test coverage</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p><strong>Tip</strong>: Prefer plain field names for best performance, only use quotes when field names contain special characters.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../../10-user/03-wpl/functions/function_index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../../10-user/03-wpl/functions/separator.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../../10-user/03-wpl/functions/function_index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../../10-user/03-wpl/functions/separator.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../../mark-09e88c2c.min.js"></script>
+        <script src="../../../searcher-c2a407aa.js"></script>
+
+        <script src="../../../clipboard-1626706a.min.js"></script>
+        <script src="../../../highlight-abc7f01d.js"></script>
+        <script src="../../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../../../../theme/lang-switch.js"></script>
+        <script src="../../../mermaid-eefea253.min.js"></script>
+        <script src="../../../mermaid-init-ccf746f1.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

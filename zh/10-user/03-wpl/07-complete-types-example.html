@@ -1,0 +1,608 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>🌟 完整类型系统示例 - Warp Parse 文档</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../../../theme/lang-switch.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../searchindex-b509f17a.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-ca145d02.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Warp Parse 文档</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wp-labs/warp-parse" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="wpl-完整类型系统示例"><a class="header" href="#wpl-完整类型系统示例">WPL 完整类型系统示例</a></h1>
+<blockquote>
+<p>一个示例展示 WPL 支持的所有主要数据类型</p>
+</blockquote>
+<p>本文档提供一个完整的、可运行的 WPL 规则示例，展示 23 种主要数据类型的使用方法。这是学习 WPL 类型系统的<strong>最佳参考</strong>。</p>
+<hr>
+<h2 id="-文档导航"><a class="header" href="#-文档导航">📑 文档导航</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>章节</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><a href="#-类型覆盖清单">类型覆盖清单</a></td><td>本示例包含的所有类型</td></tr>
+<tr><td><a href="#-完整示例">完整示例</a></td><td>输入数据、WPL 规则、输出结果</td></tr>
+<tr><td><a href="#-类型详解">类型详解</a></td><td>每种类型的详细说明</td></tr>
+<tr><td><a href="#-使用建议">使用建议</a></td><td>学习路径和实战建议</td></tr>
+<tr><td><a href="#-快速导航">快速导航</a></td><td>快速跳转到需要的内容</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="-类型覆盖清单"><a class="header" href="#-类型覆盖清单">📋 类型覆盖清单</a></h2>
+<p>本示例包含以下类型：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>类别</th><th>包含类型</th><th>数量</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>基础类型</strong></td><td><code>peek_symbol</code>、<code>symbol</code>、<code>bool</code>、<code>chars</code>、<code>digit</code>、<code>float</code>、<code>_</code></td><td>7</td></tr>
+<tr><td><strong>时间类型</strong></td><td><code>time_3339</code>、<code>time_2822</code>、<code>time/clf</code>、<code>time_timestamp</code></td><td>4</td></tr>
+<tr><td><strong>网络类型</strong></td><td><code>ip</code>、<code>ip_net</code>、<code>port</code></td><td>3</td></tr>
+<tr><td><strong>结构化类型</strong></td><td><code>kvarr</code>、<code>json</code></td><td>2</td></tr>
+<tr><td><strong>协议类型</strong></td><td><code>http/request</code>、<code>http/status</code>、<code>http/agent</code>、<code>http/method</code></td><td>4</td></tr>
+<tr><td><strong>编码类型</strong></td><td><code>hex</code>、<code>base64</code></td><td>2</td></tr>
+<tr><td><strong>特殊类型</strong></td><td><code>sn</code></td><td>1</td></tr>
+<tr><td><strong>总计</strong></td><td></td><td><strong>23 种类型</strong></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="-完整示例"><a class="header" href="#-完整示例">🚀 完整示例</a></h2>
+<h3 id="输入数据"><a class="header" href="#输入数据">输入数据</a></h3>
+<pre><code>peek_symbol symbol true "hello world" 123 3.14 2026-01-19T12:34:56Z 2022-03-21T12:34:56+00:00 Mon, 07 Jul 2025 09:20:32 +0000 [06/Aug/2019:12:12:19 +0800] 1647849600 192.168.1.100 192.168.0.0/24 name=test {"strict":true} "GET /api/users HTTP/1.1" 200 "Mozilla/5.0" "POST" 8080 ABC123XYZ 0x1A2B YmFzZTY0ZGF0YQ==
+</code></pre>
+<h3 id="wpl-规则"><a class="header" href="#wpl-规则">WPL 规则</a></h3>
+<pre><code class="language-wpl">package wpl_example {
+  rule full_types {
+    (
+      // 1. peek_symbol - 预读符号（不消费）
+      peek_symbol(peek_symbol):peek_sym,
+
+      // 2. symbol - 精确匹配符号
+      symbol(symbol):sym,
+
+      // 3. bool - 布尔值
+      bool:bool_val,
+
+      // 4. chars - 字符串（带引号）
+      chars":quoted_str,
+
+      // 5. digit - 整数
+      digit:integer,
+
+      // 6. float - 浮点数
+      float:float_val,
+
+      // 7. time_3339 - ISO 8601 / RFC3339
+      time_3339:time_iso,
+
+      // 8. time_3339 - RFC3339（带时区）
+      time_3339:time_rfc3339,
+
+      // 9. time_2822 - RFC2822（邮件时间格式）
+      time_2822:time_rfc2822,
+
+      // 10. time/clf - Common Log Format（Apache/Nginx）
+      time/clf&lt;[,]&gt;:time_clf,
+
+      // 11. time_timestamp - Unix 时间戳
+      time_timestamp:timestamp,
+
+      // 12. ip - IP 地址
+      ip:ip_addr,
+
+      // 13. ip_net - IP 网段（CIDR）
+      ip_net:ip_network,
+
+      // 14. kvarr - 键值对
+      kvarr(chars@name):kv_data,
+
+      // 15. json - JSON 对象
+      json(bool@strict):json_data,
+
+      // 16. http/request - HTTP 请求行
+      http/request":http_req,
+
+      // 17. http/status - HTTP 状态码
+      http/status:http_status,
+
+      // 18. http/agent - User-Agent
+      http/agent":user_agent,
+
+      // 19. http/method - HTTP 方法
+      http/method":http_method,
+
+      // 20. port - 端口号
+      port:port_num,
+
+      // 21. sn - 序列号
+      sn:serial,
+
+      // 22. hex - 十六进制
+      hex:hex_data,
+
+      // 23. base64 - Base64 编码
+      base64:base64_data
+    )
+  }
+}
+</code></pre>
+<h3 id="输出结果"><a class="header" href="#输出结果">输出结果</a></h3>
+<pre><code class="language-json">{
+  "peek_sym": "peek_symbol",
+  "sym": "symbol",
+  "bool_val": true,
+  "quoted_str": "hello world",
+  "integer": 123,
+  "float_val": 3.14,
+  "time_iso": "2026-01-19 12:34:56",
+  "time_rfc3339": "2022-03-21 12:34:56",
+  "time_rfc2822": "2025-07-07 09:20:32",
+  "time_clf": "2019-08-06 12:12:19",
+  "timestamp": 1647849600,
+  "ip_addr": "192.168.1.100",
+  "ip_network": "192.168.0.0/24",
+  "kv_data": {"name": "test"},
+  "json_data": {"strict": true},
+  "http_req": "GET /api/users HTTP/1.1",
+  "http_status": 200,
+  "user_agent": "Mozilla/5.0",
+  "http_method": "POST",
+  "port_num": 8080,
+  "serial": "ABC123XYZ",
+  "hex_data": "0x1A2B",
+  "base64_data": "YmFzZTY0ZGF0YQ=="
+}
+</code></pre>
+<hr>
+<h2 id="-类型详解"><a class="header" href="#-类型详解">📖 类型详解</a></h2>
+<h3 id="基础类型"><a class="header" href="#基础类型">基础类型</a></h3>
+<h4 id="1-peek_symbol---预读符号"><a class="header" href="#1-peek_symbol---预读符号">1. peek_symbol - 预读符号</a></h4>
+<pre><code class="language-wpl">peek_symbol(peek_symbol):peek_sym
+</code></pre>
+<ul>
+<li><strong>作用</strong>：预读匹配但不消费输入</li>
+<li><strong>用途</strong>：用于向前查看而不影响后续解析</li>
+</ul>
+<h4 id="2-symbol---精确匹配符号"><a class="header" href="#2-symbol---精确匹配符号">2. symbol - 精确匹配符号</a></h4>
+<pre><code class="language-wpl">symbol(symbol):sym
+</code></pre>
+<ul>
+<li><strong>作用</strong>：精确匹配指定字符串</li>
+<li><strong>用途</strong>：匹配固定关键字、分隔符等</li>
+</ul>
+<h4 id="3-bool---布尔值"><a class="header" href="#3-bool---布尔值">3. bool - 布尔值</a></h4>
+<pre><code class="language-wpl">bool:bool_val
+</code></pre>
+<ul>
+<li><strong>匹配</strong>：<code>true</code> 或 <code>false</code></li>
+<li><strong>输出</strong>：布尔类型</li>
+</ul>
+<h4 id="4-chars---字符串"><a class="header" href="#4-chars---字符串">4. chars - 字符串</a></h4>
+<pre><code class="language-wpl">chars":quoted_str
+</code></pre>
+<ul>
+<li><strong>格式</strong>：支持引号包裹 <code>"hello"</code> 或裸字符串 <code>hello</code></li>
+<li><strong>用途</strong>：提取任意字符串</li>
+</ul>
+<h4 id="5-digit---整数"><a class="header" href="#5-digit---整数">5. digit - 整数</a></h4>
+<pre><code class="language-wpl">digit:integer
+</code></pre>
+<ul>
+<li><strong>匹配</strong>：整数，如 <code>123</code>、<code>-456</code></li>
+<li><strong>输出</strong>：整数类型</li>
+</ul>
+<h4 id="6-float---浮点数"><a class="header" href="#6-float---浮点数">6. float - 浮点数</a></h4>
+<pre><code class="language-wpl">float:float_val
+</code></pre>
+<ul>
+<li><strong>匹配</strong>：浮点数，如 <code>3.14</code>、<code>-0.5</code></li>
+<li><strong>输出</strong>：浮点数类型</li>
+</ul>
+<hr>
+<h3 id="时间类型"><a class="header" href="#时间类型">时间类型</a></h3>
+<h4 id="7-8-time_3339---rfc3339iso-8601"><a class="header" href="#7-8-time_3339---rfc3339iso-8601">7-8. time_3339 - RFC3339/ISO 8601</a></h4>
+<pre><code class="language-wpl">time_3339:time_iso           // 2026-01-19T12:34:56Z
+time_3339:time_rfc3339       // 2022-03-21T12:34:56+00:00
+</code></pre>
+<ul>
+<li><strong>格式</strong>：ISO 8601 / RFC3339 标准</li>
+<li><strong>支持</strong>：带时区或不带时区</li>
+</ul>
+<h4 id="9-time_2822---rfc2822邮件时间"><a class="header" href="#9-time_2822---rfc2822邮件时间">9. time_2822 - RFC2822（邮件时间）</a></h4>
+<pre><code class="language-wpl">time_2822:time_rfc2822
+</code></pre>
+<ul>
+<li><strong>格式</strong>：<code>Mon, 07 Jul 2025 09:20:32 +0000</code></li>
+<li><strong>用途</strong>：邮件头、RSS 等</li>
+</ul>
+<h4 id="10-timeclf---common-log-format"><a class="header" href="#10-timeclf---common-log-format">10. time/clf - Common Log Format</a></h4>
+<pre><code class="language-wpl">time/clf&lt;[,]&gt;:time_clf
+</code></pre>
+<ul>
+<li><strong>格式</strong>：<code>[06/Aug/2019:12:12:19 +0800]</code></li>
+<li><strong>用途</strong>：Apache/Nginx 日志</li>
+</ul>
+<h4 id="11-time_timestamp---unix-时间戳"><a class="header" href="#11-time_timestamp---unix-时间戳">11. time_timestamp - Unix 时间戳</a></h4>
+<pre><code class="language-wpl">time_timestamp:timestamp
+</code></pre>
+<ul>
+<li><strong>格式</strong>：秒级时间戳，如 <code>1647849600</code></li>
+<li><strong>输出</strong>：时间类型</li>
+</ul>
+<hr>
+<h3 id="网络类型"><a class="header" href="#网络类型">网络类型</a></h3>
+<h4 id="12-ip---ip-地址"><a class="header" href="#12-ip---ip-地址">12. ip - IP 地址</a></h4>
+<pre><code class="language-wpl">ip:ip_addr
+</code></pre>
+<ul>
+<li><strong>支持</strong>：IPv4（<code>192.168.1.100</code>）和 IPv6（<code>::1</code>）</li>
+</ul>
+<h4 id="13-ip_net---ip-网段"><a class="header" href="#13-ip_net---ip-网段">13. ip_net - IP 网段</a></h4>
+<pre><code class="language-wpl">ip_net:ip_network
+</code></pre>
+<ul>
+<li><strong>格式</strong>：CIDR 表示法，如 <code>192.168.0.0/24</code></li>
+</ul>
+<h4 id="14-port---端口号"><a class="header" href="#14-port---端口号">14. port - 端口号</a></h4>
+<pre><code class="language-wpl">port:port_num
+</code></pre>
+<ul>
+<li><strong>范围</strong>：1-65535</li>
+</ul>
+<hr>
+<h3 id="结构化类型"><a class="header" href="#结构化类型">结构化类型</a></h3>
+<h4 id="15-kvarr---键值对"><a class="header" href="#15-kvarr---键值对">15. kvarr - 键值对</a></h4>
+<pre><code class="language-wpl">kvarr(chars@name):kv_data
+</code></pre>
+<ul>
+<li><strong>格式</strong>：<code>key=value</code></li>
+<li><strong>支持</strong>：自动解析或指定键提取</li>
+<li><strong>示例</strong>：<code>name=test</code> → <code>{name: "test"}</code></li>
+</ul>
+<h4 id="16-json---json-对象"><a class="header" href="#16-json---json-对象">16. json - JSON 对象</a></h4>
+<pre><code class="language-wpl">json(bool@strict):json_data
+</code></pre>
+<ul>
+<li><strong>支持</strong>：完整 JSON 解析</li>
+<li><strong>子字段</strong>：可提取嵌套字段</li>
+<li><strong>示例</strong>：<code>{"strict":true}</code> → <code>{strict: true}</code></li>
+</ul>
+<hr>
+<h3 id="协议类型"><a class="header" href="#协议类型">协议类型</a></h3>
+<h4 id="17-httprequest---http-请求行"><a class="header" href="#17-httprequest---http-请求行">17. http/request - HTTP 请求行</a></h4>
+<pre><code class="language-wpl">http/request":http_req
+</code></pre>
+<ul>
+<li><strong>格式</strong>：<code>"GET /api/users HTTP/1.1"</code></li>
+<li><strong>提取</strong>：方法 + 路径 + 协议版本</li>
+</ul>
+<h4 id="18-httpstatus---http-状态码"><a class="header" href="#18-httpstatus---http-状态码">18. http/status - HTTP 状态码</a></h4>
+<pre><code class="language-wpl">http/status:http_status
+</code></pre>
+<ul>
+<li><strong>格式</strong>：<code>200</code>、<code>404</code>、<code>500</code> 等</li>
+</ul>
+<h4 id="19-httpagent---user-agent"><a class="header" href="#19-httpagent---user-agent">19. http/agent - User-Agent</a></h4>
+<pre><code class="language-wpl">http/agent":user_agent
+</code></pre>
+<ul>
+<li><strong>格式</strong>：<code>"Mozilla/5.0..."</code></li>
+<li><strong>用途</strong>：浏览器标识</li>
+</ul>
+<h4 id="20-httpmethod---http-方法"><a class="header" href="#20-httpmethod---http-方法">20. http/method - HTTP 方法</a></h4>
+<pre><code class="language-wpl">http/method":http_method
+</code></pre>
+<ul>
+<li><strong>支持</strong>：<code>GET</code>、<code>POST</code>、<code>PUT</code>、<code>DELETE</code> 等</li>
+</ul>
+<hr>
+<h3 id="编码类型"><a class="header" href="#编码类型">编码类型</a></h3>
+<h4 id="21-hex---十六进制"><a class="header" href="#21-hex---十六进制">21. hex - 十六进制</a></h4>
+<pre><code class="language-wpl">hex:hex_data
+</code></pre>
+<ul>
+<li><strong>格式</strong>：<code>0x1A2B</code> 或 <code>1A2B</code></li>
+<li><strong>输出</strong>：十六进制字符串</li>
+</ul>
+<h4 id="22-base64---base64-编码"><a class="header" href="#22-base64---base64-编码">22. base64 - Base64 编码</a></h4>
+<pre><code class="language-wpl">base64:base64_data
+</code></pre>
+<ul>
+<li><strong>格式</strong>：<code>YmFzZTY0ZGF0YQ==</code></li>
+<li><strong>输出</strong>：Base64 编码字符串</li>
+</ul>
+<hr>
+<h3 id="特殊类型"><a class="header" href="#特殊类型">特殊类型</a></h3>
+<h4 id="23-sn---序列号"><a class="header" href="#23-sn---序列号">23. sn - 序列号</a></h4>
+<pre><code class="language-wpl">sn:serial
+</code></pre>
+<ul>
+<li><strong>格式</strong>：字母数字组合，如 <code>ABC123XYZ</code></li>
+<li><strong>用途</strong>：设备序列号、订单号等</li>
+</ul>
+<hr>
+<h2 id="-使用建议"><a class="header" href="#-使用建议">💡 使用建议</a></h2>
+<h3 id="学习路径"><a class="header" href="#学习路径">学习路径</a></h3>
+<ol>
+<li><strong>第一步</strong>：先理解基础类型（<code>digit</code>、<code>chars</code>、<code>ip</code>）</li>
+<li><strong>第二步</strong>：掌握时间类型（根据日志格式选择）</li>
+<li><strong>第三步</strong>：学习结构化类型（<code>json</code>、<code>kvarr</code>）</li>
+<li><strong>第四步</strong>：了解协议类型（<code>http/*</code>）</li>
+</ol>
+<h3 id="实战建议"><a class="header" href="#实战建议">实战建议</a></h3>
+<ul>
+<li><strong>快速查阅</strong>：遇到不认识的数据格式，先在本页面搜索</li>
+<li><strong>复制即用</strong>：直接复制对应类型的语法到你的规则中</li>
+<li><strong>类型组合</strong>：多种类型可以自由组合使用</li>
+</ul>
+<h3 id="常见组合"><a class="header" href="#常见组合">常见组合</a></h3>
+<pre><code class="language-wpl">// Web 日志
+(ip, time/clf&lt;[,]&gt;, http/request", http/status, digit)
+
+// API 日志
+(time_3339, chars, json(chars@user, digit@code))
+
+// 防火墙日志
+(ip, port, time, kvarr)
+</code></pre>
+<hr>
+<h2 id="-相关文档"><a class="header" href="#-相关文档">🔗 相关文档</a></h2>
+<ul>
+<li><strong>快速入门</strong>：<a href="./01-quickstart.html">01-quickstart.md</a> - 5 分钟上手</li>
+<li><strong>核心概念</strong>：<a href="./02-core-concepts.html">02-core-concepts.md</a> - 深入理解类型系统</li>
+<li><strong>实战指南</strong>：<a href="./03-practical-guide.html">03-practical-guide.md</a> - 按任务查找解决方案</li>
+<li><strong>语言参考</strong>：<a href="./04-language-reference.html">04-language-reference.md</a> - 完整类型列表</li>
+<li><strong>函数参考</strong>：<a href="./05-functions-reference.html">05-functions-reference.md</a> - 所有函数详解</li>
+</ul>
+<hr>
+<h2 id="-快速导航"><a class="header" href="#-快速导航">📌 快速导航</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>我想…</th><th>查看章节</th></tr>
+</thead>
+<tbody>
+<tr><td>查看完整示例代码</td><td><a href="#-完整示例">完整示例</a></td></tr>
+<tr><td>了解某个类型详情</td><td><a href="#-类型详解">类型详解</a></td></tr>
+<tr><td>学习如何使用</td><td><a href="#-使用建议">使用建议</a></td></tr>
+<tr><td>查找常见组合</td><td><a href="#常见组合">常见组合</a></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<p><strong>提示</strong>：将本页面加入书签，作为 WPL 类型系统的速查手册！</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../10-user/03-wpl/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../10-user/03-wpl/01-quickstart.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../10-user/03-wpl/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../10-user/03-wpl/01-quickstart.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../mark-09e88c2c.min.js"></script>
+        <script src="../../searcher-c2a407aa.js"></script>
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../../../theme/lang-switch.js"></script>
+        <script src="../../mermaid-eefea253.min.js"></script>
+        <script src="../../mermaid-init-ccf746f1.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

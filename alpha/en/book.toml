@@ -1,5 +1,5 @@
 [book]
-title = "Warp Parse Documentation"
+title = "Warp Parse Documentation [ALPHA]"
 authors = ["Warp Parse Team"]
 language = "en"
 src = "."
@@ -13,5 +13,5 @@ command = "mdbook-mermaid"
 [output.html]
 default-theme = "ayu"
 git-repository-url = "https://github.com/wp-labs/warp-parse"
-additional-css = ["../theme/lang-switch.css"]
-additional-js = ["../theme/lang-switch.js", "mermaid.min.js", "mermaid-init.js"]
+additional-css = ["../theme/lang-switch.css", "../theme/version-badge.css"]
+additional-js = ["../theme/lang-switch.js", "../theme/version-badge.js", "mermaid.min.js", "mermaid-init.js"]

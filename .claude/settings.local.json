@@ -9,7 +9,6 @@
       "Bash(do grep -n '\\\\[.*\\\\]\\(./' \"$file\")",
       "Bash(done)",
       "Bash(git mv:*)",
-      "Bash(test:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)"
     ]

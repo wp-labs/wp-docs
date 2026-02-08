@@ -77,6 +77,12 @@ jobs:
           mkdir -p book
           cp index.html book/
 
+      # Add CNAME for custom domain (only for main branch)
+      - name: Add CNAME file
+        if: steps.branch.outputs.name == 'main'
+        run: |
+          echo "docs.warpparse.ai" > book/CNAME
+
       # Create version selector for main branch
       - name: Create version selector
         if: steps.branch.outputs.name == 'main'
@@ -179,6 +185,7 @@ jobs:
           destination_dir: ${{ steps.branch.outputs.path }}
           keep_files: true
           enable_jekyll: false
+          cname: docs.warpparse.ai
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
           commit_message: 'Deploy ${{ steps.branch.outputs.name }} branch documentation'

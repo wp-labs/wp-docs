@@ -8,7 +8,10 @@
       "Bash(while read file)",
       "Bash(do grep -n '\\\\[.*\\\\]\\(./' \"$file\")",
       "Bash(done)",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(test:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   }
 }

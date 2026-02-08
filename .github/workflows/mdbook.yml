@@ -51,6 +51,11 @@ jobs:
             echo "path=$BRANCH_NAME" >> $GITHUB_OUTPUT
           fi
 
+      - name: Fetch WarpParse version
+        run: |
+          curl -s https://raw.githubusercontent.com/wp-labs/warp-parse/main/version.txt -o wp-version.txt
+          echo "WarpParse version: $(cat wp-version.txt)"
+
       - name: Install mermaid support for Chinese docs
         run: cd docs-zh && mdbook-mermaid install .
 
@@ -93,6 +98,7 @@ jobs:
         run: |
           mkdir -p book
           cp index.html book/
+          cp wp-version.txt book/
 
       # Add CNAME for custom domain (only for main branch)
       - name: Add CNAME file

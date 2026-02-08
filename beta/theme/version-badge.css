@@ -47,6 +47,19 @@
     color: #ffffff;
 }
 
+.version-banner .version-info {
+    font-weight: 600;
+    font-size: 13px;
+    color: #ffffff;
+    padding: 2px 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.version-banner .desc-text {
+    font-weight: 400;
+}
+
 .version-banner .version-switcher {
     display: flex;
     gap: 5px;

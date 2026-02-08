@@ -193,7 +193,7 @@ def generate_fixed_summary(docs_root):
 
 def main():
     """Main function"""
-    docs_root = Path(__file__).parent / "docs"
+    docs_root = Path(__file__).parent / "docs-zh"
     summary_content = generate_fixed_summary(docs_root)
 
     # Write SUMMARY.md

@@ -7,7 +7,8 @@
       "Bash(find:*)",
       "Bash(while read file)",
       "Bash(do grep -n '\\\\[.*\\\\]\\(./' \"$file\")",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(git mv:*)"
     ]
   }
 }

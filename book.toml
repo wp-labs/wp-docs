@@ -2,7 +2,7 @@
 title = "Warp Parse Documentation"
 authors = ["Warp Parse Team"]
 language = "zh-CN"
-src = "./docs"
+src = "./docs-zh"
 
 [build]
 # 输出到 docs/book，便于 GitHub Pages 或本地预览

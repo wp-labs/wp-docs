@@ -7,47 +7,62 @@ name: Deploy mdBook site to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["main"]
+    branches: ["main", "alpha", "beta"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+# Allow only one concurrent deployment per branch
 concurrency:
-  group: "pages"
+  group: "pages-${{ github.ref_name }}"
   cancel-in-progress: false
 
 jobs:
-  # Build job
-  build:
+  # Build and deploy job
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup mdBook
         uses: peaceiris/actions-mdbook@v2
         with:
           mdbook-version: "latest"
+
       - name: Install mdbook-mermaid
         run: |
           cargo install mdbook-mermaid
-      - name: Setup Pages
-        id: pages
-        uses: actions/configure-pages@v5
+
+      # Determine branch name and output path
+      - name: Set branch info
+        id: branch
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          echo "name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          if [ "$BRANCH_NAME" = "main" ]; then
+            echo "path=." >> $GITHUB_OUTPUT
+          else
+            echo "path=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          fi
+
       - name: Install mermaid support for Chinese docs
-        run: cd docs && mdbook-mermaid install .
+        run: cd docs-zh && mdbook-mermaid install .
+
       - name: Install mermaid support for English docs
-        run: cd en && mdbook-mermaid install .
+        run: cd docs-en && mdbook-mermaid install .
+
       - name: Build Chinese version
-        run: cd docs && mdbook build
+        run: cd docs-zh && mdbook build
+
       - name: Build English version
-        run: cd en && mdbook build
+        run: cd docs-en && mdbook build
+
       - name: Copy theme assets
         run: |
           mkdir -p book/zh/theme
@@ -56,23 +71,114 @@ jobs:
           cp theme/lang-switch.js book/zh/theme/
           cp theme/lang-switch.css book/en/theme/
           cp theme/lang-switch.js book/en/theme/
+
       - name: Copy language selection page
         run: |
           mkdir -p book
           cp index.html book/
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./book
 
-  # Deployment job
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
+      # Create version selector for main branch
+      - name: Create version selector
+        if: steps.branch.outputs.name == 'main'
+        run: |
+          cat > book/versions.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>WP-Docs - Version Select</title>
+              <style>
+                  body {
+                      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+                      max-width: 800px;
+                      margin: 80px auto;
+                      padding: 20px;
+                      background: #1a1a1a;
+                      color: #e6e6e6;
+                  }
+                  h1 { color: #61afef; margin-bottom: 40px; }
+                  .version-list {
+                      display: flex;
+                      flex-direction: column;
+                      gap: 20px;
+                  }
+                  .version-card {
+                      background: #2c313c;
+                      padding: 30px;
+                      border-radius: 8px;
+                      border-left: 4px solid;
+                      text-decoration: none;
+                      color: inherit;
+                      transition: transform 0.2s, box-shadow 0.2s;
+                  }
+                  .version-card:hover {
+                      transform: translateX(5px);
+                      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                  }
+                  .version-card.stable { border-left-color: #98c379; }
+                  .version-card.beta { border-left-color: #e5c07b; }
+                  .version-card.alpha { border-left-color: #e06c75; }
+                  .version-title {
+                      font-size: 24px;
+                      font-weight: bold;
+                      margin-bottom: 10px;
+                  }
+                  .version-desc {
+                      color: #abb2bf;
+                      font-size: 14px;
+                  }
+                  .badge {
+                      display: inline-block;
+                      padding: 4px 12px;
+                      border-radius: 12px;
+                      font-size: 12px;
+                      margin-left: 10px;
+                      font-weight: 600;
+                  }
+                  .badge.stable { background: #98c379; color: #1a1a1a; }
+                  .badge.beta { background: #e5c07b; color: #1a1a1a; }
+                  .badge.alpha { background: #e06c75; color: #1a1a1a; }
+              </style>
+          </head>
+          <body>
+              <h1>📚 WP-Docs Documentation</h1>
+              <div class="version-list">
+                  <a href="/" class="version-card stable">
+                      <div class="version-title">
+                          Stable Version
+                          <span class="badge stable">MAIN</span>
+                      </div>
+                      <div class="version-desc">生产环境文档 (main branch)</div>
+                  </a>
+                  <a href="/beta/" class="version-card beta">
+                      <div class="version-title">
+                          Beta Version
+                          <span class="badge beta">BETA</span>
+                      </div>
+                      <div class="version-desc">预发布文档 (beta branch)</div>
+                  </a>
+                  <a href="/alpha/" class="version-card alpha">
+                      <div class="version-title">
+                          Alpha Version
+                          <span class="badge alpha">ALPHA</span>
+                      </div>
+                      <div class="version-desc">开发版文档 (alpha branch)</div>
+                  </a>
+              </div>
+          </body>
+          </html>
+          EOF
+
+      # Deploy to GitHub Pages with branch-specific path
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./book
+          destination_dir: ${{ steps.branch.outputs.path }}
+          keep_files: true
+          enable_jekyll: false
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: 'Deploy ${{ steps.branch.outputs.name }} branch documentation'

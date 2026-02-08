@@ -1,0 +1,1760 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>BenchMark Report - Warp Parse 文档</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../../theme/lang-switch.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../searchindex-b509f17a.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-ca145d02.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Warp Parse 文档</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wp-labs/warp-parse" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="benchmark-report"><a class="header" href="#benchmark-report">BenchMark Report</a></h1>
+<p>4 种日志 * 3 种拓扑 * 2 种能力 * 2 种平台 * 2 种引擎。</p>
+<h2 id="范畴与指标"><a class="header" href="#范畴与指标">范畴与指标</a></h2>
+<ul>
+<li>拓扑：File -&gt; BlackHole、TCP -&gt; BlackHole、TCP -&gt; File。</li>
+<li>能力：解析（Parse）；解析+转换（Parse+Transform）。</li>
+<li>平台：Mac M4 Mini、Linux VPS。</li>
+<li>引擎：WarpParse、Vector。</li>
+<li>指标：EPS=Events Per Second，MPS（MiB/s, Messages Per Seconds)；CPU/MEM 取进程平均/峰值；规则大小为对应规则文件体积。</li>
+<li>样本大小：Nginx 239B、AWS 411B、Sysmon 1K、APT 3K（单条日志）。</li>
+</ul>
+<h2 id="覆盖矩阵"><a class="header" href="#覆盖矩阵">覆盖矩阵</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>维度</th><th>取值</th></tr>
+</thead>
+<tbody>
+<tr><td>日志类型</td><td>Nginx、AWS、Sysmon、APT</td></tr>
+<tr><td>拓扑</td><td>File -&gt; BlackHole、TCP -&gt; BlackHole、TCP -&gt; File</td></tr>
+<tr><td>能力</td><td>解析、解析+转换</td></tr>
+<tr><td>平台</td><td>Mac M4 Mini（数据就绪）、Linux VPS（数据筹备中）</td></tr>
+<tr><td>引擎</td><td>WarpParse、Vector</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="日志解析测试"><a class="header" href="#日志解析测试">日志解析测试</a></h2>
+<h3 id="mac-m4-mini"><a class="header" href="#mac-m4-mini">Mac M4 Mini</a></h3>
+<h4 id="nginx239b"><a class="header" href="#nginx239b">Nginx（239B）</a></h4>
+<h5 id="warpparse"><a class="header" href="#warpparse">WarpParse</a></h5>
+<h6 id="wpl"><a class="header" href="#wpl">WPL</a></h6>
+<pre><code class="language-bash">package /nginx/ {
+   rule nginx {
+        (ip:sip,_^2,chars:timestamp&lt;[,]&gt;,http/request:http_request",chars:status,chars:size,chars:referer",http/agent:http_agent",_")
+   }
+}
+</code></pre>
+<h6 id="output"><a class="header" href="#output">output</a></h6>
+<pre><code class="language-json">{
+	"wp_event_id": 1764645169882925000,
+	"sip": "180.57.30.148",
+	"timestamp": "21/Jan/2025:01:40:02 +0800",
+	"http_request": "GET /nginx-logo.png HTTP/1.1",
+	"status": "500",
+	"size": "368",
+	"referer": "http://207.131.38.110/",
+	"http_agent": "Mozilla/5.0(Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36 ",
+	"wp_src_key": "socket",
+	"wp_src_ip": "127.0.0.1"
+}
+</code></pre>
+<h5 id="vector"><a class="header" href="#vector">Vector</a></h5>
+<h6 id="vrl"><a class="header" href="#vrl">VRL</a></h6>
+<pre><code class="language- bash">source = '''
+  parsed = parse_regex!(.message, r'^(?P&lt;client&gt;\S+) \S+ \S+ \[(?P&lt;time&gt;[^\]]+)\] "(?P&lt;request&gt;[^"]*)" (?P&lt;status&gt;\d{3}) (?P&lt;size&gt;\d+) "(?P&lt;referer&gt;[^"]*)" "(?P&lt;agent&gt;[^"]*)" "(?P&lt;extra&gt;[^"]*)"')
+  .sip = parsed.client
+  .http_request = parsed.request
+  .status = parsed.status
+  .size = parsed.size
+  .referer = parsed.referer
+  .http_agent = parsed.agent
+  .timestamp = parsed.time
+  del(.message)
+'''
+</code></pre>
+<h6 id="output-1"><a class="header" href="#output-1">output</a></h6>
+<pre><code class="language-json">{
+	"host": "127.0.0.1",
+	"http_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36",
+	"http_request": "GET /nginx-logo.png HTTP/1.1",
+	"port": 58102,
+	"referer": "http://207.131.38.110/",
+	"sip": "180.57.30.148",
+	"size": "368",
+	"source_type": "socket",
+	"status": "500",
+	"timestamp": "21/Jan/2025:01:40:02 +0800"
+}
+</code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>引擎</th><th>拓扑</th><th>EPS</th><th>MPS</th><th>CPU (avg/peak)</th><th>MEM (avg/peak)</th><th>规则大小</th></tr>
+</thead>
+<tbody>
+<tr><td>WarpParse</td><td>File -&gt; BlackHole</td><td><strong>2,456,100</strong></td><td>559.81</td><td><strong>684.40 % / 824.50 %</strong></td><td><strong>107.36 MB / 120.44 MB</strong></td><td>174B</td></tr>
+<tr><td></td><td>TCP -&gt; BlackHole</td><td><strong>1,737,200</strong></td><td>395.96</td><td><strong>506.85 % / 650.90 %</strong></td><td><strong>426.09 MB /450.23 MB</strong></td><td></td></tr>
+<tr><td></td><td>TCP -&gt; File</td><td><strong>1,084,600</strong></td><td>247.21</td><td><strong>541.19 % / 722.40 %</strong></td><td><strong>696.63 MB / 699.62 MB</strong></td><td></td></tr>
+<tr><td>Vector</td><td>File -&gt; BlackHole</td><td><strong>540,540</strong></td><td>123.20</td><td><strong>341.51 % / 404.50 %</strong></td><td><strong>230.67 MB / 251.14 MB</strong></td><td>416B</td></tr>
+<tr><td></td><td>TCP -&gt; BlackHole</td><td><strong>974,100</strong></td><td>222.02</td><td><strong>530.76 % / 660.60 %</strong></td><td><strong>233.23 MB / 238.45 MB</strong></td><td></td></tr>
+<tr><td></td><td>TCP -&gt; File</td><td><strong>91,200</strong></td><td>20.79</td><td><strong>186.35 % / 194.70 %</strong></td><td><strong>230.62 MB / 244.22 MB</strong></td><td></td></tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<p>https://github.com/vectordotdev/vector/issues/20739?utm_source=chatgpt.com</p>
+</blockquote>
+<h4 id="aws411b"><a class="header" href="#aws411b">AWS（411B)</a></h4>
+<h5 id="warpparse-1"><a class="header" href="#warpparse-1">WarpParse</a></h5>
+<h6 id="wpl-1"><a class="header" href="#wpl-1">WPL</a></h6>
+<pre><code class="language-bash">package /aws/ {
+   rule aws {
+        (
+            symbol(http),
+            chars:timestamp,
+            chars:elb,
+            chars:client_host,
+            chars:target_host,
+            chars:request_processing_time,
+            chars:target_processing_time,
+            chars:response_processing_time,
+            chars:elb_status_code,
+            chars:target_status_code,
+            chars:received_bytes,
+            chars:sent_bytes,
+            chars:request | (chars:request_method, chars:request_url, chars:request_protocol),
+            chars:user_agent,
+            chars:ssl_cipher,
+            chars:ssl_protocol,
+            chars:target_group_arn,
+            chars:trace_id,
+            chars:domain_name,
+            chars:chosen_cert_arn,
+            chars:matched_rule_priority,
+            chars:request_creation_time,
+            chars:actions_executed,
+            chars:redirect_url,
+            chars:error_reason,
+            chars:target_port_list,
+            chars:target_status_code_list,
+            chars:classification,
+            chars:classification_reason,
+            chars:traceability_id,
+        )
+   }
+   }
+</code></pre>
+<h6 id="output-2"><a class="header" href="#output-2">output</a></h6>
+<pre><code class="language-json">{
+	"wp_event_id": 1764646097464011000,
+	"symbol": "http",
+	"timestamp": "2018-11-30T22:23:00.186641Z",
+	"elb": "app/my-lb",
+	"client_host": "192.168.1.10:2000",
+	"target_host": "10.0.0.15:8080",
+	"request_processing_time": "0.01",
+	"target_processing_time": "0.02",
+	"response_processing_time": "0.01",
+	"elb_status_code": "200",
+	"target_status_code": "200",
+	"received_bytes": "100",
+	"sent_bytes": "200",
+	"request_method": "POST",
+	"request_url": "https://api.example.com/u?p=1&amp;sid=2&amp;t=3",
+	"request_protocol": "HTTP/1.1",
+	"user_agent": "Mozilla/5.0 (Win) Chrome/90",
+	"ssl_cipher": "ECDHE",
+	"ssl_protocol": "TLSv1.3",
+	"target_group_arn": "arn:aws:elb:us:123:tg",
+	"trace_id": "Root=1-test",
+	"domain_name": "api.example.com",
+	"chosen_cert_arn": "arn:aws:acm:us:123:cert/short",
+	"matched_rule_priority": "1",
+	"request_creation_time": "2018-11-30T22:22:48.364000Z",
+	"actions_executed": "forward",
+	"redirect_url": "https://auth.example.com/r",
+	"error_reason": "err",
+	"target_port_list": "10.0.0.1:80",
+	"target_status_code_list": "200",
+	"classification": "cls",
+	"classification_reason": "rsn",
+	"traceability_id": "TID_x1",
+	"wp_src_key": "socket",
+	"wp_src_ip": "127.0.0.1"
+}
+</code></pre>
+<h5 id="vector-1"><a class="header" href="#vector-1">Vector</a></h5>
+<h6 id="vrl-1"><a class="header" href="#vrl-1">VRL</a></h6>
+<pre><code class="language-bash">source = '''
+  parsed = parse_regex!(.message, r'^(?P&lt;type&gt;\S+) (?P&lt;timestamp&gt;\S+) (?P&lt;elb&gt;\S+) (?P&lt;client_host&gt;\S+) (?P&lt;target_host&gt;\S+) (?P&lt;request_processing_time&gt;[-\d\.]+) (?P&lt;target_processing_time&gt;[-\d\.]+) (?P&lt;response_processing_time&gt;[-\d\.]+) (?P&lt;elb_status_code&gt;\S+) (?P&lt;target_status_code&gt;\S+) (?P&lt;received_bytes&gt;\d+) (?P&lt;sent_bytes&gt;\d+) "(?P&lt;request_method&gt;\S+) (?P&lt;request_url&gt;[^ ]+) (?P&lt;request_protocol&gt;[^"]+)" "(?P&lt;user_agent&gt;[^"]*)" "(?P&lt;ssl_cipher&gt;[^"]*)" "(?P&lt;ssl_protocol&gt;[^"]*)" (?P&lt;target_group_arn&gt;\S+) "(?P&lt;trace_id&gt;[^"]*)" "(?P&lt;domain_name&gt;[^"]*)" "(?P&lt;chosen_cert_arn&gt;[^"]*)" (?P&lt;matched_rule_priority&gt;\S+) (?P&lt;request_creation_time&gt;\S+) "(?P&lt;actions_executed&gt;[^"]*)" "(?P&lt;redirect_url&gt;[^"]*)" "(?P&lt;error_reason&gt;[^"]*)" "(?P&lt;target_port_list&gt;[^"]*)" "(?P&lt;target_status_code_list&gt;[^"]*)" "(?P&lt;classification&gt;[^"]*)" "(?P&lt;classification_reason&gt;[^"]*)" (?P&lt;traceability_id&gt;\S+)$')
+  .timestamp = parsed.timestamp
+  .symbol = parsed.type
+  .elb = parsed.elb
+  .client_host = parsed.client_host
+  .target_host = parsed.target_host
+  .request_processing_time = parsed.request_processing_time
+  .target_processing_time = parsed.target_processing_time
+  .response_processing_time = parsed.response_processing_time
+  .elb_status_code = parsed.elb_status_code
+  .target_status_code = parsed.target_status_code
+  .received_bytes = parsed.received_bytes
+  .sent_bytes = parsed.sent_bytes
+  .request_method = parsed.request_method
+  .request_url = parsed.request_url
+  .request_protocol = parsed.request_protocol
+  .user_agent = parsed.user_agent
+  .ssl_cipher = parsed.ssl_cipher
+  .ssl_protocol = parsed.ssl_protocol
+  .target_group_arn = parsed.target_group_arn
+  .trace_id = parsed.trace_id
+  .domain_name = parsed.domain_name
+  .chosen_cert_arn = parsed.chosen_cert_arn
+  .matched_rule_priority = parsed.matched_rule_priority
+  .request_creation_time = parsed.request_creation_time
+  .actions_executed = parsed.actions_executed
+  .redirect_url = parsed.redirect_url
+  .error_reason = parsed.error_reason
+  .target_port_list = parsed.target_port_list
+  .target_status_code_list = parsed.target_status_code_list
+  .classification = parsed.classification
+  .classification_reason = parsed.classification_reason
+  .traceability_id = parsed.traceability_id
+  del(.message)
+'''
+</code></pre>
+<h6 id="output-3"><a class="header" href="#output-3">output</a></h6>
+<pre><code class="language-json">{
+	"actions_executed": "forward",
+	"chosen_cert_arn": "arn:aws:acm:us:123:cert/short",
+	"classification": "cls",
+	"classification_reason": "rsn",
+	"client_host": "192.168.1.10:2000",
+	"domain_name": "api.example.com",
+	"elb": "app/my-lb",
+	"elb_status_code": "200",
+	"error_reason": "err",
+	"host": "127.0.0.1",
+	"matched_rule_priority": "1",
+	"port": 58786,
+	"received_bytes": "100",
+	"redirect_url": "https://auth.example.com/r",
+	"request_creation_time": "2018-11-30T22:22:48.364000Z",
+	"request_method": "POST",
+	"request_processing_time": "0.01",
+	"request_protocol": "HTTP/1.1",
+	"request_url": "https://api.example.com/u?p=1&amp;sid=2&amp;t=3",
+	"response_processing_time": "0.01",
+	"sent_bytes": "200",
+	"source_type": "socket",
+	"ssl_cipher": "ECDHE",
+	"ssl_protocol": "TLSv1.3",
+	"symbol": "http",
+	"target_group_arn": "arn:aws:elb:us:123:tg",
+	"target_host": "10.0.0.15:8080",
+	"target_port_list": "10.0.0.1:80",
+	"target_processing_time": "0.02",
+	"target_status_code": "200",
+	"target_status_code_list": "200",
+	"timestamp": "2018-11-30T22:23:00.186641Z",
+	"trace_id": "Root=1-test",
+	"traceability_id": "TID_x1",
+	"user_agent": "Mozilla/5.0 (Win) Chrome/90"
+}
+</code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>引擎</th><th>拓扑</th><th>EPS</th><th>MPS</th><th>CPU (avg/peak)</th><th>MEM (avg/peak)</th><th>规则大小</th></tr>
+</thead>
+<tbody>
+<tr><td>WarpParse</td><td>File -&gt; BlackHole</td><td><strong>1,012,400</strong></td><td>396.82</td><td><strong>826.53 % / 937.80 %</strong></td><td><strong>237.05 MB / 263.53 MB</strong></td><td>1153B</td></tr>
+<tr><td></td><td>TCP -&gt; BlackHole</td><td><strong>846,000</strong></td><td>331.60</td><td><strong>554.38 % / 710.90 %</strong></td><td><strong>323.86 MB / 326.97 MB</strong></td><td></td></tr>
+<tr><td></td><td>TCP -&gt; File</td><td><strong>347,800</strong></td><td>136.32</td><td><strong>495.90 % / 615.00 %</strong></td><td><strong>481.30 MB /847.70 MB</strong></td><td></td></tr>
+<tr><td>Vector</td><td>File -&gt; BlackHole</td><td><strong>158,730</strong></td><td>62.22</td><td><strong>633.77 % / 730.30 %</strong></td><td><strong>296.87 MB / 307.42 MB</strong></td><td>2289B</td></tr>
+<tr><td></td><td>TCP -&gt; BlackHole</td><td><strong>163,600</strong></td><td>64.12</td><td><strong>628.67 % / 674.60 %</strong></td><td><strong>264.21 MB / 275.98 MB</strong></td><td></td></tr>
+<tr><td></td><td>TCP -&gt; File</td><td><strong>74,700</strong></td><td>29.28</td><td><strong>374.47 % / 409.50 %</strong></td><td><strong>264.70 MB / 273.64 MB</strong></td><td></td></tr>
+</tbody>
+</table>
+</div>
+<h4 id="sysmon1kjson"><a class="header" href="#sysmon1kjson">Sysmon（1K,JSON)</a></h4>
+<h5 id="warpparse-2"><a class="header" href="#warpparse-2">WarpParse</a></h5>
+<h6 id="wpl-2"><a class="header" href="#wpl-2">WPL</a></h6>
+<pre><code class="language-bash">package /sysmon/ {
+   rule sysmon {
+        (_:pri&lt;&lt;,&gt;&gt;,3*_,_),(_\S\y\s\m\o\n\:,
+        json(
+            @Id:id,
+            @Description/ProcessId:process_id,
+            @Level:severity,
+            @Opcode:Opcode,
+            @ProcessId:ProcessId,
+            @Task:Task,
+            @ThreadId:ThreadId
+            @Version:Version,
+            @Description/CommandLine:cmd_line,
+            @Description/ParentCommandLine:parent_cmd_line,
+            @Description/LogonGuid:logon_guid,
+            @Description/LogonId:logon_id,
+            @Description/Image:process_path,
+            @Description/ParentImage:parent_process_path,
+            @Description/ParentProcessGuid:parent_process_guid,
+            @Description/ParentProcessId:parent_process_id,
+            @Description/ParentUser:parent_process_user,
+            @Description/ProcessGuid:process_guid,
+            @Description/Company:product_company,
+            @Description/Description:process_desc,
+            @Description/FileVersion:file_version,
+            chars@Description/Hashes:Hashes
+            @Description/IntegrityLevel:integrity_level,
+            @Description/OriginalFileName:origin_file_name,
+            @Description/Product:product_name,
+            @Description/RuleName:rule_name,
+            @Description/User:user_name,
+            chars@Description/UtcTime:occur_time,
+            @Description/TerminalSessionId:terminal_session_id,
+            @Description/CurrentDirectory:current_dir,
+            @Keywords:keywords
+            )
+        )
+    }
+   }
+</code></pre>
+<h6 id="output-4"><a class="header" href="#output-4">output</a></h6>
+<pre><code class="language-json">{
+	"wp_event_id": 1764657738662604000,
+	"cmd_line": "a.exe",
+	"product_company": "C",
+	"current_dir": "C:\\\\",
+	"process_desc": "D",
+	"file_version": "1",
+	"Hashes": "H",
+	"process_path": "C:\\\\Windows\\\\a.exe",
+	"integrity_level": "M",
+	"logon_guid": "{LG}",
+	"logon_id": "1",
+	"origin_file_name": "a.exe",
+	"parent_cmd_line": "b.exe",
+	"parent_process_path": "C:\\\\Windows\\\\b.exe",
+	"parent_process_guid": "{PG}",
+	"parent_process_id": "1",
+	"parent_process_user": "U",
+	"process_guid": "{G}",
+	"process_id": "1",
+	"product_name": "P",
+	"rule_name": "R",
+	"terminal_session_id": "1",
+	"user_name": "U",
+	"occur_time": "2025-04-10 06:17:28.503",
+	"DescriptionRawMessage": "Process Create\\r\\nRuleName: R",
+	"id": "1",
+	"keywords": "0",
+	"severity": "4",
+	"LevelDisplayName": "信息",
+	"LogName": "L",
+	"MachineName": "A",
+	"Opcode": "0",
+	"OpcodeDisplayName": "信息",
+	"ProcessId": "1",
+	"ProviderId": "PID",
+	"ProviderName": "P",
+	"Task": "1",
+	"TaskDisplayName": "Process Create",
+	"ThreadId": "1",
+	"TimeCreated": "2025-04-10T14:17:28.693228+08:00",
+	"Version": "1",
+	"wp_src_key": "socket",
+	"wp_src_ip": "127.0.0.1"
+}
+</code></pre>
+<h5 id="vector-2"><a class="header" href="#vector-2">Vector</a></h5>
+<h6 id="vrl-2"><a class="header" href="#vrl-2">VRL</a></h6>
+<pre><code class="language-bash">source = '''
+  parsed_msg = parse_regex!(.message, r'^[^{]*(?P&lt;body&gt;\{.*)$')
+  parsed = parse_regex!(parsed_msg.body, r'(?s)\{"Id":(?P&lt;Id&gt;[^,]+),"Version":(?P&lt;Version&gt;[^,]+),"Level":(?P&lt;Level&gt;[^,]+),"Task":(?P&lt;Task&gt;[^,]+),"Opcode":(?P&lt;Opcode&gt;[^,]+),"Keywords":(?P&lt;Keywords&gt;[^,]+),"RecordId":(?P&lt;RecordId&gt;[^,]+),"ProviderName":"(?P&lt;ProviderName&gt;[^"]*)","ProviderId":"(?P&lt;ProviderId&gt;[^"]*)","LogName":"(?P&lt;LogName&gt;[^"]*)","ProcessId":(?P&lt;ProcessId&gt;[^,]+),"ThreadId":(?P&lt;ThreadId&gt;[^,]+),"MachineName":"(?P&lt;MachineName&gt;[^"]*)","TimeCreated":"(?P&lt;TimeCreated&gt;[^"]*)","ActivityId":(?P&lt;ActivityId&gt;[^,]+),"RelatedActivityId":(?P&lt;RelatedActivityId&gt;[^,]+),"Qualifiers":(?P&lt;Qualifiers&gt;[^,]+),"LevelDisplayName":"(?P&lt;LevelDisplayName&gt;[^"]*)","OpcodeDisplayName":"(?P&lt;OpcodeDisplayName&gt;[^"]*)","TaskDisplayName":"(?P&lt;TaskDisplayName&gt;[^"]*)","Description":\{"RuleName":"(?P&lt;RuleName&gt;[^"]*)","UtcTime":"(?P&lt;UtcTime&gt;[^"]*)","ProcessGuid":"(?P&lt;ProcessGuid&gt;[^"]*)","ProcessId":"(?P&lt;DescProcessId&gt;[^"]*)","Image":"(?P&lt;Image&gt;[^"]*)","FileVersion":"(?P&lt;FileVersion&gt;[^"]*)","Description":"(?P&lt;Description&gt;[^"]*)","Product":"(?P&lt;Product&gt;[^"]*)","Company":"(?P&lt;Company&gt;[^"]*)","OriginalFileName":"(?P&lt;OriginalFileName&gt;[^"]*)","CommandLine":"(?P&lt;CommandLine&gt;[^"]*)","CurrentDirectory":"(?P&lt;CurrentDirectory&gt;[^"]*)","User":"(?P&lt;User&gt;[^"]*)","LogonGuid":"(?P&lt;LogonGuid&gt;[^"]*)","LogonId":"(?P&lt;LogonId&gt;[^"]*)","TerminalSessionId":"(?P&lt;TerminalSessionId&gt;[^"]*)","IntegrityLevel":"(?P&lt;IntegrityLevel&gt;[^"]*)","Hashes":"(?P&lt;Hashes&gt;[^"]*)","ParentProcessGuid":"(?P&lt;ParentProcessGuid&gt;[^"]*)","ParentProcessId":"(?P&lt;ParentProcessId&gt;[^"]*)","ParentImage":"(?P&lt;ParentImage&gt;[^"]*)","ParentCommandLine":"(?P&lt;ParentCommandLine&gt;[^"]*)","ParentUser":"(?P&lt;ParentUser&gt;[^"]*)"\},"DescriptionRawMessage":"(?P&lt;DescriptionRawMessage&gt;[^"]*)"\}$')
+  .cmd_line = parsed.CommandLine
+  .product_company = parsed.Company
+  .process_id = parsed.ProcessId
+  .Opcode = parsed.Opcode
+  .ProcessId = parsed.ProcessId 
+  .Task = parsed.Task
+  .ThreadId = parsed.ThreadId
+  .Version = parsed.Version
+  .current_dir = parsed.CurrentDirectory
+  .process_desc = parsed.Description
+  .file_version = parsed.FileVersion
+  .Hashes = parsed.Hashes
+  .process_path = parsed.Image
+  .integrity_level = parsed.IntegrityLevel
+  .logon_guid = parsed.LogonGuid
+  .logon_id = parsed.LogonId
+  .origin_file_name = parsed.OriginalFileName
+  .parent_cmd_line = parsed.ParentCommandLine
+  .parent_process_path = parsed.ParentImage
+  .parent_process_guid = parsed.ParentProcessGuid
+  .parent_process_id = parsed.ParentProcessId
+  .parent_process_user = parsed.ParentUser
+  .process_guid = parsed.ProcessGuid
+  .product_name = parsed.Product
+  .rule_name = parsed.RuleName
+  .terminal_session_id = parsed.TerminalSessionId
+  .user_name = parsed.User
+  .occur_time = parsed.UtcTime
+  .DescriptionRawMessage = parsed.DescriptionRawMessage
+  .id = parsed.Id
+  .keywords = parsed.Keywords
+  .severity = parsed.Level
+  .LevelDisplayName = parsed.LevelDisplayName
+  .LogName = parsed.LogName
+  .MachineName = parsed.MachineName
+  .OpcodeDisplayName = parsed.OpcodeDisplayName
+  .ProviderId = parsed.ProviderId
+  .ProviderName = parsed.ProviderName
+  .TaskDisplayName = parsed.TaskDisplayName
+  .TimeCreated = parsed.TimeCreated
+  del(.message)
+</code></pre>
+<h6 id="output-5"><a class="header" href="#output-5">output</a></h6>
+<pre><code class="language-json">{
+	"DescriptionRawMessage": "Process Create\\r\\nRuleName: R",
+	"Hashes": "H",
+	"LevelDisplayName": "信息",
+	"LogName": "L",
+	"MachineName": "A",
+	"Opcode": "0",
+	"OpcodeDisplayName": "信息",
+	"ProcessId": "1",
+	"ProviderId": "PID",
+	"ProviderName": "P",
+	"Task": "1",
+	"TaskDisplayName": "Process Create",
+	"ThreadId": "1",
+	"TimeCreated": "2025-04-10T14:17:28.693228+08:00",
+	"Version": "1",
+	"cmd_line": "a.exe",
+	"current_dir": "C:\\\\",
+	"file_version": "1",
+	"host": "127.0.0.1",
+	"id": "1",
+	"integrity_level": "M",
+	"keywords": "0",
+	"logon_guid": "{LG}",
+	"logon_id": "1",
+	"occur_time": "2025-04-10 06:17:28.503",
+	"origin_file_name": "a.exe",
+	"parent_cmd_line": "b.exe",
+	"parent_process_guid": "{PG}",
+	"parent_process_id": "1",
+	"parent_process_path": "C:\\\\Windows\\\\b.exe",
+	"parent_process_user": "U",
+	"port": 50558,
+	"process_desc": "D",
+	"process_guid": "{G}",
+	"process_id": "1",
+	"process_path": "C:\\\\Windows\\\\a.exe",
+	"product_company": "C",
+	"product_name": "P",
+	"rule_name": "R",
+	"severity": "4",
+	"source_type": "socket",
+	"terminal_session_id": "1",
+	"timestamp": "2025-12-02T06:33:53.716258Z",
+	"user_name": "U"
+}
+</code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>引擎</th><th>拓扑</th><th>EPS</th><th>MPS</th><th>CPU (avg/peak)</th><th>MEM (avg/peak)</th><th>规则大小</th></tr>
+</thead>
+<tbody>
+<tr><td>WarpParse</td><td>File -&gt; BlackHole</td><td><strong>440,000</strong></td><td>413.74</td><td><strong>852.01 % / 943.50 %</strong></td><td><strong>223.52 MB / 338.05 MB</strong></td><td>1552B</td></tr>
+<tr><td></td><td>TCP -&gt; BlackHole</td><td><strong>418,900</strong></td><td>393.90</td><td><strong>720.42 % / 814.70 %</strong></td><td><strong>455.91 MB / 461.02 MB</strong></td><td></td></tr>
+<tr><td></td><td>TCP -&gt; File</td><td><strong>279,700</strong></td><td>263.01</td><td><strong>713.18 % / 789.30 %</strong></td><td><strong>441.34 MB / 453.27 MB</strong></td><td></td></tr>
+<tr><td>Vector</td><td>File -&gt; BlackHole</td><td><strong>76,717</strong></td><td>72.14</td><td><strong>462.81 % / 563.70 %</strong></td><td><strong>294.87 MB / 312.77 MB</strong></td><td>3259B</td></tr>
+<tr><td></td><td>TCP -&gt; BlackHole</td><td><strong>111,900</strong></td><td>105.22</td><td><strong>720.04 % / 808.80 %</strong></td><td><strong>362.95 MB / 376.90 MB</strong></td><td></td></tr>
+<tr><td></td><td>TCP -&gt; File</td><td><strong>62,100</strong></td><td>58.39</td><td><strong>471.40 % / 543.40 %</strong></td><td><strong>343.65 MB / 355.57 MB</strong></td><td></td></tr>
+</tbody>
+</table>
+</div>
+<h4 id="apt3k"><a class="header" href="#apt3k">APT（3K)</a></h4>
+<h5 id="warpparse-3"><a class="header" href="#warpparse-3">WarpParse</a></h5>
+<h6 id="wpl-3"><a class="header" href="#wpl-3">WPL</a></h6>
+<pre><code class="language-bash">package /apt/ {
+   rule apt {
+        (
+            _\#,
+            time:timestamp,
+            _,
+            chars:Hostname,
+            _\%\%, 
+            chars:ModuleName\/,
+            chars:SeverityHeader\/,
+            symbol(ANTI-APT)\(,
+            chars:type\),
+            chars:Count&lt;[,]&gt;,
+            _\:,
+            chars:Content\(,
+        ),
+        (
+            kv(chars@SyslogId),
+            kv(chars@VSys),
+            kv(chars@Policy),
+            kv(chars@SrcIp),
+            kv(chars@DstIp),
+            kv(chars@SrcPort),
+            kv(chars@DstPort),
+            kv(chars@SrcZone),
+            kv(chars@DstZone),
+            kv(chars@User),
+            kv(chars@Protocol),
+            kv(chars@Application),
+            kv(chars@Profile),
+            kv(chars@Direction),
+            kv(chars@ThreatType),
+            kv(chars@ThreatName),
+            kv(chars@Action),
+            kv(chars@FileType),
+            kv(chars@Hash)\),
+        )\,
+    }
+   }
+
+</code></pre>
+<h6 id="output-6"><a class="header" href="#output-6">output</a></h6>
+<pre><code class="language-json">{
+	"wp_event_id": 1764661811871722000,
+	"timestamp": "2025-02-07 15:07:18",
+	"Hostname": "USG1000E",
+	"ModuleName": "01ANTI-APT",
+	"SeverityHeader": "4",
+	"symbol": "ANTI-APT",
+	"type": "l",
+	"Count": "29",
+	"Content": "An advanced persistent threat was detected.",
+	"SyslogId": "1",
+	"VSys": "public-long-virtual-system-name-for-testing-extra-large-value-to-simulate-enterprise-scenario",
+	"Policy": "trust-untrust-high-risk-policy-with-deep-inspection-and-layer7-protection-enabled-for-advanced-threat-detection",
+	"SrcIp": "192.168.1.123",
+	"DstIp": "182.150.63.102",
+	"SrcPort": "51784",
+	"DstPort": "10781",
+	"SrcZone": "trust-zone-with-multiple-segments-for-internal-security-domains-and-access-control",
+	"DstZone": "untrust-wide-area-network-zone-with-external-facing-interfaces-and-honeynet-integration",
+	"User": "unknown-long-user-field-used-for-simulation-purpose-with-extra-description-and-tags-[tag1][tag2][tag3]-to-reach-required-size",
+	"Protocol": "TCP",
+	"Application": "HTTP-long-application-signature-identification-with-multiple-behavior-patterns-and-deep-packet-inspection-enabled",
+	"Profile": "IPS_default_advanced_extended_profile_with_ml_detection-long",
+	"Direction": "aaa-long-direction-field-used-to-extend-size-with-additional-info-about-traffic-orientation-from-client-to-server",
+	"ThreatType": "File Reputation with additional descriptive context of multi-layer analysis engine including sandbox-behavioral-signature-ml-static-analysis-and-network-correlation-modules-working-together",
+	"ThreatName": "bbb-advanced-threat-campaign-with-code-name-operation-shadow-storm-and-related-IOCs-collected-over-multiple-incidents-in-the-wild-attached-metadata-[phase1][phase2][phase3]",
+	"Action": "ccc-block-and-alert-with-deep-scan-followed-by-quarantine-and-forensic-dump-generation-for-further-investigation",
+	"FileType": "ddd-executable-binary-with-multiple-packed-layers-suspicious-import-table-behavior-and-evasion-techniques",
+	"Hash": "eee1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef-long-hash-value-used-for-testing-purpose-extended-with-multiple-hash-representations-[MD5:aaa111bbb222ccc333]-[SHA1:bbb222ccc333ddd444]-[SHA256:ccc333ddd444eee555]-[SSDEEP:ddd444eee555fff666]-end-of-hash-section, ExtraInfo=\"This is additional extended information purposely added to inflate the total log size for stress testing of log ingestion engines such as Vector, Fluent Bit, self-developed ETL pipelines, and any high-throughput log processing systems. It contains repeated segments to simulate realistic verbose threat intelligence attachment blocks. [SEG-A-BEGIN] The threat was part of a coordinated multi-vector campaign observed across various geographic regions targeting enterprise networks with spear-phishing, watering-hole attacks, and supply-chain compromise vectors. Enriched indicators include C2 domains, malware families, behavioral clusters, sandbox detonation traces, and network telemetry correlation. [SEG-A-END] [SEG-B-BEGIN] Further analysis revealed that the payload exhibited persistence techniques including registry autoruns, scheduled tasks, masquerading, process injection, and lateral movement attempts leveraging remote service creation and stolen credentials. The binary contains multiple obfuscation layers, anti-debugging, anti-VM checks, and unusual API call sequences. [SEG-B-END] [SEG-C-BEGIN] IOC Bundle: Domains=malicious-domain-example-01.com,malicious-domain-example-02.net,malicious-update-service.info; IPs=103.21.244.0,198.51.100.55,203.0.113.77; FileNames=update_service.exe,winlog_service.dll,mscore_update.bin; RegistryKeys=HKCU\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run,HKLM\\\\System\\\\Services\\\\FakeService; Mutex=Global\\\\A1B2C3D4E5F6G7H8; YARA Matches=[rule1,rule2,rule3]. [SEG-C-END] EndOfExtraInfo\"",
+	"wp_src_key": "socket",
+	"wp_src_ip": "127.0.0.1"
+}
+</code></pre>
+<h5 id="vector-3"><a class="header" href="#vector-3">Vector</a></h5>
+<h6 id="vrl-3"><a class="header" href="#vrl-3">VRL</a></h6>
+<pre><code class="language-bash">source = '''
+  parsed_log = parse_regex!(.message, r'(?s)^#(?P&lt;timestamp&gt;\w+\s+\d+\s+\d{4}\s+\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2})\s+(?P&lt;hostname&gt;\S+)\s+%%(?P&lt;ModuleName&gt;\d+[^/]+)/(?P&lt;SeverityHeader&gt;\d+)/(?P&lt;symbol&gt;[^(]+)\((?P&lt;type&gt;[^)]+)\)\[(?P&lt;count&gt;\d+)\]:\s*(?P&lt;content&gt;[^()]+?)\s*\(SyslogId=(?P&lt;SyslogId&gt;[^,]+),\s+VSys="(?P&lt;VSys&gt;[^"]+)",\s+Policy="(?P&lt;Policy&gt;[^"]+)",\s+SrcIp=(?P&lt;SrcIp&gt;[^,]+),\s+DstIp=(?P&lt;DstIp&gt;[^,]+),\s+SrcPort=(?P&lt;SrcPort&gt;[^,]+),\s+DstPort=(?P&lt;DstPort&gt;[^,]+),\s+SrcZone=(?P&lt;SrcZone&gt;[^,]+),\s+DstZone=(?P&lt;DstZone&gt;[^,]+),\s+User="(?P&lt;User&gt;[^"]+)",\s+Protocol=(?P&lt;Protocol&gt;[^,]+),\s+Application="(?P&lt;Application&gt;[^"]+)",\s+Profile="(?P&lt;Profile&gt;[^"]+)",\s+Direction=(?P&lt;Direction&gt;[^,]+),\s+ThreatType=(?P&lt;ThreatType&gt;[^,]+),\s+ThreatName=(?P&lt;ThreatName&gt;[^,]+),\s+Action=(?P&lt;Action&gt;[^,]+),\s+FileType=(?P&lt;FileType&gt;[^,]+),\s+Hash=(?P&lt;Hash&gt;.*)\)$')
+  .Hostname = parsed_log.hostname
+  .SrcPort = parsed_log.SrcPort
+  .SeverityHeader = parsed_log.SeverityHeader
+  .type = parsed_log.type
+  .Count = parsed_log.count
+  .Content = parsed_log.content
+  .VSys = parsed_log.VSys
+  .DstPort = parsed_log.DstPort
+  .Policy = parsed_log.Policy
+  .SrcIp = parsed_log.SrcIp
+  .DstIp = parsed_log.DstIp
+  .SrcZone = parsed_log.SrcZone
+  .DstZone = parsed_log.DstZone
+  .User = parsed_log.User
+  .Protocol = parsed_log.Protocol
+  .ModuleName = parsed_log.ModuleName
+  .symbol = parsed_log.symbol
+  .timestamp = parsed_log.timestamp
+  .SyslogId = parsed_log.SyslogId
+  .Application = parsed_log.Application
+  .Profile = parsed_log.Profile
+  .Direction = parsed_log.Direction
+  .ThreatType = parsed_log.ThreatType
+  .ThreatName = parsed_log.ThreatName
+  .Action = parsed_log.Action
+  .FileType = parsed_log.FileType
+  .Hash = parsed_log.Hash
+  del(.message)
+'''
+</code></pre>
+<h6 id="output-7"><a class="header" href="#output-7">output</a></h6>
+<pre><code class="language-json">{
+	"Action": "ccc-block-and-alert-with-deep-scan-followed-by-quarantine-and-forensic-dump-generation-for-further-investigation",
+	"Application": "HTTP-long-application-signature-identification-with-multiple-behavior-patterns-and-deep-packet-inspection-enabled",
+	"Content": "An advanced persistent threat was detected.",
+	"Count": "29",
+	"Direction": "aaa-long-direction-field-used-to-extend-size-with-additional-info-about-traffic-orientation-from-client-to-server",
+	"DstIp": "182.150.63.102",
+	"DstPort": "10781",
+	"DstZone": "untrust-wide-area-network-zone-with-external-facing-interfaces-and-honeynet-integration",
+	"FileType": "ddd-executable-binary-with-multiple-packed-layers-suspicious-import-table-behavior-and-evasion-techniques",
+	"Hash": "eee1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef-long-hash-value-used-for-testing-purpose-extended-with-multiple-hash-representations-[MD5:aaa111bbb222ccc333]-[SHA1:bbb222ccc333ddd444]-[SHA256:ccc333ddd444eee555]-[SSDEEP:ddd444eee555fff666]-end-of-hash-section, ExtraInfo=\"This is additional extended information purposely added to inflate the total log size for stress testing of log ingestion engines such as Vector, Fluent Bit, self-developed ETL pipelines, and any high-throughput log processing systems. It contains repeated segments to simulate realistic verbose threat intelligence attachment blocks. [SEG-A-BEGIN] The threat was part of a coordinated multi-vector campaign observed across various geographic regions targeting enterprise networks with spear-phishing, watering-hole attacks, and supply-chain compromise vectors. Enriched indicators include C2 domains, malware families, behavioral clusters, sandbox detonation traces, and network telemetry correlation. [SEG-A-END] [SEG-B-BEGIN] Further analysis revealed that the payload exhibited persistence techniques including registry autoruns, scheduled tasks, masquerading, process injection, and lateral movement attempts leveraging remote service creation and stolen credentials. The binary contains multiple obfuscation layers, anti-debugging, anti-VM checks, and unusual API call sequences. [SEG-B-END] [SEG-C-BEGIN] IOC Bundle: Domains=malicious-domain-example-01.com,malicious-domain-example-02.net,malicious-update-service.info; IPs=103.21.244.0,198.51.100.55,203.0.113.77; FileNames=update_service.exe,winlog_service.dll,mscore_update.bin; RegistryKeys=HKCU\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run,HKLM\\\\System\\\\Services\\\\FakeService; Mutex=Global\\\\A1B2C3D4E5F6G7H8; YARA Matches=[rule1,rule2,rule3]. [SEG-C-END] EndOfExtraInfo\"",
+	"Hostname": "USG1000E",
+	"ModuleName": "01ANTI-APT",
+	"Policy": "trust-untrust-high-risk-policy-with-deep-inspection-and-layer7-protection-enabled-for-advanced-threat-detection",
+	"Profile": "IPS_default_advanced_extended_profile_with_ml_detection-long",
+	"Protocol": "TCP",
+	"SeverityHeader": "4",
+	"SrcIp": "192.168.1.123",
+	"SrcPort": "51784",
+	"SrcZone": "trust-zone-with-multiple-segments-for-internal-security-domains-and-access-control",
+	"SyslogId": "1",
+	"ThreatName": "bbb-advanced-threat-campaign-with-code-name-operation-shadow-storm-and-related-IOCs-collected-over-multiple-incidents-in-the-wild-attached-metadata-[phase1][phase2][phase3]",
+	"ThreatType": "File Reputation with additional descriptive context of multi-layer analysis engine including sandbox-behavioral-signature-ml-static-analysis-and-network-correlation-modules-working-together",
+	"User": "unknown-long-user-field-used-for-simulation-purpose-with-extra-description-and-tags-[tag1][tag2][tag3]-to-reach-required-size",
+	"VSys": "public-long-virtual-system-name-for-testing-extra-large-value-to-simulate-enterprise-scenario",
+	"host": "127.0.0.1",
+	"port": 55771,
+	"source_type": "socket",
+	"symbol": "ANTI-APT",
+	"timestamp": "Feb  7 2025 15:07:18+08:00",
+	"type": "l"
+}
+</code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>引擎</th><th>拓扑</th><th>EPS</th><th>MPS</th><th>CPU (avg/peak)</th><th>MEM (avg/peak)</th><th>规则大小</th></tr>
+</thead>
+<tbody>
+<tr><td>WarpParse</td><td>File -&gt; BlackHole</td><td><strong>314,200</strong></td><td>1062.84</td><td><strong>700.03 % / 826.30 %</strong></td><td><strong>175.63 MB / 181.05 MB</strong></td><td>985B</td></tr>
+<tr><td></td><td>TCP -&gt; BlackHole</td><td><strong>298,200</strong></td><td>1008.72</td><td><strong>693.55 % / 762.10 %</strong></td><td><strong>408.87 MB / 481.27 MB</strong></td><td></td></tr>
+<tr><td></td><td>TCP -&gt; File</td><td><strong>179,600</strong></td><td>607.53</td><td><strong>605.69 % / 853.20 %</strong></td><td><strong>1016.06 MB/ 1987.94 MB</strong></td><td></td></tr>
+<tr><td>Vector</td><td>File -&gt; BlackHole</td><td><strong>33,614</strong></td><td>113.71</td><td><strong>563.18 % / 677.50 %</strong></td><td><strong>261.19 MB / 278.39 MB</strong></td><td>1759B</td></tr>
+<tr><td></td><td>TCP -&gt; BlackHole</td><td><strong>46,100</strong></td><td>155.94</td><td><strong>849.30 % / 921.50 %</strong></td><td><strong>421.18 MB / 445.80 MB</strong></td><td></td></tr>
+<tr><td></td><td>TCP -&gt; File</td><td><strong>36,200</strong></td><td>122.45</td><td><strong>688.47 % / 754.70 %</strong></td><td><strong>368.91 MB / 397.16 MB</strong></td><td></td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="日志解析转换测试"><a class="header" href="#日志解析转换测试">日志解析转换测试</a></h2>
+<h3 id="mac-m4-mini-1"><a class="header" href="#mac-m4-mini-1">Mac M4 Mini</a></h3>
+<h4 id="nginx239b-1"><a class="header" href="#nginx239b-1">Nginx（239B）</a></h4>
+<p>WarpParse</p>
+<h6 id="wpl-4"><a class="header" href="#wpl-4">WPL</a></h6>
+<pre><code class="language-bash">package /nginx/ {
+   rule nginx {
+        (ip:sip,_^2,chars:timestamp&lt;[,]&gt;,http/request",chars:status,chars:size,chars:referer",http/agent",_")
+   }
+}
+</code></pre>
+<h6 id="oml"><a class="header" href="#oml">OML</a></h6>
+<pre><code class="language-bash">name : nginx
+rule : /nginx/*
+---
+size : digit = take(size);
+status : digit = take(status);
+str_status = match read(option:[status]) {
+    digit(500) =&gt; chars(Internal Server Error);
+    digit(404) =&gt; chars(Not Found); 
+};
+match_chars = match read(option:[wp_src_ip]) {
+    ip(127.0.0.1) =&gt; chars(localhost); 
+    !ip(127.0.0.1) =&gt; chars(attack_ip); 
+};
+* : auto = read();
+</code></pre>
+<h6 id="output-8"><a class="header" href="#output-8">output</a></h6>
+<pre><code class="language-bash">{
+	"host": "127.0.0.1",
+	"http_agent": "Mozilla/5.0(Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36 ",
+	"http_request": "GET /nginx-logo.png HTTP/1.1",
+	"match_chars": "localhost",
+	"referer": "http://207.131.38.110/",
+	"sip": "180.57.30.148",
+	"size": 368,
+	"source_type": "socket",
+	"status": 500,
+	"str_status": "Internal Server Error",
+	"timestamp": "21/Jan/2025:01:40:02 +0800"
+}
+</code></pre>
+<h5 id="vector-4"><a class="header" href="#vector-4">Vector</a></h5>
+<h6 id="vrl-4"><a class="header" href="#vrl-4">VRL</a></h6>
+<pre><code class="language-toml">source = '''
+  parsed = parse_regex!(.message, r'^(?P&lt;client&gt;\S+) \S+ \S+ \[(?P&lt;time&gt;[^\]]+)\] "(?P&lt;request&gt;[^"]*)" (?P&lt;status&gt;\d{3}) (?P&lt;size&gt;\d+) "(?P&lt;referer&gt;[^"]*)" "(?P&lt;agent&gt;[^"]*)" "(?P&lt;extra&gt;[^"]*)"')
+  .sip = parsed.client
+  .http_request = parsed.request
+  .referer = parsed.referer
+  .http_agent = parsed.agent
+  .timestamp = parsed.time
+  del(.message)
+  .status = to_int!(parsed.status)
+  .size = to_int!(parsed.size)
+if .host == "127.0.0.1" {
+    .match_chars = "localhost"
+} else if .host != "127.0.0.1" {
+    .match_chars = "attack_ip"
+}  
+if .status == 500 {
+    .str_status = "Internal Server Error"
+} else if .status == 404 {
+    .str_status = "Not Found"
+}  
+'''
+</code></pre>
+<h6 id="output-9"><a class="header" href="#output-9">output</a></h6>
+<pre><code class="language-bash">{
+	"host": "127.0.0.1",
+	"http_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36",
+	"http_request": "GET /nginx-logo.png HTTP/1.1",
+	"match_chars": "localhost",
+	"port": 53894,
+	"referer": "http://207.131.38.110/",
+	"sip": "180.57.30.148",
+	"size": 368,
+	"source_type": "socket",
+	"status": 500,
+	"str_status": "Internal Server Error",
+	"timestamp": "21/Jan/2025:01:40:02 +0800"
+}
+</code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>引擎</th><th>拓扑</th><th>EPS</th><th>MPS</th><th>CPU (avg/peak)</th><th>MEM (avg/peak)</th><th>规则大小</th></tr>
+</thead>
+<tbody>
+<tr><td>WarpParse</td><td>File -&gt; BlackHole</td><td><strong>1,749,200</strong></td><td>398.69</td><td><strong>762.65 %/865.70 %</strong></td><td><strong>143.16 MB/159.22 MB</strong></td><td>521</td></tr>
+<tr><td>WarpParse</td><td>TCP -&gt; BlackHole</td><td><strong>1,219,100</strong></td><td>277.87</td><td><strong>485.37 %/625.20 %</strong></td><td><strong>415.22 MB/440.52 MB</strong></td><td></td></tr>
+<tr><td>WarpParse</td><td>TCP -&gt; File</td><td><strong>797,700</strong></td><td>181.82</td><td><strong>492.15 %/621.20 %</strong></td><td><strong>523.97 MB/540.97 MB</strong></td><td></td></tr>
+<tr><td>Vector</td><td>File -&gt; BlackHole</td><td><strong>470,312</strong></td><td>107.20</td><td><strong>372.09 %/423.00 %</strong></td><td><strong>254.05 MB/280.03 MB</strong></td><td>682</td></tr>
+<tr><td>Vector</td><td>TCP -&gt; BlackHole</td><td><strong>870,500</strong></td><td>198.41</td><td><strong>514.06 %/639.90 %</strong></td><td><strong>238.50 MB/258.02 MB</strong></td><td></td></tr>
+<tr><td>Vector</td><td>TCP -&gt; File</td><td><strong>708,00</strong></td><td>16.14</td><td><strong>160.79 %/180.60 %</strong></td><td><strong>226.58 MB/236.41 MB</strong></td><td></td></tr>
+</tbody>
+</table>
+</div>
+<h4 id="aws411b-1"><a class="header" href="#aws411b-1">AWS（411B)</a></h4>
+<p>WarpParse</p>
+<h6 id="wpl-5"><a class="header" href="#wpl-5">WPL</a></h6>
+<pre><code class="language-bash">package /aws/ {
+   rule aws {
+        (
+            symbol(http),
+            chars:timestamp,
+            chars:elb,
+            chars:client_host,
+            chars:target_host,
+            chars:request_processing_time,
+            chars:target_processing_time,
+            chars:response_processing_time,
+            chars:elb_status_code,
+            chars:target_status_code,
+            chars:received_bytes,
+            chars:sent_bytes,
+            chars:request | (chars:request_method, chars:request_url, chars:request_protocol),
+            chars:user_agent,
+            chars:ssl_cipher,
+            chars:ssl_protocol,
+            chars:target_group_arn,
+            chars:trace_id,
+            chars:domain_name,
+            chars:chosen_cert_arn,
+            chars:matched_rule_priority,
+            chars:request_creation_time,
+            chars:actions_executed,
+            chars:redirect_url,
+            chars:error_reason,
+            chars:target_port_list,
+            chars:target_status_code_list,
+            chars:classification,
+            chars:classification_reason,
+            chars:traceability_id,
+        )
+   }
+   }
+</code></pre>
+<h6 id="oml-1"><a class="header" href="#oml-1">OML</a></h6>
+<pre><code class="language-bash">name : aws
+rule : /aws/*
+---
+sent_bytes:digit = take(sent_bytes) ;
+target_status_code:digit = take(target_status_code) ;
+elb_status_code:digit = take(elb_status_code) ;
+extends : obj = object {
+    ssl_cipher = read(ssl_cipher);
+    ssl_protocol = read(ssl_protocol);
+};
+match_chars = match read(option:[wp_src_ip]) {
+    ip(127.0.0.1) =&gt; chars(localhost); 
+    !ip(127.0.0.1) =&gt; chars(attack_ip); 
+};
+str_elb_status = match read(option:[elb_status_code]) {
+    digit(200) =&gt; chars(ok);
+    digit(404) =&gt; chars(error); 
+};
+* : auto = read();
+</code></pre>
+<h6 id="output-10"><a class="header" href="#output-10">output</a></h6>
+<pre><code class="language-bash">{
+	"timestamp": "2018-11-30T22:23:00.186641Z",
+	"actions_executed": "forward",
+	"chosen_cert_arn": "arn:aws:acm:us:123:cert/short",
+	"classification": "cls",
+	"classification_reason": "rsn",
+	"client_host": "192.168.1.10:2000",
+	"domain_name": "api.example.com",
+	"elb": "app/my-lb",
+	"elb_status_code": 200,
+	"error_reason": "err",
+	"extends": {
+		"ssl_cipher": "ECDHE",
+		"ssl_protocol": "TLSv1.3"
+	},
+	"host": "127.0.0.1",
+	"match_chars": "localhost",
+	"matched_rule_priority": "1",
+	"received_bytes": "100",
+	"redirect_url": "https://auth.example.com/r",
+	"request_creation_time": "2018-11-30T22:22:48.364000Z",
+	"request_method": "POST",
+	"request_processing_time": "0.01",
+	"request_protocol": "HTTP/1.1",
+	"request_url": "https://api.example.com/u?p=1&amp;sid=2&amp;t=3",
+	"response_processing_time": "0.01",
+	"sent_bytes": 200,
+	"source_type": "socket",
+	"ssl_cipher": "ECDHE",
+	"ssl_protocol": "TLSv1.3",
+	"str_elb_status": "ok",
+	"target_group_arn": "arn:aws:elb:us:123:tg",
+	"target_host": "10.0.0.15:8080",
+	"target_port_list": "10.0.0.1:80",
+	"target_processing_time": "0.02",
+	"target_status_code": 200,
+	"target_status_code_list": "200",
+	"trace_id": "Root=1-test",
+	"traceability_id": "TID_x1",
+	"user_agent": "Mozilla/5.0 (Win) Chrome/90"
+}
+</code></pre>
+<h5 id="vector-5"><a class="header" href="#vector-5">Vector</a></h5>
+<h6 id="vrl-5"><a class="header" href="#vrl-5">VRL</a></h6>
+<pre><code class="language-toml">source = '''
+  parsed = parse_regex!(.message, r'^(?P&lt;type&gt;\S+) (?P&lt;timestamp&gt;\S+) (?P&lt;elb&gt;\S+) (?P&lt;client_host&gt;\S+) (?P&lt;target_host&gt;\S+) (?P&lt;request_processing_time&gt;[-\d\.]+) (?P&lt;target_processing_time&gt;[-\d\.]+) (?P&lt;response_processing_time&gt;[-\d\.]+) (?P&lt;elb_status_code&gt;\S+) (?P&lt;target_status_code&gt;\S+) (?P&lt;received_bytes&gt;\d+) (?P&lt;sent_bytes&gt;\d+) "(?P&lt;request_method&gt;\S+) (?P&lt;request_url&gt;[^ ]+) (?P&lt;request_protocol&gt;[^"]+)" "(?P&lt;user_agent&gt;[^"]*)" "(?P&lt;ssl_cipher&gt;[^"]*)" "(?P&lt;ssl_protocol&gt;[^"]*)" (?P&lt;target_group_arn&gt;\S+) "(?P&lt;trace_id&gt;[^"]*)" "(?P&lt;domain_name&gt;[^"]*)" "(?P&lt;chosen_cert_arn&gt;[^"]*)" (?P&lt;matched_rule_priority&gt;\S+) (?P&lt;request_creation_time&gt;\S+) "(?P&lt;actions_executed&gt;[^"]*)" "(?P&lt;redirect_url&gt;[^"]*)" "(?P&lt;error_reason&gt;[^"]*)" "(?P&lt;target_port_list&gt;[^"]*)" "(?P&lt;target_status_code_list&gt;[^"]*)" "(?P&lt;classification&gt;[^"]*)" "(?P&lt;classification_reason&gt;[^"]*)" (?P&lt;traceability_id&gt;\S+)$')
+  .timestamp = parsed.timestamp
+  .symbol = parsed.type
+  .elb = parsed.elb
+  .client_host = parsed.client_host
+  .target_host = parsed.target_host
+  .request_processing_time = parsed.request_processing_time
+  .target_processing_time = parsed.target_processing_time
+  .response_processing_time = parsed.response_processing_time
+  .received_bytes = parsed.received_bytes
+  .request_method = parsed.request_method
+  .request_url = parsed.request_url
+  .request_protocol = parsed.request_protocol
+  .user_agent = parsed.user_agent
+  .ssl_cipher = parsed.ssl_cipher
+  .ssl_protocol = parsed.ssl_protocol
+  .target_group_arn = parsed.target_group_arn
+  .trace_id = parsed.trace_id
+  .domain_name = parsed.domain_name
+  .chosen_cert_arn = parsed.chosen_cert_arn
+  .matched_rule_priority = parsed.matched_rule_priority
+  .request_creation_time = parsed.request_creation_time
+  .actions_executed = parsed.actions_executed
+  .redirect_url = parsed.redirect_url
+  .error_reason = parsed.error_reason
+  .target_port_list = parsed.target_port_list
+  .target_status_code_list = parsed.target_status_code_list
+  .classification = parsed.classification
+  .classification_reason = parsed.classification_reason
+  .traceability_id = parsed.traceability_id
+  del(.message)
+  .elb_status_code = to_int!(parsed.elb_status_code)
+  .target_status_code = to_int!(parsed.target_status_code)
+  .sent_bytes = to_int!(parsed.sent_bytes)
+if .host == "127.0.0.1" {
+    .match_chars = "localhost"
+} else if .host != "127.0.0.1" {
+    .match_chars = "attack_ip"
+}   
+if .elb_status_code == 200 {
+    .str_elb_status = "ok"
+} else if .elb_status_code == 404 {
+    .str__elb_status = "error"
+}
+  .extends = {
+    "ssl_cipher": .ssl_cipher,
+    "ssl_protocol": .ssl_protocol,
+}
+'''
+</code></pre>
+<h6 id="output-11"><a class="header" href="#output-11">output</a></h6>
+<pre><code class="language-bash">{
+	"actions_executed": "forward",
+	"chosen_cert_arn": "arn:aws:acm:us:123:cert/short",
+	"classification": "cls",
+	"classification_reason": "rsn",
+	"client_host": "192.168.1.10:2000",
+	"domain_name": "api.example.com",
+	"elb": "app/my-lb",
+	"elb_status_code": 200,
+	"error_reason": "err",
+	"extends": {
+		"ssl_cipher": "ECDHE",
+		"ssl_protocol": "TLSv1.3"
+	},
+	"host": "127.0.0.1",
+	"match_chars": "localhost",
+	"matched_rule_priority": "1",
+	"port": 53995,
+	"received_bytes": "100",
+	"redirect_url": "https://auth.example.com/r",
+	"request_creation_time": "2018-11-30T22:22:48.364000Z",
+	"request_method": "POST",
+	"request_processing_time": "0.01",
+	"request_protocol": "HTTP/1.1",
+	"request_url": "https://api.example.com/u?p=1&amp;sid=2&amp;t=3",
+	"response_processing_time": "0.01",
+	"sent_bytes": 200,
+	"source_type": "socket",
+	"ssl_cipher": "ECDHE",
+	"ssl_protocol": "TLSv1.3",
+	"str_elb_status": "ok",
+	"symbol": "http",
+	"target_group_arn": "arn:aws:elb:us:123:tg",
+	"target_host": "10.0.0.15:8080",
+	"target_port_list": "10.0.0.1:80",
+	"target_processing_time": "0.02",
+	"target_status_code": 200,
+	"target_status_code_list": "200",
+	"timestamp": "2018-11-30T22:23:00.186641Z",
+	"trace_id": "Root=1-test",
+	"traceability_id": "TID_x1",
+	"user_agent": "Mozilla/5.0 (Win) Chrome/90"
+}
+</code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>引擎</th><th>拓扑</th><th>EPS</th><th>MPS</th><th>CPU (avg/peak)</th><th>MEM (avg/peak)</th><th>规则大小</th></tr>
+</thead>
+<tbody>
+<tr><td>WarpParse</td><td>File -&gt; BlackHole</td><td><strong>710,400</strong></td><td>278.45</td><td><strong>837.44 %/912.40 %</strong></td><td><strong>230.00 MB/252.95 MB</strong></td><td>1694</td></tr>
+<tr><td>WarpParse</td><td>TCP -&gt; BlackHole</td><td><strong>611,800</strong></td><td>239.80</td><td><strong>624.17 %/753.00 %</strong></td><td><strong>478.25 MB/487.42 MB</strong></td><td></td></tr>
+<tr><td>WarpParse</td><td>TCP -&gt; File</td><td><strong>318,200</strong></td><td>124.72</td><td><strong>593.16 %/732.60 %</strong></td><td><strong>409.21 MB/547.50 MB</strong></td><td></td></tr>
+<tr><td>Vector</td><td>File -&gt; BlackHole</td><td><strong>129,743</strong></td><td>50.85</td><td><strong>593.45 %/665.00 %</strong></td><td><strong>283.67 MB/298.16 MB</strong></td><td>2650</td></tr>
+<tr><td>Vector</td><td>TCP -&gt; BlackHole</td><td><strong>152,900</strong></td><td>59.93</td><td><strong>611.53 %/677.50 %</strong></td><td><strong>288.53 MB/294.42 MB</strong></td><td></td></tr>
+<tr><td>Vector</td><td>TCP -&gt; File</td><td><strong>582,00</strong></td><td>22.81</td><td><strong>331.78 %/373.90 %</strong></td><td><strong>276.99 MB/288.42 MB</strong></td><td></td></tr>
+</tbody>
+</table>
+</div>
+<h4 id="sysmon1kjson-1"><a class="header" href="#sysmon1kjson-1">Sysmon（1K,JSON)</a></h4>
+<p>WarpParse</p>
+<h6 id="wpl-6"><a class="header" href="#wpl-6">WPL</a></h6>
+<pre><code class="language-bash">package /sysmon/ {
+   rule sysmon {
+        (_:pri&lt;&lt;,&gt;&gt;,3*_,_),(_\S\y\s\m\o\n\:,
+        json(
+            @Id:id,
+            @Description/ProcessId:process_id,
+            @Level:severity,
+            @Opcode:Opcode,
+            @ProcessId:ProcessId,
+            @Task:Task,
+            @ThreadId:ThreadId
+            @Version:Version,
+            @Description/CommandLine:cmd_line,
+            @Description/ParentCommandLine:parent_cmd_line,
+            @Description/LogonGuid:logon_guid,
+            @Description/LogonId:logon_id,
+            @Description/Image:process_path,
+            @Description/ParentImage:parent_process_path,
+            @Description/ParentProcessGuid:parent_process_guid,
+            @Description/ParentProcessId:parent_process_id,
+            @Description/ParentUser:parent_process_user,
+            @Description/ProcessGuid:process_guid,
+            @Description/Company:product_company,
+            @Description/Description:process_desc,
+            @Description/FileVersion:file_version,
+            chars@Description/Hashes:Hashes
+            @Description/IntegrityLevel:integrity_level,
+            @Description/OriginalFileName:origin_file_name,
+            @Description/Product:product_name,
+            @Description/RuleName:rule_name,
+            @Description/User:user_name,
+            chars@Description/UtcTime:occur_time,
+            @Description/TerminalSessionId:terminal_session_id,
+            @Description/CurrentDirectory:current_dir,
+            @Keywords:keywords
+            )
+        )
+    }
+   }
+</code></pre>
+<h6 id="oml-2"><a class="header" href="#oml-2">OML</a></h6>
+<pre><code class="language-bash">name : sysmon
+rule : /sysmon/*
+---
+Id:digit = take(id) ;
+LogonId:digit = take(logon_id) ;
+enrich_level = match read(option:[severity]) {
+    chars(4) =&gt; chars(severity);
+    chars(3) =&gt; chars(normal);
+};
+extends : obj = object {
+    OriginalFileName = read(origin_file_name);
+    ParentCommandLine = read(parent_cmd_line);
+};
+extends_dir = object {
+    ParentProcessPath = read(parent_process_path);
+    Process_path = read(process_path);
+};
+match_chars = match read(option:[wp_src_ip]) {
+    ip(127.0.0.1) =&gt; chars(localhost); 
+    !ip(127.0.0.1) =&gt; chars(attack_ip); 
+};
+num_range = match read(option:[Id]) {
+    in ( digit(0), digit(1000) ) =&gt; read(Id) ;
+    _ =&gt; digit(0) ;
+};
+* : auto = read();
+</code></pre>
+<h6 id="output-12"><a class="header" href="#output-12">output</a></h6>
+<pre><code class="language-bash">{
+	"Id": 1,
+	"LogonId": 1,
+	"enrich_level": "severity",
+	"extends": {
+		"OriginalFileName": "a.exe",
+		"ParentCommandLine": "b.exe"
+	},
+	"extends_dir": {
+		"ParentProcessPath": "C:\\\\Windows\\\\b.exe",
+		"Process_path": "C:\\\\Windows\\\\a.exe"
+	},
+	"match_chars": "localhost",
+	"num_range": 1,
+	"wp_event_id": 1764813339134818000,
+	"cmd_line": "a.exe",
+	"product_company": "C",
+	"current_dir": "C:\\\\",
+	"process_desc": "D",
+	"file_version": "1",
+	"Hashes": "H",
+	"process_path": "C:\\\\Windows\\\\a.exe",
+	"integrity_level": "M",
+	"logon_guid": "{LG}",
+	"origin_file_name": "a.exe",
+	"parent_cmd_line": "b.exe",
+	"parent_process_path": "C:\\\\Windows\\\\b.exe",
+	"parent_process_guid": "{PG}",
+	"parent_process_id": "1",
+	"parent_process_user": "U",
+	"process_guid": "{G}",
+	"process_id": "1",
+	"product_name": "P",
+	"rule_name": "R",
+	"terminal_session_id": "1",
+	"user_name": "U",
+	"occur_time": "2025-04-10 06:17:28.503",
+	"DescriptionRawMessage": "Process Create\\r\\nRuleName: R",
+	"keywords": "0",
+	"severity": "4",
+	"LevelDisplayName": "信息",
+	"LogName": "L",
+	"MachineName": "A",
+	"Opcode": "0",
+	"OpcodeDisplayName": "信息",
+	"ProcessId": "1",
+	"ProviderId": "PID",
+	"ProviderName": "P",
+	"Task": "1",
+	"TaskDisplayName": "Process Create",
+	"ThreadId": "1",
+	"TimeCreated": "2025-04-10T14:17:28.693228+08:00",
+	"Version": "1",
+	"wp_src_key": "socket",
+	"wp_src_ip": "127.0.0.1"
+}
+</code></pre>
+<h5 id="vector-6"><a class="header" href="#vector-6">Vector</a></h5>
+<h6 id="vrl-6"><a class="header" href="#vrl-6">VRL</a></h6>
+<pre><code class="language-toml">source = '''
+  parsed_msg = parse_regex!(.message, r'^[^{]*(?P&lt;body&gt;\{.*)$')
+  parsed = parse_regex!(parsed_msg.body, r'(?s)\{"Id":(?P&lt;Id&gt;[^,]+),"Version":(?P&lt;Version&gt;[^,]+),"Level":(?P&lt;Level&gt;[^,]+),"Task":(?P&lt;Task&gt;[^,]+),"Opcode":(?P&lt;Opcode&gt;[^,]+),"Keywords":(?P&lt;Keywords&gt;[^,]+),"RecordId":(?P&lt;RecordId&gt;[^,]+),"ProviderName":"(?P&lt;ProviderName&gt;[^"]*)","ProviderId":"(?P&lt;ProviderId&gt;[^"]*)","LogName":"(?P&lt;LogName&gt;[^"]*)","ProcessId":(?P&lt;ProcessId&gt;[^,]+),"ThreadId":(?P&lt;ThreadId&gt;[^,]+),"MachineName":"(?P&lt;MachineName&gt;[^"]*)","TimeCreated":"(?P&lt;TimeCreated&gt;[^"]*)","ActivityId":(?P&lt;ActivityId&gt;[^,]+),"RelatedActivityId":(?P&lt;RelatedActivityId&gt;[^,]+),"Qualifiers":(?P&lt;Qualifiers&gt;[^,]+),"LevelDisplayName":"(?P&lt;LevelDisplayName&gt;[^"]*)","OpcodeDisplayName":"(?P&lt;OpcodeDisplayName&gt;[^"]*)","TaskDisplayName":"(?P&lt;TaskDisplayName&gt;[^"]*)","Description":\{"RuleName":"(?P&lt;RuleName&gt;[^"]*)","UtcTime":"(?P&lt;UtcTime&gt;[^"]*)","ProcessGuid":"(?P&lt;ProcessGuid&gt;[^"]*)","ProcessId":"(?P&lt;DescProcessId&gt;[^"]*)","Image":"(?P&lt;Image&gt;[^"]*)","FileVersion":"(?P&lt;FileVersion&gt;[^"]*)","Description":"(?P&lt;Description&gt;[^"]*)","Product":"(?P&lt;Product&gt;[^"]*)","Company":"(?P&lt;Company&gt;[^"]*)","OriginalFileName":"(?P&lt;OriginalFileName&gt;[^"]*)","CommandLine":"(?P&lt;CommandLine&gt;[^"]*)","CurrentDirectory":"(?P&lt;CurrentDirectory&gt;[^"]*)","User":"(?P&lt;User&gt;[^"]*)","LogonGuid":"(?P&lt;LogonGuid&gt;[^"]*)","LogonId":"(?P&lt;LogonId&gt;[^"]*)","TerminalSessionId":"(?P&lt;TerminalSessionId&gt;[^"]*)","IntegrityLevel":"(?P&lt;IntegrityLevel&gt;[^"]*)","Hashes":"(?P&lt;Hashes&gt;[^"]*)","ParentProcessGuid":"(?P&lt;ParentProcessGuid&gt;[^"]*)","ParentProcessId":"(?P&lt;ParentProcessId&gt;[^"]*)","ParentImage":"(?P&lt;ParentImage&gt;[^"]*)","ParentCommandLine":"(?P&lt;ParentCommandLine&gt;[^"]*)","ParentUser":"(?P&lt;ParentUser&gt;[^"]*)"\},"DescriptionRawMessage":"(?P&lt;DescriptionRawMessage&gt;[^"]*)"\}$')
+  .cmd_line = parsed.CommandLine
+  .product_company= parsed.Company
+  .Opcode = parsed.Opcode
+  .process_id = parsed.ProcessId 
+  .ProcessId = parsed.ProcessId 
+  .Task = parsed.Task
+  .ThreadId = parsed.ThreadId
+  .Version = parsed.Version
+  .current_dir = parsed.CurrentDirectory
+  .process_desc = parsed.Description
+  .file_version = parsed.FileVersion
+  .Hashes = parsed.Hashes
+  .process_path = parsed.Image
+  .integrity_level = parsed.IntegrityLevel
+  .logon_guid = parsed.LogonGuid
+  .origin_file_name = parsed.OriginalFileName
+  .parent_cmd_line = parsed.ParentCommandLine
+  .parent_process_path = parsed.ParentImage
+  .parent_process_guid = parsed.ParentProcessGuid
+  .parent_process_id = parsed.ParentProcessId
+  .parent_process_user = parsed.ParentUser
+  .process_guid = parsed.ProcessGuid
+  .product_name = parsed.Product
+  .rule_name = parsed.RuleName
+  .terminal_session_id = parsed.TerminalSessionId
+  .user_name = parsed.User
+  .occur_time = parsed.UtcTime
+  .DescriptionRawMessage = parsed.DescriptionRawMessage
+  .keywords = parsed.Keywords
+  .severity = parsed.Level
+  .LevelDisplayName = parsed.LevelDisplayName
+  .LogName = parsed.LogName
+  .MachineName = parsed.MachineName
+  .OpcodeDisplayName = parsed.OpcodeDisplayName
+  .ProviderId = parsed.ProviderId
+  .ProviderName = parsed.ProviderName
+  .TaskDisplayName = parsed.TaskDisplayName
+  .TimeCreated = parsed.TimeCreated
+  del(.message)
+  .LogonId = to_int!(parsed.LogonId)
+  .Id = to_int!(parsed.Id)
+if .host == "127.0.0.1" {
+    .match_chars = "localhost"
+} else if .host != "127.0.0.1" {
+    .match_chars = "attack_ip"
+}   
+if .severity == "4" {
+    .enrich_level = "severity"
+} else if .Level == "3" {
+    .enrich_level = "normal"
+} 
+.extends = {
+    "OriginalFileName": .origin_file_name,
+    "ParentCommandLine": .parent_cmd_line,
+}
+.extends_dir = {
+    "ParentProcessPath": .parent_process_path,
+    "Process_path": .process_path,
+}
+.num_range = if .Id &gt;= 0 &amp;&amp; .Id &lt;= 1000 {
+    .Id
+} else {
+    0
+}
+'''
+</code></pre>
+<h6 id="output-13"><a class="header" href="#output-13">output</a></h6>
+<pre><code class="language-bash">{
+	"DescriptionRawMessage": "Process Create\\r\\nRuleName: R",
+	"Hashes": "H",
+	"Id": 1,
+	"LevelDisplayName": "信息",
+	"LogName": "L",
+	"LogonId": 1,
+	"MachineName": "A",
+	"Opcode": "0",
+	"OpcodeDisplayName": "信息",
+	"ProcessId": "1",
+	"ProviderId": "PID",
+	"ProviderName": "P",
+	"Task": "1",
+	"TaskDisplayName": "Process Create",
+	"ThreadId": "1",
+	"TimeCreated": "2025-04-10T14:17:28.693228+08:00",
+	"Version": "1",
+	"cmd_line": "a.exe",
+	"current_dir": "C:\\\\",
+	"enrich_level": "severity",
+	"extends": {
+		"OriginalFileName": "a.exe",
+		"ParentCommandLine": "b.exe"
+	},
+	"extends_dir": {
+		"ParentProcessPath": "C:\\\\Windows\\\\b.exe",
+		"Process_path": "C:\\\\Windows\\\\a.exe"
+	},
+	"file_version": "1",
+	"host": "127.0.0.1",
+	"integrity_level": "M",
+	"keywords": "0",
+	"logon_guid": "{LG}",
+	"match_chars": "localhost",
+	"num_range": 1,
+	"occur_time": "2025-04-10 06:17:28.503",
+	"origin_file_name": "a.exe",
+	"parent_cmd_line": "b.exe",
+	"parent_process_guid": "{PG}",
+	"parent_process_id": "1",
+	"parent_process_path": "C:\\\\Windows\\\\b.exe",
+	"parent_process_user": "U",
+	"port": 49838,
+	"process_desc": "D",
+	"process_guid": "{G}",
+	"process_id": "1",
+	"process_path": "C:\\\\Windows\\\\a.exe",
+	"product_company": "C",
+	"product_name": "P",
+	"rule_name": "R",
+	"severity": "4",
+	"source_type": "socket",
+	"terminal_session_id": "1",
+	"timestamp": "2025-12-04T02:04:24.686378Z",
+	"user_name": "U"
+}
+</code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>引擎</th><th>拓扑</th><th>EPS</th><th>MPS</th><th>CPU (avg/peak)</th><th>MEM (avg/peak)</th><th>规则大小</th></tr>
+</thead>
+<tbody>
+<tr><td>WarpParse</td><td>File -&gt; BlackHole</td><td><strong>354,800</strong></td><td>333.63</td><td><strong>880.24 %/935.40 %</strong></td><td><strong>157.88 MB/170.69 MB</strong></td><td>2249</td></tr>
+<tr><td>WarpParse</td><td>TCP -&gt; BlackHole</td><td><strong>299,500</strong></td><td>281.63</td><td><strong>664.56 %/749.00 %</strong></td><td><strong>367.47 MB/377.25 MB</strong></td><td></td></tr>
+<tr><td>WarpParse</td><td>TCP -&gt; File</td><td><strong>219,900</strong></td><td>206.78</td><td><strong>719.29 %/817.00 %</strong></td><td><strong>431.93 MB/457.17 MB</strong></td><td></td></tr>
+<tr><td>Vector</td><td>File -&gt; BlackHole</td><td><strong>582,00</strong></td><td>54.73</td><td><strong>431.45 %/527.60 %</strong></td><td><strong>296.28 MB/317.84 MB</strong></td><td>3782</td></tr>
+<tr><td>Vector</td><td>TCP -&gt; BlackHole</td><td><strong>97,200</strong></td><td>91.40</td><td><strong>710.83 %/806.80 %</strong></td><td><strong>399.64 MB/424.08 MB</strong></td><td></td></tr>
+<tr><td>Vector</td><td>TCP -&gt; File</td><td><strong>40,300</strong></td><td>37.90</td><td><strong>391.09 %/497.30 %</strong></td><td><strong>394.67 MB/409.95 MB</strong></td><td></td></tr>
+</tbody>
+</table>
+</div>
+<h4 id="apt3k-1"><a class="header" href="#apt3k-1">APT（3K)</a></h4>
+<p>WarpParse</p>
+<h6 id="wpl-7"><a class="header" href="#wpl-7">WPL</a></h6>
+<pre><code class="language-bash">package /apt/ {
+   rule apt {
+        (
+            _\#,
+            time:timestamp,
+            _,
+            chars:Hostname,
+            _\%\%, 
+            chars:ModuleName\/,
+            chars:SeverityHeader\/,
+            symbol(ANTI-APT)\(,
+            chars:type\),
+            chars:Count&lt;[,]&gt;,
+            _\:,
+            chars:Content\(,
+        ),
+        (
+            kv(chars@SyslogId),
+            kv(chars@VSys),
+            kv(chars@Policy),
+            kv(chars@SrcIp),
+            kv(chars@DstIp),
+            kv(chars@SrcPort),
+            kv(chars@DstPort),
+            kv(chars@SrcZone),
+            kv(chars@DstZone),
+            kv(chars@User),
+            kv(chars@Protocol),
+            kv(chars@Application),
+            kv(chars@Profile),
+            kv(chars@Direction),
+            kv(chars@ThreatType),
+            kv(chars@ThreatName),
+            kv(chars@Action),
+            kv(chars@FileType),
+            kv(chars@Hash)\),
+        )\,
+    }
+   }
+</code></pre>
+<h6 id="oml-3"><a class="header" href="#oml-3">OML</a></h6>
+<pre><code class="language-bash">name : apt
+rule : /apt/*
+---
+count:digit = take(Count) ;
+severity:digit = take(SeverityHeader) ;
+match_chars = match read(option:[wp_src_ip]) {
+    ip(127.0.0.1) =&gt; chars(localhost); 
+    !ip(127.0.0.1) =&gt; chars(attack_ip); 
+};
+num_range = match read(option:[count]) {
+    in ( digit(0), digit(1000) ) =&gt; read(count) ;
+    _ =&gt; digit(0) ;
+};
+src_system_log_type = match read(option:[type]) {
+    chars(l) =&gt; chars(日志信息);
+    chars(s) =&gt; chars(安全日志信息);
+};
+extends_ip : obj = object {
+    DstIp = read(DstIp);
+    SrcIp = read(SrcIp);
+};
+extends_info : obj = object {
+    hostname = read(Hostname);
+    source_type = read(wp_src_key)
+};
+* : auto = read();
+</code></pre>
+<h6 id="output-14"><a class="header" href="#output-14">output</a></h6>
+<pre><code class="language-bash">{
+	"count": 29,
+	"severity": 4,
+	"match_chars": "localhost",
+	"num_range": 29,
+	"src_system_log_type": "日志信息",
+	"extends_ip": {
+		"DstIp": "182.150.63.102",
+		"SrcIp": "192.168.1.123"
+	},
+	"extends_info": {
+		"hostname": "USG1000E",
+		"source_type": "socket"
+	},
+	"wp_event_id": 1764815397395451000,
+	"timestamp": "2025-02-07 15:07:18",
+	"Hostname": "USG1000E",
+	"ModuleName": "01ANTI-APT",
+	"symbol": "ANTI-APT",
+	"type": "l",
+	"Content": "An advanced persistent threat was detected.",
+	"SyslogId": "1",
+	"VSys": "public-long-virtual-system-name-for-testing-extra-large-value-to-simulate-enterprise-scenario",
+	"Policy": "trust-untrust-high-risk-policy-with-deep-inspection-and-layer7-protection-enabled-for-advanced-threat-detection",
+	"SrcIp": "192.168.1.123",
+	"DstIp": "182.150.63.102",
+	"SrcPort": "51784",
+	"DstPort": "10781",
+	"SrcZone": "trust-zone-with-multiple-segments-for-internal-security-domains-and-access-control",
+	"DstZone": "untrust-wide-area-network-zone-with-external-facing-interfaces-and-honeynet-integration",
+	"User": "unknown-long-user-field-used-for-simulation-purpose-with-extra-description-and-tags-[tag1][tag2][tag3]-to-reach-required-size",
+	"Protocol": "TCP",
+	"Application": "HTTP-long-application-signature-identification-with-multiple-behavior-patterns-and-deep-packet-inspection-enabled",
+	"Profile": "IPS_default_advanced_extended_profile_with_ml_detection-long",
+	"Direction": "aaa-long-direction-field-used-to-extend-size-with-additional-info-about-traffic-orientation-from-client-to-server",
+	"ThreatType": "File Reputation with additional descriptive context of multi-layer analysis engine including sandbox-behavioral-signature-ml-static-analysis-and-network-correlation-modules-working-together",
+	"ThreatName": "bbb-advanced-threat-campaign-with-code-name-operation-shadow-storm-and-related-IOCs-collected-over-multiple-incidents-in-the-wild-attached-metadata-[phase1][phase2][phase3]",
+	"Action": "ccc-block-and-alert-with-deep-scan-followed-by-quarantine-and-forensic-dump-generation-for-further-investigation",
+	"FileType": "ddd-executable-binary-with-multiple-packed-layers-suspicious-import-table-behavior-and-evasion-techniques",
+	"Hash": "eee1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef-long-hash-value-used-for-testing-purpose-extended-with-multiple-hash-representations-[MD5:aaa111bbb222ccc333]-[SHA1:bbb222ccc333ddd444]-[SHA256:ccc333ddd444eee555]-[SSDEEP:ddd444eee555fff666]-end-of-hash-section, ExtraInfo=\"This is additional extended information purposely added to inflate the total log size for stress testing of log ingestion engines such as Vector, Fluent Bit, self-developed ETL pipelines, and any high-throughput log processing systems. It contains repeated segments to simulate realistic verbose threat intelligence attachment blocks. [SEG-A-BEGIN] The threat was part of a coordinated multi-vector campaign observed across various geographic regions targeting enterprise networks with spear-phishing, watering-hole attacks, and supply-chain compromise vectors. Enriched indicators include C2 domains, malware families, behavioral clusters, sandbox detonation traces, and network telemetry correlation. [SEG-A-END] [SEG-B-BEGIN] Further analysis revealed that the payload exhibited persistence techniques including registry autoruns, scheduled tasks, masquerading, process injection, and lateral movement attempts leveraging remote service creation and stolen credentials. The binary contains multiple obfuscation layers, anti-debugging, anti-VM checks, and unusual API call sequences. [SEG-B-END] [SEG-C-BEGIN] IOC Bundle: Domains=malicious-domain-example-01.com,malicious-domain-example-02.net,malicious-update-service.info; IPs=103.21.244.0,198.51.100.55,203.0.113.77; FileNames=update_service.exe,winlog_service.dll,mscore_update.bin; RegistryKeys=HKCU\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run,HKLM\\\\System\\\\Services\\\\FakeService; Mutex=Global\\\\A1B2C3D4E5F6G7H8; YARA Matches=[rule1,rule2,rule3]. [SEG-C-END] EndOfExtraInfo\"",
+	"wp_src_key": "socket",
+	"wp_src_ip": "127.0.0.1"
+}
+</code></pre>
+<h5 id="vector-7"><a class="header" href="#vector-7">Vector</a></h5>
+<pre><code class="language-toml">source = '''
+parsed_log = parse_regex!(.message, r'(?s)^#(?P&lt;timestamp&gt;\w+\s+\d+\s+\d{4}\s+\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2})\s+(?P&lt;hostname&gt;\S+)\s+%%(?P&lt;ModuleName&gt;\d+[^/]+)/(?P&lt;SeverityHeader&gt;\d+)/(?P&lt;symbol&gt;[^(]+)\((?P&lt;type&gt;[^)]+)\)\[(?P&lt;count&gt;\d+)\]:\s*(?P&lt;content&gt;[^()]+?)\s*\(SyslogId=(?P&lt;SyslogId&gt;[^,]+),\s+VSys="(?P&lt;VSys&gt;[^"]+)",\s+Policy="(?P&lt;Policy&gt;[^"]+)",\s+SrcIp=(?P&lt;SrcIp&gt;[^,]+),\s+DstIp=(?P&lt;DstIp&gt;[^,]+),\s+SrcPort=(?P&lt;SrcPort&gt;[^,]+),\s+DstPort=(?P&lt;DstPort&gt;[^,]+),\s+SrcZone=(?P&lt;SrcZone&gt;[^,]+),\s+DstZone=(?P&lt;DstZone&gt;[^,]+),\s+User="(?P&lt;User&gt;[^"]+)",\s+Protocol=(?P&lt;Protocol&gt;[^,]+),\s+Application="(?P&lt;Application&gt;[^"]+)",\s+Profile="(?P&lt;Profile&gt;[^"]+)",\s+Direction=(?P&lt;Direction&gt;[^,]+),\s+ThreatType=(?P&lt;ThreatType&gt;[^,]+),\s+ThreatName=(?P&lt;ThreatName&gt;[^,]+),\s+Action=(?P&lt;Action&gt;[^,]+),\s+FileType=(?P&lt;FileType&gt;[^,]+),\s+Hash=(?P&lt;Hash&gt;.*)\)$')
+  .Hostname = parsed_log.hostname
+  .SrcPort = parsed_log.SrcPort
+  .SeverityHeader = parsed_log.SeverityHeader
+  .type = parsed_log.type
+  .Content = parsed_log.content
+  .VSys = parsed_log.VSys
+  .DstPort = parsed_log.DstPort
+  .Policy = parsed_log.Policy
+  .SrcIp = parsed_log.SrcIp
+  .DstIp = parsed_log.DstIp
+  .SrcZone = parsed_log.SrcZone
+  .DstZone = parsed_log.DstZone
+  .User = parsed_log.User
+  .Protocol = parsed_log.Protocol
+  .ModuleName = parsed_log.ModuleName
+  .symbol = parsed_log.symbol
+  .timestamp = parsed_log.timestamp
+  .SyslogId = parsed_log.SyslogId
+  .Application = parsed_log.Application
+  .Profile = parsed_log.Profile
+  .Direction = parsed_log.Direction
+  .ThreatType = parsed_log.ThreatType
+  .ThreatName = parsed_log.ThreatName
+  .Action = parsed_log.Action
+  .FileType = parsed_log.FileType
+  .Hash = parsed_log.Hash
+  del(.message)
+.severity = to_int!(parsed_log.SeverityHeader)
+.count = to_int!(parsed_log.count)
+if .host == "127.0.0.1" {
+    .match_chars = "localhost"
+} else if .host != "127.0.0.1" {
+    .match_chars = "attack_ip"
+}  
+if .type == "l" {
+.src_system_log_type = "日志信息"
+} else if .type == "s" {
+.src_system_log_type = "安全日志信息"
+}
+.extends_ip = {
+    "DstIp": .DstIp,
+    "SrcIp": .SrcIp,
+}
+.extends_info = {
+    "hostname": .Hostname,
+    "source_type": .source_type,
+}
+.num_range = if .count &gt;= 0 &amp;&amp; .count &lt;= 1000 {
+    .count
+} else {
+    0
+}
+'''
+</code></pre>
+<h6 id="output-15"><a class="header" href="#output-15">output</a></h6>
+<pre><code class="language-bash">{
+	"Action": "ccc-block-and-alert-with-deep-scan-followed-by-quarantine-and-forensic-dump-generation-for-further-investigation",
+	"Application": "HTTP-long-application-signature-identification-with-multiple-behavior-patterns-and-deep-packet-inspection-enabled",
+	"Content": "An advanced persistent threat was detected.",
+	"Direction": "aaa-long-direction-field-used-to-extend-size-with-additional-info-about-traffic-orientation-from-client-to-server",
+	"DstIp": "182.150.63.102",
+	"DstPort": "10781",
+	"DstZone": "untrust-wide-area-network-zone-with-external-facing-interfaces-and-honeynet-integration",
+	"FileType": "ddd-executable-binary-with-multiple-packed-layers-suspicious-import-table-behavior-and-evasion-techniques",
+	"Hash": "eee1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef-long-hash-value-used-for-testing-purpose-extended-with-multiple-hash-representations-[MD5:aaa111bbb222ccc333]-[SHA1:bbb222ccc333ddd444]-[SHA256:ccc333ddd444eee555]-[SSDEEP:ddd444eee555fff666]-end-of-hash-section, ExtraInfo=\"This is additional extended information purposely added to inflate the total log size for stress testing of log ingestion engines such as Vector, Fluent Bit, self-developed ETL pipelines, and any high-throughput log processing systems. It contains repeated segments to simulate realistic verbose threat intelligence attachment blocks. [SEG-A-BEGIN] The threat was part of a coordinated multi-vector campaign observed across various geographic regions targeting enterprise networks with spear-phishing, watering-hole attacks, and supply-chain compromise vectors. Enriched indicators include C2 domains, malware families, behavioral clusters, sandbox detonation traces, and network telemetry correlation. [SEG-A-END] [SEG-B-BEGIN] Further analysis revealed that the payload exhibited persistence techniques including registry autoruns, scheduled tasks, masquerading, process injection, and lateral movement attempts leveraging remote service creation and stolen credentials. The binary contains multiple obfuscation layers, anti-debugging, anti-VM checks, and unusual API call sequences. [SEG-B-END] [SEG-C-BEGIN] IOC Bundle: Domains=malicious-domain-example-01.com,malicious-domain-example-02.net,malicious-update-service.info; IPs=103.21.244.0,198.51.100.55,203.0.113.77; FileNames=update_service.exe,winlog_service.dll,mscore_update.bin; RegistryKeys=HKCU\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run,HKLM\\\\System\\\\Services\\\\FakeService; Mutex=Global\\\\A1B2C3D4E5F6G7H8; YARA Matches=[rule1,rule2,rule3]. [SEG-C-END] EndOfExtraInfo\"",
+	"Hostname": "USG1000E",
+	"ModuleName": "01ANTI-APT",
+	"Policy": "trust-untrust-high-risk-policy-with-deep-inspection-and-layer7-protection-enabled-for-advanced-threat-detection",
+	"Profile": "IPS_default_advanced_extended_profile_with_ml_detection-long",
+	"Protocol": "TCP",
+	"SeverityHeader": "4",
+	"SrcIp": "192.168.1.123",
+	"SrcPort": "51784",
+	"SrcZone": "trust-zone-with-multiple-segments-for-internal-security-domains-and-access-control",
+	"SyslogId": "1",
+	"ThreatName": "bbb-advanced-threat-campaign-with-code-name-operation-shadow-storm-and-related-IOCs-collected-over-multiple-incidents-in-the-wild-attached-metadata-[phase1][phase2][phase3]",
+	"ThreatType": "File Reputation with additional descriptive context of multi-layer analysis engine including sandbox-behavioral-signature-ml-static-analysis-and-network-correlation-modules-working-together",
+	"User": "unknown-long-user-field-used-for-simulation-purpose-with-extra-description-and-tags-[tag1][tag2][tag3]-to-reach-required-size",
+	"VSys": "public-long-virtual-system-name-for-testing-extra-large-value-to-simulate-enterprise-scenario",
+	"count": 29,
+	"extends_info": {
+		"hostname": "USG1000E",
+		"source_type": "socket"
+	},
+	"extends_ip": {
+		"DstIp": "182.150.63.102",
+		"SrcIp": "192.168.1.123"
+	},
+	"host": "127.0.0.1",
+	"match_chars": "localhost",
+	"num_range": 29,
+	"port": 51272,
+	"severity": 4,
+	"source_type": "socket",
+	"src_system_log_type": "日志信息",
+	"symbol": "ANTI-APT",
+	"timestamp": "Feb  7 2025 15:07:18+08:00",
+	"type": "l"
+}
+</code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>引擎</th><th>拓扑</th><th>EPS</th><th>MPS</th><th>CPU (avg/peak)</th><th>MEM (avg/peak)</th><th>规则大小</th></tr>
+</thead>
+<tbody>
+<tr><td>WarpParse</td><td>File -&gt; BlackHole</td><td><strong>280,000</strong></td><td>947.15</td><td><strong>768.50 %/868.90 %</strong></td><td><strong>172.72 MB/178.23 MB</strong></td><td>1638</td></tr>
+<tr><td>WarpParse</td><td>TCP -&gt; BlackHole</td><td><strong>238,900</strong></td><td>808.12</td><td><strong>657.14 %/705.40 %</strong></td><td><strong>364.73 MB/389.94 MB</strong></td><td></td></tr>
+<tr><td>WarpParse</td><td>TCP -&gt; File</td><td><strong>169,800</strong></td><td>574.38</td><td><strong>663.90 %/883.80 %</strong></td><td><strong>871.77 MB/1500.22 MB</strong></td><td></td></tr>
+<tr><td>Vector</td><td>File -&gt; BlackHole</td><td><strong>306,12</strong></td><td>103.55</td><td><strong>560.94 %/654.40 %</strong></td><td><strong>248.00 MB/273.02 MB</strong></td><td>2259</td></tr>
+<tr><td>Vector</td><td>TCP -&gt; BlackHole</td><td><strong>340,00</strong></td><td>115.01</td><td><strong>693.47 %/848.80 %</strong></td><td><strong>408.92 MB/430.59 MB</strong></td><td></td></tr>
+<tr><td>Vector</td><td>TCP -&gt; File</td><td><strong>249,00</strong></td><td>84.23</td><td><strong>538.78 %/644.90 %</strong></td><td><strong>393.26 MB/420.05 MB</strong></td><td></td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="linux-vps"><a class="header" href="#linux-vps">Linux VPS</a></h3>
+<p>平台数据仍在采集中，先保留统一表格，便于后续补录。</p>
+<h4 id="nginx239b-2"><a class="header" href="#nginx239b-2">Nginx（239B）</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>引擎</th><th>拓扑</th><th>EPS</th><th>MPS</th><th>CPU (avg/peak)</th><th>MEM (avg/peak)</th><th>规则大小</th></tr>
+</thead>
+<tbody>
+<tr><td>WarpParse</td><td>File -&gt; BlackHole</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td></td><td>TCP -&gt; BlackHole</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td></tr>
+<tr><td></td><td>TCP -&gt; File</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td></tr>
+<tr><td>Vector</td><td>File -&gt; BlackHole</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td></td><td>TCP -&gt; BlackHole</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td></tr>
+<tr><td></td><td>TCP -&gt; File</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td></tr>
+</tbody>
+</table>
+</div>
+<h4 id="aws411b-2"><a class="header" href="#aws411b-2">AWS（411B)</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>引擎</th><th>拓扑</th><th>EPS</th><th>MPS</th><th>CPU (avg/peak)</th><th>MEM (avg/peak)</th><th>规则大小</th></tr>
+</thead>
+<tbody>
+<tr><td>WarpParse</td><td>File -&gt; BlackHole</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td></td><td>TCP -&gt; BlackHole</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td></tr>
+<tr><td></td><td>TCP -&gt; File</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td></tr>
+<tr><td>Vector</td><td>File -&gt; BlackHole</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td></td><td>TCP -&gt; BlackHole</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td></tr>
+<tr><td></td><td>TCP -&gt; File</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td></tr>
+</tbody>
+</table>
+</div>
+<h4 id="sysmon1kjson-2"><a class="header" href="#sysmon1kjson-2">Sysmon（1K,JSON)</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>引擎</th><th>拓扑</th><th>EPS</th><th>MPS</th><th>CPU (avg/peak)</th><th>MEM (avg/peak)</th><th>规则大小</th></tr>
+</thead>
+<tbody>
+<tr><td>WarpParse</td><td>File -&gt; BlackHole</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td></td><td>TCP -&gt; BlackHole</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td></tr>
+<tr><td></td><td>TCP -&gt; File</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td></tr>
+<tr><td>Vector</td><td>File -&gt; BlackHole</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td></td><td>TCP -&gt; BlackHole</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td></tr>
+<tr><td></td><td>TCP -&gt; File</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td></tr>
+</tbody>
+</table>
+</div>
+<h4 id="apt3k-2"><a class="header" href="#apt3k-2">APT（3K)</a></h4>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>引擎</th><th>拓扑</th><th>EPS</th><th>MPS</th><th>CPU (avg/peak)</th><th>MEM (avg/peak)</th><th>规则大小</th></tr>
+</thead>
+<tbody>
+<tr><td>WarpParse</td><td>File -&gt; BlackHole</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td></td><td>TCP -&gt; BlackHole</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td></tr>
+<tr><td></td><td>TCP -&gt; File</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td></tr>
+<tr><td>Vector</td><td>File -&gt; BlackHole</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td></td><td>TCP -&gt; BlackHole</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td></tr>
+<tr><td></td><td>TCP -&gt; File</td><td>-</td><td>-</td><td>-</td><td>-</td><td></td></tr>
+</tbody>
+</table>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../10-user/09-FQA/troubleshooting.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../30-dev/connector_dev_guide.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../10-user/09-FQA/troubleshooting.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../30-dev/connector_dev_guide.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../../theme/lang-switch.js"></script>
+        <script src="../mermaid-eefea253.min.js"></script>
+        <script src="../mermaid-init-ccf746f1.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

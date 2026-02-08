@@ -1,0 +1,838 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>regex_match 正则匹配 - Warp Parse 文档</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../../../../theme/lang-switch.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../../searchindex-b509f17a.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../../toc-ca145d02.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Warp Parse 文档</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wp-labs/warp-parse" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="regex_match-函数使用指南"><a class="header" href="#regex_match-函数使用指南">regex_match 函数使用指南</a></h1>
+<h2 id="概述"><a class="header" href="#概述">概述</a></h2>
+<p><code>regex_match</code> 是 WPL (WP Language) 中的正则表达式匹配函数，用于检查日志字段的字符串内容是否匹配指定的正则表达式模式。使用 Rust 的 regex 引擎，支持完整的正则表达式语法。</p>
+<h2 id="快速开始"><a class="header" href="#快速开始">快速开始</a></h2>
+<h3 id="基本语法"><a class="header" href="#基本语法">基本语法</a></h3>
+<pre><code class="language-wpl">regex_match('pattern')
+</code></pre>
+<ul>
+<li><strong>pattern</strong>: 正则表达式模式（推荐使用<strong>单引号</strong>）</li>
+<li>匹配成功返回 Ok，失败返回 Err</li>
+</ul>
+<h3 id="简单示例"><a class="header" href="#简单示例">简单示例</a></h3>
+<pre><code class="language-wpl"># 匹配纯数字
+regex_match('^\d+$')
+
+# 匹配邮箱格式
+regex_match('^\w+@\w+\.\w+$')
+
+# 匹配 IP 地址
+regex_match('^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
+
+# 匹配 HTTP 方法
+regex_match('^(GET|POST|PUT|DELETE)$')
+</code></pre>
+<h2 id="重要提示引号使用"><a class="header" href="#重要提示引号使用">重要提示：引号使用</a></h2>
+<h3 id="推荐使用单引号原始字符串"><a class="header" href="#推荐使用单引号原始字符串">推荐：使用单引号（原始字符串）</a></h3>
+<pre><code class="language-wpl"># ✅ 推荐：单引号不处理转义，适合正则表达式
+regex_match('^\d+$')           # \d 保持原样
+regex_match('^\w+@\w+\.\w+$')  # \w, \. 保持原样
+regex_match('^[A-Z]+\d+$')     # 完美工作
+</code></pre>
+<h3 id="避免双引号会导致转义问题"><a class="header" href="#避免双引号会导致转义问题">避免：双引号会导致转义问题</a></h3>
+<pre><code class="language-wpl"># ❌ 错误：双引号会尝试转义 \d
+regex_match("^\d+$")  # 解析失败！\d 不是有效的转义序列
+
+# ❌ 错误：\w 也会失败
+regex_match("^\w+$")  # 解析失败！
+</code></pre>
+<p><strong>原因</strong>：WPL 的双引号字符串解析器只支持 <code>\"</code>, <code>\\</code>, <code>\n</code>, <code>\t</code> 这几种转义字符，而正则表达式中的 <code>\d</code>, <code>\w</code>, <code>\s</code> 等会导致解析错误。</p>
+<h2 id="正则表达式语法"><a class="header" href="#正则表达式语法">正则表达式语法</a></h2>
+<p><code>regex_match</code> 使用 Rust regex 引擎，支持以下特性：</p>
+<h3 id="1-基本匹配"><a class="header" href="#1-基本匹配">1. 基本匹配</a></h3>
+<pre><code class="language-wpl"># 字面字符
+regex_match('hello')          # 匹配 "hello"
+regex_match('error')          # 匹配 "error"
+</code></pre>
+<h3 id="2-字符类"><a class="header" href="#2-字符类">2. 字符类</a></h3>
+<pre><code class="language-wpl"># 数字
+regex_match('\d')             # 匹配任意数字 [0-9]
+regex_match('\d+')            # 匹配一个或多个数字
+regex_match('\d{3}')          # 匹配恰好3个数字
+
+# 字母和数字
+regex_match('\w')             # 匹配 [a-zA-Z0-9_]
+regex_match('\w+')            # 匹配一个或多个单词字符
+
+# 空白字符
+regex_match('\s')             # 匹配空格、制表符、换行符
+regex_match('\s+')            # 匹配一个或多个空白字符
+
+# 自定义字符类
+regex_match('[a-z]')          # 匹配小写字母
+regex_match('[A-Z]')          # 匹配大写字母
+regex_match('[0-9]')          # 匹配数字
+regex_match('[a-zA-Z0-9]')    # 匹配字母或数字
+</code></pre>
+<h3 id="3-量词"><a class="header" href="#3-量词">3. 量词</a></h3>
+<pre><code class="language-wpl"># * - 0次或多次
+regex_match('a*')             # 匹配 "", "a", "aa", "aaa"...
+
+# + - 1次或多次
+regex_match('a+')             # 匹配 "a", "aa", "aaa"... (不匹配空串)
+
+# ? - 0次或1次
+regex_match('colou?r')        # 匹配 "color" 或 "colour"
+
+# {n} - 恰好n次
+regex_match('\d{4}')          # 匹配4位数字
+
+# {n,m} - n到m次
+regex_match('\d{2,4}')        # 匹配2到4位数字
+
+# {n,} - 至少n次
+regex_match('\d{3,}')         # 匹配3位或更多数字
+</code></pre>
+<h3 id="4-锚点"><a class="header" href="#4-锚点">4. 锚点</a></h3>
+<pre><code class="language-wpl"># ^ - 字符串开始
+regex_match('^\d+')           # 必须以数字开头
+
+# $ - 字符串结束
+regex_match('\d+$')           # 必须以数字结尾
+
+# ^...$ - 完全匹配
+regex_match('^\d+$')          # 整个字符串必须是数字
+</code></pre>
+<h3 id="5-分组和选择"><a class="header" href="#5-分组和选择">5. 分组和选择</a></h3>
+<pre><code class="language-wpl"># (...) - 分组
+regex_match('(ab)+')          # 匹配 "ab", "abab", "ababab"...
+
+# | - 选择（或）
+regex_match('cat|dog')        # 匹配 "cat" 或 "dog"
+regex_match('^(GET|POST)$')   # 匹配 "GET" 或 "POST"
+
+# (?:...) - 非捕获分组
+regex_match('(?:ab)+')        # 与 (ab)+ 功能相同，但不捕获
+</code></pre>
+<h3 id="6-特殊字符转义"><a class="header" href="#6-特殊字符转义">6. 特殊字符转义</a></h3>
+<pre><code class="language-wpl"># 转义元字符
+regex_match('\.')             # 匹配点号 .
+regex_match('\[')             # 匹配左方括号 [
+regex_match('\(')             # 匹配左括号 (
+regex_match('\$')             # 匹配美元符号 $
+regex_match('\*')             # 匹配星号 *
+</code></pre>
+<h3 id="7-标志"><a class="header" href="#7-标志">7. 标志</a></h3>
+<pre><code class="language-wpl"># (?i) - 大小写不敏感
+regex_match('(?i)error')      # 匹配 "error", "ERROR", "Error"
+
+# (?m) - 多行模式
+regex_match('(?m)^line')      # ^ 匹配每行开始
+
+# (?s) - 单行模式（. 匹配换行符）
+regex_match('(?s).*')         # . 可以匹配换行符
+</code></pre>
+<h2 id="实际应用场景"><a class="header" href="#实际应用场景">实际应用场景</a></h2>
+<h3 id="场景-1日志级别匹配"><a class="header" href="#场景-1日志级别匹配">场景 1：日志级别匹配</a></h3>
+<pre><code class="language-wpl">rule log_level_filter {
+    # 选择日志消息字段
+    | take(message)
+
+    # 匹配包含 ERROR 或 FATAL 的消息（大小写不敏感）
+    | regex_match('(?i)(error|fatal)')
+}
+
+# 示例数据：
+# message: "Error occurred"     → ✅ 匹配
+# message: "FATAL exception"    → ✅ 匹配
+# message: "Warning message"    → ❌ 不匹配
+</code></pre>
+<h3 id="场景-2邮箱地址验证"><a class="header" href="#场景-2邮箱地址验证">场景 2：邮箱地址验证</a></h3>
+<pre><code class="language-wpl">rule email_validation {
+    # 选择邮箱字段
+    | take(email)
+
+    # 验证邮箱格式
+    | regex_match('^\w+(\.\w+)*@\w+(\.\w+)+$')
+}
+
+# 示例数据：
+# email: "user@example.com"           → ✅ 匹配
+# email: "john.doe@company.co.uk"     → ✅ 匹配
+# email: "invalid-email"              → ❌ 不匹配
+# email: "@example.com"               → ❌ 不匹配
+</code></pre>
+<h3 id="场景-3ip-地址匹配"><a class="header" href="#场景-3ip-地址匹配">场景 3：IP 地址匹配</a></h3>
+<pre><code class="language-wpl">rule ip_address_filter {
+    # 选择 IP 地址字段
+    | take(client_ip)
+
+    # 匹配内网 IP（192.168.x.x）
+    | regex_match('^192\.168\.\d{1,3}\.\d{1,3}$')
+}
+
+# 示例数据：
+# client_ip: "192.168.1.1"    → ✅ 匹配
+# client_ip: "192.168.0.100"  → ✅ 匹配
+# client_ip: "10.0.0.1"       → ❌ 不匹配
+# client_ip: "8.8.8.8"        → ❌ 不匹配
+</code></pre>
+<h3 id="场景-4url-路径过滤"><a class="header" href="#场景-4url-路径过滤">场景 4：URL 路径过滤</a></h3>
+<pre><code class="language-wpl">rule api_endpoint_filter {
+    # 选择请求路径
+    | take(path)
+
+    # 匹配 API 端点（/api/v1/...）
+    | regex_match('^/api/v\d+/')
+}
+
+# 示例数据：
+# path: "/api/v1/users"         → ✅ 匹配
+# path: "/api/v2/products"      → ✅ 匹配
+# path: "/static/image.png"     → ❌ 不匹配
+</code></pre>
+<h3 id="场景-5时间戳格式验证"><a class="header" href="#场景-5时间戳格式验证">场景 5：时间戳格式验证</a></h3>
+<pre><code class="language-wpl">rule timestamp_validation {
+    # 选择时间戳字段
+    | take(timestamp)
+
+    # 匹配 ISO 8601 格式（YYYY-MM-DD HH:MM:SS）
+    | regex_match('^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$')
+}
+
+# 示例数据：
+# timestamp: "2024-01-29 15:30:45"  → ✅ 匹配
+# timestamp: "2024-1-9 5:3:5"       → ❌ 不匹配（缺少前导零）
+# timestamp: "29/01/2024 15:30"     → ❌ 不匹配（格式不同）
+</code></pre>
+<h3 id="场景-6http-方法验证"><a class="header" href="#场景-6http-方法验证">场景 6：HTTP 方法验证</a></h3>
+<pre><code class="language-wpl">rule http_method_check {
+    # 选择 HTTP 方法字段
+    | take(method)
+
+    # 只接受安全的 HTTP 方法
+    | regex_match('^(GET|HEAD|OPTIONS)$')
+}
+
+# 示例数据：
+# method: "GET"     → ✅ 匹配
+# method: "HEAD"    → ✅ 匹配
+# method: "POST"    → ❌ 不匹配
+# method: "DELETE"  → ❌ 不匹配
+</code></pre>
+<h3 id="场景-7版本号匹配"><a class="header" href="#场景-7版本号匹配">场景 7：版本号匹配</a></h3>
+<pre><code class="language-wpl">rule version_check {
+    # 选择版本字段
+    | take(version)
+
+    # 匹配语义化版本号（如 1.2.3）
+    | regex_match('^\d+\.\d+\.\d+$')
+}
+
+# 示例数据：
+# version: "1.0.0"     → ✅ 匹配
+# version: "2.10.5"    → ✅ 匹配
+# version: "1.0"       → ❌ 不匹配（缺少补丁版本）
+# version: "v1.2.3"    → ❌ 不匹配（有前缀）
+</code></pre>
+<h3 id="场景-8sql-注入检测"><a class="header" href="#场景-8sql-注入检测">场景 8：SQL 注入检测</a></h3>
+<pre><code class="language-wpl">rule sql_injection_detection {
+    # 选择用户输入字段
+    | take(user_input)
+
+    # 检测常见的 SQL 注入模式
+    | regex_match('(?i)(union|select|insert|update|delete|drop|;|--|\|)')
+}
+
+# 示例数据：
+# user_input: "SELECT * FROM users"  → ✅ 匹配（检测到）
+# user_input: "'; DROP TABLE --"     → ✅ 匹配（检测到）
+# user_input: "normal search query"  → ❌ 不匹配（安全）
+</code></pre>
+<h3 id="场景-9文件扩展名过滤"><a class="header" href="#场景-9文件扩展名过滤">场景 9：文件扩展名过滤</a></h3>
+<pre><code class="language-wpl">rule image_file_filter {
+    # 选择文件名字段
+    | take(filename)
+
+    # 只匹配图片文件
+    | regex_match('\.(?i)(jpg|jpeg|png|gif|bmp|svg)$')
+}
+
+# 示例数据：
+# filename: "photo.jpg"      → ✅ 匹配
+# filename: "image.PNG"      → ✅ 匹配（大小写不敏感）
+# filename: "document.pdf"   → ❌ 不匹配
+</code></pre>
+<h3 id="场景-10mac-地址验证"><a class="header" href="#场景-10mac-地址验证">场景 10：MAC 地址验证</a></h3>
+<pre><code class="language-wpl">rule mac_address_validation {
+    # 选择 MAC 地址字段
+    | take(mac)
+
+    # 匹配 MAC 地址格式（XX:XX:XX:XX:XX:XX）
+    | regex_match('^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$')
+}
+
+# 示例数据：
+# mac: "00:1B:44:11:3A:B7"  → ✅ 匹配
+# mac: "AA:BB:CC:DD:EE:FF"  → ✅ 匹配
+# mac: "invalid-mac"        → ❌ 不匹配
+</code></pre>
+<h2 id="使用限制"><a class="header" href="#使用限制">使用限制</a></h2>
+<h3 id="类型限制"><a class="header" href="#类型限制">类型限制</a></h3>
+<p><code>regex_match</code> 只能处理<strong>字符串类型</strong>的字段：</p>
+<pre><code class="language-wpl"># ✅ 正确 - 字段是字符串
+message: "error occurred" -&gt; regex_match('error')
+
+# ❌ 错误 - 字段是数字
+status_code: 404 -&gt; regex_match('\d+')  # 会失败
+
+# ❌ 错误 - 字段是 IP 地址（非字符串类型）
+ip: 192.168.1.1 -&gt; regex_match('\d+')  # 会失败
+</code></pre>
+<h3 id="性能考虑"><a class="header" href="#性能考虑">性能考虑</a></h3>
+<ol>
+<li>
+<p><strong>正则表达式编译开销</strong>：</p>
+<ul>
+<li>每次调用都会重新编译正则表达式</li>
+<li>复杂的正则表达式编译可能需要几微秒</li>
+</ul>
+</li>
+<li>
+<p><strong>匹配性能</strong>：</p>
+<ul>
+<li>简单模式：微秒级</li>
+<li>复杂模式（大量回溯）：可能较慢</li>
+<li>建议：避免过度复杂的正则表达式</li>
+</ul>
+</li>
+<li>
+<p><strong>优化建议</strong>：</p>
+<pre><code class="language-wpl"># ✅ 推荐：简单直接的模式
+regex_match('^\d{4}$')
+
+# ⚠️ 慎用：复杂的回溯模式
+regex_match('^(a+)+b$')  # 可能导致性能问题
+</code></pre>
+</li>
+</ol>
+<h3 id="不支持的特性"><a class="header" href="#不支持的特性">不支持的特性</a></h3>
+<ol>
+<li>
+<p><strong>不支持命名捕获组</strong>：</p>
+<pre><code class="language-wpl"># ❌ 不支持（无法提取捕获的内容）
+regex_match('(?P&lt;year&gt;\d{4})')
+</code></pre>
+</li>
+<li>
+<p><strong>不支持替换</strong>：</p>
+<pre><code class="language-wpl"># ❌ regex_match 只做匹配，不做替换
+# 需要替换请使用 chars_replace
+</code></pre>
+</li>
+<li>
+<p><strong>不支持多个模式</strong>：</p>
+<pre><code class="language-wpl"># ❌ 不能传递多个模式
+regex_match('pattern1', 'pattern2')
+
+# ✅ 使用选择符 |
+regex_match('pattern1|pattern2')
+</code></pre>
+</li>
+</ol>
+<h2 id="完整示例"><a class="header" href="#完整示例">完整示例</a></h2>
+<h3 id="示例-1日志分类流水线"><a class="header" href="#示例-1日志分类流水线">示例 1：日志分类流水线</a></h3>
+<pre><code class="language-wpl">rule log_classification {
+    # 选择日志消息
+    | take(message)
+
+    # 分类为错误日志
+    (
+        | regex_match('(?i)(error|exception|failed|fatal)')
+        | tag(level, ERROR)
+    )
+    |
+    # 或分类为警告日志
+    (
+        | regex_match('(?i)(warn|warning|deprecated)')
+        | tag(level, WARNING)
+    )
+    |
+    # 或分类为普通日志
+    (
+        | tag(level, INFO)
+    )
+}
+</code></pre>
+<h3 id="示例-2安全审计过滤"><a class="header" href="#示例-2安全审计过滤">示例 2：安全审计过滤</a></h3>
+<pre><code class="language-wpl">rule security_audit {
+    # 检查用户输入中的危险模式
+    | take(user_input)
+
+    # 检测脚本注入
+    | regex_match('(?i)(&lt;script|javascript:|onerror=)')
+
+    # 或检测 SQL 注入
+    | regex_match('(?i)(union|select.*from|insert.*into)')
+
+    # 或检测路径遍历
+    | regex_match('(\.\./|\.\.\\)')
+
+    # 匹配到任何一个就记录为安全事件
+    | tag(security_event, true)
+}
+</code></pre>
+<h3 id="示例-3结构化日志解析"><a class="header" href="#示例-3结构化日志解析">示例 3：结构化日志解析</a></h3>
+<pre><code class="language-wpl">rule structured_log_parsing {
+    # 验证 JSON 日志格式
+    | take(raw_message)
+    | regex_match('^\{.*\}$')
+
+    # 验证包含必需字段
+    | regex_match('"timestamp":\s*"\d{4}-\d{2}-\d{2}')
+    | regex_match('"level":\s*"(INFO|WARN|ERROR)"')
+    | regex_match('"message":\s*"[^"]+"')
+
+    # 所有验证通过后继续处理
+}
+</code></pre>
+<h2 id="性能说明"><a class="header" href="#性能说明">性能说明</a></h2>
+<ul>
+<li><strong>正则编译</strong>：每次调用都会编译，建议使用简单模式</li>
+<li><strong>匹配速度</strong>：
+<ul>
+<li>简单模式（如 <code>^\d+$</code>）：&lt; 1μs</li>
+<li>中等复杂度（如邮箱验证）：1-10μs</li>
+<li>复杂模式（大量回溯）：可能 &gt; 100μs</li>
+</ul>
+</li>
+<li><strong>内存开销</strong>：每个正则表达式约 1-10KB</li>
+</ul>
+<h2 id="错误处理"><a class="header" href="#错误处理">错误处理</a></h2>
+<h3 id="常见错误"><a class="header" href="#常见错误">常见错误</a></h3>
+<ol>
+<li>
+<p><strong>无效的正则表达式</strong></p>
+<pre><code>错误: regex_match | invalid regex pattern
+原因: 正则表达式语法错误
+解决: 检查正则表达式语法
+</code></pre>
+</li>
+<li>
+<p><strong>字段不存在</strong></p>
+<pre><code>错误: regex_match | no active field
+原因: 当前没有活动字段
+解决: 使用 take() 先选择字段
+</code></pre>
+</li>
+<li>
+<p><strong>字段类型不匹配</strong></p>
+<pre><code>错误: regex_match | field is not a string
+原因: 字段不是字符串类型
+解决: 确保字段是 Chars 类型
+</code></pre>
+</li>
+<li>
+<p><strong>模式不匹配</strong></p>
+<pre><code>错误: regex_match | not matched
+原因: 字段内容不匹配正则表达式
+解决: 这是正常的过滤逻辑
+</code></pre>
+</li>
+</ol>
+<h2 id="与其他函数配合使用"><a class="header" href="#与其他函数配合使用">与其他函数配合使用</a></h2>
+<h3 id="与字段选择器配合"><a class="header" href="#与字段选择器配合">与字段选择器配合</a></h3>
+<pre><code class="language-wpl"># 先选择字段，再匹配
+| take(message)
+| regex_match('error')
+</code></pre>
+<h3 id="与条件检查配合"><a class="header" href="#与条件检查配合">与条件检查配合</a></h3>
+<pre><code class="language-wpl"># 组合多个条件
+| take(status)
+| regex_match('^[45]\d{2}$')  # 4xx 或 5xx
+</code></pre>
+<h3 id="与-chars_replace-配合"><a class="header" href="#与-chars_replace-配合">与 chars_replace 配合</a></h3>
+<pre><code class="language-wpl"># 先匹配，再替换
+| regex_match('error')
+| chars_replace(error, ERROR)
+</code></pre>
+<h3 id="与分支逻辑配合"><a class="header" href="#与分支逻辑配合">与分支逻辑配合</a></h3>
+<pre><code class="language-wpl"># 不同模式走不同分支
+(
+    | regex_match('^2\d{2}$')  # 2xx
+    | tag(status_class, success)
+)
+|
+(
+    | regex_match('^4\d{2}$')  # 4xx
+    | tag(status_class, client_error)
+)
+</code></pre>
+<h2 id="最佳实践"><a class="header" href="#最佳实践">最佳实践</a></h2>
+<h3 id="1-优先使用单引号"><a class="header" href="#1-优先使用单引号">1. 优先使用单引号</a></h3>
+<pre><code class="language-wpl"># ✅ 推荐
+regex_match('^\d+$')
+
+# ❌ 避免（会导致解析错误）
+regex_match("^\d+$")
+</code></pre>
+<h3 id="2-使用锚点明确匹配范围"><a class="header" href="#2-使用锚点明确匹配范围">2. 使用锚点明确匹配范围</a></h3>
+<pre><code class="language-wpl"># ✅ 推荐：完全匹配
+regex_match('^\d{4}$')  # 恰好4位数字
+
+# ⚠️ 可能不符合预期：部分匹配
+regex_match('\d{4}')    # 包含4位数字即可
+</code></pre>
+<h3 id="3-简化正则表达式"><a class="header" href="#3-简化正则表达式">3. 简化正则表达式</a></h3>
+<pre><code class="language-wpl"># ✅ 推荐：简单清晰
+regex_match('^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
+
+# ⚠️ 过度复杂
+regex_match('^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')
+</code></pre>
+<h3 id="4-使用注释文档化复杂模式"><a class="header" href="#4-使用注释文档化复杂模式">4. 使用注释文档化复杂模式</a></h3>
+<pre><code class="language-wpl"># 匹配邮箱：用户名@域名.后缀
+regex_match('^\w+@\w+\.\w+$')
+</code></pre>
+<h3 id="5-测试边界情况"><a class="header" href="#5-测试边界情况">5. 测试边界情况</a></h3>
+<pre><code class="language-wpl"># 测试模式的边界
+regex_match('^\d{2,4}$')
+# 测试：1 ❌, 12 ✅, 123 ✅, 1234 ✅, 12345 ❌
+</code></pre>
+<h2 id="正则表达式测试"><a class="header" href="#正则表达式测试">正则表达式测试</a></h2>
+<h3 id="在线测试工具"><a class="header" href="#在线测试工具">在线测试工具</a></h3>
+<ol>
+<li>
+<p><strong>regex101.com</strong></p>
+<ul>
+<li>选择 Rust flavor</li>
+<li>测试你的正则表达式</li>
+<li>查看匹配详情和性能</li>
+</ul>
+</li>
+<li>
+<p><strong>regexr.com</strong></p>
+<ul>
+<li>可视化匹配过程</li>
+<li>提供备忘清单</li>
+</ul>
+</li>
+</ol>
+<h3 id="命令行测试"><a class="header" href="#命令行测试">命令行测试</a></h3>
+<pre><code class="language-bash"># 使用 WP-Motor 测试
+echo "test_value: 12345" | wp-motor test.wpl
+
+# 查看匹配结果
+wp-motor --debug test.wpl &lt; test_data.log
+</code></pre>
+<h2 id="常见问题-faq"><a class="header" href="#常见问题-faq">常见问题 (FAQ)</a></h2>
+<h3 id="q1-为什么必须使用单引号"><a class="header" href="#q1-为什么必须使用单引号">Q1: 为什么必须使用单引号？</a></h3>
+<p>因为 WPL 的双引号字符串解析器只支持有限的转义序列（<code>\"</code>, <code>\\</code>, <code>\n</code>, <code>\t</code>），而正则表达式需要 <code>\d</code>, <code>\w</code>, <code>\s</code> 等，这些会导致解析失败。</p>
+<h3 id="q2-如何匹配点号"><a class="header" href="#q2-如何匹配点号">Q2: 如何匹配点号（.）？</a></h3>
+<pre><code class="language-wpl"># 使用反斜杠转义
+regex_match('\.')  # 匹配字面的点号
+</code></pre>
+<h3 id="q3-如何实现大小写不敏感匹配"><a class="header" href="#q3-如何实现大小写不敏感匹配">Q3: 如何实现大小写不敏感匹配？</a></h3>
+<pre><code class="language-wpl"># 使用 (?i) 标志
+regex_match('(?i)error')  # 匹配 error, ERROR, Error
+</code></pre>
+<h3 id="q4-正则表达式是完全匹配还是部分匹配"><a class="header" href="#q4-正则表达式是完全匹配还是部分匹配">Q4: 正则表达式是完全匹配还是部分匹配？</a></h3>
+<p>默认是<strong>部分匹配</strong>。使用 <code>^</code> 和 <code>$</code> 实现完全匹配：</p>
+<pre><code class="language-wpl"># 部分匹配
+regex_match('\d+')     # "abc123def" → ✅ 匹配
+
+# 完全匹配
+regex_match('^\d+$')   # "abc123def" → ❌ 不匹配
+</code></pre>
+<h3 id="q5-如何匹配多行文本"><a class="header" href="#q5-如何匹配多行文本">Q5: 如何匹配多行文本？</a></h3>
+<pre><code class="language-wpl"># 使用 (?m) 多行模式
+regex_match('(?m)^ERROR')  # 匹配任意行开头的 ERROR
+
+# 使用 (?s) 单行模式让 . 匹配换行符
+regex_match('(?s)start.*end')  # 跨行匹配
+</code></pre>
+<h3 id="q6-性能如何"><a class="header" href="#q6-性能如何">Q6: 性能如何？</a></h3>
+<ul>
+<li>简单模式：非常快（微秒级）</li>
+<li>复杂模式：可能较慢</li>
+<li>建议：避免过度复杂的回溯模式</li>
+</ul>
+<h3 id="q7-能否提取匹配的内容"><a class="header" href="#q7-能否提取匹配的内容">Q7: 能否提取匹配的内容？</a></h3>
+<p>不支持。<code>regex_match</code> 只做匹配判断，不提取内容。</p>
+<h2 id="正则表达式速查表"><a class="header" href="#正则表达式速查表">正则表达式速查表</a></h2>
+<h3 id="常用模式"><a class="header" href="#常用模式">常用模式</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>模式</th><th>说明</th><th>示例</th></tr>
+</thead>
+<tbody>
+<tr><td><code>\d</code></td><td>数字</td><td><code>\d+</code> 匹配 “123”</td></tr>
+<tr><td><code>\w</code></td><td>单词字符</td><td><code>\w+</code> 匹配 “hello”</td></tr>
+<tr><td><code>\s</code></td><td>空白字符</td><td><code>\s+</code> 匹配 “   “</td></tr>
+<tr><td><code>.</code></td><td>任意字符</td><td><code>.*</code> 匹配任何内容</td></tr>
+<tr><td><code>^</code></td><td>行首</td><td><code>^start</code> 必须开头匹配</td></tr>
+<tr><td><code>$</code></td><td>行尾</td><td><code>end$</code> 必须结尾匹配</td></tr>
+<tr><td><code>*</code></td><td>0或多次</td><td><code>a*</code> 匹配 “”, “a”, “aa”</td></tr>
+<tr><td><code>+</code></td><td>1或多次</td><td><code>a+</code> 匹配 “a”, “aa”</td></tr>
+<tr><td><code>?</code></td><td>0或1次</td><td><code>a?</code> 匹配 “”, “a”</td></tr>
+<tr><td><code>{n}</code></td><td>恰好n次</td><td><code>\d{4}</code> 匹配 “2024”</td></tr>
+<tr><td><code>{n,m}</code></td><td>n到m次</td><td><code>\d{2,4}</code> 匹配 “12”, “123”</td></tr>
+<tr><td><code>[abc]</code></td><td>字符集</td><td><code>[aeiou]</code> 匹配元音</td></tr>
+<tr><td><code>[^abc]</code></td><td>非字符集</td><td><code>[^0-9]</code> 匹配非数字</td></tr>
+<tr><td><code>|</code></td><td>选择</td><td><code>cat|dog</code> 匹配 “cat” 或 “dog”</td></tr>
+<tr><td><code>()</code></td><td>分组</td><td><code>(ab)+</code> 匹配 “ab”, “abab”</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="更多资源"><a class="header" href="#更多资源">更多资源</a></h2>
+<ul>
+<li><strong>Rust Regex 文档</strong>: https://docs.rs/regex/</li>
+<li><strong>开发指南</strong>: <code>docs/guide/wpl_field_func_development_guide.md</code></li>
+<li><strong>源代码</strong>: <code>crates/wp-lang/src/ast/processor/function.rs</code></li>
+<li><strong>测试用例</strong>: <code>crates/wp-lang/src/eval/builtins/pipe_fun.rs</code></li>
+</ul>
+<h2 id="版本历史"><a class="header" href="#版本历史">版本历史</a></h2>
+<ul>
+<li><strong>1.13.1</strong> (2026-02-02)
+<ul>
+<li>初始实现</li>
+<li>支持完整的 Rust regex 语法</li>
+<li>支持所有标准正则表达式特性</li>
+<li>添加完整的测试覆盖</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p><strong>提示</strong>: <code>regex_match</code> 功能强大但也可能影响性能。对于简单的字符串匹配，优先考虑使用 <code>chars_has</code> 或 <code>chars_in</code>；对于数值范围检查，使用 <code>digit_range</code> 或 <code>digit_in</code>。正则表达式适合复杂的模式匹配场景。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../../10-user/03-wpl/functions/chars_replace.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../../10-user/03-wpl/functions/digit_range.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../../10-user/03-wpl/functions/chars_replace.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../../10-user/03-wpl/functions/digit_range.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../../mark-09e88c2c.min.js"></script>
+        <script src="../../../searcher-c2a407aa.js"></script>
+
+        <script src="../../../clipboard-1626706a.min.js"></script>
+        <script src="../../../highlight-abc7f01d.js"></script>
+        <script src="../../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../../../../theme/lang-switch.js"></script>
+        <script src="../../../mermaid-eefea253.min.js"></script>
+        <script src="../../../mermaid-init-ccf746f1.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

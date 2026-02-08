@@ -1,0 +1,838 @@
+<!DOCTYPE HTML>
+<html lang="en" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>regex_match - Regex Match - Warp Parse Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../../../../theme/lang-switch.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../../searchindex-cee6790d.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../../toc-ec81ad47.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Warp Parse Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wp-labs/warp-parse" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="regex_match-function-guide"><a class="header" href="#regex_match-function-guide">regex_match Function Guide</a></h1>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p><code>regex_match</code> is a regular expression matching function in WPL (WP Language) used to check whether log field string content matches a specified regular expression pattern. It uses Rust’s regex engine and supports complete regular expression syntax.</p>
+<h2 id="quick-start"><a class="header" href="#quick-start">Quick Start</a></h2>
+<h3 id="basic-syntax"><a class="header" href="#basic-syntax">Basic Syntax</a></h3>
+<pre><code class="language-wpl">regex_match('pattern')
+</code></pre>
+<ul>
+<li><strong>pattern</strong>: Regular expression pattern (recommend using <strong>single quotes</strong>)</li>
+<li>Returns Ok on successful match, Err on failure</li>
+</ul>
+<h3 id="simple-examples"><a class="header" href="#simple-examples">Simple Examples</a></h3>
+<pre><code class="language-wpl"># Match pure numbers
+regex_match('^\d+$')
+
+# Match email format
+regex_match('^\w+@\w+\.\w+$')
+
+# Match IP address
+regex_match('^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
+
+# Match HTTP methods
+regex_match('^(GET|POST|PUT|DELETE)$')
+</code></pre>
+<h2 id="important-note-quote-usage"><a class="header" href="#important-note-quote-usage">Important Note: Quote Usage</a></h2>
+<h3 id="recommended-use-single-quotes-raw-strings"><a class="header" href="#recommended-use-single-quotes-raw-strings">Recommended: Use Single Quotes (Raw Strings)</a></h3>
+<pre><code class="language-wpl"># ✅ Recommended: Single quotes don't process escapes, suitable for regex
+regex_match('^\d+$')           # \d preserved as-is
+regex_match('^\w+@\w+\.\w+$')  # \w, \. preserved as-is
+regex_match('^[A-Z]+\d+$')     # Works perfectly
+</code></pre>
+<h3 id="avoid-double-quotes-lead-to-escape-issues"><a class="header" href="#avoid-double-quotes-lead-to-escape-issues">Avoid: Double Quotes Lead to Escape Issues</a></h3>
+<pre><code class="language-wpl"># ❌ Wrong: Double quotes attempt to escape \d
+regex_match("^\d+$")  # Parsing fails! \d is not a valid escape sequence
+
+# ❌ Wrong: \w also fails
+regex_match("^\w+$")  # Parsing fails!
+</code></pre>
+<p><strong>Reason</strong>: WPL’s double-quoted string parser only supports <code>\"</code>, <code>\\</code>, <code>\n</code>, <code>\t</code> escape sequences, while regex patterns like <code>\d</code>, <code>\w</code>, <code>\s</code> will cause parsing errors.</p>
+<h2 id="regular-expression-syntax"><a class="header" href="#regular-expression-syntax">Regular Expression Syntax</a></h2>
+<p><code>regex_match</code> uses Rust’s regex engine and supports the following features:</p>
+<h3 id="1-basic-matching"><a class="header" href="#1-basic-matching">1. Basic Matching</a></h3>
+<pre><code class="language-wpl"># Literal characters
+regex_match('hello')          # Matches "hello"
+regex_match('error')          # Matches "error"
+</code></pre>
+<h3 id="2-character-classes"><a class="header" href="#2-character-classes">2. Character Classes</a></h3>
+<pre><code class="language-wpl"># Digits
+regex_match('\d')             # Matches any digit [0-9]
+regex_match('\d+')            # Matches one or more digits
+regex_match('\d{3}')          # Matches exactly 3 digits
+
+# Alphanumeric
+regex_match('\w')             # Matches [a-zA-Z0-9_]
+regex_match('\w+')            # Matches one or more word characters
+
+# Whitespace
+regex_match('\s')             # Matches space, tab, newline
+regex_match('\s+')            # Matches one or more whitespace characters
+
+# Custom character classes
+regex_match('[a-z]')          # Matches lowercase letters
+regex_match('[A-Z]')          # Matches uppercase letters
+regex_match('[0-9]')          # Matches digits
+regex_match('[a-zA-Z0-9]')    # Matches letters or digits
+</code></pre>
+<h3 id="3-quantifiers"><a class="header" href="#3-quantifiers">3. Quantifiers</a></h3>
+<pre><code class="language-wpl"># * - Zero or more times
+regex_match('a*')             # Matches "", "a", "aa", "aaa"...
+
+# + - One or more times
+regex_match('a+')             # Matches "a", "aa", "aaa"... (not empty string)
+
+# ? - Zero or one time
+regex_match('colou?r')        # Matches "color" or "colour"
+
+# {n} - Exactly n times
+regex_match('\d{4}')          # Matches 4 digits
+
+# {n,m} - Between n and m times
+regex_match('\d{2,4}')        # Matches 2 to 4 digits
+
+# {n,} - At least n times
+regex_match('\d{3,}')         # Matches 3 or more digits
+</code></pre>
+<h3 id="4-anchors"><a class="header" href="#4-anchors">4. Anchors</a></h3>
+<pre><code class="language-wpl"># ^ - Start of string
+regex_match('^\d+')           # Must start with digits
+
+# $ - End of string
+regex_match('\d+$')           # Must end with digits
+
+# ^...$ - Complete match
+regex_match('^\d+$')          # Entire string must be digits
+</code></pre>
+<h3 id="5-groups-and-alternation"><a class="header" href="#5-groups-and-alternation">5. Groups and Alternation</a></h3>
+<pre><code class="language-wpl"># (...) - Grouping
+regex_match('(ab)+')          # Matches "ab", "abab", "ababab"...
+
+# | - Alternation (OR)
+regex_match('cat|dog')        # Matches "cat" or "dog"
+regex_match('^(GET|POST)$')   # Matches "GET" or "POST"
+
+# (?:...) - Non-capturing group
+regex_match('(?:ab)+')        # Same as (ab)+, but doesn't capture
+</code></pre>
+<h3 id="6-special-character-escaping"><a class="header" href="#6-special-character-escaping">6. Special Character Escaping</a></h3>
+<pre><code class="language-wpl"># Escape metacharacters
+regex_match('\.')             # Matches dot .
+regex_match('\[')             # Matches left bracket [
+regex_match('\(')             # Matches left parenthesis (
+regex_match('\$')             # Matches dollar sign $
+regex_match('\*')             # Matches asterisk *
+</code></pre>
+<h3 id="7-flags"><a class="header" href="#7-flags">7. Flags</a></h3>
+<pre><code class="language-wpl"># (?i) - Case insensitive
+regex_match('(?i)error')      # Matches "error", "ERROR", "Error"
+
+# (?m) - Multiline mode
+regex_match('(?m)^line')      # ^ matches start of each line
+
+# (?s) - Single line mode (. matches newlines)
+regex_match('(?s).*')         # . can match newlines
+</code></pre>
+<h2 id="practical-use-cases"><a class="header" href="#practical-use-cases">Practical Use Cases</a></h2>
+<h3 id="scenario-1-log-level-matching"><a class="header" href="#scenario-1-log-level-matching">Scenario 1: Log Level Matching</a></h3>
+<pre><code class="language-wpl">rule log_level_filter {
+    # Select log message field
+    | take(message)
+
+    # Match messages containing ERROR or FATAL (case insensitive)
+    | regex_match('(?i)(error|fatal)')
+}
+
+# Example data:
+# message: "Error occurred"     → ✅ Matched
+# message: "FATAL exception"    → ✅ Matched
+# message: "Warning message"    → ❌ Not matched
+</code></pre>
+<h3 id="scenario-2-email-address-validation"><a class="header" href="#scenario-2-email-address-validation">Scenario 2: Email Address Validation</a></h3>
+<pre><code class="language-wpl">rule email_validation {
+    # Select email field
+    | take(email)
+
+    # Validate email format
+    | regex_match('^\w+(\.\w+)*@\w+(\.\w+)+$')
+}
+
+# Example data:
+# email: "user@example.com"           → ✅ Matched
+# email: "john.doe@company.co.uk"     → ✅ Matched
+# email: "invalid-email"              → ❌ Not matched
+# email: "@example.com"               → ❌ Not matched
+</code></pre>
+<h3 id="scenario-3-ip-address-matching"><a class="header" href="#scenario-3-ip-address-matching">Scenario 3: IP Address Matching</a></h3>
+<pre><code class="language-wpl">rule ip_address_filter {
+    # Select IP address field
+    | take(client_ip)
+
+    # Match private IP (192.168.x.x)
+    | regex_match('^192\.168\.\d{1,3}\.\d{1,3}$')
+}
+
+# Example data:
+# client_ip: "192.168.1.1"    → ✅ Matched
+# client_ip: "192.168.0.100"  → ✅ Matched
+# client_ip: "10.0.0.1"       → ❌ Not matched
+# client_ip: "8.8.8.8"        → ❌ Not matched
+</code></pre>
+<h3 id="scenario-4-url-path-filtering"><a class="header" href="#scenario-4-url-path-filtering">Scenario 4: URL Path Filtering</a></h3>
+<pre><code class="language-wpl">rule api_endpoint_filter {
+    # Select request path
+    | take(path)
+
+    # Match API endpoints (/api/v1/...)
+    | regex_match('^/api/v\d+/')
+}
+
+# Example data:
+# path: "/api/v1/users"         → ✅ Matched
+# path: "/api/v2/products"      → ✅ Matched
+# path: "/static/image.png"     → ❌ Not matched
+</code></pre>
+<h3 id="scenario-5-timestamp-format-validation"><a class="header" href="#scenario-5-timestamp-format-validation">Scenario 5: Timestamp Format Validation</a></h3>
+<pre><code class="language-wpl">rule timestamp_validation {
+    # Select timestamp field
+    | take(timestamp)
+
+    # Match ISO 8601 format (YYYY-MM-DD HH:MM:SS)
+    | regex_match('^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$')
+}
+
+# Example data:
+# timestamp: "2024-01-29 15:30:45"  → ✅ Matched
+# timestamp: "2024-1-9 5:3:5"       → ❌ Not matched (missing leading zeros)
+# timestamp: "29/01/2024 15:30"     → ❌ Not matched (different format)
+</code></pre>
+<h3 id="scenario-6-http-method-validation"><a class="header" href="#scenario-6-http-method-validation">Scenario 6: HTTP Method Validation</a></h3>
+<pre><code class="language-wpl">rule http_method_check {
+    # Select HTTP method field
+    | take(method)
+
+    # Only accept safe HTTP methods
+    | regex_match('^(GET|HEAD|OPTIONS)$')
+}
+
+# Example data:
+# method: "GET"     → ✅ Matched
+# method: "HEAD"    → ✅ Matched
+# method: "POST"    → ❌ Not matched
+# method: "DELETE"  → ❌ Not matched
+</code></pre>
+<h3 id="scenario-7-version-number-matching"><a class="header" href="#scenario-7-version-number-matching">Scenario 7: Version Number Matching</a></h3>
+<pre><code class="language-wpl">rule version_check {
+    # Select version field
+    | take(version)
+
+    # Match semantic version (e.g., 1.2.3)
+    | regex_match('^\d+\.\d+\.\d+$')
+}
+
+# Example data:
+# version: "1.0.0"     → ✅ Matched
+# version: "2.10.5"    → ✅ Matched
+# version: "1.0"       → ❌ Not matched (missing patch version)
+# version: "v1.2.3"    → ❌ Not matched (has prefix)
+</code></pre>
+<h3 id="scenario-8-sql-injection-detection"><a class="header" href="#scenario-8-sql-injection-detection">Scenario 8: SQL Injection Detection</a></h3>
+<pre><code class="language-wpl">rule sql_injection_detection {
+    # Select user input field
+    | take(user_input)
+
+    # Detect common SQL injection patterns
+    | regex_match('(?i)(union|select|insert|update|delete|drop|;|--|\|)')
+}
+
+# Example data:
+# user_input: "SELECT * FROM users"  → ✅ Matched (detected)
+# user_input: "'; DROP TABLE --"     → ✅ Matched (detected)
+# user_input: "normal search query"  → ❌ Not matched (safe)
+</code></pre>
+<h3 id="scenario-9-file-extension-filtering"><a class="header" href="#scenario-9-file-extension-filtering">Scenario 9: File Extension Filtering</a></h3>
+<pre><code class="language-wpl">rule image_file_filter {
+    # Select filename field
+    | take(filename)
+
+    # Only match image files
+    | regex_match('\.(?i)(jpg|jpeg|png|gif|bmp|svg)$')
+}
+
+# Example data:
+# filename: "photo.jpg"      → ✅ Matched
+# filename: "image.PNG"      → ✅ Matched (case insensitive)
+# filename: "document.pdf"   → ❌ Not matched
+</code></pre>
+<h3 id="scenario-10-mac-address-validation"><a class="header" href="#scenario-10-mac-address-validation">Scenario 10: MAC Address Validation</a></h3>
+<pre><code class="language-wpl">rule mac_address_validation {
+    # Select MAC address field
+    | take(mac)
+
+    # Match MAC address format (XX:XX:XX:XX:XX:XX)
+    | regex_match('^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$')
+}
+
+# Example data:
+# mac: "00:1B:44:11:3A:B7"  → ✅ Matched
+# mac: "AA:BB:CC:DD:EE:FF"  → ✅ Matched
+# mac: "invalid-mac"        → ❌ Not matched
+</code></pre>
+<h2 id="usage-limitations"><a class="header" href="#usage-limitations">Usage Limitations</a></h2>
+<h3 id="type-restrictions"><a class="header" href="#type-restrictions">Type Restrictions</a></h3>
+<p><code>regex_match</code> can only process <strong>string type</strong> fields:</p>
+<pre><code class="language-wpl"># ✅ Correct - field is string
+message: "error occurred" -&gt; regex_match('error')
+
+# ❌ Wrong - field is number
+status_code: 404 -&gt; regex_match('\d+')  # Will fail
+
+# ❌ Wrong - field is IP address (non-string type)
+ip: 192.168.1.1 -&gt; regex_match('\d+')  # Will fail
+</code></pre>
+<h3 id="performance-considerations"><a class="header" href="#performance-considerations">Performance Considerations</a></h3>
+<ol>
+<li>
+<p><strong>Regex Compilation Overhead</strong>:</p>
+<ul>
+<li>Regex is recompiled on every call</li>
+<li>Complex regex compilation may take a few microseconds</li>
+</ul>
+</li>
+<li>
+<p><strong>Matching Performance</strong>:</p>
+<ul>
+<li>Simple patterns: Microsecond-level</li>
+<li>Complex patterns (heavy backtracking): May be slower</li>
+<li>Recommendation: Avoid overly complex regular expressions</li>
+</ul>
+</li>
+<li>
+<p><strong>Optimization Suggestions</strong>:</p>
+<pre><code class="language-wpl"># ✅ Recommended: Simple and direct patterns
+regex_match('^\d{4}$')
+
+# ⚠️ Use with caution: Complex backtracking patterns
+regex_match('^(a+)+b$')  # May cause performance issues
+</code></pre>
+</li>
+</ol>
+<h3 id="unsupported-features"><a class="header" href="#unsupported-features">Unsupported Features</a></h3>
+<ol>
+<li>
+<p><strong>Named Capture Groups Not Supported</strong>:</p>
+<pre><code class="language-wpl"># ❌ Not supported (cannot extract captured content)
+regex_match('(?P&lt;year&gt;\d{4})')
+</code></pre>
+</li>
+<li>
+<p><strong>Replacement Not Supported</strong>:</p>
+<pre><code class="language-wpl"># ❌ regex_match only matches, doesn't replace
+# For replacement, use chars_replace
+</code></pre>
+</li>
+<li>
+<p><strong>Multiple Patterns Not Supported</strong>:</p>
+<pre><code class="language-wpl"># ❌ Cannot pass multiple patterns
+regex_match('pattern1', 'pattern2')
+
+# ✅ Use alternation |
+regex_match('pattern1|pattern2')
+</code></pre>
+</li>
+</ol>
+<h2 id="complete-examples"><a class="header" href="#complete-examples">Complete Examples</a></h2>
+<h3 id="example-1-log-classification-pipeline"><a class="header" href="#example-1-log-classification-pipeline">Example 1: Log Classification Pipeline</a></h3>
+<pre><code class="language-wpl">rule log_classification {
+    # Select log message
+    | take(message)
+
+    # Classify as error log
+    (
+        | regex_match('(?i)(error|exception|failed|fatal)')
+        | tag(level, ERROR)
+    )
+    |
+    # Or classify as warning log
+    (
+        | regex_match('(?i)(warn|warning|deprecated)')
+        | tag(level, WARNING)
+    )
+    |
+    # Or classify as normal log
+    (
+        | tag(level, INFO)
+    )
+}
+</code></pre>
+<h3 id="example-2-security-audit-filtering"><a class="header" href="#example-2-security-audit-filtering">Example 2: Security Audit Filtering</a></h3>
+<pre><code class="language-wpl">rule security_audit {
+    # Check for dangerous patterns in user input
+    | take(user_input)
+
+    # Detect script injection
+    | regex_match('(?i)(&lt;script|javascript:|onerror=)')
+
+    # Or detect SQL injection
+    | regex_match('(?i)(union|select.*from|insert.*into)')
+
+    # Or detect path traversal
+    | regex_match('(\.\./|\.\.\\)')
+
+    # Log as security event if any match
+    | tag(security_event, true)
+}
+</code></pre>
+<h3 id="example-3-structured-log-parsing"><a class="header" href="#example-3-structured-log-parsing">Example 3: Structured Log Parsing</a></h3>
+<pre><code class="language-wpl">rule structured_log_parsing {
+    # Validate JSON log format
+    | take(raw_message)
+    | regex_match('^\{.*\}$')
+
+    # Validate required fields are present
+    | regex_match('"timestamp":\s*"\d{4}-\d{2}-\d{2}')
+    | regex_match('"level":\s*"(INFO|WARN|ERROR)"')
+    | regex_match('"message":\s*"[^"]+"')
+
+    # Continue processing after all validations pass
+}
+</code></pre>
+<h2 id="performance-notes"><a class="header" href="#performance-notes">Performance Notes</a></h2>
+<ul>
+<li><strong>Regex Compilation</strong>: Compiled on every call, recommend using simple patterns</li>
+<li><strong>Matching Speed</strong>:
+<ul>
+<li>Simple patterns (e.g., <code>^\d+$</code>): &lt; 1μs</li>
+<li>Medium complexity (e.g., email validation): 1-10μs</li>
+<li>Complex patterns (heavy backtracking): May be &gt; 100μs</li>
+</ul>
+</li>
+<li><strong>Memory Overhead</strong>: ~1-10KB per regular expression</li>
+</ul>
+<h2 id="error-handling"><a class="header" href="#error-handling">Error Handling</a></h2>
+<h3 id="common-errors"><a class="header" href="#common-errors">Common Errors</a></h3>
+<ol>
+<li>
+<p><strong>Invalid Regular Expression</strong></p>
+<pre><code>Error: regex_match | invalid regex pattern
+Cause: Regex syntax error
+Solution: Check regex syntax
+</code></pre>
+</li>
+<li>
+<p><strong>Field Does Not Exist</strong></p>
+<pre><code>Error: regex_match | no active field
+Cause: No active field currently
+Solution: Use take() to select field first
+</code></pre>
+</li>
+<li>
+<p><strong>Field Type Mismatch</strong></p>
+<pre><code>Error: regex_match | field is not a string
+Cause: Field is not a string type
+Solution: Ensure field is Chars type
+</code></pre>
+</li>
+<li>
+<p><strong>Pattern Not Matched</strong></p>
+<pre><code>Error: regex_match | not matched
+Cause: Field content doesn't match regex
+Solution: This is normal filtering logic
+</code></pre>
+</li>
+</ol>
+<h2 id="using-with-other-functions"><a class="header" href="#using-with-other-functions">Using with Other Functions</a></h2>
+<h3 id="with-field-selectors"><a class="header" href="#with-field-selectors">With Field Selectors</a></h3>
+<pre><code class="language-wpl"># Select field first, then match
+| take(message)
+| regex_match('error')
+</code></pre>
+<h3 id="with-conditional-checks"><a class="header" href="#with-conditional-checks">With Conditional Checks</a></h3>
+<pre><code class="language-wpl"># Combine multiple conditions
+| take(status)
+| regex_match('^[45]\d{2}$')  # 4xx or 5xx
+</code></pre>
+<h3 id="with-chars_replace"><a class="header" href="#with-chars_replace">With chars_replace</a></h3>
+<pre><code class="language-wpl"># Match first, then replace
+| regex_match('error')
+| chars_replace(error, ERROR)
+</code></pre>
+<h3 id="with-branch-logic"><a class="header" href="#with-branch-logic">With Branch Logic</a></h3>
+<pre><code class="language-wpl"># Different patterns take different branches
+(
+    | regex_match('^2\d{2}$')  # 2xx
+    | tag(status_class, success)
+)
+|
+(
+    | regex_match('^4\d{2}$')  # 4xx
+    | tag(status_class, client_error)
+)
+</code></pre>
+<h2 id="best-practices"><a class="header" href="#best-practices">Best Practices</a></h2>
+<h3 id="1-prefer-single-quotes"><a class="header" href="#1-prefer-single-quotes">1. Prefer Single Quotes</a></h3>
+<pre><code class="language-wpl"># ✅ Recommended
+regex_match('^\d+$')
+
+# ❌ Avoid (will cause parsing errors)
+regex_match("^\d+$")
+</code></pre>
+<h3 id="2-use-anchors-to-clarify-match-scope"><a class="header" href="#2-use-anchors-to-clarify-match-scope">2. Use Anchors to Clarify Match Scope</a></h3>
+<pre><code class="language-wpl"># ✅ Recommended: Complete match
+regex_match('^\d{4}$')  # Exactly 4 digits
+
+# ⚠️ May not match expectations: Partial match
+regex_match('\d{4}')    # Contains 4 digits
+</code></pre>
+<h3 id="3-simplify-regular-expressions"><a class="header" href="#3-simplify-regular-expressions">3. Simplify Regular Expressions</a></h3>
+<pre><code class="language-wpl"># ✅ Recommended: Simple and clear
+regex_match('^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
+
+# ⚠️ Overly complex
+regex_match('^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')
+</code></pre>
+<h3 id="4-document-complex-patterns-with-comments"><a class="header" href="#4-document-complex-patterns-with-comments">4. Document Complex Patterns with Comments</a></h3>
+<pre><code class="language-wpl"># Match email: username@domain.suffix
+regex_match('^\w+@\w+\.\w+$')
+</code></pre>
+<h3 id="5-test-edge-cases"><a class="header" href="#5-test-edge-cases">5. Test Edge Cases</a></h3>
+<pre><code class="language-wpl"># Test pattern boundaries
+regex_match('^\d{2,4}$')
+# Test: 1 ❌, 12 ✅, 123 ✅, 1234 ✅, 12345 ❌
+</code></pre>
+<h2 id="regular-expression-testing"><a class="header" href="#regular-expression-testing">Regular Expression Testing</a></h2>
+<h3 id="online-testing-tools"><a class="header" href="#online-testing-tools">Online Testing Tools</a></h3>
+<ol>
+<li>
+<p><strong>regex101.com</strong></p>
+<ul>
+<li>Select Rust flavor</li>
+<li>Test your regular expressions</li>
+<li>View match details and performance</li>
+</ul>
+</li>
+<li>
+<p><strong>regexr.com</strong></p>
+<ul>
+<li>Visualize matching process</li>
+<li>Provides cheat sheet</li>
+</ul>
+</li>
+</ol>
+<h3 id="command-line-testing"><a class="header" href="#command-line-testing">Command Line Testing</a></h3>
+<pre><code class="language-bash"># Test with WP-Motor
+echo "test_value: 12345" | wp-motor test.wpl
+
+# View match results
+wp-motor --debug test.wpl &lt; test_data.log
+</code></pre>
+<h2 id="frequently-asked-questions-faq"><a class="header" href="#frequently-asked-questions-faq">Frequently Asked Questions (FAQ)</a></h2>
+<h3 id="q1-why-must-i-use-single-quotes"><a class="header" href="#q1-why-must-i-use-single-quotes">Q1: Why must I use single quotes?</a></h3>
+<p>Because WPL’s double-quoted string parser only supports limited escape sequences (<code>\"</code>, <code>\\</code>, <code>\n</code>, <code>\t</code>), while regular expressions need <code>\d</code>, <code>\w</code>, <code>\s</code>, etc., which will cause parsing failures.</p>
+<h3 id="q2-how-do-i-match-a-dot-"><a class="header" href="#q2-how-do-i-match-a-dot-">Q2: How do I match a dot (.)?</a></h3>
+<pre><code class="language-wpl"># Use backslash to escape
+regex_match('\.')  # Matches literal dot
+</code></pre>
+<h3 id="q3-how-do-i-implement-case-insensitive-matching"><a class="header" href="#q3-how-do-i-implement-case-insensitive-matching">Q3: How do I implement case-insensitive matching?</a></h3>
+<pre><code class="language-wpl"># Use (?i) flag
+regex_match('(?i)error')  # Matches error, ERROR, Error
+</code></pre>
+<h3 id="q4-does-regex-match-completely-or-partially"><a class="header" href="#q4-does-regex-match-completely-or-partially">Q4: Does regex match completely or partially?</a></h3>
+<p>Default is <strong>partial matching</strong>. Use <code>^</code> and <code>$</code> for complete matching:</p>
+<pre><code class="language-wpl"># Partial match
+regex_match('\d+')     # "abc123def" → ✅ Matched
+
+# Complete match
+regex_match('^\d+$')   # "abc123def" → ❌ Not matched
+</code></pre>
+<h3 id="q5-how-do-i-match-multiline-text"><a class="header" href="#q5-how-do-i-match-multiline-text">Q5: How do I match multiline text?</a></h3>
+<pre><code class="language-wpl"># Use (?m) multiline mode
+regex_match('(?m)^ERROR')  # Matches ERROR at start of any line
+
+# Use (?s) single line mode to make . match newlines
+regex_match('(?s)start.*end')  # Match across lines
+</code></pre>
+<h3 id="q6-what-about-performance"><a class="header" href="#q6-what-about-performance">Q6: What about performance?</a></h3>
+<ul>
+<li>Simple patterns: Very fast (microsecond-level)</li>
+<li>Complex patterns: May be slower</li>
+<li>Recommendation: Avoid overly complex backtracking patterns</li>
+</ul>
+<h3 id="q7-can-i-extract-matched-content"><a class="header" href="#q7-can-i-extract-matched-content">Q7: Can I extract matched content?</a></h3>
+<p>Not supported. <code>regex_match</code> only performs match testing, doesn’t extract content.</p>
+<h2 id="regular-expression-quick-reference"><a class="header" href="#regular-expression-quick-reference">Regular Expression Quick Reference</a></h2>
+<h3 id="common-patterns"><a class="header" href="#common-patterns">Common Patterns</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Pattern</th><th>Description</th><th>Example</th></tr>
+</thead>
+<tbody>
+<tr><td><code>\d</code></td><td>Digit</td><td><code>\d+</code> matches “123”</td></tr>
+<tr><td><code>\w</code></td><td>Word character</td><td><code>\w+</code> matches “hello”</td></tr>
+<tr><td><code>\s</code></td><td>Whitespace</td><td><code>\s+</code> matches “   “</td></tr>
+<tr><td><code>.</code></td><td>Any character</td><td><code>.*</code> matches anything</td></tr>
+<tr><td><code>^</code></td><td>Start of line</td><td><code>^start</code> must match at beginning</td></tr>
+<tr><td><code>$</code></td><td>End of line</td><td><code>end$</code> must match at end</td></tr>
+<tr><td><code>*</code></td><td>Zero or more</td><td><code>a*</code> matches “”, “a”, “aa”</td></tr>
+<tr><td><code>+</code></td><td>One or more</td><td><code>a+</code> matches “a”, “aa”</td></tr>
+<tr><td><code>?</code></td><td>Zero or one</td><td><code>a?</code> matches “”, “a”</td></tr>
+<tr><td><code>{n}</code></td><td>Exactly n times</td><td><code>\d{4}</code> matches “2024”</td></tr>
+<tr><td><code>{n,m}</code></td><td>n to m times</td><td><code>\d{2,4}</code> matches “12”, “123”</td></tr>
+<tr><td><code>[abc]</code></td><td>Character set</td><td><code>[aeiou]</code> matches vowels</td></tr>
+<tr><td><code>[^abc]</code></td><td>Negated set</td><td><code>[^0-9]</code> matches non-digits</td></tr>
+<tr><td><code>|</code></td><td>Alternation</td><td><code>cat|dog</code> matches “cat” or “dog”</td></tr>
+<tr><td><code>()</code></td><td>Group</td><td><code>(ab)+</code> matches “ab”, “abab”</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="additional-resources"><a class="header" href="#additional-resources">Additional Resources</a></h2>
+<ul>
+<li><strong>Rust Regex Documentation</strong>: https://docs.rs/regex/</li>
+<li><strong>Development Guide</strong>: <code>docs/guide/wpl_field_func_development_guide.md</code></li>
+<li><strong>Source Code</strong>: <code>crates/wp-lang/src/ast/processor/function.rs</code></li>
+<li><strong>Test Cases</strong>: <code>crates/wp-lang/src/eval/builtins/pipe_fun.rs</code></li>
+</ul>
+<h2 id="version-history"><a class="header" href="#version-history">Version History</a></h2>
+<ul>
+<li><strong>1.13.1</strong> (2026-02-02)
+<ul>
+<li>Initial implementation</li>
+<li>Support complete Rust regex syntax</li>
+<li>Support all standard regular expression features</li>
+<li>Add comprehensive test coverage</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p><strong>Tip</strong>: While <code>regex_match</code> is powerful, it may impact performance. For simple string matching, consider using <code>chars_has</code> or <code>chars_in</code>; for numeric range checks, use <code>digit_range</code> or <code>digit_in</code>. Regular expressions are suitable for complex pattern matching scenarios.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../../10-user/03-wpl/functions/chars_replace.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../../10-user/03-wpl/functions/digit_range.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../../10-user/03-wpl/functions/chars_replace.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../../10-user/03-wpl/functions/digit_range.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../../mark-09e88c2c.min.js"></script>
+        <script src="../../../searcher-c2a407aa.js"></script>
+
+        <script src="../../../clipboard-1626706a.min.js"></script>
+        <script src="../../../highlight-abc7f01d.js"></script>
+        <script src="../../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../../../../theme/lang-switch.js"></script>
+        <script src="../../../mermaid-eefea253.min.js"></script>
+        <script src="../../../mermaid-init-ccf746f1.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

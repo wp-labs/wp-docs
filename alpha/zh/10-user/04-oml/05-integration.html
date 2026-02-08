@@ -1,0 +1,796 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>集成指南 - Warp Parse 文档</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../../../theme/lang-switch.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../searchindex-b509f17a.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../toc-ca145d02.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Warp Parse 文档</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wp-labs/warp-parse" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="oml-集成指南"><a class="header" href="#oml-集成指南">OML 集成指南</a></h1>
+<p>本文档介绍如何将 OML 集成到数据处理流水线中，包括配置关联、数据流向和路由规则。</p>
+<h2 id="目录"><a class="header" href="#目录">目录</a></h2>
+<ul>
+<li><a href="#数据流概览">数据流概览</a></li>
+<li><a href="#oml-在数据流中的位置">OML 在数据流中的位置</a></li>
+<li><a href="#配置文件结构">配置文件结构</a></li>
+<li><a href="#oml-与-sink-关联">OML 与 Sink 关联</a></li>
+<li><a href="#路由规则">路由规则</a></li>
+<li><a href="#配置示例">配置示例</a></li>
+<li><a href="#工作流程">工作流程</a></li>
+<li><a href="#最佳实践">最佳实践</a></li>
+<li><a href="#故障排查">故障排查</a></li>
+</ul>
+<hr>
+<h2 id="数据流概览"><a class="header" href="#数据流概览">数据流概览</a></h2>
+<p>在 WP Engine 数据处理流水线中，数据的完整流向如下：</p>
+<pre><code>原始日志/数据
+    ↓
+[WPL 解析]
+    ↓
+结构化数据（携带 Rule 标识）
+    ↓
+[OML 转换]（可选）
+    ↓
+目标格式数据
+    ↓
+[Sink 输出]
+    ↓
+目标存储（文件/数据库/消息队列等）
+</code></pre>
+<h3 id="关键概念"><a class="header" href="#关键概念">关键概念</a></h3>
+<ul>
+<li><strong>WPL Rule</strong>：标识数据来源和类型的路径，如 <code>/nginx/access_log</code></li>
+<li><strong>OML Model</strong>：定义数据转换逻辑的 OML 配置文件</li>
+<li><strong>Sink Group</strong>：输出组，定义数据的输出目标集合</li>
+<li><strong>Connector</strong>：连接器，定义具体的输出方式（文件、Kafka、数据库等）</li>
+</ul>
+<hr>
+<h2 id="oml-在数据流中的位置"><a class="header" href="#oml-在数据流中的位置">OML 在数据流中的位置</a></h2>
+<p>OML 作为<strong>数据转换引擎</strong>，位于 WPL 解析和 Sink 输出之间：</p>
+<pre class="mermaid">graph LR
+    A[原始数据] --&gt; B[WPL 解析]
+    B --&gt; C[结构化数据&lt;br/&gt;rule: /nginx/access_log]
+    C --&gt; D{查找匹配的&lt;br/&gt;OML 模型}
+    D --&gt;|找到匹配| E[OML 转换]
+    D --&gt;|未找到| F[数据透传]
+    E --&gt; G[转换后的数据]
+    F --&gt; G
+    G --&gt; H[Sink 输出]
+
+    style C fill:#e1f5ff
+    style E fill:#fff4e1
+    style G fill:#e8f5e9
+</pre>
+
+<p><strong>工作原理</strong>：</p>
+<ol>
+<li>WPL 解析器处理原始数据，生成结构化数据并附带 Rule 标识</li>
+<li>系统根据 Sink Group 配置查找匹配的 OML 模型</li>
+<li>如果找到匹配的 OML 模型，执行转换；否则数据透传</li>
+<li>转换后的数据发送到 Sink 进行输出</li>
+</ol>
+<hr>
+<h2 id="配置文件结构"><a class="header" href="#配置文件结构">配置文件结构</a></h2>
+<h3 id="项目目录结构"><a class="header" href="#项目目录结构">项目目录结构</a></h3>
+<pre><code>project/
+├── oml/                        # OML 模型目录
+│   ├── nginx_access.oml        # Nginx 访问日志转换
+│   ├── nginx_error.oml         # Nginx 错误日志转换
+│   └── system_metrics.oml      # 系统监控数据转换
+├── topology/
+│   └── sinks/                  # Sink 配置目录
+│       ├── web_logs.toml       # Web 日志输出组
+│       └── metrics.toml        # 监控数据输出组
+└── connectors/                 # 连接器定义
+    ├── file_sink.toml
+    ├── kafka_sink.toml
+    └── mysql_sink.toml
+</code></pre>
+<h3 id="oml-模型文件"><a class="header" href="#oml-模型文件">OML 模型文件</a></h3>
+<p>OML 模型文件位于 <code>oml/</code> 目录，使用 <code>.oml</code> 扩展名。</p>
+<p><strong>文件格式</strong>：</p>
+<pre><code class="language-oml">name : &lt;模型名称&gt;
+rule : &lt;WPL 规则模式&gt;
+---
+&lt;字段转换定义&gt;
+</code></pre>
+<p><strong>示例</strong>：<code>oml/nginx_access.oml</code></p>
+<pre><code class="language-oml">name : nginx_access
+rule : /nginx/access*
+---
+user_id = read(user_id) ;
+timestamp : time = read(time) ;
+status : digit = read(status_code) ;
+uri = read(request_uri) ;
+
+# 创建结构化输出
+log : obj = object {
+    user : chars = read(user_id) ;
+    time : time = read(timestamp) ;
+    status : digit = read(status) ;
+    uri : chars = read(uri) ;
+} ;
+</code></pre>
+<h3 id="sink-group-配置文件"><a class="header" href="#sink-group-配置文件">Sink Group 配置文件</a></h3>
+<p>Sink Group 配置文件位于 <code>topology/sinks/</code> 目录，使用 TOML 格式。</p>
+<p><strong>文件格式</strong>：</p>
+<pre><code class="language-toml">version = "2.0"
+
+[sink_group]
+name = "输出组名称"
+oml = ["&lt;OML 模型名称&gt;", ...]  # 关联的 OML 模型
+rule = ["&lt;WPL 规则模式&gt;", ...]  # 可选：限定处理的规则
+parallel = 1                     # 可选：并行度
+tags = ["key:value", ...]        # 可选：标签
+
+[[sink_group.sinks]]
+name = "输出目标名称"
+connect = "&lt;连接器 ID&gt;"
+tags = ["key:value", ...]
+
+[sink_group.sinks.params]
+# 连接器特定的参数
+</code></pre>
+<p><strong>示例</strong>：<code>topology/sinks/web_logs.toml</code></p>
+<pre><code class="language-toml">version = "2.0"
+
+[sink_group]
+name = "web_logs"
+oml = ["*"]           # 使用所有匹配的 OML 模型
+rule = []             # 不限定规则
+parallel = 1
+
+[[sink_group.sinks]]
+name = "access_logs"
+connect = "file_json_sink"
+
+[sink_group.sinks.params]
+file = "access.json"
+
+[[sink_group.sinks]]
+name = "error_logs"
+connect = "file_json_sink"
+
+[sink_group.sinks.params]
+file = "error.json"
+</code></pre>
+<hr>
+<h2 id="oml-与-sink-关联"><a class="header" href="#oml-与-sink-关联">OML 与 Sink 关联</a></h2>
+<h3 id="关联方式"><a class="header" href="#关联方式">关联方式</a></h3>
+<p>Sink Group 通过 <code>oml</code> 字段与 OML 模型建立关联，支持三种模式：</p>
+<h4 id="1-通配符模式推荐"><a class="header" href="#1-通配符模式推荐">1. 通配符模式（推荐）</a></h4>
+<p>使用 <code>["*"]</code> 自动匹配所有符合条件的 OML 模型。</p>
+<pre><code class="language-toml">[sink_group]
+name = "all_logs"
+oml = ["*"]  # 自动匹配所有 OML 模型
+</code></pre>
+<p><strong>工作原理</strong>：</p>
+<ol>
+<li>数据携带 WPL Rule（如 <code>/nginx/access_log</code>）</li>
+<li>系统遍历所有 OML 模型</li>
+<li>找到 <code>rule</code> 字段匹配的 OML 模型</li>
+<li>执行转换</li>
+</ol>
+<p><strong>适用场景</strong>：</p>
+<ul>
+<li>需要处理多种类型的数据</li>
+<li>OML 模型经常变动</li>
+<li>希望自动发现新的 OML 模型</li>
+</ul>
+<h4 id="2-指定模型名称"><a class="header" href="#2-指定模型名称">2. 指定模型名称</a></h4>
+<p>明确列出需要使用的 OML 模型。</p>
+<pre><code class="language-toml">[sink_group]
+name = "nginx_logs"
+oml = ["nginx_access", "nginx_error"]
+</code></pre>
+<p><strong>工作原理</strong>：</p>
+<ul>
+<li>只在指定的 OML 模型列表中查找匹配</li>
+<li>其他 OML 模型会被忽略</li>
+</ul>
+<p><strong>适用场景</strong>：</p>
+<ul>
+<li>明确知道需要哪些 OML 模型</li>
+<li>需要精确控制转换逻辑</li>
+<li>避免意外使用其他 OML 模型</li>
+</ul>
+<h4 id="3-空列表数据透传"><a class="header" href="#3-空列表数据透传">3. 空列表（数据透传）</a></h4>
+<p>不使用任何 OML 转换，数据直接输出。</p>
+<pre><code class="language-toml">[sink_group]
+name = "raw_logs"
+oml = []  # 不使用 OML 转换
+</code></pre>
+<p><strong>适用场景</strong>：</p>
+<ul>
+<li>不需要数据转换</li>
+<li>直接输出 WPL 解析后的原始数据</li>
+</ul>
+<hr>
+<h2 id="路由规则"><a class="header" href="#路由规则">路由规则</a></h2>
+<h3 id="oml-模型匹配规则"><a class="header" href="#oml-模型匹配规则">OML 模型匹配规则</a></h3>
+<p>OML 模型通过 <code>rule</code> 字段定义匹配的 WPL Rule 模式，支持通配符。</p>
+<p><strong>匹配逻辑</strong>：</p>
+<pre><code>数据的 WPL Rule 是否匹配 OML 模型的 rule 字段
+</code></pre>
+<p><strong>通配符规则</strong>：</p>
+<ul>
+<li><code>*</code> 匹配任意字符（包括 <code>/</code>）</li>
+<li>支持前缀匹配、后缀匹配、完全匹配</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>OML rule 字段</th><th>数据 WPL Rule</th><th>是否匹配</th></tr>
+</thead>
+<tbody>
+<tr><td><code>/nginx/*</code></td><td><code>/nginx/access_log</code></td><td>✅ 匹配</td></tr>
+<tr><td><code>/nginx/*</code></td><td><code>/nginx/error_log</code></td><td>✅ 匹配</td></tr>
+<tr><td><code>/nginx/access*</code></td><td><code>/nginx/access_log</code></td><td>✅ 匹配</td></tr>
+<tr><td><code>/nginx/access*</code></td><td><code>/nginx/error_log</code></td><td>❌ 不匹配</td></tr>
+<tr><td><code>*</code></td><td>任意规则</td><td>✅ 匹配</td></tr>
+<tr><td><code>/apache/*</code></td><td><code>/nginx/access_log</code></td><td>❌ 不匹配</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="sink-group-规则过滤"><a class="header" href="#sink-group-规则过滤">Sink Group 规则过滤</a></h3>
+<p>Sink Group 可以通过 <code>rule</code> 字段进一步限定处理的数据。</p>
+<pre><code class="language-toml">[sink_group]
+name = "filtered_logs"
+oml = ["*"]
+rule = ["/nginx/*", "/apache/*"]  # 只处理 Nginx 和 Apache 日志
+</code></pre>
+<p><strong>工作流程</strong>：</p>
+<pre><code>1. 数据的 WPL Rule 是否匹配 Sink Group 的 rule？
+   ├─ 是 → 继续
+   └─ 否 → 跳过此 Sink Group
+
+2. 查找匹配的 OML 模型
+   ├─ 找到 → 执行转换
+   └─ 未找到 → 数据透传（如果 oml=["*"] 或 oml=[]）
+
+3. 输出到 Sink
+</code></pre>
+<hr>
+<h2 id="配置示例"><a class="header" href="#配置示例">配置示例</a></h2>
+<h3 id="示例-1基础配置"><a class="header" href="#示例-1基础配置">示例 1：基础配置</a></h3>
+<p>处理 Nginx 访问日志并输出到文件。</p>
+<p><strong>OML 模型</strong>：<code>oml/nginx_access.oml</code></p>
+<pre><code class="language-oml">name : nginx_access
+rule : /nginx/access_log
+---
+user_id = read(user_id) ;
+timestamp : time = read(time) ;
+status : digit = read(status_code) ;
+uri = read(request_uri) ;
+
+access_log : obj = object {
+    user : chars = read(user_id) ;
+    time : time = read(timestamp) ;
+    status : digit = read(status) ;
+    uri : chars = read(uri) ;
+} ;
+</code></pre>
+<p><strong>Sink Group 配置</strong>：<code>topology/sinks/nginx_logs.toml</code></p>
+<pre><code class="language-toml">version = "2.0"
+
+[sink_group]
+name = "nginx_access_logs"
+oml = ["nginx_access"]
+
+[[sink_group.sinks]]
+name = "file_output"
+connect = "file_json_sink"
+
+[sink_group.sinks.params]
+file = "nginx_access.json"
+</code></pre>
+<hr>
+<h3 id="示例-2多-oml-模型配置"><a class="header" href="#示例-2多-oml-模型配置">示例 2：多 OML 模型配置</a></h3>
+<p>处理多种类型的日志。</p>
+<p><strong>OML 模型 1</strong>：<code>oml/nginx_access.oml</code></p>
+<pre><code class="language-oml">name : nginx_access
+rule : /nginx/access*
+---
+user_id = read(user_id) ;
+uri = read(request_uri) ;
+status : digit = read(status_code) ;
+</code></pre>
+<p><strong>OML 模型 2</strong>：<code>oml/apache_access.oml</code></p>
+<pre><code class="language-oml">name : apache_access
+rule : /apache/access*
+---
+user = read(remote_user) ;
+path = read(request) ;
+code : digit = read(status) ;
+</code></pre>
+<p><strong>Sink Group 配置</strong>：<code>topology/sinks/web_logs.toml</code></p>
+<pre><code class="language-toml">version = "2.0"
+
+[sink_group]
+name = "all_web_logs"
+oml = ["*"]  # 自动匹配所有 OML 模型
+
+[[sink_group.sinks]]
+name = "unified_output"
+connect = "file_json_sink"
+
+[sink_group.sinks.params]
+file = "web_logs.json"
+</code></pre>
+<hr>
+<h3 id="示例-3条件路由"><a class="header" href="#示例-3条件路由">示例 3：条件路由</a></h3>
+<p>根据数据类型输出到不同目标。</p>
+<p><strong>Sink Group 1</strong>：<code>topology/sinks/error_logs.toml</code></p>
+<pre><code class="language-toml">version = "2.0"
+
+[sink_group]
+name = "error_logs"
+oml = ["*"]
+rule = ["*/error*"]  # 只处理错误日志
+
+[[sink_group.sinks]]
+name = "error_file"
+connect = "file_json_sink"
+
+[sink_group.sinks.params]
+file = "errors.json"
+</code></pre>
+<p><strong>Sink Group 2</strong>：<code>topology/sinks/access_logs.toml</code></p>
+<pre><code class="language-toml">version = "2.0"
+
+[sink_group]
+name = "access_logs"
+oml = ["*"]
+rule = ["*/access*"]  # 只处理访问日志
+
+[[sink_group.sinks]]
+name = "access_file"
+connect = "file_json_sink"
+
+[sink_group.sinks.params]
+file = "access.json"
+</code></pre>
+<hr>
+<h3 id="示例-4数据富化sql-集成"><a class="header" href="#示例-4数据富化sql-集成">示例 4：数据富化（SQL 集成）</a></h3>
+<p>从数据库查询额外信息。</p>
+<p><strong>OML 模型</strong>：<code>oml/user_activity.oml</code></p>
+<pre><code class="language-oml">name : user_activity
+rule : /app/user_activity
+---
+user_id = read(user_id) ;
+action = read(action) ;
+timestamp : time = Now::time() ;
+
+# 从数据库查询用户信息
+user_name, user_level =
+    select name, level
+    from users
+    where id = read(user_id) ;
+
+# 聚合输出
+activity : obj = object {
+    user : obj = object {
+        id : chars = read(user_id) ;
+        name : chars = read(user_name) ;
+        level : chars = read(user_level) ;
+    } ;
+    action : chars = read(action) ;
+    time : time = read(timestamp) ;
+} ;
+</code></pre>
+<p><strong>Sink Group 配置</strong>：<code>topology/sinks/user_activities.toml</code></p>
+<pre><code class="language-toml">version = "2.0"
+
+[sink_group]
+name = "user_activities"
+oml = ["user_activity"]
+
+[[sink_group.sinks]]
+name = "kafka_output"
+connect = "kafka_sink"
+
+[sink_group.sinks.params]
+topic = "user-activities"
+brokers = ["localhost:9092"]
+</code></pre>
+<hr>
+<h2 id="工作流程"><a class="header" href="#工作流程">工作流程</a></h2>
+<h3 id="完整处理流程"><a class="header" href="#完整处理流程">完整处理流程</a></h3>
+<pre><code>1. 数据到达
+   ↓
+2. WPL 解析
+   ├─ 生成结构化数据
+   └─ 附加 Rule 标识（如 /nginx/access_log）
+   ↓
+3. Sink Group 匹配
+   ├─ 检查 Sink Group 的 rule 字段
+   └─ 匹配 → 继续；不匹配 → 跳过
+   ↓
+4. OML 模型查找
+   ├─ 根据 Sink Group 的 oml 字段
+   ├─ 查找匹配的 OML 模型
+   └─ 找到 → 转换；未找到 → 透传
+   ↓
+5. 数据转换（如果有 OML）
+   ├─ 执行 OML 转换逻辑
+   └─ 生成目标格式数据
+   ↓
+6. Sink 输出
+   ├─ 根据 Connector 配置
+   └─ 输出到目标存储
+</code></pre>
+<h3 id="多-sink-group-并行处理"><a class="header" href="#多-sink-group-并行处理">多 Sink Group 并行处理</a></h3>
+<p>一条数据可以被多个 Sink Group 同时处理：</p>
+<pre><code>                数据（rule: /nginx/access_log）
+                        |
+        +---------------+---------------+
+        |                               |
+    Sink Group 1                   Sink Group 2
+    (rule: ["/nginx/*"])          (rule: ["/nginx/access*"])
+        |                               |
+    OML 转换 A                      OML 转换 B
+        |                               |
+    输出到文件                       输出到 Kafka
+</code></pre>
+<hr>
+<h2 id="最佳实践"><a class="header" href="#最佳实践">最佳实践</a></h2>
+<h3 id="1-oml-模型命名"><a class="header" href="#1-oml-模型命名">1. OML 模型命名</a></h3>
+<p>使用清晰的命名规则：</p>
+<pre><code>&lt;数据源&gt;_&lt;数据类型&gt;.oml
+
+示例：
+- nginx_access.oml
+- apache_error.oml
+- system_metrics.oml
+</code></pre>
+<h3 id="2-rule-模式设计"><a class="header" href="#2-rule-模式设计">2. Rule 模式设计</a></h3>
+<p>使用有意义的层次结构：</p>
+<pre><code class="language-oml"># 好的示例
+rule : /nginx/access_log
+rule : /apache/access_log
+rule : /system/cpu_metrics
+
+# 避免过于宽泛
+rule : *  # 会匹配所有数据
+</code></pre>
+<h3 id="3-sink-group-组织"><a class="header" href="#3-sink-group-组织">3. Sink Group 组织</a></h3>
+<p>按业务逻辑组织 Sink Group：</p>
+<pre><code>topology/sinks/
+├── web_logs.toml           # Web 日志
+├── system_metrics.toml     # 系统监控
+├── application_logs.toml   # 应用日志
+└── security_events.toml    # 安全事件
+</code></pre>
+<h3 id="4-使用通配符模式"><a class="header" href="#4-使用通配符模式">4. 使用通配符模式</a></h3>
+<p>对于灵活的配置，推荐使用通配符：</p>
+<pre><code class="language-toml">[sink_group]
+oml = ["*"]  # 自动发现所有 OML 模型
+</code></pre>
+<h3 id="5-数据透传场景"><a class="header" href="#5-数据透传场景">5. 数据透传场景</a></h3>
+<p>不需要转换时，明确使用空列表：</p>
+<pre><code class="language-toml">[sink_group]
+oml = []  # 明确表示不使用 OML
+</code></pre>
+<h3 id="6-测试配置"><a class="header" href="#6-测试配置">6. 测试配置</a></h3>
+<p>在部署前测试配置：</p>
+<ol>
+<li>验证 OML 语法</li>
+<li>检查 Rule 匹配逻辑</li>
+<li>确认 Sink 连接</li>
+<li>测试数据流向</li>
+</ol>
+<hr>
+<h2 id="故障排查"><a class="header" href="#故障排查">故障排查</a></h2>
+<h3 id="问题-1数据未经过-oml-转换"><a class="header" href="#问题-1数据未经过-oml-转换">问题 1：数据未经过 OML 转换</a></h3>
+<p><strong>可能原因</strong>：</p>
+<ul>
+<li>OML 模型的 <code>rule</code> 不匹配数据的 WPL Rule</li>
+<li>Sink Group 的 <code>oml</code> 配置错误</li>
+</ul>
+<p><strong>排查步骤</strong>：</p>
+<ol>
+<li>检查数据的 WPL Rule</li>
+<li>检查 OML 模型的 <code>rule</code> 字段</li>
+<li>验证通配符匹配逻辑</li>
+<li>检查 Sink Group 的 <code>oml</code> 配置</li>
+</ol>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-oml"># OML 模型
+rule : /nginx/access_log
+
+# 数据 Rule
+/nginx/access  # ❌ 不匹配（缺少 _log）
+
+# 修正
+rule : /nginx/access*  # ✅ 匹配
+</code></pre>
+<hr>
+<h3 id="问题-2数据被重复处理"><a class="header" href="#问题-2数据被重复处理">问题 2：数据被重复处理</a></h3>
+<p><strong>可能原因</strong>：</p>
+<ul>
+<li>多个 Sink Group 匹配同一数据</li>
+<li>多个 OML 模型匹配同一 Rule</li>
+</ul>
+<p><strong>排查步骤</strong>：</p>
+<ol>
+<li>检查所有 Sink Group 的 <code>rule</code> 配置</li>
+<li>确认是否需要并行处理</li>
+<li>调整 Rule 模式避免重复</li>
+</ol>
+<hr>
+<h3 id="问题-3oml-转换失败"><a class="header" href="#问题-3oml-转换失败">问题 3：OML 转换失败</a></h3>
+<p><strong>可能原因</strong>：</p>
+<ul>
+<li>OML 语法错误</li>
+<li>字段不存在</li>
+<li>类型转换失败</li>
+</ul>
+<p><strong>排查步骤</strong>：</p>
+<ol>
+<li>检查 OML 语法</li>
+<li>验证输入数据结构</li>
+<li>使用默认值处理缺失字段</li>
+<li>检查类型转换逻辑</li>
+</ol>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-oml"># 容错处理
+port : digit = read(port) { _ : digit(80) } ;
+user_id = read(user_id) { _ : chars(unknown) } ;
+</code></pre>
+<hr>
+<h3 id="问题-4sink-输出失败"><a class="header" href="#问题-4sink-输出失败">问题 4：Sink 输出失败</a></h3>
+<p><strong>可能原因</strong>：</p>
+<ul>
+<li>Connector 配置错误</li>
+<li>目标存储不可用</li>
+<li>权限问题</li>
+</ul>
+<p><strong>排查步骤</strong>：</p>
+<ol>
+<li>检查 Connector 配置</li>
+<li>验证目标存储连接</li>
+<li>检查权限和凭证</li>
+<li>查看错误日志</li>
+</ol>
+<hr>
+<h2 id="下一步"><a class="header" href="#下一步">下一步</a></h2>
+<ul>
+<li><a href="./03-practical-guide.html">实战指南</a> - 查看 OML 转换示例</li>
+<li><a href="./04-functions-reference.html">函数参考</a> - 查阅可用函数</li>
+<li><a href="./06-grammar-reference.html">语法参考</a> - 查看完整语法</li>
+<li><a href="./01-quickstart.html">快速入门</a> - 回顾基础用法</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../10-user/04-oml/04-functions-reference.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../10-user/04-oml/06-grammar-reference.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../10-user/04-oml/04-functions-reference.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../10-user/04-oml/06-grammar-reference.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../mark-09e88c2c.min.js"></script>
+        <script src="../../searcher-c2a407aa.js"></script>
+
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../../../theme/lang-switch.js"></script>
+        <script src="../../mermaid-eefea253.min.js"></script>
+        <script src="../../mermaid-init-ccf746f1.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

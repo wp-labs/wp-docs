@@ -1,0 +1,737 @@
+<!DOCTYPE HTML>
+<html lang="en" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Separator Configuration - Warp Parse Documentation</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../../../../theme/lang-switch.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../../searchindex-cee6790d.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../../toc-ec81ad47.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Warp Parse Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wp-labs/warp-parse" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="wpl-separator-usage-guide"><a class="header" href="#wpl-separator-usage-guide">WPL Separator Usage Guide</a></h1>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>Separator is a key syntax element in WPL used to split log fields. By flexibly using separators, you can parse various formats of structured log data.</p>
+<h2 id="quick-start"><a class="header" href="#quick-start">Quick Start</a></h2>
+<h3 id="basic-syntax"><a class="header" href="#basic-syntax">Basic Syntax</a></h3>
+<pre><code class="language-wpl">| take(field_name) separator
+</code></pre>
+<p>The separator is written after the field definition to indicate where the field ends.</p>
+<h3 id="simple-examples"><a class="header" href="#simple-examples">Simple Examples</a></h3>
+<pre><code class="language-wpl"># Using space separator
+| take(ip) \s
+| take(method) \s
+| take(path)
+
+# Using comma separator
+| take(name) ,
+| take(age) ,
+| take(city)
+</code></pre>
+<h2 id="built-in-separators"><a class="header" href="#built-in-separators">Built-in Separators</a></h2>
+<h3 id="1-space-separator-s"><a class="header" href="#1-space-separator-s">1. Space Separator <code>\s</code></a></h3>
+<p>Matches a single space character.</p>
+<pre><code class="language-wpl"># Input: "192.168.1.1 GET /api/users"
+rule parse_log {
+    | take(ip) \s
+    | take(method) \s
+    | take(path)
+}
+</code></pre>
+<p><strong>Use Cases</strong>:</p>
+<ul>
+<li>Apache/Nginx access logs</li>
+<li>Simple space-separated logs</li>
+<li>Standard format log files</li>
+</ul>
+<h3 id="2-tab-separator-t"><a class="header" href="#2-tab-separator-t">2. Tab Separator <code>\t</code></a></h3>
+<p>Matches a single tab character.</p>
+<pre><code class="language-wpl"># Input: "user001\t25\tBeijing"
+rule parse_tsv {
+    | take(user_id) \t
+    | take(age) \t
+    | take(city)
+}
+</code></pre>
+<p><strong>Use Cases</strong>:</p>
+<ul>
+<li>TSV (Tab-Separated Values) files</li>
+<li>Database export files</li>
+<li>Tab-aligned logs</li>
+</ul>
+<h3 id="3-generic-whitespace-separator-s"><a class="header" href="#3-generic-whitespace-separator-s">3. Generic Whitespace Separator <code>\S</code></a></h3>
+<p>Matches space <strong>or</strong> tab (either one).</p>
+<pre><code class="language-wpl"># Input: "field1 field2\tfield3" (mixed spaces and tabs)
+rule parse_flexible {
+    | take(col1) \S
+    | take(col2) \S
+    | take(col3)
+}
+</code></pre>
+<p><strong>Use Cases</strong>:</p>
+<ul>
+<li>Inconsistent format logs (mixed spaces and tabs)</li>
+<li>Manually edited configuration files</li>
+<li>Lenient data parsing</li>
+</ul>
+<p><strong>Behavior</strong>:</p>
+<ul>
+<li>Stops at either space or tab</li>
+<li>Flexibly handles inconsistent data sources</li>
+</ul>
+<h3 id="4-end-of-line-separator-0"><a class="header" href="#4-end-of-line-separator-0">4. End-of-Line Separator <code>\0</code></a></h3>
+<p>Reads to the end of line (newline or end of string).</p>
+<pre><code class="language-wpl"># Input: "prefix_value some remaining text until end"
+rule parse_to_end {
+    | take(prefix) _
+    | take(remaining) \0
+}
+</code></pre>
+<p><strong>Use Cases</strong>:</p>
+<ul>
+<li>Parsing the last field</li>
+<li>Reading message body</li>
+<li>Getting all remaining content</li>
+</ul>
+<p><strong>Aliases</strong>:</p>
+<ul>
+<li><code>\0</code> and <code>0</code> are equivalent</li>
+</ul>
+<h3 id="5-custom-character-separator"><a class="header" href="#5-custom-character-separator">5. Custom Character Separator</a></h3>
+<p>Use any single character as a separator.</p>
+<pre><code class="language-wpl"># Comma separated
+| take(name) ,
+| take(age) ,
+
+# Pipe separated
+| take(id) |
+| take(status) |
+
+# Semicolon separated
+| take(key) ;
+| take(value) ;
+</code></pre>
+<p><strong>Supported Characters</strong>:</p>
+<ul>
+<li>Comma <code>,</code></li>
+<li>Pipe <code>|</code></li>
+<li>Semicolon <code>;</code></li>
+<li>Colon <code>:</code></li>
+<li>Equal sign <code>=</code></li>
+<li>Slash <code>/</code></li>
+<li>Any single character</li>
+</ul>
+<h3 id="6-custom-string-separator"><a class="header" href="#6-custom-string-separator">6. Custom String Separator</a></h3>
+<p>Use multi-character strings as separators.</p>
+<pre><code class="language-wpl"># Using " | " as separator
+| take(field1) " | "
+| take(field2) " | "
+
+# Using " :: " as separator
+| take(module) " :: "
+| take(function) " :: "
+</code></pre>
+<p><strong>Use Cases</strong>:</p>
+<ul>
+<li>Formatted output logs</li>
+<li>Specific format protocols</li>
+<li>Data requiring clear boundaries</li>
+</ul>
+<h2 id="practical-application-scenarios"><a class="header" href="#practical-application-scenarios">Practical Application Scenarios</a></h2>
+<h3 id="scenario-1-parsing-nginx-access-logs"><a class="header" href="#scenario-1-parsing-nginx-access-logs">Scenario 1: Parsing Nginx Access Logs</a></h3>
+<pre><code class="language-wpl"># Log format: 192.168.1.1 - - [29/Jan/2024:10:30:45 +0800] "GET /api/users HTTP/1.1" 200 1234
+rule nginx_access_log {
+    | take(client_ip) \s
+    | take(identity) \s
+    | take(user) \s
+    | take(timestamp) \s
+    | take(request) \s
+    | take(status_code) \s
+    | take(bytes_sent) \0
+}
+</code></pre>
+<h3 id="scenario-2-parsing-tsv-data"><a class="header" href="#scenario-2-parsing-tsv-data">Scenario 2: Parsing TSV Data</a></h3>
+<pre><code class="language-wpl"># Input: "2024-01-29\t10:30:45\tERROR\tDatabase connection failed"
+rule tsv_log {
+    | take(date) \t
+    | take(time) \t
+    | take(level) \t
+    | take(message) \0
+}
+</code></pre>
+<h3 id="scenario-3-parsing-csv-data"><a class="header" href="#scenario-3-parsing-csv-data">Scenario 3: Parsing CSV Data</a></h3>
+<pre><code class="language-wpl"># Input: "John Smith,30,New York,Engineer"
+rule csv_parser {
+    | take(name) ,
+    | take(age) ,
+    | take(city) ,
+    | take(job) \0
+}
+</code></pre>
+<h3 id="scenario-4-parsing-structured-logs"><a class="header" href="#scenario-4-parsing-structured-logs">Scenario 4: Parsing Structured Logs</a></h3>
+<pre><code class="language-wpl"># Input: "level=error | module=database | msg=Connection timeout"
+rule structured_log {
+    | take(level_prefix) =
+    | take(level_value) " | "
+    | take(module_prefix) =
+    | take(module_value) " | "
+    | take(msg_prefix) =
+    | take(message) \0
+}
+</code></pre>
+<h3 id="scenario-5-handling-mixed-whitespace-logs"><a class="header" href="#scenario-5-handling-mixed-whitespace-logs">Scenario 5: Handling Mixed Whitespace Logs</a></h3>
+<pre><code class="language-wpl"># Input: "192.168.1.1 \tGET\t /api/data" (mixed spaces and tabs)
+rule flexible_whitespace {
+    | take(ip) \S
+    | take(method) \S
+    | take(path) \0
+}
+</code></pre>
+<h3 id="scenario-6-parsing-syslog-format"><a class="header" href="#scenario-6-parsing-syslog-format">Scenario 6: Parsing Syslog Format</a></h3>
+<pre><code class="language-wpl"># Input: "Jan 29 10:30:45 hostname app[1234]: Error message here"
+rule syslog {
+    | take(month) \s
+    | take(day) \s
+    | take(time) \s
+    | take(hostname) \s
+    | take(app_tag) ": "
+    | take(message) \0
+}
+</code></pre>
+<h3 id="scenario-7-parsing-key-value-logs"><a class="header" href="#scenario-7-parsing-key-value-logs">Scenario 7: Parsing Key-Value Logs</a></h3>
+<pre><code class="language-wpl"># Input: "user=admin;action=login;ip=192.168.1.1;status=success"
+rule kv_log {
+    | take(user_key) =
+    | take(user_value) ;
+    | take(action_key) =
+    | take(action_value) ;
+    | take(ip_key) =
+    | take(ip_value) ;
+    | take(status_key) =
+    | take(status_value) \0
+}
+</code></pre>
+<h2 id="separator-priority"><a class="header" href="#separator-priority">Separator Priority</a></h2>
+<p>WPL supports three levels of separator settings:</p>
+<h3 id="1-field-level-separator-priority-3-highest"><a class="header" href="#1-field-level-separator-priority-3-highest">1. Field-level Separator (Priority 3, Highest)</a></h3>
+<pre><code class="language-wpl">| take(field1) ,  # This field uses comma
+| take(field2) \s # This field uses space
+</code></pre>
+<h3 id="2-group-level-separator-priority-2"><a class="header" href="#2-group-level-separator-priority-2">2. Group-level Separator (Priority 2)</a></h3>
+<pre><code class="language-wpl">group {
+    sep = \t  # All fields in the group use tab by default
+    | take(field1)
+    | take(field2)
+}
+</code></pre>
+<h3 id="3-inherited-separator-priority-1-lowest"><a class="header" href="#3-inherited-separator-priority-1-lowest">3. Inherited Separator (Priority 1, Lowest)</a></h3>
+<p>Default separator inherited from upstream rules.</p>
+<h3 id="priority-rules"><a class="header" href="#priority-rules">Priority Rules</a></h3>
+<p>Field-level &gt; Group-level &gt; Inherited-level</p>
+<pre><code class="language-wpl">group {
+    sep = \t         # Group-level: tab
+    | take(f1)       # Uses \t
+    | take(f2) ,     # Uses , (field-level overrides group-level)
+    | take(f3)       # Uses \t
+}
+</code></pre>
+<h2 id="separator-behavior"><a class="header" href="#separator-behavior">Separator Behavior</a></h2>
+<h3 id="global-replacement-vs-single-match"><a class="header" href="#global-replacement-vs-single-match">Global Replacement vs Single Match</a></h3>
+<p>Separators only match once at the current field’s end position:</p>
+<pre><code class="language-wpl"># Input: "hello,world,test"
+| take(first) ,   # Reads "hello", consumes first comma
+| take(second) ,  # Reads "world", consumes second comma
+| take(third) \0  # Reads "test"
+</code></pre>
+<h3 id="separator-consumption-behavior"><a class="header" href="#separator-consumption-behavior">Separator Consumption Behavior</a></h3>
+<p>By default, separators are <strong>consumed</strong> (removed from input):</p>
+<pre><code class="language-wpl"># Input: "a,b,c"
+| take(x) ,  # Reads "a", consumes ",", remaining "b,c"
+| take(y) ,  # Reads "b", consumes ",", remaining "c"
+</code></pre>
+<h3 id="when-separator-not-found"><a class="header" href="#when-separator-not-found">When Separator Not Found</a></h3>
+<p>If the end of string is reached without finding the separator, reads to the end:</p>
+<pre><code class="language-wpl"># Input: "field1 field2"
+| take(f1) ,  # Comma not found, reads entire "field1 field2"
+</code></pre>
+<h2 id="advanced-usage"><a class="header" href="#advanced-usage">Advanced Usage</a></h2>
+<h3 id="combining-multiple-separators"><a class="header" href="#combining-multiple-separators">Combining Multiple Separators</a></h3>
+<pre><code class="language-wpl"># Input: "192.168.1.1:8080/api/users?id=123"
+rule url_parse {
+    | take(ip) :
+    | take(port) /
+    | take(api_path) /
+    | take(resource) ?
+    | take(query_string) \0
+}
+</code></pre>
+<h3 id="handling-optional-fields"><a class="header" href="#handling-optional-fields">Handling Optional Fields</a></h3>
+<pre><code class="language-wpl"># Input may be: "user,30,city" or "user,,city" (age is empty)
+rule optional_fields {
+    | take(name) ,
+    | take(age) ,      # May be empty string
+    | take(city) \0
+}
+</code></pre>
+<h3 id="skipping-unwanted-fields"><a class="header" href="#skipping-unwanted-fields">Skipping Unwanted Fields</a></h3>
+<pre><code class="language-wpl"># Only extract fields 1 and 3
+rule skip_fields {
+    | take(field1) ,
+    | take(_skip) ,    # Temporary variable, not saved
+    | take(field3) \0
+}
+</code></pre>
+<h2 id="usage-limitations"><a class="header" href="#usage-limitations">Usage Limitations</a></h2>
+<h3 id="1-separators-do-not-support-regular-expressions"><a class="header" href="#1-separators-do-not-support-regular-expressions">1. Separators Do Not Support Regular Expressions</a></h3>
+<pre><code class="language-wpl"># ❌ Regular expressions not supported
+| take(field) [0-9]+
+
+# ✅ Use fixed strings
+| take(field) \s
+</code></pre>
+<h3 id="2-separators-are-case-sensitive"><a class="header" href="#2-separators-are-case-sensitive">2. Separators Are Case-Sensitive</a></h3>
+<pre><code class="language-wpl"># "ABC" and "abc" are different separators
+| take(field1) ABC
+| take(field2) abc
+</code></pre>
+<h3 id="3-empty-string-cannot-be-used-as-separator"><a class="header" href="#3-empty-string-cannot-be-used-as-separator">3. Empty String Cannot Be Used as Separator</a></h3>
+<pre><code class="language-wpl"># ❌ Not supported
+| take(field) ""
+
+# ✅ Use \0 to read to end
+| take(field) \0
+</code></pre>
+<h3 id="4-escape-character-limitations"><a class="header" href="#4-escape-character-limitations">4. Escape Character Limitations</a></h3>
+<p>Currently supported escape characters:</p>
+<ul>
+<li><code>\s</code> - space</li>
+<li><code>\t</code> - tab</li>
+<li><code>\S</code> - space or tab</li>
+<li><code>\0</code> - end of line</li>
+</ul>
+<p>Other escape characters (such as <code>\n</code>, <code>\r</code>) need to use actual characters.</p>
+<h2 id="performance-notes"><a class="header" href="#performance-notes">Performance Notes</a></h2>
+<h3 id="single-character-separators"><a class="header" href="#single-character-separators">Single Character Separators</a></h3>
+<p>Best performance, recommended for priority use:</p>
+<pre><code class="language-wpl">| take(f1) ,
+| take(f2) \s
+| take(f3) \t
+</code></pre>
+<ul>
+<li>Time complexity: O(n)</li>
+<li>Scan speed: ~500 MB/s</li>
+</ul>
+<h3 id="multi-character-separators"><a class="header" href="#multi-character-separators">Multi-character Separators</a></h3>
+<p>Slightly lower performance, but still efficient:</p>
+<pre><code class="language-wpl">| take(f1) " | "
+| take(f2) " :: "
+</code></pre>
+<ul>
+<li>Time complexity: O(n × m), where m is the separator length</li>
+<li>Scan speed: ~300-400 MB/s</li>
+</ul>
+<h3 id="generic-whitespace-separator-s"><a class="header" href="#generic-whitespace-separator-s">Generic Whitespace Separator <code>\S</code></a></h3>
+<p>Requires character-by-character checking, performance between the two:</p>
+<pre><code class="language-wpl">| take(f1) \S
+</code></pre>
+<ul>
+<li>Time complexity: O(n)</li>
+<li>Scan speed: ~400 MB/s</li>
+</ul>
+<h2 id="error-handling"><a class="header" href="#error-handling">Error Handling</a></h2>
+<h3 id="common-errors"><a class="header" href="#common-errors">Common Errors</a></h3>
+<h4 id="1-separator-not-found"><a class="header" href="#1-separator-not-found">1. Separator Not Found</a></h4>
+<pre><code>Error: Separator ',' not found
+Cause: Input string does not contain the specified separator
+Solution: Check input format or use \0 to read to end
+</code></pre>
+<h4 id="2-separator-syntax-error"><a class="header" href="#2-separator-syntax-error">2. Separator Syntax Error</a></h4>
+<pre><code>Error: invalid separator
+Cause: Used unsupported separator syntax
+Solution: Refer to this document for correct separator format
+</code></pre>
+<h4 id="3-field-order-error"><a class="header" href="#3-field-order-error">3. Field Order Error</a></h4>
+<pre><code>Error: Field parsing failed
+Cause: Field definition order does not match actual data
+Solution: Adjust field order to match input format
+</code></pre>
+<h2 id="best-practices"><a class="header" href="#best-practices">Best Practices</a></h2>
+<h3 id="1-prefer-built-in-separators"><a class="header" href="#1-prefer-built-in-separators">1. Prefer Built-in Separators</a></h3>
+<pre><code class="language-wpl"># ✅ Recommended
+| take(f1) \s
+| take(f2) \t
+
+# ⚠️ Avoid (unless necessary)
+| take(f1) " "
+| take(f2) "\t"
+</code></pre>
+<h3 id="2-explicitly-specify-last-field-separator"><a class="header" href="#2-explicitly-specify-last-field-separator">2. Explicitly Specify Last Field Separator</a></h3>
+<pre><code class="language-wpl"># ✅ Recommended (explicit to end of line)
+| take(message) \0
+
+# ⚠️ Unclear
+| take(message)  # Relies on default behavior
+</code></pre>
+<h3 id="3-use-s-for-non-standard-data"><a class="header" href="#3-use-s-for-non-standard-data">3. Use <code>\S</code> for Non-standard Data</a></h3>
+<pre><code class="language-wpl"># ✅ Recommended (better compatibility)
+| take(field1) \S
+| take(field2) \S
+
+# ⚠️ May fail (if spaces and tabs are mixed)
+| take(field1) \s
+| take(field2) \s
+</code></pre>
+<h3 id="4-use-multi-character-separators-for-complex-formats"><a class="header" href="#4-use-multi-character-separators-for-complex-formats">4. Use Multi-character Separators for Complex Formats</a></h3>
+<pre><code class="language-wpl"># ✅ Clear and accurate
+| take(level) " | "
+| take(message) " | "
+
+# ⚠️ May mismatch
+| take(level) |
+| take(message) |
+</code></pre>
+<h3 id="5-combine-field-level-and-group-level-separators"><a class="header" href="#5-combine-field-level-and-group-level-separators">5. Combine Field-level and Group-level Separators</a></h3>
+<pre><code class="language-wpl"># ✅ Recommended (reduces repetition)
+group {
+    sep = ,
+    | take(f1)
+    | take(f2)
+    | take(f3) \0  # Last field uses different separator
+}
+</code></pre>
+<h2 id="debugging-tips"><a class="header" href="#debugging-tips">Debugging Tips</a></h2>
+<h3 id="1-validate-field-by-field"><a class="header" href="#1-validate-field-by-field">1. Validate Field by Field</a></h3>
+<pre><code class="language-wpl"># First parse the first field
+| take(field1) ,
+
+# After confirming success, add the second
+| take(field1) ,
+| take(field2) ,
+
+# Add incrementally...
+</code></pre>
+<h3 id="2-use-temporary-fields-to-view-intermediate-results"><a class="header" href="#2-use-temporary-fields-to-view-intermediate-results">2. Use Temporary Fields to View Intermediate Results</a></h3>
+<pre><code class="language-wpl">| take(field1) ,
+| take(_debug) ,    # Temporary field, view remaining content
+| take(field2) \0
+</code></pre>
+<h3 id="3-print-separator-positions"><a class="header" href="#3-print-separator-positions">3. Print Separator Positions</a></h3>
+<p>In test environment, use debug mode to view separator matching:</p>
+<pre><code class="language-bash">wp-motor --debug rule.wpl &lt; test.log
+</code></pre>
+<h3 id="4-verify-separator-characters"><a class="header" href="#4-verify-separator-characters">4. Verify Separator Characters</a></h3>
+<p>For invisible characters (like tabs), use hex viewer to confirm:</p>
+<pre><code class="language-bash"># View tabs in file
+cat -A test.log
+# or
+hexdump -C test.log | head
+</code></pre>
+<h2 id="frequently-asked-questions-faq"><a class="header" href="#frequently-asked-questions-faq">Frequently Asked Questions (FAQ)</a></h2>
+<h3 id="q1-whats-the-difference-between-s-and-s"><a class="header" href="#q1-whats-the-difference-between-s-and-s">Q1: What’s the difference between <code>\s</code> and <code>\S</code>?</a></h3>
+<ul>
+<li><code>\s</code>: Only matches space</li>
+<li><code>\S</code>: Matches space or tab (space OR tab)</li>
+</ul>
+<pre><code class="language-wpl"># Input: "a b"
+| take(x) \s  # ✅ Match successful
+
+# Input: "a\tb"
+| take(x) \s  # ❌ Match failed (this is a tab, not a space)
+| take(x) \S  # ✅ Match successful
+</code></pre>
+<h3 id="q2-how-to-handle-consecutive-separators"><a class="header" href="#q2-how-to-handle-consecutive-separators">Q2: How to handle consecutive separators?</a></h3>
+<p>WPL treats consecutive separators as multiple empty fields:</p>
+<pre><code class="language-wpl"># Input: "a,,c"
+| take(f1) ,  # Reads "a"
+| take(f2) ,  # Reads "" (empty string)
+| take(f3) \0 # Reads "c"
+</code></pre>
+<h3 id="q3-do-separators-affect-performance"><a class="header" href="#q3-do-separators-affect-performance">Q3: Do separators affect performance?</a></h3>
+<p>Single-character separators have the best performance, multi-character separators are slightly slower, but the impact is negligible for most scenarios.</p>
+<h3 id="q4-how-to-parse-nested-structures"><a class="header" href="#q4-how-to-parse-nested-structures">Q4: How to parse nested structures?</a></h3>
+<p>Use multi-level separators:</p>
+<pre><code class="language-wpl"># Input: "k1=v1;k2=v2|k3=v3;k4=v4"
+rule nested {
+    | take(group1) |
+    | take(group2) \0
+}
+# Then parse each group internally with ; and =
+</code></pre>
+<h3 id="q5-can-separators-be-chinese-characters"><a class="header" href="#q5-can-separators-be-chinese-characters">Q5: Can separators be Chinese characters?</a></h3>
+<p>Yes, Unicode characters are supported:</p>
+<pre><code class="language-wpl"># Using Chinese comma as separator
+| take(field1) ，
+| take(field2) ，
+</code></pre>
+<h3 id="q6-is-there-a-difference-between-0-and-omitting-the-separator"><a class="header" href="#q6-is-there-a-difference-between-0-and-omitting-the-separator">Q6: Is there a difference between <code>\0</code> and omitting the separator?</a></h3>
+<p>It’s recommended to explicitly use <code>\0</code> for clearer semantics:</p>
+<pre><code class="language-wpl"># ✅ Recommended (explicit)
+| take(message) \0
+
+# ⚠️ Works but unclear
+| take(message)
+</code></pre>
+<h3 id="q7-how-to-handle-separators-within-quotes"><a class="header" href="#q7-how-to-handle-separators-within-quotes">Q7: How to handle separators within quotes?</a></h3>
+<p>For complex formats with quotes, it’s recommended to use specialized parsers (such as JSON, KV parser):</p>
+<pre><code class="language-wpl"># Complex CSV (with quotes)
+# Input: "field1","field with , comma","field3"
+# Recommend using CSV parser instead of manual separators
+</code></pre>
+<h2 id="additional-resources"><a class="header" href="#additional-resources">Additional Resources</a></h2>
+<ul>
+<li><strong>WPL Syntax Reference</strong>: <code>docs/guide/wpl_syntax.md</code></li>
+<li><strong>Parser Development Guide</strong>: <code>docs/guide/wpl_field_func_development_guide.md</code></li>
+<li><strong>chars_replace Usage Guide</strong>: <code>docs/usage/wpl/chars_replace.md</code></li>
+<li><strong>Source Code</strong>: <code>crates/wp-lang/src/ast/syntax/wpl_sep.rs</code></li>
+</ul>
+<h2 id="version-history"><a class="header" href="#version-history">Version History</a></h2>
+<ul>
+<li>
+<p><strong>1.11.0</strong> (2026-01-29)</p>
+<ul>
+<li>Added <code>\t</code> tab separator support</li>
+<li>Added <code>\S</code> generic whitespace separator (space or tab)</li>
+<li>Optimized Whitespace separator performance</li>
+<li>Added complete test coverage</li>
+</ul>
+</li>
+<li>
+<p><strong>1.10.x</strong> and earlier versions</p>
+<ul>
+<li>Support for <code>\s</code> (space) and <code>\0</code> (end of line)</li>
+<li>Support for custom character and string separators</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p><strong>Tip</strong>: Separators are the core of WPL parsing. Choosing the right separator can greatly simplify log parsing rules.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../../10-user/03-wpl/functions/field_reference.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../../10-user/03-wpl/functions/chars_replace.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../../10-user/03-wpl/functions/field_reference.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../../10-user/03-wpl/functions/chars_replace.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../../mark-09e88c2c.min.js"></script>
+        <script src="../../../searcher-c2a407aa.js"></script>
+
+        <script src="../../../clipboard-1626706a.min.js"></script>
+        <script src="../../../highlight-abc7f01d.js"></script>
+        <script src="../../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../../../../theme/lang-switch.js"></script>
+        <script src="../../../mermaid-eefea253.min.js"></script>
+        <script src="../../../mermaid-init-ccf746f1.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

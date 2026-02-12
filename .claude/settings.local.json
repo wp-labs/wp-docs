@@ -10,7 +10,8 @@
       "Bash(done)",
       "Bash(git mv:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(cat:*)"
     ]
   }
 }

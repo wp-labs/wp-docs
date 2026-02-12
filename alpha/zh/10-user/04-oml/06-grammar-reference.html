@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>语法参考 - Warp Parse 文档 [ALPHA]</title>
+        <title>OML 语法参考 - Warp Parse 文档 [ALPHA]</title>
 
 
         <!-- Custom HTML head -->
@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-b509f17a.js";
+            window.path_to_searchindex_js = "../../searchindex-a82d0413.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-ca145d02.js"></script>
+        <script src="../../toc-957234dd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -335,14 +335,16 @@ pipe_expr        = ["pipe"], var_get, "|", pipe_fun, { "|", pipe_fun } ;
 pipe_fun         = "nth",           "(", unsigned, ")"
                  | "get",           "(", ident,   ")"
                  | "base64_decode", "(", [ encode_type ], ")"
-                 | "sxf_get",       "(", alnum*,  ")"
                  | "path",          "(", ("name"|"path"), ")"
                  | "url",           "(", ("domain"|"host"|"uri"|"path"|"params"), ")"
                  | "Time::to_ts_zone", "(", [ "-" ], unsigned, ",", ("ms"|"us"|"ss"|"s"), ")"
+                 | "starts_with",   "(", string, ")"
+                 | "map_to",        "(", (string | number | bool), ")"
                  | "base64_encode" | "html_escape" | "html_unescape"
-                 | "str_escape" | "json_escape" | "json_unescape"
+                 | "str_escape" | "str_unescape" | "json_escape" | "json_unescape"
                  | "Time::to_ts" | "Time::to_ts_ms" | "Time::to_ts_us"
-                 | "to_json" | "to_str" | "skip_empty" | "ip4_to_int" ;
+                 | "to_json" | "to_str" | "skip_empty" | "ip4_to_int"
+                 | "extract_main_word" | "extract_subject_object" ;
 
 encode_type      = ident ;                     (* 例如: Utf8/Gbk/Imap/... *)
 </code></pre>
@@ -358,6 +360,21 @@ ts = read(time) | Time::to_ts_zone(0, ms) ;
 
 # URL 解析
 host = read(url) | url(host) ;
+
+# 字符串前缀检查
+is_http = read(url) | starts_with('http://') ;
+
+# 映射到常量值
+status = read(code) | map_to(200) ;
+
+# 提取主要单词
+keyword = read(message) | extract_main_word ;
+
+# 提取主客体结构
+log_struct = read(message) | extract_subject_object ;
+
+# 字符串反转义
+text = read(escaped) | str_unescape ;
 </code></pre>
 <h3 id="对象聚合"><a class="header" href="#对象聚合">对象聚合</a></h3>
 <pre><code class="language-ebnf">(* 聚合到对象：object 内部为子赋值序列；分号可选但推荐 *)
@@ -594,6 +611,7 @@ pos_sn : privacy_keymsg
 <tr><td><code>json_escape</code></td><td><code>json_escape</code></td><td>JSON 转义</td></tr>
 <tr><td><code>json_unescape</code></td><td><code>json_unescape</code></td><td>JSON 反转义</td></tr>
 <tr><td><code>str_escape</code></td><td><code>str_escape</code></td><td>字符串转义</td></tr>
+<tr><td><code>str_unescape</code></td><td><code>str_unescape</code></td><td>字符串反转义</td></tr>
 <tr><td><code>Time::to_ts</code></td><td><code>Time::to_ts</code></td><td>时间转时间戳（秒，UTC+8）</td></tr>
 <tr><td><code>Time::to_ts_ms</code></td><td><code>Time::to_ts_ms</code></td><td>时间转时间戳（毫秒，UTC+8）</td></tr>
 <tr><td><code>Time::to_ts_us</code></td><td><code>Time::to_ts_us</code></td><td>时间转时间戳（微秒，UTC+8）</td></tr>
@@ -602,7 +620,10 @@ pos_sn : privacy_keymsg
 <tr><td><code>get</code></td><td><code>get(字段名)</code></td><td>获取对象字段</td></tr>
 <tr><td><code>path</code></td><td><code>path(name|path)</code></td><td>提取文件路径部分</td></tr>
 <tr><td><code>url</code></td><td><code>url(domain|host|uri|path|params)</code></td><td>提取 URL 部分</td></tr>
-<tr><td><code>sxf_get</code></td><td><code>sxf_get(字段名)</code></td><td>提取特殊格式字段</td></tr>
+<tr><td><code>starts_with</code></td><td><code>starts_with('前缀')</code></td><td>检查字符串是否以指定前缀开始</td></tr>
+<tr><td><code>map_to</code></td><td><code>map_to(值)</code></td><td>映射到指定常量值</td></tr>
+<tr><td><code>extract_main_word</code></td><td><code>extract_main_word</code></td><td>提取主要单词（第一个非空单词）</td></tr>
+<tr><td><code>extract_subject_object</code></td><td><code>extract_subject_object</code></td><td>提取日志主客体结构（subject/action/object/status）</td></tr>
 <tr><td><code>to_str</code></td><td><code>to_str</code></td><td>转换为字符串</td></tr>
 <tr><td><code>to_json</code></td><td><code>to_json</code></td><td>转换为 JSON</td></tr>
 <tr><td><code>ip4_to_int</code></td><td><code>ip4_to_int</code></td><td>IPv4 转整数</td></tr>
@@ -656,7 +677,7 @@ alert* = take() ;      # 取走所有以 alert 开头的字段
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../10-user/04-oml/functions/function_index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../10-user/04-oml/07-complete-example.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -670,7 +691,7 @@ alert* = take() ;      # 取走所有以 alert 开头的字段
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../10-user/04-oml/functions/function_index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../10-user/04-oml/07-complete-example.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

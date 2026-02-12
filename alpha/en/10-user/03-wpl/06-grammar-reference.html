@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Grammar Reference (EBNF) - Warp Parse Documentation [ALPHA]</title>
+        <title>WPL Grammar Reference (EBNF) - Warp Parse Documentation [ALPHA]</title>
 
 
         <!-- Custom HTML head -->
@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-cee6790d.js";
+            window.path_to_searchindex_js = "../../searchindex-eae4ffac.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-ec81ad47.js"></script>
+        <script src="../../toc-86225319.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -180,12 +180,6 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="wpl-grammar-reference-ebnf"><a class="header" href="#wpl-grammar-reference-ebnf">WPL Grammar Reference (EBNF)</a></h1>
-<blockquote>
-<p><strong>Translation in Progress</strong></p>
-<p>This document is currently being translated from Chinese to English.</p>
-<p>Please refer to the Chinese version: <code>docs/10-user/03-wpl-new/06-grammar-reference.md</code></p>
-</blockquote>
-<hr>
 <p>This document provides the formal grammar definition of WPL, suitable for:</p>
 <ul>
 <li>Compiler/parser developers</li>
@@ -200,7 +194,307 @@
 <li>Language Reference: <a href="./04-language-reference.html">04-language-reference.md</a></li>
 </ul>
 <hr>
-<p><strong>For the complete English documentation, please check back later or refer to the Chinese version.</strong></p>
+<h2 id="-document-navigation"><a class="header" href="#-document-navigation">📑 Document Navigation</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Section</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><a href="#complete-ebnf-definition">Complete EBNF Definition</a></td><td>Formal grammar definition</td></tr>
+<tr><td><a href="#semantics">Semantics</a></td><td>Semantic interpretation of grammar rules</td></tr>
+<tr><td><a href="#implementation-reference">Implementation Reference</a></td><td>Source code locations</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="complete-ebnf-definition"><a class="header" href="#complete-ebnf-definition">Complete EBNF Definition</a></h2>
+<p>The authoritative implementation is in the <code>crates/wp-lang</code> parser; this document is kept in sync with the source code.</p>
+<pre><code class="language-ebnf">; WPL Grammar (EBNF)
+; Based on the parser implementation (winnow) in crates/wp-lang
+; Note: This file provides grammar productions and necessary lexical conventions. Unless explicitly noted, optional whitespace `ws` is allowed between tokens.
+
+wpl_document     = { package_decl } ;
+
+package_decl     = [ annotation ] "package" ws? ident ws? "{" ws? rule_decl+ ws? "}" ;
+
+rule_decl        = [ annotation ] "rule" ws? rule_name ws? "{" ws? statement ws? "}" ;
+
+statement        = plg_pipe_block | express ;
+
+plg_pipe_block   = ["@"]? "plg_pipe" ws? "(" ws? "id" ws? ":" ws? key ws? ")" ws? "{" ws? express ws? "}" ;
+
+express          = [ preproc ] group { ws? "," ws? group } ;
+
+preproc          = "|" ws? preproc_step { ws? "|" ws? preproc_step } ws? "|" ;   ; At least one step, ending with '|'
+preproc_step     = builtin_preproc | plg_pipe_step ;
+builtin_preproc  = ns "/" name ;
+plg_pipe_step    = "plg_pipe" ws? "/" ws? key ;                   ; Look up custom extensions through registry
+ns               = "decode" | "unquote" | "strip" ;              ; Namespace whitelist
+name             = ("base64" | "hex") | "unescape" | "bom" ;     ; Step name whitelist
+; Supported preprocessors:
+;   decode/base64 - Base64 decoding
+;   decode/hex - Hexadecimal decoding
+;   unquote/unescape - URL unescape decoding
+;   strip/bom - Remove BOM (Byte Order Mark)
+
+group            = [ group_meta ] ws? "(" ws? field_list_opt ws? ")" [ ws? group_len ] [ ws? group_sep ] ;
+group_meta       = "alt" | "opt" | "some_of" | "seq" ;
+group_len        = "[" number "]" ;
+group_sep        = sep ;
+
+; List: allows empty, allows trailing comma
+field_list_opt   = [ field { ws? "," ws? field } [ ws? "," ] ] ;
+
+field            = [ repeat ] data_type [ symbol_content ]
+                   [ subfields ]
+                   [ ":" ws? var_name ]
+                   [ length ]
+                   [ format ]
+                   [ sep ]
+                   { pipe } ;                              ; Allows multiple pipes
+
+repeat           = [ number ] "*" ;                        ; "*ip" or "3*ip"
+length           = "[" number "]" ;                       ; Only top-level fields support (subfields do not)
+
+; Subfield list for composite fields (e.g., kvarr/json)
+subfields        = "(" ws? subfields_opt ws? ")" ;
+subfields_opt    = [ subfield { ws? "," ws? subfield } [ ws? "," ] ] ;
+subfield         = [ opt_datatype | data_type ]
+                   [ symbol_content ]
+                   [ "@" ref_path ]
+                   [ ":" ws? var_name ]
+                   [ format ]
+                   [ sep ]
+                   { pipe } ;
+
+opt_datatype     = "opt" "(" ws? data_type ws? ")" ;     ; Declare this subfield as optional
+
+; Field data types (corresponds to external crate wp-model-core::DataType)
+data_type        = builtin_type | ns_type | array_type ;
+
+builtin_type     = "auto" | "bool" | "chars" | "symbol" | "peek_symbol"
+                   | "digit" | "float" | "_" | "sn"
+                   | "time" | "time/clf" | "time_iso" | "time_3339" | "time_2822" | "time_timestamp"
+                   | "ip" | "ip_net" | "domain" | "email" | "port"
+                   | "hex" | "base64"
+                   | "kv" | "kvarr" | "json" | "exact_json"
+                   | "url"
+                   | "proto_text" | "obj"
+                   | "id_card" | "mobile_phone" ;
+
+ns_type          = path_ident ;                               ; e.g., http/request, http/status, etc.
+; Note: Implementation should validate whitelist prefixes (like "http/") to avoid arbitrary path expansion.
+; Supported namespace types:
+;   http/request, http/status, http/agent (or http/user_agent), http/method
+;   time/clf (or time/apache, time/httpd, time/nginx)
+;   time/rfc3339 (alias time_3339), time/rfc2822 (alias time_2822)
+;   time/timestamp (or time/epoch, alias time_timestamp)
+;   proto/text (alias proto_text)
+
+array_type       = "array" [ "/" subtype ] ;                 ; e.g., "array" or "array/ip" or "array/chars"
+subtype          = key ;                                      ; Can be any supported type name
+
+; Only allowed when data_type is symbol/peek_symbol
+symbol_content   = "(" symbol_chars ")" ;
+
+; Field display/extraction format
+format           = scope_fmt | quote_fmt | field_cnt ;
+scope_fmt        = "&lt;" any_chars "," any_chars "&gt;" ;   ; Scope delimiters, e.g., &lt;[,]&gt;
+quote_fmt        = '"' ;                                ; Equivalent to '"' at both ends
+field_cnt        = "^" number ;                          ; Only valid for chars/_ (implementation constraint)
+
+; Separator (high/medium priority, concatenated as-is). Syntax is backslash-escaped character sequence, length&gt;=1
+sep              = sep_char , { sep_char } ;             ; e.g., "\\," =&gt; ","; "\\!\\|" =&gt; "!|"
+sep_char         = '\\' , any_char ;
+
+; Field-level pipe: function call or nested group
+pipe             = "|" ws? ( fun_call | group ) ;
+
+; Built-in functions (wpl_fun.rs):
+; - Selector functions: take, last
+; - f_ prefix indicates field collection operations (requires field name)
+; - No prefix indicates active field operations
+; - Transform functions: json_unescape, base64_decode, chars_replace
+; - Wrapper functions: not
+fun_call         = selector_fun | target_fun | active_fun | transform_fun | wrapper_fun ;
+
+; Selector functions
+selector_fun     = take_fun | last_fun ;
+take_fun         = "take" "(" ws? key ws? ")" ;
+last_fun         = "last" "(" ws? ")" ;
+
+; Field collection operation functions (f_ prefix)
+target_fun       = f_has | f_chars_has | f_chars_not_has | f_chars_in
+                 | f_digit_has | f_digit_in | f_ip_in ;
+f_has            = "f_has" "(" ws? key ws? ")" ;
+f_chars_has      = "f_chars_has" "(" ws? key ws? "," ws? path ws? ")" ;
+f_chars_not_has  = "f_chars_not_has" "(" ws? key ws? "," ws? path ws? ")" ;
+f_chars_in       = "f_chars_in" "(" ws? key ws? "," ws? path_array ws? ")" ;
+f_digit_has      = "f_digit_has" "(" ws? key ws? "," ws? number ws? ")" ;
+f_digit_in       = "f_digit_in" "(" ws? key ws? "," ws? number_array ws? ")" ;
+f_ip_in          = "f_ip_in" "(" ws? key ws? "," ws? ip_array ws? ")" ;
+
+; Active field operation functions (no prefix)
+active_fun       = has_fun | chars_has | chars_not_has | chars_in | starts_with | regex_match
+                 | digit_has | digit_in | digit_range | ip_in ;
+has_fun          = "has" "(" ws? ")" ;
+chars_has        = "chars_has" "(" ws? path ws? ")" ;
+chars_not_has    = "chars_not_has" "(" ws? path ws? ")" ;
+chars_in         = "chars_in" "(" ws? path_array ws? ")" ;
+starts_with      = "starts_with" "(" ws? quoted_string ws? ")" ;
+regex_match      = "regex_match" "(" ws? quoted_string ws? ")" ;
+digit_has        = "digit_has" "(" ws? number ws? ")" ;
+digit_in         = "digit_in" "(" ws? number_array ws? ")" ;
+digit_range      = "digit_range" "(" ws? number ws? "," ws? number ws? ")" ;
+ip_in            = "ip_in" "(" ws? ip_array ws? ")" ;
+
+; Transform functions
+transform_fun    = json_unescape | base64_decode | chars_replace ;
+json_unescape    = "json_unescape" "(" ws? ")" ;
+base64_decode    = "base64_decode" "(" ws? ")" ;
+chars_replace    = "chars_replace" "(" ws? path ws? "," ws? path ws? ")" ;
+
+; Wrapper functions
+wrapper_fun      = not_fun ;
+not_fun          = "not" "(" ws? fun_call ws? ")" ;
+
+path_array       = "[" ws? path { ws? "," ws? path } ws? "]" ;
+number_array     = "[" ws? number { ws? "," ws? number } ws? "]" ;
+ip_array         = "[" ws? ip_addr { ws? "," ws? ip_addr } ws? "]" ;
+
+annotation       = "#[" ws? ann_item { ws? "," ws? ann_item } ws? "]" ;
+ann_item         = tag_anno | copy_raw_anno ;
+tag_anno         = "tag" "(" ws? tag_kv { ws? "," ws? tag_kv } ws? ")" ;
+tag_kv           = ident ":" ( quoted_string | raw_string ) ;      ; Key is identifier; value is string
+copy_raw_anno    = "copy_raw" "(" ws? "name" ws? ":" ws? ( quoted_string | raw_string ) ws? ")" ;
+
+; Lexical and auxiliary tokens --------------------------------------------------------
+field_name       = var_name ;
+rule_name        = exact_path ;
+key              = key_char { key_char } ;              ; [A-Za-z0-9_./-]+
+var_name         = var_char { var_char } ;              ; [A-Za-z0-9_.-]+
+ref_path         = ref_char { ref_char } ;              ; [A-Za-z0-9_./\-.[\]*]+
+; Identifier and path identifier (recommended syntax)
+ident            = ( letter | '_' ) { letter | digit | '_' | '.' | '-' } ;
+path_ident       = ident { "/" ident } ;
+
+exact_path       = exact_path_char { exact_path_char } ; ; Does not contain '[' ']' '*'
+exact_path_char  = letter | digit | '_' | '.' | '/' | '-' ;
+path             = key | ref_path ;
+
+number           = digit { digit } ;
+digit            = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' ;
+
+key_char         = letter | digit | '_' | '.' | '/' | '-' ;
+var_char         = letter | digit | '_' | '.' | '-' ;
+ref_char         = key_char | '[' | ']' | '*' ;
+
+letter           = 'A'..'Z' | 'a'..'z' ;
+
+quoted_string    = '"' { escaped | char_no_quote_backslash } '"' ;
+raw_string       = 'r' '#' '"' { any_char } '"' '#' ;          ; r#"..."#, no escape processing inside (can contain '"')
+char_no_quote    = ? any char except '"' ? ;
+escaped          = '\\' ( '"' | '\\' | 'n' | 't' | 'r' | 'x' hex hex ) ;
+char_no_quote_backslash = ? any char except '"' and '\\' ? ;
+hex              = '0'..'9' | 'a'..'f' | 'A'..'F' ;
+
+free_string      = { fchar } ;                          ; Until ',' or ')' (not included)
+fchar            = ? any char except ',' and ')' ? ;
+
+symbol_chars     = { schar } ;                          ; Allows all chars except ')' and '\\', or use '\)' to escape
+schar            = char_no_close_paren_backslash | '\\' ')' ;
+char_no_close_paren_backslash = ? any char except ')' and '\\' ? ;
+any_chars        = { any_char } ;
+any_char         = ? any character ? ;
+
+ip_addr          = quoted_string | ipv4 | ipv6 ;        ; Supports IPv4/IPv6 bare literals or quoted
+ipv4             = digit1 "." digit1 "." digit1 "." digit1 ;
+digit1           = digit { digit } ;
+ipv6             = ? valid IPv6 literal (RFC 4291), including compressed forms like "::1" ? ;
+
+ws               = { ' ' | '\t' | '\n' | '\r' } ;
+
+; Reserved keywords (cannot be used as identifiers; conflict validation performed by implementation)
+ReservedKeyword  = "package" | "rule" | "alt" | "opt" | "some_of" | "seq" | "order"
+                 | "tag" | "copy_raw" | "include" | "macro" ;
+
+
+</code></pre>
+<hr>
+<h2 id="semantics"><a class="header" href="#semantics">Semantics</a></h2>
+<h3 id="preprocessing-pipeline"><a class="header" href="#preprocessing-pipeline">Preprocessing Pipeline</a></h3>
+<ul>
+<li>The <code>preproc</code> pipeline (e.g., <code>|decode/base64|unquote/unescape|</code>) appears at the beginning of <code>express</code>, independent of field-level <code>pipe</code></li>
+<li>Applies to the entire line input, executed before field parsing</li>
+<li>Execution order: left to right</li>
+<li>Must end with <code>|</code></li>
+<li>Supported preprocessors:
+<ul>
+<li><code>decode/base64</code> - Base64 decoding</li>
+<li><code>decode/hex</code> - Hexadecimal decoding</li>
+<li><code>unquote/unescape</code> - URL unescape decoding</li>
+<li><code>strip/bom</code> - Remove BOM (Byte Order Mark)</li>
+</ul>
+</li>
+</ul>
+<h3 id="group-length-and-separator"><a class="header" href="#group-length-and-separator">Group Length and Separator</a></h3>
+<ul>
+<li><code>group</code> can be followed by <code>[n]</code> and separator <code>sep</code></li>
+<li>Length applies to all fields within the group</li>
+<li><code>sep</code> is only stored on the group, specific combination strategy see implementation</li>
+</ul>
+<h3 id="format-control"><a class="header" href="#format-control">Format Control</a></h3>
+<ul>
+<li><code>field_cnt</code> (<code>^n</code>) in <code>format</code> only applies to <code>chars/_</code> types</li>
+<li>Other types will be rejected (implementation constraint)</li>
+</ul>
+<h3 id="symbol-types"><a class="header" href="#symbol-types">Symbol Types</a></h3>
+<ul>
+<li><code>symbol/peek_symbol</code> can carry <code>symbol_content</code>, e.g., <code>symbol(boy)</code></li>
+<li><code>peek_symbol</code> is equivalent to <code>symbol</code>, only changing the “peek” semantics (lookahead without consuming)</li>
+</ul>
+<h3 id="subfields"><a class="header" href="#subfields">Subfields</a></h3>
+<ul>
+<li>In <code>subfields</code>, when <code>"@ref"</code> is not explicitly specified, the key defaults to <code>"*"</code> (wildcard key)</li>
+<li>Subfields support <code>opt(type)</code> to mark as optional</li>
+</ul>
+<h3 id="separators"><a class="header" href="#separators">Separators</a></h3>
+<ul>
+<li><code>sep</code> syntax requires backslash-escaping each character</li>
+<li>For example, <code>\\!\\|</code> represents the string <code>"!|"</code></li>
+<li>Priority: field-level &gt; group-level &gt; upstream</li>
+</ul>
+<h3 id="annotations"><a class="header" href="#annotations">Annotations</a></h3>
+<ul>
+<li><code>annotation</code> can be used for <code>package</code> and <code>rule</code></li>
+<li>If both exist, they are merged on the <code>rule</code> side (<code>rule</code> takes priority)</li>
+</ul>
+<h3 id="pipe-functions"><a class="header" href="#pipe-functions">Pipe Functions</a></h3>
+<ul>
+<li>Field-level pipe functions include: selectors, condition checks, transforms, wrappers</li>
+<li><code>not()</code> wrapper can invert the success/failure result of any pipe function</li>
+<li><code>starts_with()</code> checks if a string field starts with a specified prefix</li>
+<li><code>regex_match()</code> supports regular expression pattern matching</li>
+<li><code>digit_range()</code> supports numeric range checking (closed interval)</li>
+<li><code>chars_replace()</code> performs string replacement operations</li>
+</ul>
+<hr>
+<h2 id="related-documentation"><a class="header" href="#related-documentation">Related Documentation</a></h2>
+<ul>
+<li>Quick Start: <a href="./01-quickstart.html">01-quickstart.md</a></li>
+<li>Core Concepts: <a href="./02-core-concepts.html">02-core-concepts.md</a></li>
+<li>Practical Guide: <a href="./03-practical-guide.html">03-practical-guide.md</a></li>
+<li>Language Reference: <a href="./04-language-reference.html">04-language-reference.md</a></li>
+<li>Functions Reference: <a href="./05-functions-reference.html">05-functions-reference.md</a></li>
+</ul>
+<hr>
+<h2 id="implementation-reference"><a class="header" href="#implementation-reference">Implementation Reference</a></h2>
+<ul>
+<li>Grammar implementation: <code>crates/wp-lang/src/parser/</code></li>
+<li>Pipe functions: <code>crates/wp-lang/src/parser/wpl_fun.rs</code></li>
+<li>Data types: External crate <code>wp-model-core</code></li>
+</ul>
 
                     </main>
 
@@ -210,7 +504,7 @@
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../10-user/03-wpl/functions/function_index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../10-user/03-wpl/07-complete-types-example.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -224,7 +518,7 @@
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../10-user/03-wpl/functions/function_index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../10-user/03-wpl/07-complete-types-example.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

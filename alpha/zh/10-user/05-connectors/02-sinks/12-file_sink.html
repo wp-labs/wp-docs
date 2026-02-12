@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>文件 Sink - Warp Parse 文档 [ALPHA]</title>
+        <title>File Sink 使用指南 - Warp Parse 文档 [ALPHA]</title>
 
 
         <!-- Custom HTML head -->
@@ -37,10 +37,10 @@
             const path_to_root = "../../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-b509f17a.js";
+            window.path_to_searchindex_js = "../../../searchindex-a82d0413.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../../toc-ca145d02.js"></script>
+        <script src="../../../toc-957234dd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -179,83 +179,333 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="文件-sink"><a class="header" href="#文件-sink">文件 Sink</a></h1>
-<p>本文档介绍文件型 Sink 的现行配置与能力，已与代码实现对齐。</p>
+                        <h1 id="file-sink-使用指南"><a class="header" href="#file-sink-使用指南">File Sink 使用指南</a></h1>
 <h2 id="概述"><a class="header" href="#概述">概述</a></h2>
-<p>文件 Sink 将处理后的数据写入本地文件系统，支持多种输出格式和灵活的路径配置。常用于离线验收、归档与调试。</p>
-<p>支持的输出格式（<code>fmt</code>）：<code>json</code>、<code>csv</code>、<code>kv</code>、<code>raw</code>、<code>proto</code>、<code>proto-text</code>（默认 <code>json</code>）。</p>
-<h2 id="连接器定义"><a class="header" href="#连接器定义">连接器定义</a></h2>
-<p>推荐直接使用仓库自带模板（位于 <code>connectors/sink.d/</code>）：</p>
-<pre><code class="language-toml"># JSON
-[[connectors]]
-id = "file_json_sink"
-type = "file"
-allow_override = ["base","file"]
-[connectors.params]
-fmt  = "json"
-base = "./data/out_dat"
-file = "default.json"
-
-# Prototext
-[[connectors]]
-id = "file_proto_sink"
-type = "file"
-allow_override = ["base","file"]
-[connectors.params]
-fmt  = "proto-text"
-base = "./data/out_dat"
-file = "default.dat"
-
-# Raw
-[[connectors]]
-id = "file_raw_sink"
-type = "file"
-allow_override = ["base","file"]
-[connectors.params]
-fmt  = "raw"
-base = "./data/out_dat"
-file = "default.raw"
-</code></pre>
-<h2 id="可用参数路由-params"><a class="header" href="#可用参数路由-params">可用参数（路由 <code>params</code>）</a></h2>
-<ul>
-<li><code>base</code> + <code>file</code>：目标目录与文件名（推荐写法）。</li>
-<li><code>fmt</code>：输出格式（见上）。</li>
-</ul>
-<p>说明：文件 Sink 会自动创建父目录；内部使用缓冲写入并按批次刷新，无“手动缓冲大小/同步模式”等参数。</p>
+<p>File Sink 用于将处理后的数据写入本地文件。支持多种数据格式，可根据需求选择性能模式或安全模式。</p>
+<h2 id="配置参数"><a class="header" href="#配置参数">配置参数</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>参数</th><th>类型</th><th>默认值</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><code>fmt</code></td><td>string</td><td><code>json</code></td><td>输出格式</td></tr>
+<tr><td><code>base</code></td><td>string</td><td><code>./data/out_dat</code></td><td>输出目录</td></tr>
+<tr><td><code>file</code></td><td>string</td><td><code>out.dat</code></td><td>输出文件名</td></tr>
+<tr><td><code>sync</code></td><td>bool</td><td><code>false</code></td><td>是否立即刷新到磁盘</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="支持的输出格式"><a class="header" href="#支持的输出格式">支持的输出格式</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>格式</th><th>说明</th><th>适用场景</th></tr>
+</thead>
+<tbody>
+<tr><td><code>json</code></td><td>JSON 格式（每行一个对象）</td><td>API 对接、数据分析</td></tr>
+<tr><td><code>csv</code></td><td>CSV 格式</td><td>Excel 导入、数据交换</td></tr>
+<tr><td><code>kv</code></td><td>键值对格式</td><td>日志系统、监控</td></tr>
+<tr><td><code>show</code></td><td>人类可读格式</td><td>调试、查看</td></tr>
+<tr><td><code>raw</code></td><td>原始数据</td><td>备份、转发</td></tr>
+<tr><td><code>proto-text</code></td><td>Protocol Buffer 文本格式</td><td>结构化数据、调试</td></tr>
+</tbody>
+</table>
+</div>
 <h2 id="配置示例"><a class="header" href="#配置示例">配置示例</a></h2>
-<ol>
-<li>基础 JSON 输出</li>
-</ol>
-<pre><code class="language-toml"># business.d/json_output.toml
-version = "2.0"
-[sink_group]
-name = "/sink/json_output"
-oml  = ["logs"]
+<h3 id="示例-1-基础-json-输出"><a class="header" href="#示例-1-基础-json-输出">示例 1: 基础 JSON 输出</a></h3>
+<pre><code class="language-toml">[[sinks]]
+name = "json_output"
+kind = "file"
 
-[[sink_group.sinks]]
-name = "json"
-connect = "file_json_sink"
-params = { base = "/var/log/warpflow", file = "application.json" }
+[sinks.params]
+fmt = "json"
+base = "./data/output"
+file = "results.json"
 </code></pre>
-<ol start="2">
-<li>错误日志分离（按过滤器）</li>
-</ol>
-<pre><code class="language-toml">version = "2.0"
-[sink_group]
-name = "/sink/error_logs"
-oml  = ["application_logs"]
+<p>输出文件路径: <code>./data/output/results.json</code></p>
+<h3 id="示例-2-csv-格式输出"><a class="header" href="#示例-2-csv-格式输出">示例 2: CSV 格式输出</a></h3>
+<pre><code class="language-toml">[[sinks]]
+name = "csv_export"
+kind = "file"
 
-[[sink_group.sinks]]
-name = "all"
-connect = "file_json_sink"
-params = { file = "all.json" }
-
-[[sink_group.sinks]]
-name = "err"
-connect = "file_json_sink"
-filter = "./error_filter.wpl"
-params = { file = "err.json" }
+[sinks.params]
+fmt = "csv"
+base = "./exports"
+file = "data.csv"
 </code></pre>
+<h3 id="示例-3-启用同步模式"><a class="header" href="#示例-3-启用同步模式">示例 3: 启用同步模式</a></h3>
+<pre><code class="language-toml">[[sinks]]
+name = "critical_sink"
+kind = "file"
+
+[sinks.params]
+fmt = "json"
+base = "./data/critical"
+file = "important.json"
+sync = true
+</code></pre>
+<p><strong>说明</strong>: 设置 <code>sync = true</code> 可确保数据实时写入磁盘，适合关键数据。</p>
+<h3 id="示例-4-多个输出文件"><a class="header" href="#示例-4-多个输出文件">示例 4: 多个输出文件</a></h3>
+<pre><code class="language-toml"># JSON 格式
+[[sinks]]
+name = "json_output"
+kind = "file"
+
+[sinks.params]
+fmt = "json"
+base = "./data/json"
+file = "output.json"
+
+# CSV 格式
+[[sinks]]
+name = "csv_output"
+kind = "file"
+
+[sinks.params]
+fmt = "csv"
+base = "./data/csv"
+file = "output.csv"
+
+# 原始格式备份
+[[sinks]]
+name = "raw_backup"
+kind = "file"
+
+[sinks.params]
+fmt = "raw"
+base = "./backup"
+file = "backup.dat"
+sync = true
+</code></pre>
+<h2 id="sync-参数说明"><a class="header" href="#sync-参数说明">sync 参数说明</a></h2>
+<h3 id="sync-false-默认"><a class="header" href="#sync-false-默认">sync: false (默认)</a></h3>
+<p><strong>特点</strong>:</p>
+<ul>
+<li>✅ 高性能，适合大量数据输出</li>
+<li>✅ 系统资源占用低</li>
+<li>⚠️ 异常退出时可能丢失少量数据</li>
+</ul>
+<p><strong>适用场景</strong>:</p>
+<ul>
+<li>日志归档</li>
+<li>批量数据导出</li>
+<li>非关键数据存储</li>
+</ul>
+<h3 id="sync-true"><a class="header" href="#sync-true">sync: true</a></h3>
+<p><strong>特点</strong>:</p>
+<ul>
+<li>✅ 数据实时写入磁盘</li>
+<li>✅ 最大程度避免数据丢失</li>
+<li>⚠️ 性能较低，不适合高频写入</li>
+</ul>
+<p><strong>适用场景</strong>:</p>
+<ul>
+<li>审计日志</li>
+<li>金融交易记录</li>
+<li>关键业务数据</li>
+<li>调试环境</li>
+</ul>
+<h3 id="性能对比"><a class="header" href="#性能对比">性能对比</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>模式</th><th>吞吐量</th><th>数据安全性</th><th>推荐场景</th></tr>
+</thead>
+<tbody>
+<tr><td><code>sync: false</code></td><td>🚀 高</td><td>⚠️ 中等</td><td>普通日志、批量导出</td></tr>
+<tr><td><code>sync: true</code></td><td>📊 中等</td><td>✅ 高</td><td>审计日志、关键数据</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="输出格式示例"><a class="header" href="#输出格式示例">输出格式示例</a></h2>
+<h3 id="json-格式"><a class="header" href="#json-格式">JSON 格式</a></h3>
+<pre><code class="language-json">{"timestamp":"2026-02-07T10:30:00Z","level":"INFO","message":"User login"}
+{"timestamp":"2026-02-07T10:31:00Z","level":"WARN","message":"API timeout"}
+</code></pre>
+<h3 id="csv-格式"><a class="header" href="#csv-格式">CSV 格式</a></h3>
+<pre><code class="language-csv">timestamp,level,message
+2026-02-07T10:30:00Z,INFO,User login
+2026-02-07T10:31:00Z,WARN,API timeout
+</code></pre>
+<h3 id="kv-格式"><a class="header" href="#kv-格式">KV 格式</a></h3>
+<pre><code>timestamp=2026-02-07T10:30:00Z level=INFO message="User login"
+timestamp=2026-02-07T10:31:00Z level=WARN message="API timeout"
+</code></pre>
+<h2 id="使用场景"><a class="header" href="#使用场景">使用场景</a></h2>
+<h3 id="场景-1-应用日志收集"><a class="header" href="#场景-1-应用日志收集">场景 1: 应用日志收集</a></h3>
+<pre><code class="language-toml">[[sinks]]
+name = "app_log"
+kind = "file"
+
+[sinks.params]
+fmt = "json"
+base = "./logs"
+file = "app.log"
+sync = false
+</code></pre>
+<p><strong>推荐配置</strong>: 使用 <code>sync = false</code> 获得最佳性能。</p>
+<h3 id="场景-2-审计日志"><a class="header" href="#场景-2-审计日志">场景 2: 审计日志</a></h3>
+<pre><code class="language-toml">[[sinks]]
+name = "audit_log"
+kind = "file"
+
+[sinks.params]
+fmt = "json"
+base = "./audit"
+file = "security.log"
+sync = true
+</code></pre>
+<p><strong>推荐配置</strong>: 使用 <code>sync = true</code> 确保审计记录不丢失。</p>
+<h3 id="场景-3-数据导出到-excel"><a class="header" href="#场景-3-数据导出到-excel">场景 3: 数据导出到 Excel</a></h3>
+<pre><code class="language-toml">[[sinks]]
+name = "excel_export"
+kind = "file"
+
+[sinks.params]
+fmt = "csv"
+base = "./exports"
+file = "report.csv"
+sync = false
+</code></pre>
+<p><strong>提示</strong>: CSV 格式可直接用 Excel 打开。</p>
+<h3 id="场景-4-调试输出"><a class="header" href="#场景-4-调试输出">场景 4: 调试输出</a></h3>
+<pre><code class="language-toml">[[sinks]]
+name = "debug_output"
+kind = "file"
+
+[sinks.params]
+fmt = "show"
+base = "./debug"
+file = "trace.log"
+sync = true
+</code></pre>
+<p><strong>推荐配置</strong>: 调试时使用 <code>sync = true</code> 便于实时查看。</p>
+<h3 id="场景-5-多格式备份"><a class="header" href="#场景-5-多格式备份">场景 5: 多格式备份</a></h3>
+<pre><code class="language-toml"># JSON - 用于程序处理
+[[sinks]]
+name = "json_sink"
+kind = "file"
+
+[sinks.params]
+fmt = "json"
+file = "data.json"
+
+# CSV - 用于 Excel 分析
+[[sinks]]
+name = "csv_sink"
+kind = "file"
+
+[sinks.params]
+fmt = "csv"
+file = "data.csv"
+
+# 原始格式 - 用于完整备份
+[[sinks]]
+name = "raw_backup"
+kind = "file"
+
+[sinks.params]
+fmt = "raw"
+file = "backup.dat"
+sync = true
+</code></pre>
+<h2 id="文件名规范"><a class="header" href="#文件名规范">文件名规范</a></h2>
+<h3 id="建议的命名方式"><a class="header" href="#建议的命名方式">建议的命名方式</a></h3>
+<pre><code class="language-toml"># ✅ 带日期
+[sinks.params]
+file = "app_2024-01-01.log"
+</code></pre>
+<pre><code class="language-toml"># ✅ 描述性名称
+[sinks.params]
+file = "access.log"
+</code></pre>
+<pre><code class="language-toml"># ❌ 通用名称
+[sinks.params]
+file = "out.dat"
+</code></pre>
+<h3 id="目录规划示例"><a class="header" href="#目录规划示例">目录规划示例</a></h3>
+<pre><code>./data/
+  ├── logs/           # 普通日志
+  ├── audit/          # 审计日志
+  ├── exports/        # 数据导出
+  ├── backup/         # 备份数据
+  └── debug/          # 调试输出
+</code></pre>
+<h2 id="最佳实践"><a class="header" href="#最佳实践">最佳实践</a></h2>
+<h3 id="1-根据数据重要性选择-sync-模式"><a class="header" href="#1-根据数据重要性选择-sync-模式">1. 根据数据重要性选择 sync 模式</a></h3>
+<pre><code>关键数据 → sync: true
+普通数据 → sync: false
+</code></pre>
+<h3 id="2-使用描述性文件名"><a class="header" href="#2-使用描述性文件名">2. 使用描述性文件名</a></h3>
+<pre><code class="language-toml"># ✅ 清晰明了
+[sinks.params]
+file = "user_login_2024-01.log"
+</code></pre>
+<h3 id="3-合理规划目录结构"><a class="header" href="#3-合理规划目录结构">3. 合理规划目录结构</a></h3>
+<p>按数据类型或重要性分目录存储。</p>
+<h3 id="4-定期清理旧文件"><a class="header" href="#4-定期清理旧文件">4. 定期清理旧文件</a></h3>
+<p>配合日志轮转工具（如 logrotate）管理文件。</p>
+<h3 id="5-监控磁盘空间"><a class="header" href="#5-监控磁盘空间">5. 监控磁盘空间</a></h3>
+<p>设置告警，避免磁盘写满。</p>
+<h2 id="注意事项"><a class="header" href="#注意事项">注意事项</a></h2>
+<h3 id="1-目录权限"><a class="header" href="#1-目录权限">1. 目录权限</a></h3>
+<ul>
+<li>✅ 确保输出目录存在</li>
+<li>✅ 确保有写入权限</li>
+<li>⚠️ 检查 SELinux/AppArmor 策略</li>
+</ul>
+<h3 id="2-磁盘空间"><a class="header" href="#2-磁盘空间">2. 磁盘空间</a></h3>
+<ul>
+<li>⚠️ 监控磁盘使用率</li>
+<li>⚠️ 配置空间不足告警</li>
+<li>✅ 定期清理历史文件</li>
+</ul>
+<h3 id="3-性能影响"><a class="header" href="#3-性能影响">3. 性能影响</a></h3>
+<ul>
+<li><code>sync: true</code> 会降低性能</li>
+<li>高频写入场景慎用 <code>sync: true</code></li>
+<li>使用 SSD 可改善性能</li>
+</ul>
+<h2 id="常见问题"><a class="header" href="#常见问题">常见问题</a></h2>
+<h3 id="q-如何查看输出文件"><a class="header" href="#q-如何查看输出文件">Q: 如何查看输出文件？</a></h3>
+<p><strong>A</strong>: 直接使用文本编辑器或命令行工具：</p>
+<pre><code class="language-bash"># 查看 JSON 文件
+cat ./data/output/results.json
+
+# 实时查看（追加模式）
+tail -f ./data/output/results.json
+</code></pre>
+<h3 id="q-文件过大如何处理"><a class="header" href="#q-文件过大如何处理">Q: 文件过大如何处理？</a></h3>
+<p><strong>A</strong>: 配合日志轮转工具：</p>
+<pre><code class="language-bash"># 使用 logrotate
+logrotate /etc/logrotate.d/wp-motor
+</code></pre>
+<h3 id="q-sync-参数如何选择"><a class="header" href="#q-sync-参数如何选择">Q: sync 参数如何选择？</a></h3>
+<p><strong>A</strong>: 参考以下原则：</p>
+<ul>
+<li>关键数据（审计、交易）→ <code>sync: true</code></li>
+<li>普通数据（日志、统计）→ <code>sync: false</code></li>
+<li>不确定时使用默认值 <code>false</code></li>
+</ul>
+<h3 id="q-支持哪些字符编码"><a class="header" href="#q-支持哪些字符编码">Q: 支持哪些字符编码？</a></h3>
+<p><strong>A</strong>: 默认使用 UTF-8 编码。</p>
+<h2 id="总结"><a class="header" href="#总结">总结</a></h2>
+<p>File Sink 是最常用的输出方式，适合各种场景：</p>
+<ul>
+<li>✅ 配置简单，参数清晰</li>
+<li>✅ 支持多种格式</li>
+<li>✅ 灵活的性能/安全平衡</li>
+<li>✅ 可靠的写入机制</li>
+</ul>
+<p><strong>记住</strong>:</p>
+<ul>
+<li>普通数据用 <code>sync: false</code>（高性能）</li>
+<li>关键数据用 <code>sync: true</code>（高安全）</li>
+</ul>
+<hr>
+<p><strong>版本</strong>: 1.15.0
+<strong>更新日期</strong>: 2026-02-07</p>
 
                     </main>
 

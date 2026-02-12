@@ -193,18 +193,25 @@ def generate_fixed_summary(docs_root):
 
 def main():
     """Main function"""
-    docs_root = Path(__file__).parent / "docs-zh"
-    summary_content = generate_fixed_summary(docs_root)
+    base_dir = Path(__file__).parent
 
-    # Write SUMMARY.md
-    summary_path = docs_root / "SUMMARY.md"
-    with open(summary_path, "w", encoding="utf-8") as f:
-        f.write(summary_content)
+    for lang_dir in ["docs-zh", "docs-en"]:
+        docs_root = base_dir / lang_dir
+        if not docs_root.exists():
+            print(f"Skipping {lang_dir}: directory not found")
+            continue
 
-    print(f"Generated {summary_path}")
-    print("\nGenerated structure:")
-    print("-" * 40)
-    print(summary_content)
+        summary_content = generate_fixed_summary(docs_root)
+
+        # Write SUMMARY.md
+        summary_path = docs_root / "SUMMARY.md"
+        with open(summary_path, "w", encoding="utf-8") as f:
+            f.write(summary_content)
+
+        print(f"Generated {summary_path}")
+        print("-" * 40)
+        print(summary_content)
+        print()
 
 
 if __name__ == "__main__":

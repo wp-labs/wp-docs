@@ -13,3 +13,4 @@ This guide introduces how to configure and use various data outputs (Sinks) in t
 | `kafka` | Output to Kafka | - |
 | `prometheus` | Prometheus metrics exposure | [Prometheus Sink Configuration](./14-prometheus_sink.md) |
 | `victorialogs` | Output to VictoriaLogs | [VictoriaLogs Sink Configuration](./16-victorialogs.md) |
+| `mysql` | Output to MySQL database | [MySQL Sink Configuration](./19-mysql_sink.md) |

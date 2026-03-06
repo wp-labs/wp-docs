@@ -76,6 +76,8 @@
       - [Kafka Sink](10-user/05-connectors/02-sinks/18-kafka_sink.md)
       - [MySQL Sink](10-user/05-connectors/02-sinks/19-mysql_sink.md)
       - [Elasticsearch Sink](10-user/05-connectors/02-sinks/20-elasticsearch_sink.md)
+      - [ClickHouse Sink](10-user/05-connectors/02-sinks/21-clickhouse.md)
+      - [HTTP Sink](10-user/05-connectors/02-sinks/22-http.md)
   - [排障指南（Troubleshooting）](10-user/09-FQA/troubleshooting.md)
 
 - [BenchMark Report](20-report/benchmark.md)

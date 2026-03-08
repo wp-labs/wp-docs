@@ -65,6 +65,10 @@
       - [Prometheus Sink](10-user/05-connectors/02-sinks/14-prometheus_sink.md)
       - [TCP Sink](10-user/05-connectors/02-sinks/15-tcp_sink.md)
       - [VictoriaLogs](10-user/05-connectors/02-sinks/16-victorialogs.md)
+      - [Doris Sink](10-user/05-connectors/02-sinks/17-doris.md)
+      - [Elasticsearch Sink](10-user/05-connectors/02-sinks/20-elasticsearch_sink.md)
+      - [ClickHouse Sink](10-user/05-connectors/02-sinks/21-clickhouse.md)
+      - [HTTP Sink](10-user/05-connectors/02-sinks/22-http.md)
   - [troubleshooting.md](10-user/09-FQA/troubleshooting.md)
 
 - [Benchmark Report](20-report/benchmark.md)

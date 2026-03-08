@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-a4711c88.js";
+            window.path_to_searchindex_js = "searchindex-4f2850be.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-957234dd.js"></script>
+        <script src="toc-23bb9976.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -16503,6 +16503,7 @@ framing = "line"  # 或 "len"
 <tr><td><code>kafka</code></td><td>输出到 Kafka</td><td><a href="#kafka-sink">Kafka Sink 配置</a></td></tr>
 <tr><td><code>mysql</code></td><td>输出到 MySQL</td><td><a href="#mysql-sink">MySQL Sink 配置</a></td></tr>
 <tr><td><code>doris</code></td><td>输出到 Doris</td><td><a href="#doris-sink">Doris Sink 配置</a></td></tr>
+<tr><td><code>elasticsearch</code></td><td>输出到 Elasticsearch</td><td><a href="#elasticsearch-sink">Elasticsearch Sink 配置</a></td></tr>
 <tr><td><code>prometheus</code></td><td>Prometheus 指标暴露</td><td><a href="#prometheus-sink">Prometheus Sink 配置</a></td></tr>
 </tbody>
 </table>
@@ -17325,20 +17326,38 @@ fmt = "json"
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="doris-sink"><a class="header" href="#doris-sink">Doris Sink</a></h1>
-<p>Doris sink 通过 Doris 的 MySQL 协议入口建立连接，并使用 Stream Load 写入数据。相比 mysql sink，对 Doris 兼容性更好（mysql sink 不兼容 Doris，doris sink 兼容 MySQL）。</p>
+<p>Doris sink 用于通过 Stream Load API 将数据批量写入 Apache Doris，适合日志类、明细类数据的高吞吐落库场景。</p>
 <h2 id="连接器定义-7"><a class="header" href="#连接器定义-7">连接器定义</a></h2>
-<p>推荐使用仓库自带模板（位于 <code>connectors/sink.d/50-doris.toml</code>）：</p>
+<p>推荐使用仓库自带模板（位于 <code>connectors/sink.d/60-doris.toml</code>）：</p>
 <pre><code class="language-toml">[[connectors]]
 id = "doris_sink"
 type = "doris"
-allow_override = ["endpoint", "user", "password", "database", "table", "create_table"]
+allow_override = [
+  "endpoint",
+  "user",
+  "password",
+  "database",
+  "table",
+  "timeout_secs",
+  "max_retries",
+  "headers",
+  "batch_size"
+]
 
 [connectors.params]
-endpoint = "mysql://localhost:9030?charset=utf8mb4&amp;connect_timeout=10"
+endpoint = "http://localhost:8040"
 user = "root"
 password = ""
-database = "wp_test"
+database = "test_db"
 table = "events_parsed"
+timeout_secs = 30
+max_retries = 3
+batch_size = 100_0000
+
+[connectors.params.headers]
+strip_outer_array = "false"
+max_filter_ratio = "0.1"
+strict_mode = "false"
 </code></pre>
 <h2 id="可用参数-2"><a class="header" href="#可用参数-2">可用参数</a></h2>
 <div class="table-wrapper">
@@ -17347,75 +17366,48 @@ table = "events_parsed"
 <tr><th>参数</th><th>类型</th><th>说明</th></tr>
 </thead>
 <tbody>
-<tr><td><code>endpoint</code></td><td>string</td><td>Doris FE 的 MySQL 访问地址（DSN 形式），如 <code>mysql://host:9030?charset=utf8mb4</code>（必填）</td></tr>
-<tr><td><code>user</code></td><td>string</td><td>Doris 用户名（必填）</td></tr>
-<tr><td><code>password</code></td><td>string</td><td>Doris 密码（可为空）</td></tr>
+<tr><td><code>endpoint</code></td><td>string</td><td>Doris Stream Load 地址（必填，推荐使用 BE HTTP 端口，如 <code>http://host:8040</code>）</td></tr>
+<tr><td><code>user</code></td><td>string</td><td>Doris 用户名（可选，默认 <code>root</code>）</td></tr>
+<tr><td><code>password</code></td><td>string</td><td>Doris 密码（可选）</td></tr>
 <tr><td><code>database</code></td><td>string</td><td>目标数据库（必填）</td></tr>
-<tr><td><code>table</code></td><td>string</td><td>目标表（必填）</td></tr>
-<tr><td><code>create_table</code></td><td>string</td><td>可选建表 SQL，库表不存在时自动执行</td></tr>
-<tr><td><code>pool_size</code></td><td>int</td><td>连接池大小（可选，常用 4）</td></tr>
-<tr><td><code>batch_size</code></td><td>int</td><td>单批写入事件数量（可选，常用 2048）</td></tr>
+<tr><td><code>table</code></td><td>string</td><td>目标表名（必填）</td></tr>
+<tr><td><code>timeout_secs</code></td><td>int</td><td>单次请求超时秒数（默认 <code>30</code>）</td></tr>
+<tr><td><code>max_retries</code></td><td>int</td><td>写入失败重试次数（默认 <code>3</code>）</td></tr>
+<tr><td><code>batch_size</code></td><td>int</td><td>批量写入大小（默认 <code>1000000</code>）</td></tr>
+<tr><td><code>headers</code></td><td>table</td><td>Stream Load 自定义 Header（可选），如 <code>columns</code>、<code>strict_mode</code>、<code>max_filter_ratio</code></td></tr>
 </tbody>
 </table>
 </div>
 <h2 id="配置示例-13"><a class="header" href="#配置示例-13">配置示例</a></h2>
-<h3 id="基础用法-1"><a class="header" href="#基础用法-1">基础用法</a></h3>
+<h3 id="基础用法参考-extensionsdoris"><a class="header" href="#基础用法参考-extensionsdoris">基础用法（参考 <code>extensions/doris</code>）</a></h3>
 <pre><code class="language-toml">version = "2.0"
 
 [sink_group]
-name = "/sink/doris"
-oml  = ["example2"]
+name = "doris"
+rule = ["*"]
+batch_timeout_ms = 5000
+parallel = 4
 
 [[sink_group.sinks]]
 name = "doris_stream_load"
 connect = "doris_sink"
 
 [sink_group.sinks.params]
-endpoint = "mysql://localhost:9030?charset=utf8mb4&amp;connect_timeout=10"
-database = "wp_test"
-table = "events_parsed"
+endpoint = "http://localhost:8040"
+database = "test_db"
+table = "wp_nginx"
 user = "root"
 password = ""
+timeout_secs = 30
+max_retries = 1
+batch_size = 10_0000
 </code></pre>
-<h3 id="自动建表"><a class="header" href="#自动建表">自动建表</a></h3>
-<pre><code class="language-toml">[[sink_group.sinks]]
-name = "doris_stream_load"
-connect = "doris_sink"
-
-[sink_group.sinks.params]
-endpoint = "mysql://localhost:9030?charset=utf8mb4&amp;connect_timeout=10"
-database = "wp_test"
-table = "events_parsed"
-create_table = """
-CREATE DATABASE IF NOT EXISTS wp_test;
-CREATE TABLE events_parsed (
-    sn           VARCHAR(64) COMMENT '设备序列号',
-    dev_name     VARCHAR(128) COMMENT '设备名称',
-    sip          VARCHAR(45) COMMENT '源 IP',
-    from_zone    VARCHAR(32) COMMENT '来源区域',
-    from_ip      VARCHAR(45) COMMENT '来源 IP',
-    requ_uri     VARCHAR(512) COMMENT '请求 URI',
-    requ_status  SMALLINT COMMENT '请求状态码',
-    resp_len     INT COMMENT '响应长度',
-    src_city     VARCHAR(32) COMMENT '源城市'
-)
-    ENGINE=OLAP
-    DUPLICATE KEY(sn)
-COMMENT '设备请求事件解析表'
-DISTRIBUTED BY HASH(sn) BUCKETS 8
-PROPERTIES (
-    "replication_num" = "1"
-);
-"""
-user = "root"
-password = ""
+<h3 id="指定-stream-load-列映射"><a class="header" href="#指定-stream-load-列映射">指定 Stream Load 列映射</a></h3>
+<pre><code class="language-toml">[sink_group.sinks.params.headers]
+strip_outer_array = "false"
+max_filter_ratio = "0.1"
+columns = "wp_event_id,wp_src_key,sip,timestamp,`http/request`,size,referer,`http/agent`"
 </code></pre>
-<h2 id="注意事项-7"><a class="header" href="#注意事项-7">注意事项</a></h2>
-<ul>
-<li>确保 Doris FE 的 MySQL 端口可访问，并开启 Stream Load 能力。</li>
-<li>需要为账号授予 <code>SELECT/INSERT</code> 以及 <code>LOAD</code> 权限。</li>
-<li>完整端到端示例可参考 <code>wp-examples/extensions/doris/README.md</code>。</li>
-</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="kafka-sink"><a class="header" href="#kafka-sink">Kafka Sink</a></h1>
 <p>Kafka sink 用于将数据输出到 Apache Kafka。启动时会尝试创建目标 topic（使用 <code>num_partitions</code>/<code>replication</code> 作为分区与副本配置）。</p>
@@ -17449,7 +17441,7 @@ replication = 1
 </table>
 </div>
 <h2 id="配置示例-14"><a class="header" href="#配置示例-14">配置示例</a></h2>
-<h3 id="基础用法-2"><a class="header" href="#基础用法-2">基础用法</a></h3>
+<h3 id="基础用法-1"><a class="header" href="#基础用法-1">基础用法</a></h3>
 <pre><code class="language-toml">version = "2.0"
 
 [sink_group]
@@ -17479,7 +17471,7 @@ config = [
   "linger.ms=5"
 ]
 </code></pre>
-<h2 id="注意事项-8"><a class="header" href="#注意事项-8">注意事项</a></h2>
+<h2 id="注意事项-7"><a class="header" href="#注意事项-7">注意事项</a></h2>
 <ul>
 <li><code>config</code> 参数会透传给 Kafka producer（rdkafka），格式必须是 <code>key=value</code> 字符串。</li>
 <li>若集群禁用自动建 topic，请提前在 Kafka 中创建目标 topic。</li>
@@ -17543,13 +17535,312 @@ table = "nginx_logs"
 columns = ["sip", "timestamp", "http/request", "status", "size", "referer", "http/agent", "wp_event_id"]
 batch = 20
 </code></pre>
-<h2 id="注意事项-9"><a class="header" href="#注意事项-9">注意事项</a></h2>
+<h2 id="注意事项-8"><a class="header" href="#注意事项-8">注意事项</a></h2>
 <ul>
 <li>表结构必须包含 <code>wp_event_id</code>（建议为 <code>BIGINT</code> 主键），否则写入会失败或产生重复。</li>
 <li><code>columns</code> 中的字段名需与 OML 输出字段一致；缺失字段会以 <code>NULL</code> 写入。</li>
 <li>可通过环境变量 <code>MYSQL_URL</code> 覆盖连接串（格式：<code>mysql://user:pass@host:port/db</code>）。</li>
 <li>端到端示例可参考 <code>wp-examples/extensions/tcp_mysql/README.md</code>。</li>
 </ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="elasticsearch-sink"><a class="header" href="#elasticsearch-sink">Elasticsearch Sink</a></h1>
+<p>Elasticsearch sink 用于将解析后的记录批量写入 Elasticsearch 索引，适合检索、聚合与可视化场景。</p>
+<h2 id="连接器定义-10"><a class="header" href="#连接器定义-10">连接器定义</a></h2>
+<p>推荐使用仓库自带模板（位于 <code>connectors/sink.d/90-elasticsearch.toml</code>）：</p>
+<pre><code class="language-toml">[[connectors]]
+id = "elasticsearch_sink"
+type = "elasticsearch"
+allow_override = [
+  "protocol",
+  "host",
+  "port",
+  "username",
+  "password",
+  "index",
+  "timeout_secs",
+  "max_retries",
+  "batch_size"
+]
+
+[connectors.params]
+protocol = "http"
+host = "localhost"
+port = "9200"
+username = "elastic"
+password = ""
+index = "wp_nginx"
+timeout_secs = 30
+max_retries = 3
+batch_size = 100_0000
+</code></pre>
+<h2 id="可用参数-5"><a class="header" href="#可用参数-5">可用参数</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>参数</th><th>类型</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><code>protocol</code></td><td>string</td><td>协议（<code>http</code> 或 <code>https</code>，默认 <code>http</code>）</td></tr>
+<tr><td><code>host</code></td><td>string</td><td>Elasticsearch 主机地址（必填）</td></tr>
+<tr><td><code>port</code></td><td>string/int</td><td>Elasticsearch 端口（默认 <code>9200</code>）</td></tr>
+<tr><td><code>username</code></td><td>string</td><td>用户名（可选）</td></tr>
+<tr><td><code>password</code></td><td>string</td><td>密码（可选）</td></tr>
+<tr><td><code>index</code></td><td>string</td><td>目标索引名称（必填）</td></tr>
+<tr><td><code>timeout_secs</code></td><td>int</td><td>单次请求超时秒数（默认 <code>30</code>）</td></tr>
+<tr><td><code>max_retries</code></td><td>int</td><td>写入失败重试次数（默认 <code>3</code>）</td></tr>
+<tr><td><code>batch_size</code></td><td>int</td><td>批量写入大小（默认 <code>1000000</code>）</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="配置示例-16"><a class="header" href="#配置示例-16">配置示例</a></h2>
+<h3 id="基础用法参考-extensionselasticsearch"><a class="header" href="#基础用法参考-extensionselasticsearch">基础用法（参考 <code>extensions/elasticsearch</code>）</a></h3>
+<pre><code class="language-toml">version = "2.0"
+
+[sink_group]
+name = "es"
+rule = ["*"]
+batch_timeout_ms = 5000
+parallel = 4
+
+[[sink_group.sinks]]
+name = "es_stream_load"
+connect = "elasticsearch_sink"
+
+[sink_group.sinks.params]
+protocol = "http"
+host = "localhost"
+port = "9200"
+username = "elastic"
+password = "zgVClXP2"
+index = "wp_nginx"
+timeout_secs = 30
+max_retries = 3
+batch_size = 100_0000
+</code></pre>
+<h2 id="注意事项-9"><a class="header" href="#注意事项-9">注意事项</a></h2>
+<ul>
+<li>示例环境开启了认证，需提供有效用户名/密码。</li>
+<li>首次写入通常会自动创建索引，生产环境建议提前规划 mapping 与分片策略。</li>
+<li>可使用 <code>_count</code> 与 <code>_search</code> 接口快速验证写入结果。</li>
+<li>完整示例可参考 <code>wp-examples/extensions/elasticsearch/README.md</code>。</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="clickhouse-sink"><a class="header" href="#clickhouse-sink">ClickHouse Sink</a></h1>
+<p>ClickHouse sink 用于将解析后的记录批量写入 ClickHouse 数据库，适合大规模日志分析和实时数据查询场景。</p>
+<h2 id="连接器定义-11"><a class="header" href="#连接器定义-11">连接器定义</a></h2>
+<pre><code class="language-toml">[[connectors]]
+id = "clickhouse_sink"
+type = "clickhouse"
+allow_override = [
+  "endpoint",
+  "database",
+  "table",
+  "username",
+  "password",
+  "timeout_secs",
+  "max_retries"
+]
+
+[connectors.params]
+endpoint = "http://clickhouse-server:8123"
+database = ""
+table = ""
+username = ""
+password = ""
+timeout_secs = 30
+max_retries = 3
+</code></pre>
+<h2 id="可用参数-6"><a class="header" href="#可用参数-6">可用参数</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>参数</th><th>类型</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><code>endpoint</code></td><td>string</td><td>ClickHouse 端点地址，格式：<code>http://host:port</code> 或 <code>https://host:port</code>（必填）</td></tr>
+<tr><td><code>database</code></td><td>string</td><td>目标数据库名称（必填）</td></tr>
+<tr><td><code>table</code></td><td>string</td><td>目标表名称（必填）</td></tr>
+<tr><td><code>username</code></td><td>string</td><td>认证用户名（必填）</td></tr>
+<tr><td><code>password</code></td><td>string</td><td>认证密码（可选，默认为空）</td></tr>
+<tr><td><code>timeout_secs</code></td><td>int</td><td>单次请求超时秒数（默认 <code>30</code>）</td></tr>
+<tr><td><code>max_retries</code></td><td>int</td><td>写入失败重试次数（默认 <code>3</code>，<code>-1</code> 表示无限重试）</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="配置示例-17"><a class="header" href="#配置示例-17">配置示例</a></h2>
+<h3 id="基础用法-2"><a class="header" href="#基础用法-2">基础用法</a></h3>
+<pre><code class="language-toml">version = "2.0"
+
+[sink_group]
+name = "clickhouse"
+rule = ["*"]
+batch_timeout_ms = 5000
+parallel = 4
+
+[[sink_group.sinks]]
+name = "clickhouse_stream_load"
+connect = "clickhouse_sink"
+
+[sink_group.sinks.params]
+endpoint = "http://localhost:8123"
+database = "default"
+table = "wp_nginx"
+username = "default"
+password = "default"
+timeout_secs = 30
+max_retries = 3
+</code></pre>
+<h3 id="https-连接"><a class="header" href="#https-连接">HTTPS 连接</a></h3>
+<pre><code class="language-toml">[sink_group.sinks.params]
+endpoint = "https://clickhouse.example.com:8443"
+database = "production"
+table = "logs"
+username = "app_user"
+password = "secure_password"
+timeout_secs = 60
+max_retries = 5
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="http-sink"><a class="header" href="#http-sink">HTTP Sink</a></h1>
+<p>HTTP sink 用于将解析后的记录以多种格式发送到 HTTP/HTTPS 端点，适用于 webhook、API 集成和自定义数据管道场景。</p>
+<h2 id="连接器定义-12"><a class="header" href="#连接器定义-12">连接器定义</a></h2>
+<pre><code class="language-toml">[[connectors]]
+id = "http_sink"
+type = "http"
+allow_override = [
+  "endpoint",
+  "method",
+  "username",
+  "password",
+  "headers",
+  "fmt",
+  "batch_size",
+  "timeout_secs",
+  "max_retries",
+  "compression"
+]
+
+[connectors.params]
+endpoint = "http://localhost:8080/webhook"
+method = "POST"
+username = ""
+password = ""
+fmt = "json"
+batch_size = 100
+timeout_secs = 60
+max_retries = 3
+compression = "none"
+</code></pre>
+<h2 id="可用参数-7"><a class="header" href="#可用参数-7">可用参数</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>参数</th><th>类型</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><code>endpoint</code></td><td>string</td><td>HTTP(S) 端点 URL（必填）</td></tr>
+<tr><td><code>method</code></td><td>string</td><td>HTTP 方法：GET、POST、PUT、PATCH、DELETE（默认 <code>POST</code>）</td></tr>
+<tr><td><code>username</code></td><td>string</td><td>HTTP Basic 认证用户名（可选）</td></tr>
+<tr><td><code>password</code></td><td>string</td><td>HTTP Basic 认证密码（可选）</td></tr>
+<tr><td><code>headers</code></td><td>object</td><td>自定义 HTTP 头，JSON 对象格式（可选）</td></tr>
+<tr><td><code>fmt</code></td><td>string</td><td>输出格式：<code>json</code>、<code>ndjson</code>、<code>csv</code>、<code>kv</code>、<code>raw</code>、<code>proto-text</code>（默认 <code>json</code>）</td></tr>
+<tr><td><code>batch_size</code></td><td>int</td><td>批量大小：1 表示单条发送，&gt;1 表示批量发送（默认 <code>1</code>）</td></tr>
+<tr><td><code>timeout_secs</code></td><td>int</td><td>请求超时时间（秒，默认 <code>60</code>）</td></tr>
+<tr><td><code>max_retries</code></td><td>int</td><td>请求失败重试次数：-1 表示无限重试，0 表示不重试（默认 <code>3</code>）</td></tr>
+<tr><td><code>compression</code></td><td>string</td><td>数据压缩：<code>none</code>、<code>gzip</code>（默认 <code>none</code>）</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="输出格式"><a class="header" href="#输出格式">输出格式</a></h2>
+<p>设置输出格式会自动设置对应的<code>content-type</code>.</p>
+<h3 id="json-格式-fmt--json"><a class="header" href="#json-格式-fmt--json">JSON 格式 (<code>fmt = "json"</code>)</a></h3>
+<p>以 JSON 数组形式发送记录：</p>
+<pre><code class="language-json">[
+  {"field1": "value1", "field2": "value2"},
+  {"field1": "value3", "field2": "value4"}
+]
+</code></pre>
+<h3 id="ndjson-格式-fmt--ndjson"><a class="header" href="#ndjson-格式-fmt--ndjson">NDJSON 格式 (<code>fmt = "ndjson"</code>)</a></h3>
+<p>以换行分隔的 JSON 形式发送记录（每行一条记录）：</p>
+<pre><code>{"field1": "value1", "field2": "value2"}
+{"field1": "value3", "field2": "value4"}
+</code></pre>
+<h3 id="csv-格式-fmt--csv"><a class="header" href="#csv-格式-fmt--csv">CSV 格式 (<code>fmt = "csv"</code>)</a></h3>
+<p>以 CSV 格式发送记录（包含表头）：</p>
+<pre><code>field1,field2
+value1,value2
+value3,value4
+</code></pre>
+<h3 id="kv-格式-fmt--kv"><a class="header" href="#kv-格式-fmt--kv">KV 格式 (<code>fmt = "kv"</code>)</a></h3>
+<p>以键值对形式发送记录（每行一条记录）：</p>
+<pre><code>field1=value1 field2=value2
+field1=value3 field2=value4
+</code></pre>
+<h3 id="raw-格式-fmt--raw"><a class="header" href="#raw-格式-fmt--raw">Raw 格式 (<code>fmt = "raw"</code>)</a></h3>
+<p>发送原始消息内容，不进行解析。</p>
+<h3 id="proto-text-格式-fmt--proto-text"><a class="header" href="#proto-text-格式-fmt--proto-text">Proto-Text 格式 (<code>fmt = "proto-text"</code>)</a></h3>
+<p>以 Protocol Buffer 文本格式发送记录。(不会添加字段名)</p>
+<h2 id="压缩"><a class="header" href="#压缩">压缩</a></h2>
+<p>当启用 <code>compression = "gzip"</code> 时：</p>
+<ul>
+<li>请求体使用 gzip 压缩</li>
+<li>自动添加 <code>Content-Encoding: gzip</code> 头</li>
+<li>减少网络带宽占用，特别适合大批量数据</li>
+<li>建议批量大小 &gt; 1000 时启用</li>
+</ul>
+<h2 id="认证"><a class="header" href="#认证">认证</a></h2>
+<h3 id="http-basic-认证"><a class="header" href="#http-basic-认证">HTTP Basic 认证</a></h3>
+<pre><code class="language-toml">[connectors.params]
+endpoint = "https://api.example.com/webhook"
+username = "myuser"
+password = "mypassword"
+</code></pre>
+<h3 id="自定义头如-bearer-token"><a class="header" href="#自定义头如-bearer-token">自定义头（如 Bearer Token）</a></h3>
+<pre><code class="language-toml">[connectors.params]
+endpoint = "https://api.example.com/webhook"
+[connectors.params.headers]
+Authorization="Bearer YOUR_TOKEN_HERE"
+</code></pre>
+<h2 id="配置示例-18"><a class="header" href="#配置示例-18">配置示例</a></h2>
+<h3 id="示例-1简单-webhook单条发送"><a class="header" href="#示例-1简单-webhook单条发送">示例 1：简单 Webhook（单条发送）</a></h3>
+<pre><code class="language-toml">version = "2.0"
+
+[sink_group]
+name = "webhook"
+rule = ["*"]
+batch_timeout_ms = 1000
+parallel = 2
+
+[[sink_group.sinks]]
+name = "http_webhook"
+connect = "http_sink"
+
+[sink_group.sinks.params]
+endpoint = "http://localhost:8080/webhook"
+method = "POST"
+fmt = "json"
+batch_size = 1
+timeout_secs = 30
+max_retries = 3
+compression = "none"
+</code></pre>
+<p><code>https://github.com/wp-labs/wp-examples</code>中提供了完整示例，和测试服务器 <code>extensions/http/test_server.py</code>：</p>
+<h2 id="重试策略"><a class="header" href="#重试策略">重试策略</a></h2>
+<p>HTTP sink 实现了指数退避重试机制：</p>
+<ul>
+<li>初始重试延迟：1 秒</li>
+<li>每次重试延迟翻倍（2秒、4秒、8秒…）</li>
+<li>对 5xx 服务器错误和网络故障进行重试</li>
+<li>不对 4xx 客户端错误重试（429 Too Many Requests 除外）</li>
+</ul>
+<h2 id="性能优化建议-1"><a class="header" href="#性能优化建议-1">性能优化建议</a></h2>
+<ol>
+<li><strong>批量大小</strong>：高吞吐场景使用较大批量（1000-10000）</li>
+<li><strong>压缩</strong>：批量 &gt; 1000 条记录时启用 gzip 压缩</li>
+<li><strong>并发</strong>：增加 <code>parallel</code> 设置以提高并发处理能力</li>
+<li><strong>格式</strong>：大批量场景下 <code>ndjson</code> 格式性能优于 <code>json</code></li>
+<li><strong>超时</strong>：根据端点响应时间调整 <code>timeout_secs</code></li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="排障指南troubleshooting"><a class="header" href="#排障指南troubleshooting">排障指南（Troubleshooting）</a></h1>
 <!-- 角色：使用配置者 | 最近验证：2025-12-11 -->

@@ -75,6 +75,9 @@
       - [Doris Sink](10-user/05-connectors/02-sinks/17-doris.md)
       - [Kafka Sink](10-user/05-connectors/02-sinks/18-kafka_sink.md)
       - [MySQL Sink](10-user/05-connectors/02-sinks/19-mysql_sink.md)
+      - [Elasticsearch Sink](10-user/05-connectors/02-sinks/20-elasticsearch_sink.md)
+      - [ClickHouse Sink](10-user/05-connectors/02-sinks/21-clickhouse.md)
+      - [HTTP Sink](10-user/05-connectors/02-sinks/22-http.md)
   - [排障指南（Troubleshooting）](10-user/09-FQA/troubleshooting.md)
   - [用户建议 Q&A](10-user/09-FQA/user_suggestions_qa.md)
 

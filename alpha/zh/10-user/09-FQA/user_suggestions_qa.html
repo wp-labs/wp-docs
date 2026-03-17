@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Syslog Sink - Warp Parse 文档 [ALPHA]</title>
+        <title>用户建议 Q&amp;A - Warp Parse 文档 [ALPHA]</title>
 
 
         <!-- Custom HTML head -->
@@ -12,35 +12,35 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../../../favicon-de23e50b.svg">
-        <link rel="shortcut icon" href="../../../favicon-8114d1fc.png">
-        <link rel="stylesheet" href="../../../css/variables-8adf115d.css">
-        <link rel="stylesheet" href="../../../css/general-2459343d.css">
-        <link rel="stylesheet" href="../../../css/chrome-ae938929.css">
-        <link rel="stylesheet" href="../../../css/print-9e4910d8.css" media="print">
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="../../../fonts/fonts-9644e21d.css">
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="mdbook-highlight-css" href="../../../highlight-493f70e1.css">
-        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../../tomorrow-night-4c0ae647.css">
-        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../../ayu-highlight-3fdfc3ac.css">
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../../../../theme/lang-switch.css">
-        <link rel="stylesheet" href="../../../../theme/version-badge.css">
+        <link rel="stylesheet" href="../../../theme/lang-switch.css">
+        <link rel="stylesheet" href="../../../theme/version-badge.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "../../../";
+            const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-bc033ace.js";
+            window.path_to_searchindex_js = "../../searchindex-bc033ace.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../../toc-e2dc8458.js"></script>
+        <script src="../../toc-e2dc8458.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -107,7 +107,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="../../../toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
             </noscript>
             <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -142,7 +142,7 @@
                     <h1 class="menu-title">Warp Parse 文档 [ALPHA]</h1>
 
                     <div class="right-buttons">
-                        <a href="../../../print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
                             <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
                         </a>
                         <a href="https://github.com/wp-labs/warp-parse" title="Git repository" aria-label="Git repository">
@@ -179,80 +179,61 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="syslog-sink"><a class="header" href="#syslog-sink">Syslog Sink</a></h1>
-<p>本文档与代码实现对齐，描述 Syslog Sink 的实际可用参数与示例。</p>
-<h2 id="概述"><a class="header" href="#概述">概述</a></h2>
-<p>Syslog Sink 将数据以 RFC3164 文本格式发送到 Syslog 服务器，支持 UDP 与 TCP。消息格式：<code>&lt;PRI&gt;TIMESTAMP HOSTNAME APP_NAME: MESSAGE</code>。</p>
-<h2 id="连接器定义"><a class="header" href="#连接器定义">连接器定义</a></h2>
-<p>使用仓库内置模板（<code>connectors/sink.d/10-syslog-udp.toml</code>、<code>11-syslog-tcp.toml</code>）：</p>
-<pre><code class="language-toml">[[connectors]]
-id = "syslog_udp_sink"
-type = "syslog"
-allow_override = ["addr", "port", "protocol", "app_name"]
-[connectors.params]
-addr = "127.0.0.1"
-port = 1514
-protocol = "udp"
-
-[[connectors]]
-id = "syslog_tcp_sink"
-type = "syslog"
-allow_override = ["addr", "port", "protocol", "app_name"]
-[connectors.params]
-addr = "127.0.0.1"
-port = 1514
-protocol = "tcp"
-</code></pre>
-<h2 id="可用参数路由-params"><a class="header" href="#可用参数路由-params">可用参数（路由 <code>params</code>）</a></h2>
-<ul>
-<li><code>addr</code>：Syslog 服务器地址（IP 或主机名）。</li>
-<li><code>port</code>：端口（1–65535）。</li>
-<li><code>protocol</code>：<code>udp</code> 或 <code>tcp</code>（大小写不敏感）。</li>
-<li><code>app_name</code>：应用名称，默认为当前进程名（如 <code>wp-engine</code>）。</li>
-</ul>
-<h2 id="配置示例"><a class="header" href="#配置示例">配置示例</a></h2>
+                        <h1 id="用户建议-qa产品能力与配置体验"><a class="header" href="#用户建议-qa产品能力与配置体验">用户建议 Q&amp;A（产品能力与配置体验）</a></h1>
+<blockquote>
+<p>本文整理用户关于“复杂解析扩展能力”和“配置管理方式”的典型建议与官方答复。</p>
+</blockquote>
+<h2 id="q1复杂数据结构解析是否支持可选-pythonjs-脚本扩展"><a class="header" href="#q1复杂数据结构解析是否支持可选-pythonjs-脚本扩展">Q1：复杂数据结构解析，是否支持可选 Python/JS 脚本扩展？</a></h2>
+<p><strong>A：</strong>
+我们理解并认可这个建议的价值。Python/JS 普及度高，上手成本低，这是事实。</p>
+<p>但 WarpParse 当前主路径仍以 WPL/OML 为核心，主要原因有三点：</p>
 <ol>
-<li>基础 UDP 输出</li>
+<li><strong>语义更聚焦</strong>：WPL/OML 的目标是用更直接的语义描述“提取什么、转换什么”，而不是通用编程流程。</li>
+<li><strong>复杂日志仍可简洁表达</strong>：在我们已接入的复杂日志场景里，WPL 规则通常比通用脚本更短、更易维护。</li>
+<li><strong>性能目标约束</strong>：在 Rust 主链路内引入 Python/JS 运行时会带来额外开销，不利于高吞吐、低延迟目标。</li>
 </ol>
-<pre><code class="language-toml">version = "2.0"
-[sink_group]
-name = "/sink/syslog_basic"
-oml  = ["application_logs"]
-
-[[sink_group.sinks]]
-name = "syslog_output"
-connect = "syslog_udp_sink"
-params = { addr = "syslog.example.com", port = 1514, protocol = "udp" }
-</code></pre>
-<ol start="2">
-<li>按条件分流</li>
+<p>我们会持续降低 WPL 使用门槛：</p>
+<ul>
+<li>通过 <strong>WpEditor</strong> 可视化 IDE 降低编写与调试成本；</li>
+<li>通过 <strong>AI + Skills</strong> 自动生成/优化 WPL；</li>
+<li>对复杂日志提供官方解析支持（规则建议、示例、定位与优化）。</li>
+</ul>
+<hr>
+<h2 id="q2连接信息是否可以统一管理并按唯一名字引用"><a class="header" href="#q2连接信息是否可以统一管理并按唯一名字引用">Q2：连接信息是否可以统一管理，并按唯一名字引用？</a></h2>
+<p><strong>A：</strong>
+认可并支持该方向。建议将 MySQL、Kafka 等连接信息集中管理，业务配置只引用连接名（如 <code>mysql_center</code>、<code>kafka_log_cluster</code>），避免在 source/sink 中重复写 endpoint、账号、密码。</p>
+<p>这样可以获得：</p>
+<ul>
+<li>更好的安全性（敏感信息与业务配置分离）；</li>
+<li>更低的变更成本（地址/凭据变更时只改一处）；</li>
+<li>更清晰的治理能力（统一命名、统一审计、统一轮换）。</li>
+</ul>
+<hr>
+<h2 id="q3当前一条链路要改-sourcesinkwploml-多处配置是否可以合并"><a class="header" href="#q3当前一条链路要改-sourcesinkwploml-多处配置是否可以合并">Q3：当前一条链路要改 source/sink/wpl/oml 多处配置，是否可以合并？</a></h2>
+<p><strong>A：</strong>
+这个反馈准确：在简单场景下，多处分离配置确实不够方便，容易漏配或配错。</p>
+<p>当前分离配置的设计初衷是面向长期运行与规模化治理：</p>
+<ul>
+<li>分离维护责任；</li>
+<li>提升规则与连接器复用能力；</li>
+<li>建立可审计的配置变更机制，降低线上风险。</li>
+</ul>
+<p>针对易用性，我们的改进方向是：</p>
+<ol>
+<li>提供更完整的一体化配置示例，降低首次接入成本；</li>
+<li>后续提供可视化界面管理版本，减少手工维护多处配置的负担。</li>
 </ol>
-<pre><code class="language-toml">version = "2.0"
-[sink_group]
-name = "/sink/syslog_by_cond"
-
-[[sink_group.sinks]]
-name = "error"
-connect = "syslog_tcp_sink"
-filter = "./error_filter.wpl"
-params = { addr = "syslog-errors.example.com", port = 514, protocol = "tcp" }
-
-[[sink_group.sinks]]
-name = "info"
-connect = "syslog_udp_sink"
-filter = "./info_filter.wpl"
-params = { addr = "syslog-info.example.com", port = 1514, protocol = "udp" }
-</code></pre>
+<p>我们会持续在“简单场景易用性”和“复杂场景可治理性”之间做平衡。</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../../10-user/05-connectors/02-sinks/12-file_sink.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../10-user/09-FQA/troubleshooting.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../../10-user/05-connectors/02-sinks/14-prometheus_sink.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../20-report/benchmark.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -262,11 +243,11 @@ params = { addr = "syslog-info.example.com", port = 1514, protocol = "udp" }
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../../10-user/05-connectors/02-sinks/12-file_sink.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../10-user/09-FQA/troubleshooting.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../../10-user/05-connectors/02-sinks/14-prometheus_sink.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../20-report/benchmark.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
@@ -286,19 +267,19 @@ params = { addr = "syslog-info.example.com", port = 1514, protocol = "udp" }
         </script>
 
 
-        <script src="../../../elasticlunr-ef4e11c1.min.js"></script>
-        <script src="../../../mark-09e88c2c.min.js"></script>
-        <script src="../../../searcher-c2a407aa.js"></script>
+        <script src="../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../mark-09e88c2c.min.js"></script>
+        <script src="../../searcher-c2a407aa.js"></script>
 
-        <script src="../../../clipboard-1626706a.min.js"></script>
-        <script src="../../../highlight-abc7f01d.js"></script>
-        <script src="../../../book-a0b12cfe.js"></script>
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
-        <script src="../../../../theme/lang-switch.js"></script>
-        <script src="../../../../theme/version-badge.js"></script>
-        <script src="../../../mermaid-eefea253.min.js"></script>
-        <script src="../../../mermaid-init-ccf746f1.js"></script>
+        <script src="../../../theme/lang-switch.js"></script>
+        <script src="../../../theme/version-badge.js"></script>
+        <script src="../../mermaid-eefea253.min.js"></script>
+        <script src="../../mermaid-init-ccf746f1.js"></script>
 
 
 

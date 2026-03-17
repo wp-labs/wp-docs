@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-ccce6be4.js";
+            window.path_to_searchindex_js = "searchindex-bc033ace.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-23bb9976.js"></script>
+        <script src="toc-e2dc8458.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -17862,6 +17862,52 @@ compression = "none"
 <ul>
 <li>文档导航：docs/README.md（Quick Triage）</li>
 </ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="用户建议-qa产品能力与配置体验"><a class="header" href="#用户建议-qa产品能力与配置体验">用户建议 Q&amp;A（产品能力与配置体验）</a></h1>
+<blockquote>
+<p>本文整理用户关于“复杂解析扩展能力”和“配置管理方式”的典型建议与官方答复。</p>
+</blockquote>
+<h2 id="q1复杂数据结构解析是否支持可选-pythonjs-脚本扩展"><a class="header" href="#q1复杂数据结构解析是否支持可选-pythonjs-脚本扩展">Q1：复杂数据结构解析，是否支持可选 Python/JS 脚本扩展？</a></h2>
+<p><strong>A：</strong>
+我们理解并认可这个建议的价值。Python/JS 普及度高，上手成本低，这是事实。</p>
+<p>但 WarpParse 当前主路径仍以 WPL/OML 为核心，主要原因有三点：</p>
+<ol>
+<li><strong>语义更聚焦</strong>：WPL/OML 的目标是用更直接的语义描述“提取什么、转换什么”，而不是通用编程流程。</li>
+<li><strong>复杂日志仍可简洁表达</strong>：在我们已接入的复杂日志场景里，WPL 规则通常比通用脚本更短、更易维护。</li>
+<li><strong>性能目标约束</strong>：在 Rust 主链路内引入 Python/JS 运行时会带来额外开销，不利于高吞吐、低延迟目标。</li>
+</ol>
+<p>我们会持续降低 WPL 使用门槛：</p>
+<ul>
+<li>通过 <strong>WpEditor</strong> 可视化 IDE 降低编写与调试成本；</li>
+<li>通过 <strong>AI + Skills</strong> 自动生成/优化 WPL；</li>
+<li>对复杂日志提供官方解析支持（规则建议、示例、定位与优化）。</li>
+</ul>
+<hr>
+<h2 id="q2连接信息是否可以统一管理并按唯一名字引用"><a class="header" href="#q2连接信息是否可以统一管理并按唯一名字引用">Q2：连接信息是否可以统一管理，并按唯一名字引用？</a></h2>
+<p><strong>A：</strong>
+认可并支持该方向。建议将 MySQL、Kafka 等连接信息集中管理，业务配置只引用连接名（如 <code>mysql_center</code>、<code>kafka_log_cluster</code>），避免在 source/sink 中重复写 endpoint、账号、密码。</p>
+<p>这样可以获得：</p>
+<ul>
+<li>更好的安全性（敏感信息与业务配置分离）；</li>
+<li>更低的变更成本（地址/凭据变更时只改一处）；</li>
+<li>更清晰的治理能力（统一命名、统一审计、统一轮换）。</li>
+</ul>
+<hr>
+<h2 id="q3当前一条链路要改-sourcesinkwploml-多处配置是否可以合并"><a class="header" href="#q3当前一条链路要改-sourcesinkwploml-多处配置是否可以合并">Q3：当前一条链路要改 source/sink/wpl/oml 多处配置，是否可以合并？</a></h2>
+<p><strong>A：</strong>
+这个反馈准确：在简单场景下，多处分离配置确实不够方便，容易漏配或配错。</p>
+<p>当前分离配置的设计初衷是面向长期运行与规模化治理：</p>
+<ul>
+<li>分离维护责任；</li>
+<li>提升规则与连接器复用能力；</li>
+<li>建立可审计的配置变更机制，降低线上风险。</li>
+</ul>
+<p>针对易用性，我们的改进方向是：</p>
+<ol>
+<li>提供更完整的一体化配置示例，降低首次接入成本；</li>
+<li>后续提供可视化界面管理版本，减少手工维护多处配置的负担。</li>
+</ol>
+<p>我们会持续在“简单场景易用性”和“复杂场景可治理性”之间做平衡。</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="benchmark-report"><a class="header" href="#benchmark-report">BenchMark Report</a></h1>
 <p>4 种日志 * 3 种拓扑 * 2 种能力 * 2 种平台 * 2 种引擎。</p>

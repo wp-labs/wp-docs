@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-a2960831.js";
+            window.path_to_searchindex_js = "searchindex-c41ccb19.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-86225319.js"></script>
+        <script src="toc-6cff5523.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -8936,6 +8936,9 @@ framing = "line"  # or "len"
 <tr><td><code>syslog</code></td><td>Output to Syslog server (UDP/TCP)</td><td><a href="#syslog-sink">Syslog Sink Configuration</a></td></tr>
 <tr><td><code>tcp</code></td><td>Output to TCP server</td><td><a href="#tcp-sink">TCP Sink Configuration</a></td></tr>
 <tr><td><code>kafka</code></td><td>Output to Kafka</td><td>-</td></tr>
+<tr><td><code>postgresql</code></td><td>Output to PostgreSQL</td><td><a href="10-user/05-connectors/02-sinks/23-postgresql_sink.html">PostgreSQL Sink Configuration</a></td></tr>
+<tr><td><code>doris</code></td><td>Output to Doris</td><td><a href="#doris-sink">Doris Sink Configuration</a></td></tr>
+<tr><td><code>elasticsearch</code></td><td>Output to Elasticsearch</td><td><a href="#elasticsearch-sink">Elasticsearch Sink Configuration</a></td></tr>
 <tr><td><code>prometheus</code></td><td>Prometheus metrics exposure</td><td><a href="#prometheus-sink">Prometheus Sink Configuration</a></td></tr>
 <tr><td><code>victorialogs</code></td><td>Output to VictoriaLogs</td><td><a href="#victorialogs">VictoriaLogs Sink Configuration</a></td></tr>
 <tr><td><code>mysql</code></td><td>Output to MySQL database</td><td><a href="10-user/05-connectors/02-sinks/19-mysql_sink.html">MySQL Sink Configuration</a></td></tr>
@@ -9508,6 +9511,396 @@ fmt = "json"
 <li>HTTP request timeout is 5 seconds</li>
 <li>If the field specified by <code>create_time_field</code> does not exist or is not a time type, current UTC time will be used</li>
 </ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="doris-sink"><a class="header" href="#doris-sink">Doris Sink</a></h1>
+<p>Doris sink writes records to Apache Doris in batches through the Stream Load API, which is suitable for high-throughput log and detail-data ingestion.</p>
+<h2 id="connector-definition-8"><a class="header" href="#connector-definition-8">Connector Definition</a></h2>
+<p>Use the built-in template in the repository (<code>connectors/sink.d/60-doris.toml</code>):</p>
+<pre><code class="language-toml">[[connectors]]
+id = "doris_sink"
+type = "doris"
+allow_override = [
+  "endpoint",
+  "user",
+  "password",
+  "database",
+  "table",
+  "timeout_secs",
+  "max_retries",
+  "headers",
+  "batch_size"
+]
+
+[connectors.params]
+endpoint = "http://localhost:8040"
+user = "root"
+password = ""
+database = "test_db"
+table = "events_parsed"
+timeout_secs = 30
+max_retries = 3
+batch_size = 100_0000
+
+[connectors.params.headers]
+strip_outer_array = "false"
+max_filter_ratio = "0.1"
+strict_mode = "false"
+</code></pre>
+<h2 id="available-parameters-2"><a class="header" href="#available-parameters-2">Available Parameters</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>endpoint</code></td><td>string</td><td>Doris Stream Load endpoint (required). Use BE HTTP port, for example <code>http://host:8040</code>.</td></tr>
+<tr><td><code>user</code></td><td>string</td><td>Doris username (optional, default <code>root</code>)</td></tr>
+<tr><td><code>password</code></td><td>string</td><td>Doris password (optional)</td></tr>
+<tr><td><code>database</code></td><td>string</td><td>Target database (required)</td></tr>
+<tr><td><code>table</code></td><td>string</td><td>Target table (required)</td></tr>
+<tr><td><code>timeout_secs</code></td><td>int</td><td>Request timeout in seconds (default <code>30</code>)</td></tr>
+<tr><td><code>max_retries</code></td><td>int</td><td>Retry times when write fails (default <code>3</code>)</td></tr>
+<tr><td><code>batch_size</code></td><td>int</td><td>Batch write size (default <code>1000000</code>)</td></tr>
+<tr><td><code>headers</code></td><td>table</td><td>Optional Stream Load headers, such as <code>columns</code>, <code>strict_mode</code>, <code>max_filter_ratio</code></td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="configuration-examples-12"><a class="header" href="#configuration-examples-12">Configuration Examples</a></h2>
+<h3 id="basic-usage-from-extensionsdoris"><a class="header" href="#basic-usage-from-extensionsdoris">Basic Usage (from <code>extensions/doris</code>)</a></h3>
+<pre><code class="language-toml">version = "2.0"
+
+[sink_group]
+name = "doris"
+rule = ["*"]
+batch_timeout_ms = 5000
+parallel = 4
+
+[[sink_group.sinks]]
+name = "doris_stream_load"
+connect = "doris_sink"
+
+[sink_group.sinks.params]
+endpoint = "http://localhost:8040"
+database = "test_db"
+table = "wp_nginx"
+user = "root"
+password = ""
+timeout_secs = 30
+max_retries = 1
+batch_size = 10_0000
+</code></pre>
+<h3 id="stream-load-column-mapping"><a class="header" href="#stream-load-column-mapping">Stream Load Column Mapping</a></h3>
+<pre><code class="language-toml">[sink_group.sinks.params.headers]
+strip_outer_array = "false"
+max_filter_ratio = "0.1"
+columns = "wp_event_id,wp_src_key,sip,timestamp,`http/request`,size,referer,`http/agent`"
+</code></pre>
+<h2 id="notes-2"><a class="header" href="#notes-2">Notes</a></h2>
+<ul>
+<li>Use BE HTTP port for <code>endpoint</code> (example: <code>8040</code>), not FE query port.</li>
+<li>Create database/table before writing. See <code>wp-examples/extensions/doris/test.sql</code>.</li>
+<li>If field names include <code>/</code> (for example <code>http/request</code>), wrap them in backticks in <code>headers.columns</code>.</li>
+<li>For an end-to-end example, see <code>wp-examples/extensions/doris/README.md</code>.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="elasticsearch-sink"><a class="header" href="#elasticsearch-sink">Elasticsearch Sink</a></h1>
+<p>Elasticsearch sink writes parsed records to Elasticsearch indexes in batches, which is useful for search, aggregation, and visualization workloads.</p>
+<h2 id="connector-definition-9"><a class="header" href="#connector-definition-9">Connector Definition</a></h2>
+<p>Use the built-in template in the repository (<code>connectors/sink.d/90-elasticsearch.toml</code>):</p>
+<pre><code class="language-toml">[[connectors]]
+id = "elasticsearch_sink"
+type = "elasticsearch"
+allow_override = [
+  "protocol",
+  "host",
+  "port",
+  "username",
+  "password",
+  "index",
+  "timeout_secs",
+  "max_retries",
+  "batch_size"
+]
+
+[connectors.params]
+protocol = "http"
+host = "localhost"
+port = "9200"
+username = "elastic"
+password = ""
+index = "wp_nginx"
+timeout_secs = 30
+max_retries = 3
+batch_size = 100_0000
+</code></pre>
+<h2 id="available-parameters-3"><a class="header" href="#available-parameters-3">Available Parameters</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>protocol</code></td><td>string</td><td>Protocol, <code>http</code> or <code>https</code> (default <code>http</code>)</td></tr>
+<tr><td><code>host</code></td><td>string</td><td>Elasticsearch host (required)</td></tr>
+<tr><td><code>port</code></td><td>string/int</td><td>Elasticsearch port (default <code>9200</code>)</td></tr>
+<tr><td><code>username</code></td><td>string</td><td>Username (optional)</td></tr>
+<tr><td><code>password</code></td><td>string</td><td>Password (optional)</td></tr>
+<tr><td><code>index</code></td><td>string</td><td>Target index name (required)</td></tr>
+<tr><td><code>timeout_secs</code></td><td>int</td><td>Request timeout in seconds (default <code>30</code>)</td></tr>
+<tr><td><code>max_retries</code></td><td>int</td><td>Retry times when write fails (default <code>3</code>)</td></tr>
+<tr><td><code>batch_size</code></td><td>int</td><td>Batch write size (default <code>1000000</code>)</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="configuration-example"><a class="header" href="#configuration-example">Configuration Example</a></h2>
+<h3 id="basic-usage-from-extensionselasticsearch"><a class="header" href="#basic-usage-from-extensionselasticsearch">Basic Usage (from <code>extensions/elasticsearch</code>)</a></h3>
+<pre><code class="language-toml">version = "2.0"
+
+[sink_group]
+name = "es"
+rule = ["*"]
+batch_timeout_ms = 5000
+parallel = 4
+
+[[sink_group.sinks]]
+name = "es_stream_load"
+connect = "elasticsearch_sink"
+
+[sink_group.sinks.params]
+protocol = "http"
+host = "localhost"
+port = "9200"
+username = "elastic"
+password = "zgVClXP2"
+index = "wp_nginx"
+timeout_secs = 30
+max_retries = 3
+batch_size = 100_0000
+</code></pre>
+<h2 id="notes-3"><a class="header" href="#notes-3">Notes</a></h2>
+<ul>
+<li>The example environment enables authentication, so valid username/password is required.</li>
+<li>On first write, the index is usually auto-created. In production, define mapping and shard strategy in advance.</li>
+<li>You can use <code>_count</code> and <code>_search</code> APIs to verify ingestion quickly.</li>
+<li>For an end-to-end example, see <code>wp-examples/extensions/elasticsearch/README.md</code>.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="clickhouse-sink"><a class="header" href="#clickhouse-sink">ClickHouse Sink</a></h1>
+<p>ClickHouse sink writes parsed records to ClickHouse database in batches, which is ideal for large-scale log analysis and real-time data query scenarios.</p>
+<h2 id="connector-definition-10"><a class="header" href="#connector-definition-10">Connector Definition</a></h2>
+<pre><code class="language-toml">[[connectors]]
+id = "clickhouse_sink"
+type = "clickhouse"
+allow_override = [
+  "endpoint",
+  "database",
+  "table",
+  "username",
+  "password",
+  "timeout_secs",
+  "max_retries"
+]
+
+[connectors.params]
+endpoint = "http://clickhouse-server:8123"
+database = "default"
+table = "wp_nginx"
+username = "default"
+password = "default"
+timeout_secs = 30
+max_retries = 3
+</code></pre>
+<h2 id="available-parameters-4"><a class="header" href="#available-parameters-4">Available Parameters</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>endpoint</code></td><td>string</td><td>ClickHouse endpoint address, format: <code>http://host:port</code> or <code>https://host:port</code> (required)</td></tr>
+<tr><td><code>database</code></td><td>string</td><td>Target database name (required)</td></tr>
+<tr><td><code>table</code></td><td>string</td><td>Target table name (required)</td></tr>
+<tr><td><code>username</code></td><td>string</td><td>Authentication username (required)</td></tr>
+<tr><td><code>password</code></td><td>string</td><td>Authentication password (optional, default empty)</td></tr>
+<tr><td><code>timeout_secs</code></td><td>int</td><td>Request timeout in seconds (default <code>30</code>)</td></tr>
+<tr><td><code>max_retries</code></td><td>int</td><td>Retry times when write fails (default <code>3</code>, <code>-1</code> for infinite retries)</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="configuration-example-1"><a class="header" href="#configuration-example-1">Configuration Example</a></h2>
+<h3 id="basic-usage-2"><a class="header" href="#basic-usage-2">Basic Usage</a></h3>
+<pre><code class="language-toml">version = "2.0"
+
+[sink_group]
+name = "clickhouse"
+rule = ["*"]
+batch_timeout_ms = 5000
+parallel = 4
+
+[[sink_group.sinks]]
+name = "clickhouse_stream_load"
+connect = "clickhouse_sink"
+
+[sink_group.sinks.params]
+endpoint = "http://localhost:8123"
+database = "default"
+table = "wp_nginx"
+username = "default"
+password = "default"
+timeout_secs = 30
+max_retries = 3
+</code></pre>
+<h3 id="https-connection"><a class="header" href="#https-connection">HTTPS Connection</a></h3>
+<pre><code class="language-toml">[sink_group.sinks.params]
+endpoint = "https://clickhouse.example.com:8443"
+database = "production"
+table = "logs"
+username = "app_user"
+password = "secure_password"
+timeout_secs = 60
+max_retries = 5
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="http-sink"><a class="header" href="#http-sink">HTTP Sink</a></h1>
+<p>HTTP sink sends parsed records to HTTP/HTTPS endpoints in various formats, suitable for webhooks, API integration, and custom data pipeline scenarios.</p>
+<h2 id="connector-definition-11"><a class="header" href="#connector-definition-11">Connector Definition</a></h2>
+<pre><code class="language-toml">[[connectors]]
+id = "http_sink"
+type = "http"
+allow_override = [
+  "endpoint",
+  "method",
+  "username",
+  "password",
+  "headers",
+  "fmt",
+  "batch_size",
+  "timeout_secs",
+  "max_retries",
+  "compression"
+]
+
+[connectors.params]
+endpoint = "http://localhost:8080/webhook"
+method = "POST"
+username = ""
+password = ""
+fmt = "json"
+batch_size = 100
+timeout_secs = 60
+max_retries = 3
+compression = "none"
+</code></pre>
+<h2 id="available-parameters-5"><a class="header" href="#available-parameters-5">Available Parameters</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>endpoint</code></td><td>string</td><td>HTTP(S) endpoint URL (required)</td></tr>
+<tr><td><code>method</code></td><td>string</td><td>HTTP method: GET, POST, PUT, PATCH, DELETE (default <code>POST</code>)</td></tr>
+<tr><td><code>username</code></td><td>string</td><td>HTTP Basic authentication username (optional)</td></tr>
+<tr><td><code>password</code></td><td>string</td><td>HTTP Basic authentication password (optional)</td></tr>
+<tr><td><code>headers</code></td><td>object</td><td>Custom HTTP headers in JSON object format (optional)</td></tr>
+<tr><td><code>fmt</code></td><td>string</td><td>Output format: <code>json</code>, <code>ndjson</code>, <code>csv</code>, <code>kv</code>, <code>raw</code>, <code>proto-text</code> (default <code>json</code>)</td></tr>
+<tr><td><code>batch_size</code></td><td>int</td><td>Batch size: 1 for single record, &gt;1 for batch sending (default <code>1</code>)</td></tr>
+<tr><td><code>timeout_secs</code></td><td>int</td><td>Request timeout in seconds (default <code>60</code>)</td></tr>
+<tr><td><code>max_retries</code></td><td>int</td><td>Retry times on failure: -1 for infinite retries, 0 for no retry (default <code>3</code>)</td></tr>
+<tr><td><code>compression</code></td><td>string</td><td>Data compression: <code>none</code>, <code>gzip</code> (default <code>none</code>)</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="output-formats"><a class="header" href="#output-formats">Output Formats</a></h2>
+<p>Setting the output format automatically sets the corresponding <code>content-type</code>.</p>
+<h3 id="json-format-fmt--json"><a class="header" href="#json-format-fmt--json">JSON Format (<code>fmt = "json"</code>)</a></h3>
+<p>Sends records as a JSON array:</p>
+<pre><code class="language-json">[
+  {"field1": "value1", "field2": "value2"},
+  {"field1": "value3", "field2": "value4"}
+]
+</code></pre>
+<h3 id="ndjson-format-fmt--ndjson"><a class="header" href="#ndjson-format-fmt--ndjson">NDJSON Format (<code>fmt = "ndjson"</code>)</a></h3>
+<p>Sends records as newline-delimited JSON (one record per line):</p>
+<pre><code>{"field1": "value1", "field2": "value2"}
+{"field1": "value3", "field2": "value4"}
+</code></pre>
+<h3 id="csv-format-fmt--csv"><a class="header" href="#csv-format-fmt--csv">CSV Format (<code>fmt = "csv"</code>)</a></h3>
+<p>Sends records in CSV format (with header):</p>
+<pre><code>field1,field2
+value1,value2
+value3,value4
+</code></pre>
+<h3 id="kv-format-fmt--kv"><a class="header" href="#kv-format-fmt--kv">KV Format (<code>fmt = "kv"</code>)</a></h3>
+<p>Sends records as key-value pairs (one record per line):</p>
+<pre><code>field1=value1 field2=value2
+field1=value3 field2=value4
+</code></pre>
+<h3 id="raw-format-fmt--raw"><a class="header" href="#raw-format-fmt--raw">Raw Format (<code>fmt = "raw"</code>)</a></h3>
+<p>Sends raw message content without parsing.</p>
+<h3 id="proto-text-format-fmt--proto-text"><a class="header" href="#proto-text-format-fmt--proto-text">Proto-Text Format (<code>fmt = "proto-text"</code>)</a></h3>
+<p>Sends records in Protocol Buffer text format (without field names).</p>
+<h2 id="compression"><a class="header" href="#compression">Compression</a></h2>
+<p>When <code>compression = "gzip"</code> is enabled:</p>
+<ul>
+<li>Request body is compressed with gzip</li>
+<li>Automatically adds <code>Content-Encoding: gzip</code> header</li>
+<li>Reduces network bandwidth usage, especially suitable for large batches</li>
+<li>Recommended when batch size &gt; 1000</li>
+</ul>
+<h2 id="authentication"><a class="header" href="#authentication">Authentication</a></h2>
+<h3 id="http-basic-authentication"><a class="header" href="#http-basic-authentication">HTTP Basic Authentication</a></h3>
+<pre><code class="language-toml">[connectors.params]
+endpoint = "https://api.example.com/webhook"
+username = "myuser"
+password = "mypassword"
+</code></pre>
+<h3 id="custom-headers-eg-bearer-token"><a class="header" href="#custom-headers-eg-bearer-token">Custom Headers (e.g., Bearer Token)</a></h3>
+<pre><code class="language-toml">[connectors.params]
+endpoint = "https://api.example.com/webhook"
+[connectors.params.headers]
+Authorization="Bearer YOUR_TOKEN_HERE"
+</code></pre>
+<h2 id="configuration-examples-13"><a class="header" href="#configuration-examples-13">Configuration Examples</a></h2>
+<h3 id="example-1-simple-webhook-single-record-sending"><a class="header" href="#example-1-simple-webhook-single-record-sending">Example 1: Simple Webhook (Single Record Sending)</a></h3>
+<pre><code class="language-toml">version = "2.0"
+
+[sink_group]
+name = "webhook"
+rule = ["*"]
+batch_timeout_ms = 1000
+parallel = 2
+
+[[sink_group.sinks]]
+name = "http_webhook"
+connect = "http_sink"
+
+[sink_group.sinks.params]
+endpoint = "http://localhost:8080/webhook"
+method = "POST"
+fmt = "json"
+batch_size = 1
+timeout_secs = 30
+max_retries = 3
+compression = "none"
+</code></pre>
+<p>Complete examples and test server are available in <code>https://github.com/wp-labs/wp-examples</code> at <code>extensions/http/test_server.py</code>.</p>
+<h2 id="retry-strategy"><a class="header" href="#retry-strategy">Retry Strategy</a></h2>
+<p>HTTP sink implements exponential backoff retry mechanism:</p>
+<ul>
+<li>Initial retry delay: 1 second</li>
+<li>Delay doubles with each retry (2s, 4s, 8s…)</li>
+<li>Retries on 5xx server errors and network failures</li>
+<li>Does not retry on 4xx client errors (except 429 Too Many Requests)</li>
+</ul>
+<h2 id="performance-optimization-tips-1"><a class="header" href="#performance-optimization-tips-1">Performance Optimization Tips</a></h2>
+<ol>
+<li><strong>Batch Size</strong>: Use larger batches (1000-10000) for high throughput scenarios</li>
+<li><strong>Compression</strong>: Enable gzip compression when batch &gt; 1000 records</li>
+<li><strong>Concurrency</strong>: Increase <code>parallel</code> setting to improve concurrent processing</li>
+<li><strong>Format</strong>: <code>ndjson</code> format performs better than <code>json</code> in large batch scenarios</li>
+<li><strong>Timeout</strong>: Adjust <code>timeout_secs</code> based on endpoint response time</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="troubleshootingmd"><a class="header" href="#troubleshootingmd">troubleshooting.md</a></h1>
 <div style="break-before: page; page-break-before: always;"></div>

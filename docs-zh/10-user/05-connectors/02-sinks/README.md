@@ -12,5 +12,7 @@
 | `tcp` | 输出到 TCP 服务端 | [TCP Sink 配置](./15-tcp_sink.md) |
 | `kafka` | 输出到 Kafka | [Kafka Sink 配置](./18-kafka_sink.md) |
 | `mysql` | 输出到 MySQL | [MySQL Sink 配置](./19-mysql_sink.md) |
+| `postgresql` | 输出到 PostgreSQL | [PostgreSQL Sink 配置](./23-postgresql_sink.md) |
 | `doris` | 输出到 Doris | [Doris Sink 配置](./17-doris.md) |
+| `elasticsearch` | 输出到 Elasticsearch | [Elasticsearch Sink 配置](./20-elasticsearch_sink.md) |
 | `prometheus` | Prometheus 指标暴露 | [Prometheus Sink 配置](./14-prometheus_sink.md) |

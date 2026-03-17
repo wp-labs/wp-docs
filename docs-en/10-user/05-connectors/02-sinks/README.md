@@ -11,6 +11,9 @@ This guide introduces how to configure and use various data outputs (Sinks) in t
 | `syslog` | Output to Syslog server (UDP/TCP) | [Syslog Sink Configuration](./13-syslog_sink.md) |
 | `tcp` | Output to TCP server | [TCP Sink Configuration](./15-tcp_sink.md) |
 | `kafka` | Output to Kafka | - |
+| `postgresql` | Output to PostgreSQL | [PostgreSQL Sink Configuration](./23-postgresql_sink.md) |
+| `doris` | Output to Doris | [Doris Sink Configuration](./17-doris.md) |
+| `elasticsearch` | Output to Elasticsearch | [Elasticsearch Sink Configuration](./20-elasticsearch_sink.md) |
 | `prometheus` | Prometheus metrics exposure | [Prometheus Sink Configuration](./14-prometheus_sink.md) |
 | `victorialogs` | Output to VictoriaLogs | [VictoriaLogs Sink Configuration](./16-victorialogs.md) |
 | `mysql` | Output to MySQL database | [MySQL Sink Configuration](./19-mysql_sink.md) |

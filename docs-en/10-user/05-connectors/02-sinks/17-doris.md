@@ -24,8 +24,8 @@ allow_override = [
 
 [connectors.params]
 endpoint = "http://localhost:8040"
-user = "root"
-password = ""
+user = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 database = "test_db"
 table = "events_parsed"
 timeout_secs = 30
@@ -73,8 +73,8 @@ connect = "doris_sink"
 endpoint = "http://localhost:8040"
 database = "test_db"
 table = "wp_nginx"
-user = "root"
-password = ""
+user = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 timeout_secs = 30
 max_retries = 1
 batch_size = 10_0000

@@ -22,8 +22,8 @@ allow_override = [
 endpoint = "http://clickhouse-server:8123"
 database = "default"
 table = "wp_nginx"
-username = "default"
-password = "default"
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 timeout_secs = 30
 max_retries = 3
 ```
@@ -61,8 +61,8 @@ connect = "clickhouse_sink"
 endpoint = "http://localhost:8123"
 database = "default"
 table = "wp_nginx"
-username = "default"
-password = "default"
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 timeout_secs = 30
 max_retries = 3
 ```
@@ -74,8 +74,8 @@ max_retries = 3
 endpoint = "https://clickhouse.example.com:8443"
 database = "production"
 table = "logs"
-username = "app_user"
-password = "secure_password"
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 timeout_secs = 60
 max_retries = 5
 ```

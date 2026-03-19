@@ -25,8 +25,8 @@ allow_override = [
 [connectors.params]
 endpoint = "http://localhost:8080/webhook"
 method = "POST"
-username = ""
-password = ""
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 fmt = "json"
 batch_size = 100
 timeout_secs = 60
@@ -103,8 +103,8 @@ field1=value3 field2=value4
 ```toml
 [connectors.params]
 endpoint = "https://api.example.com/webhook"
-username = "myuser"
-password = "mypassword"
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 ```
 
 ### 自定义头（如 Bearer Token）
@@ -161,4 +161,3 @@ HTTP sink 实现了指数退避重试机制：
 3. **并发**：增加 `parallel` 设置以提高并发处理能力
 4. **格式**：大批量场景下 `ndjson` 格式性能优于 `json`
 5. **超时**：根据端点响应时间调整 `timeout_secs`
-

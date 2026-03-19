@@ -23,8 +23,8 @@ allow_override = [
 [connectors.params]
 endpoint = "http://localhost:8080/webhook"
 method = "POST"
-username = ""
-password = ""
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 fmt = "json"
 batch_size = 100
 timeout_secs = 60
@@ -101,8 +101,8 @@ When `compression = "gzip"` is enabled:
 ```toml
 [connectors.params]
 endpoint = "https://api.example.com/webhook"
-username = "myuser"
-password = "mypassword"
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 ```
 
 ### Custom Headers (e.g., Bearer Token)

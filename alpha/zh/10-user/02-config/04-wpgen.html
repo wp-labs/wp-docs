@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-bc033ace.js";
+            window.path_to_searchindex_js = "../../searchindex-37cffb89.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e2dc8458.js"></script>
+        <script src="../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -206,6 +206,25 @@ level = "warn"
 output = "file"
 file_path = "./data/logs/"
 </code></pre>
+<h2 id="变量化示例"><a class="header" href="#变量化示例">变量化示例</a></h2>
+<p><code>wpgen.toml</code> 也适合用 <code>${VAR}</code> 提升环境切换效率：</p>
+<pre><code class="language-toml">version = "1.0"
+
+[generator]
+mode = "rule"
+rule_root = "${WORK_ROOT}/models/wpl"
+
+[output]
+connect = "file_${ENV}"
+name = "gen_${ENV}"
+params = { base = "${WORK_ROOT}/data/out", file = "${OUTPUT_FILE}" }
+
+[logging]
+level = "${LOG_LEVEL}"
+output = "file"
+file_path = "${WORK_ROOT}/data/logs"
+</code></pre>
+<p>如果输出目标依赖账号、密码或连接串，建议改用 <code>SEC_</code> 变量，并把敏感值放到 <code>sec_key.toml</code> 或其他受控外部变量源中。详细约定见：<a href="08-variables_and_sec_key.html">配置变量与安全字典（<code>${VAR}</code> / <code>sec_key.toml</code>）</a>。</p>
 <h2 id="动态速度模型"><a class="header" href="#动态速度模型">动态速度模型</a></h2>
 <p>除了使用 <code>speed</code> 字段指定恒定速率外，还可以使用 <code>speed_profile</code> 配置动态速度变化模型。
 当 <code>speed_profile</code> 存在时，<code>speed</code> 字段将被忽略。</p>

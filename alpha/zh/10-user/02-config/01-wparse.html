@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-bc033ace.js";
+            window.path_to_searchindex_js = "../../searchindex-37cffb89.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e2dc8458.js"></script>
+        <script src="../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -187,6 +187,7 @@ robust  = "normal"           # debug|normal|strict
 [models]
 wpl     = "./models/wpl"
 oml     = "./models/oml"
+knowledge = "./models/knowledge"
 
 [topology]
 sources = "./topology/sources"
@@ -220,6 +221,24 @@ target = "*"
 key    = "sink_stat"
 target = "*"
 </code></pre>
+<p>说明：</p>
+<ul>
+<li><code>[models].knowledge</code> 是知识配置根目录，默认值为 <code>./models/knowledge</code></li>
+<li><code>semantic_dict.toml</code> 默认读取 <code>${models.knowledge}/semantic_dict.toml</code></li>
+<li><code>knowdb.toml</code> 默认读取 <code>${models.knowledge}/knowdb.toml</code></li>
+</ul>
+<h2 id="变量化建议"><a class="header" href="#变量化建议">变量化建议</a></h2>
+<p><code>wparse.toml</code> 中的路径类字符串适合使用 <code>${VAR}</code> 变量化，例如：</p>
+<pre><code class="language-toml">[models]
+knowledge = "${WORK_ROOT}/models/knowledge"
+
+[rescue]
+path = "${WORK_ROOT}/data/rescue"
+
+[log_conf.file]
+path = "${WORK_ROOT}/data/logs"
+</code></pre>
+<p>涉及外部变量文件、敏感值和 <code>sec_key.toml</code> 约定时，参考：<a href="08-variables_and_sec_key.html">配置变量与安全字典（<code>${VAR}</code> / <code>sec_key.toml</code>）</a>。</p>
 
                     </main>
 

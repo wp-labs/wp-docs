@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-bc033ace.js";
+            window.path_to_searchindex_js = "../../searchindex-37cffb89.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e2dc8458.js"></script>
+        <script src="../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -219,6 +219,28 @@
 </ul>
 </li>
 </ul>
+<h2 id="变量化示例"><a class="header" href="#变量化示例">变量化示例</a></h2>
+<pre><code class="language-toml">version = "2.0"
+
+[sink_group]
+name = "mysql_${ENV}"
+oml = ["*"]
+
+[[sink_group.sinks]]
+name = "writer"
+connect = "mysql_sink"
+tags = ["env:${ENV}"]
+
+[sink_group.sinks.params]
+url = "${SEC_MYSQL_URL}"
+table = "nginx_${ENV}"
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>route 名、sink 名、tags 以及 <code>params</code> 中的字符串都可以按 <code>${VAR}</code> 变量化</li>
+<li>对账号、密码、DSN、Token 这类字段，优先使用 <code>SEC_</code> 变量</li>
+<li>变量来源与 <code>sec_key.toml</code> 约定见：<a href="08-variables_and_sec_key.html">配置变量与安全字典（<code>${VAR}</code> / <code>sec_key.toml</code>）</a></li>
+</ul>
 <h2 id="配置示例"><a class="header" href="#配置示例">配置示例：</a></h2>
 <h3 id="基础组"><a class="header" href="#基础组">基础组</a></h3>
 <pre><code class="language-toml">version = "2.0"
@@ -279,6 +301,7 @@ params = { base = "./out/sink", file = "safe.dat" }
 <ul>
 <li>连接器未找到：检查 connectors/sink.d 是否存在对应 id；<code>wproj sinks list</code> 可查看引用关系</li>
 <li>覆盖参数不生效：检查 allow_override 白名单</li>
+<li>遇到 <code>${VAR}</code> 未替换：先检查上层程序是否已注入变量字典，再检查变量名拼写和 <code>sec_key.toml</code> / 环境变量内容</li>
 <li>filter 未生效：
 <ul>
 <li>路径解析相对当前工作目录（建议写相对 sink_root 的相对路径）</li>

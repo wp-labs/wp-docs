@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-bc033ace.js";
+            window.path_to_searchindex_js = "../../searchindex-37cffb89.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e2dc8458.js"></script>
+        <script src="../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -239,7 +239,7 @@
       bool:bool_val,
 
       // 4. chars - 字符串（带引号）
-      chars":quoted_str,
+      chars:quoted_str",
 
       // 5. digit - 整数
       digit:integer,
@@ -257,7 +257,7 @@
       time_2822:time_rfc2822,
 
       // 10. time/clf - Common Log Format（Apache/Nginx）
-      time/clf&lt;[,]&gt;:time_clf,
+      time/clf:time_clf&lt;[,]&gt;,
 
       // 11. time_timestamp - Unix 时间戳
       time_timestamp:timestamp,
@@ -275,16 +275,16 @@
       json(bool@strict):json_data,
 
       // 16. http/request - HTTP 请求行
-      http/request":http_req,
+      http/request:http_req",
 
       // 17. http/status - HTTP 状态码
       http/status:http_status,
 
       // 18. http/agent - User-Agent
-      http/agent":user_agent,
+      http/agent:user_agent",
 
       // 19. http/method - HTTP 方法
-      http/method":http_method,
+      http/method:http_method",
 
       // 20. port - 端口号
       port:port_num,
@@ -353,7 +353,7 @@
 <li><strong>输出</strong>：布尔类型</li>
 </ul>
 <h4 id="4-chars---字符串"><a class="header" href="#4-chars---字符串">4. chars - 字符串</a></h4>
-<pre><code class="language-wpl">chars":quoted_str
+<pre><code class="language-wpl">chars:quoted_str"
 </code></pre>
 <ul>
 <li><strong>格式</strong>：支持引号包裹 <code>"hello"</code> 或裸字符串 <code>hello</code></li>
@@ -391,7 +391,7 @@ time_3339:time_rfc3339       // 2022-03-21T12:34:56+00:00
 <li><strong>用途</strong>：邮件头、RSS 等</li>
 </ul>
 <h4 id="10-timeclf---common-log-format"><a class="header" href="#10-timeclf---common-log-format">10. time/clf - Common Log Format</a></h4>
-<pre><code class="language-wpl">time/clf&lt;[,]&gt;:time_clf
+<pre><code class="language-wpl">time/clf:time_clf&lt;[,]&gt;
 </code></pre>
 <ul>
 <li><strong>格式</strong>：<code>[06/Aug/2019:12:12:19 +0800]</code></li>
@@ -445,7 +445,7 @@ time_3339:time_rfc3339       // 2022-03-21T12:34:56+00:00
 <hr>
 <h3 id="协议类型"><a class="header" href="#协议类型">协议类型</a></h3>
 <h4 id="17-httprequest---http-请求行"><a class="header" href="#17-httprequest---http-请求行">17. http/request - HTTP 请求行</a></h4>
-<pre><code class="language-wpl">http/request":http_req
+<pre><code class="language-wpl">http/request:http_req"
 </code></pre>
 <ul>
 <li><strong>格式</strong>：<code>"GET /api/users HTTP/1.1"</code></li>
@@ -458,14 +458,14 @@ time_3339:time_rfc3339       // 2022-03-21T12:34:56+00:00
 <li><strong>格式</strong>：<code>200</code>、<code>404</code>、<code>500</code> 等</li>
 </ul>
 <h4 id="19-httpagent---user-agent"><a class="header" href="#19-httpagent---user-agent">19. http/agent - User-Agent</a></h4>
-<pre><code class="language-wpl">http/agent":user_agent
+<pre><code class="language-wpl">http/agent:user_agent"
 </code></pre>
 <ul>
 <li><strong>格式</strong>：<code>"Mozilla/5.0..."</code></li>
 <li><strong>用途</strong>：浏览器标识</li>
 </ul>
 <h4 id="20-httpmethod---http-方法"><a class="header" href="#20-httpmethod---http-方法">20. http/method - HTTP 方法</a></h4>
-<pre><code class="language-wpl">http/method":http_method
+<pre><code class="language-wpl">http/method:http_method"
 </code></pre>
 <ul>
 <li><strong>支持</strong>：<code>GET</code>、<code>POST</code>、<code>PUT</code>、<code>DELETE</code> 等</li>

@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-29d9a526.js";
+            window.path_to_searchindex_js = "searchindex-bab637e3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-6cff5523.js"></script>
+        <script src="toc-6f276faf.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -180,7 +180,95 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="user-guide"><a class="header" href="#user-guide">User Guide</a></h1>
+                        <h1 id="020-release-notes"><a class="header" href="#020-release-notes">0.20 Release Notes</a></h1>
+<h2 id="added"><a class="header" href="#added">Added</a></h2>
+<h3 id="added-elasticsearch-sink"><a class="header" href="#added-elasticsearch-sink">Added Elasticsearch Sink.</a></h3>
+<p>Supports batch writing parsed records to the Elasticsearch <code>/_bulk</code> API over HTTP/HTTPS, with timeout, retry, and password authentication support.
+Example:</p>
+<pre><code class="language-toml">[connectors.params]
+protocol = "http"      # Transport protocol; switch to https if needed
+host = "localhost"     # Elasticsearch server host
+port = "9200"          # Elasticsearch service port
+index = "wp_nginx"     # Target index name
+username = "${SEC_USERNAME}"   # Username
+password = "${SEC_PASSWORD}"   # Password
+batch_size = 1_0000     # Number of records per batch
+</code></pre>
+<ul>
+<li>Usage doc: <a href="#elasticsearch-sink">Elasticsearch Sink</a></li>
+<li>Example index: <a href="https://github.com/wp-labs/wp-examples/blob/main/extensions/elasticsearch/README.md">wp-examples/extensions/elasticsearch/README.md</a></li>
+</ul>
+<h3 id="added-postgresql-sink"><a class="header" href="#added-postgresql-sink">Added PostgreSQL Sink.</a></h3>
+<ul>
+<li>Usage doc: <a href="#postgresql-sink">PostgreSQL Sink</a></li>
+<li>Example index: <a href="https://github.com/wp-labs/wp-examples/blob/main/extensions/tcp_postgres/README.md">wp-examples/extensions/tcp_postgres/README.md</a></li>
+</ul>
+<h3 id="added-doris-sink"><a class="header" href="#added-doris-sink">Added Doris Sink.</a></h3>
+<p>Supports batch loading data into Apache Doris through the Stream Load API, with custom Stream Load headers, timeout, retry, and password authentication support.
+Example:</p>
+<pre><code class="language-toml">[connectors.params]
+endpoint = "http://localhost:8040"  # Use the BE HTTP port
+user = "${SEC_USERNAME}"           # Username
+password = "${SEC_PASSWORD}"       # Password
+database = ""                       # Database name
+table = ""                          # Table name
+batch_size = 1_0000                  # Request batch size
+
+# Optional: custom Stream Load parameters
+[connectors.params.headers]
+strip_outer_array = "false"
+max_filter_ratio = "0.1"
+strict_mode = "false"
+</code></pre>
+<ul>
+<li>Usage doc: <a href="#doris-sink">Doris Sink</a></li>
+<li>Example index: <a href="https://github.com/wp-labs/wp-examples/blob/main/extensions/doris/README.md">wp-examples/extensions/doris/README.md</a></li>
+</ul>
+<h3 id="added-clickhouse-sink"><a class="header" href="#added-clickhouse-sink">Added ClickHouse Sink.</a></h3>
+<p>Supports writing to ClickHouse with the RowBinary format over HTTP, with timeout, retry, and password authentication support.
+Example:</p>
+<pre><code class="language-toml">[connectors.params]
+endpoint = "http://localhost:8123"
+username = "${SEC_USERNAME}"       # Username
+password = "${SEC_PASSWORD}"       # Password
+database = ""                       # Database name
+table = ""                          # Table name
+batch_size = 1_0000                  # Request batch size
+</code></pre>
+<ul>
+<li>Usage doc: <a href="#clickhouse-sink">ClickHouse Sink</a></li>
+<li>Example index: <a href="https://github.com/wp-labs/wp-examples/tree/main/extensions/clickhouse">wp-examples/extensions/clickhouse</a></li>
+</ul>
+<h3 id="added-http-sink"><a class="header" href="#added-http-sink">Added HTTP Sink.</a></h3>
+<p>Supports sending parsed records to HTTP/HTTPS endpoints for webhooks, API integrations, and custom pipelines, with <code>json</code>, <code>ndjson</code>, <code>csv</code>, <code>kv</code>, <code>raw</code>, and <code>proto-text</code> output formats, plus Basic Auth, custom headers, gzip compression, timeout, and retry support.
+Example:</p>
+<pre><code class="language-toml">[sink_group.sinks.params]
+endpoint = "http://localhost:8080/webhook" # Target HTTP endpoint
+method = "POST"                            # HTTP method
+username = "${SEC_USERNAME}"               # Use HTTP Basic authentication
+password = "${SEC_PASSWORD}"               # Use HTTP Basic authentication
+fmt = "json"                               # Output format: `json`, `ndjson`, `csv`, `kv`, `raw`, `proto-text` (default `json`)
+batch_size = 1_0000                         # Batch send size
+compression = "none"                       # Whether to enable gzip compression
+
+# Optional: custom header parameters
+[connectors.params.headers]
+# content-type = "application/json"
+</code></pre>
+<ul>
+<li>Usage doc: <a href="#http-sink">HTTP Sink</a></li>
+<li>Example index: <a href="https://github.com/wp-labs/wp-examples/blob/main/extensions/http/README.md">wp-examples/extensions/http/README.md</a></li>
+</ul>
+<h2 id="changed"><a class="header" href="#changed">Changed</a></h2>
+<ul>
+<li>Upgraded <code>wp-connector-api</code> to <code>0.8</code> to reduce unnecessary dependencies.</li>
+</ul>
+<h2 id="fixed"><a class="header" href="#fixed">Fixed</a></h2>
+<ul>
+<li>Event ID: synced with the upstream <code>wp-motor</code> fix to unify <code>wp_event_id</code> generation logic and avoid duplicate IDs caused by falling back to an in-process seed after runtime restarts.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="user-guide"><a class="header" href="#user-guide">User Guide</a></h1>
 <p>Welcome to the Warp Parse documentation.</p>
 <blockquote>
 <p>This is the English version. 中文版请点击 <a href="/zh">中文</a>.</p>
@@ -1114,7 +1202,12 @@ parallel = 4       # Number of parallel workers
 <ul>
 <li>Wparse Runtime Configuration (Main Configuration): wparse.toml (this directory)
 <ul>
-<li><a href="10-user/02-config/01-wparse_config.html">Wparse Configuration Specification (wparse.toml)</a></li>
+<li><a href="#wparse-configuration">Wparse Configuration</a></li>
+</ul>
+</li>
+<li>Secure Variables and Environment Variables
+<ul>
+<li><a href="#secure-variables-and-environment-variables">Secure Variables and Environment Variables</a></li>
 </ul>
 </li>
 <li>Sources and Connectors
@@ -1125,9 +1218,13 @@ parallel = 4       # Number of parallel workers
 </li>
 <li>Sinks and Connectors
 <ul>
-<li><a href="10-user/02-config/04-sinks_config.html">Sinks Design and Configuration (Directory-based V2)</a></li>
-<li><a href="10-user/02-config/03-sinks_minimal.html">Sinks Minimal Runnable Skeleton</a></li>
+<li><a href="#sink-configuration">Sink Configuration</a></li>
 <li>Connectors (sink.d) and route details - see “Design and Configuration”</li>
+</ul>
+</li>
+<li>Wpgen Generator Configuration
+<ul>
+<li><a href="#wpgen-configuration">Wpgen Configuration</a></li>
 </ul>
 </li>
 </ul>
@@ -1140,6 +1237,7 @@ parallel = 4       # Number of parallel workers
 <ul>
 <li>Use <code>wproj conf init --work-root .</code> to initialize standard directories and templates (conf/, connectors/, and some models directories). If you need a KnowDB template, run <code>wproj knowdb init</code> separately.</li>
 <li>After modifying scenario workflows, it is recommended to run <code>usecase/core/getting_started/case_verify.sh</code> to verify end-to-end output.</li>
+<li>For passwords, tokens, DSNs, and other sensitive values, prefer secure variables instead of writing plaintext directly into routes or connector files.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="wparse-configuration"><a class="header" href="#wparse-configuration">Wparse Configuration</a></h1>
@@ -1150,6 +1248,7 @@ robust  = "normal"           # debug|normal|strict
 [models]
 wpl     = "./models/wpl"
 oml     = "./models/oml"
+knowledge = "./models/knowledge"
 
 [topology]
 sources = "./topology/sources"
@@ -1183,6 +1282,12 @@ target = "*"
 key    = "sink_stat"
 target = "*"
 </code></pre>
+<p>Notes:</p>
+<ul>
+<li><code>[models].knowledge</code> is the root directory for knowledge-related config, defaulting to <code>./models/knowledge</code></li>
+<li><code>semantic_dict.toml</code> is loaded from <code>${models.knowledge}/semantic_dict.toml</code> by default</li>
+<li><code>knowdb.toml</code> is loaded from <code>${models.knowledge}/knowdb.toml</code> by default</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="sources-configuration"><a class="header" href="#sources-configuration">Sources Configuration</a></h1>
 <h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
@@ -1619,7 +1724,7 @@ path = "./data/logs"
 <li><strong>Built-in System Dictionary</strong>: Code-embedded, covering common vocabulary for log analysis</li>
 <li><strong>External Configuration Support</strong>: Optional, supports adding or replacing the built-in dictionary</li>
 </ul>
-<p><strong>Configuration File Location</strong>: <code>models/knowledge/semantic_dict.toml</code> (knowledge configuration directory)</p>
+<p><strong>Configuration File Location</strong>: <code>${models.knowledge}/semantic_dict.toml</code> (knowledge configuration directory, default <code>models/knowledge/semantic_dict.toml</code>)</p>
 <h2 id="built-in-system-dictionary"><a class="header" href="#built-in-system-dictionary">Built-in System Dictionary</a></h2>
 <h3 id="built-in-vocabulary-categories"><a class="header" href="#built-in-vocabulary-categories">Built-in Vocabulary Categories</a></h3>
 <p>All dictionaries are built into the code (<code>semantic_dict_loader.rs</code>), including:</p>
@@ -1684,9 +1789,12 @@ path = "./data/logs"
 </ol>
 <h2 id="external-configuration-optional"><a class="header" href="#external-configuration-optional">External Configuration (Optional)</a></h2>
 <h3 id="configuration-method"><a class="header" href="#configuration-method">Configuration Method</a></h3>
-<p>Specify the external configuration file via environment variable:</p>
-<pre><code class="language-bash">export SEMANTIC_DICT_CONFIG=/path/to/custom_semantic_dict.toml
-</code></pre>
+<p>The loader checks these paths by default (in order):</p>
+<ul>
+<li><code>${models.knowledge}/semantic_dict.toml</code></li>
+<li><code>knowledge/semantic_dict.toml</code> (legacy compatibility)</li>
+</ul>
+<p>No environment variable is required.</p>
 <h3 id="configuration-modes"><a class="header" href="#configuration-modes">Configuration Modes</a></h3>
 <h4 id="1-add-mode-default"><a class="header" href="#1-add-mode-default">1. ADD Mode (Default)</a></h4>
 <p><strong>Add</strong> external configuration vocabulary to the built-in system dictionary:</p>
@@ -1721,6 +1829,9 @@ chinese = ["运行中", "等待中"]
 <h3 id="configuration-file-structure"><a class="header" href="#configuration-file-structure">Configuration File Structure</a></h3>
 <pre><code class="language-toml"># Version number (required)
 version = 1
+
+# External dictionary switch (optional, defaults to true)
+enabled = true
 
 # Mode (optional, defaults to "add")
 mode = "add"  # or "replace"
@@ -1763,7 +1874,7 @@ chinese = ["迁移任务", "通知"]
 </code></pre>
 <h2 id="configuration-examples-3"><a class="header" href="#configuration-examples-3">Configuration Examples</a></h2>
 <h3 id="example-1-extend-built-in-dictionary-add-mode"><a class="header" href="#example-1-extend-built-in-dictionary-add-mode">Example 1: Extend Built-in Dictionary (ADD Mode)</a></h3>
-<p>File: <code>models/knowledge/semantic_dict.toml</code></p>
+<p>File: <code>${models.knowledge}/semantic_dict.toml</code></p>
 <pre><code class="language-toml">version = 1
 mode = "add"
 
@@ -1778,8 +1889,7 @@ english = ["calculate", "aggregate", "transform"]
 chinese = ["计算", "聚合", "转换"]
 </code></pre>
 <p>Usage:</p>
-<pre><code class="language-bash">export SEMANTIC_DICT_CONFIG=models/knowledge/semantic_dict.toml
-./wp-engine
+<pre><code class="language-bash">./wp-engine
 </code></pre>
 <h3 id="example-2-kubernetes-specific-dictionary-replace-mode"><a class="header" href="#example-2-kubernetes-specific-dictionary-replace-mode">Example 2: Kubernetes-specific Dictionary (REPLACE Mode)</a></h3>
 <p>File: <code>k8s_semantic_dict.toml</code></p>
@@ -1850,23 +1960,20 @@ chinese = ["自定义状态1"]
 </ul>
 <h3 id="2-version-control"><a class="header" href="#2-version-control">2. Version Control</a></h3>
 <p>Include configuration file in version control:</p>
-<pre><code class="language-bash">git add models/knowledge/semantic_dict.toml
+<pre><code class="language-bash">git add ${models.knowledge}/semantic_dict.toml
 git commit -m "Add custom semantic dictionary for production"
 </code></pre>
 <h3 id="3-environment-separation"><a class="header" href="#3-environment-separation">3. Environment Separation</a></h3>
-<p>Use different configurations for different environments:</p>
+<p>Use different files per environment, then copy to the default path before startup:</p>
 <pre><code class="language-bash"># Development environment
-export SEMANTIC_DICT_CONFIG=models/knowledge/dev_semantic_dict.toml
+cp ${models.knowledge}/dev_semantic_dict.toml ${models.knowledge}/semantic_dict.toml
 
 # Production environment
-export SEMANTIC_DICT_CONFIG=models/knowledge/prod_semantic_dict.toml
+cp ${models.knowledge}/prod_semantic_dict.toml ${models.knowledge}/semantic_dict.toml
 </code></pre>
 <h3 id="4-configuration-validation"><a class="header" href="#4-configuration-validation">4. Configuration Validation</a></h3>
 <p>Test if configuration loads correctly:</p>
-<pre><code class="language-bash"># Set configuration
-export SEMANTIC_DICT_CONFIG=/path/to/config.toml
-
-# Run tests
+<pre><code class="language-bash"># Run tests
 cargo test -p wp-oml test_extract_main_word -- --nocapture
 </code></pre>
 <h2 id="troubleshooting-1"><a class="header" href="#troubleshooting-1">Troubleshooting</a></h2>
@@ -1882,21 +1989,20 @@ cargo test -p wp-oml test_extract_main_word -- --nocapture
 </ol>
 <p><strong>Solutions:</strong></p>
 <pre><code class="language-bash"># Check if file exists
-ls -l $SEMANTIC_DICT_CONFIG
+ls -l ${models.knowledge}/semantic_dict.toml
 
 # Verify TOML format
-cat $SEMANTIC_DICT_CONFIG
+cat ${models.knowledge}/semantic_dict.toml
 
 # Check version number
-grep "version" $SEMANTIC_DICT_CONFIG
+grep "version" ${models.knowledge}/semantic_dict.toml
 </code></pre>
 <h3 id="vocabulary-not-taking-effect"><a class="header" href="#vocabulary-not-taking-effect">Vocabulary Not Taking Effect</a></h3>
 <p><strong>Troubleshooting Steps:</strong></p>
 <ol>
 <li>
-<p>Confirm environment variable is set:</p>
-<pre><code class="language-bash">echo $SEMANTIC_DICT_CONFIG
-</code></pre>
+<p>Confirm default config exists and is enabled:
+<code>enabled = true</code> in <code>${models.knowledge}/semantic_dict.toml</code></p>
 </li>
 <li>
 <p>Confirm correct mode:</p>
@@ -1967,8 +2073,8 @@ grep "version" $SEMANTIC_DICT_CONFIG
 <li>Security: Runtime only allows access to table names declared in configuration; SQL only supports {table} placeholder</li>
 <li>Ready to use by default: Most fields can be omitted; built-in defaults and auto-detection satisfy common scenarios</li>
 </ul>
-<p>Directory Layout (Recommended)</p>
-<pre><code>models/knowledge/
+<p>Directory Layout (Recommended, default under <code>${models.knowledge}</code>)</p>
+<pre><code>${models.knowledge}/
   knowdb.toml                     # This configuration
   example/
     create.sql
@@ -1979,12 +2085,12 @@ grep "version" $SEMANTIC_DICT_CONFIG
     insert.sql
     data.csv
 </code></pre>
-<p>Top-level Configuration (models/knowledge/knowdb.toml)</p>
+<p>Top-level Configuration (<code>${models.knowledge}/knowdb.toml</code>)</p>
 <pre><code class="language-toml">version = 2
 
 [[tables]]
 name = "example"
-# dir defaults to name when omitted; this example uses directory models/knowledge/example
+# dir defaults to name when omitted; this example uses directory ${models.knowledge}/example
 # data_file defaults to data.csv in table directory when omitted
 columns.by_header = ["name", "pinying"]
 
@@ -2026,7 +2132,7 @@ columns.by_header = ["name", "pinying"]
 <ol>
 <li>Directory</li>
 </ol>
-<pre><code>models/knowledge/knowdb.toml
+<pre><code>${models.knowledge}/knowdb.toml
 models/knowledge/example/{create.sql, insert.sql, data.csv}
 </code></pre>
 <ol start="2">
@@ -2161,6 +2267,189 @@ level  = "debug"
 path = "./data/logs"
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="secure-variables-and-environment-variables"><a class="header" href="#secure-variables-and-environment-variables">Secure Variables and Environment Variables</a></h1>
+<p>This document is for configuration users. It explains how to use two kinds of variables:</p>
+<ul>
+<li>Environment variables: for non-sensitive values such as environment names, directories, file names, and addresses</li>
+<li>Secure variables: for sensitive values such as passwords, tokens, and connection strings</li>
+</ul>
+<p>In configuration files, both kinds use the same reference syntax:</p>
+<pre><code class="language-toml">${VAR_NAME}
+</code></pre>
+<p>If a variable may be missing, you can also use a default value:</p>
+<pre><code class="language-toml">${VAR_NAME:default_value}
+</code></pre>
+<h2 id="quick-summary"><a class="header" href="#quick-summary">Quick Summary</a></h2>
+<ul>
+<li>Non-sensitive variables: read from the current shell environment</li>
+<li>Secure variables: read from <code>sec_key.toml</code></li>
+<li>The reference syntax is always <code>${...}</code></li>
+<li>Do not put sensitive values directly into <code>wpsrc.toml</code>, sink routes, or connector files</li>
+</ul>
+<h2 id="how-to-use-environment-variables"><a class="header" href="#how-to-use-environment-variables">How to Use Environment Variables</a></h2>
+<p>Environment variables are suitable for:</p>
+<ul>
+<li>Environment names such as <code>dev</code>, <code>test</code>, and <code>prod</code></li>
+<li>Normal directory paths</li>
+<li>Output file names</li>
+<li>Regular addresses, ports, and tag suffixes</li>
+</ul>
+<p>Set them in your shell first:</p>
+<pre><code class="language-bash">export ENV=prod
+export WORK_ROOT=/opt/wp
+export OUTPUT_FILE=out.dat
+export SRC_ADDR=127.0.0.1
+</code></pre>
+<p>Then reference them in configuration:</p>
+<pre><code class="language-toml">[log_conf.file]
+path = "${WORK_ROOT}/data/logs"
+
+[[sources]]
+key = "tcp_${ENV}"
+connect = "tcp_src"
+params = { addr = "${SRC_ADDR}", port = 19000 }
+
+[output]
+name = "gen_${ENV}"
+params = { file = "${OUTPUT_FILE}" }
+</code></pre>
+<h2 id="how-to-use-secure-variables"><a class="header" href="#how-to-use-secure-variables">How to Use Secure Variables</a></h2>
+<p>Secure variables are suitable for:</p>
+<ul>
+<li>Database passwords</li>
+<li>API tokens</li>
+<li>Full connection strings</li>
+<li>Access keys / secret keys</li>
+</ul>
+<h3 id="file-location"><a class="header" href="#file-location">File Location</a></h3>
+<p>If you use the <code>warp-parse</code> CLI as-is, the secure variable file is looked up in this order:</p>
+<ol>
+<li><code>.warp_parse/sec_key.toml</code> under the current working directory</li>
+<li><code>$HOME/.warp_parse/sec_key.toml</code> as a fallback</li>
+</ol>
+<p>The most common project-local location is:</p>
+<pre><code class="language-text">./.warp_parse/sec_key.toml
+</code></pre>
+<h3 id="file-content"><a class="header" href="#file-content">File Content</a></h3>
+<p><code>sec_key.toml</code> uses normal TOML key-value pairs, for example:</p>
+<pre><code class="language-toml">mysql_url = "mysql://writer:replace-me@127.0.0.1:3306/wparse"
+api_token = "replace-me"
+db_password = "replace-me"
+</code></pre>
+<p>Important:</p>
+<ul>
+<li>Do not write the <code>SEC_</code> prefix in the file</li>
+<li>At runtime, keys are automatically converted to uppercase and prefixed with <code>SEC_</code></li>
+</ul>
+<p>So the three keys above should be referenced like this in configuration:</p>
+<pre><code class="language-toml">${SEC_MYSQL_URL}
+${SEC_API_TOKEN}
+${SEC_DB_PASSWORD}
+</code></pre>
+<h3 id="configuration-example"><a class="header" href="#configuration-example">Configuration Example</a></h3>
+<pre><code class="language-toml">[[sink_group.sinks]]
+connect = "mysql_sink"
+
+[sink_group.sinks.params]
+url = "${SEC_MYSQL_URL}"
+table = "nginx_prod"
+</code></pre>
+<h2 id="using-both-together"><a class="header" href="#using-both-together">Using Both Together</a></h2>
+<p>You can use environment variables and secure variables together.</p>
+<p>For example:</p>
+<pre><code class="language-toml">[[sink_group.sinks]]
+connect = "mysql_sink"
+
+[sink_group.sinks.params]
+url = "${SEC_MYSQL_URL}"
+table = "nginx_${ENV}"
+</code></pre>
+<p>Here:</p>
+<ul>
+<li><code>${SEC_MYSQL_URL}</code> comes from <code>sec_key.toml</code></li>
+<li><code>${ENV}</code> comes from the shell environment</li>
+</ul>
+<h2 id="what-happens-if-a-variable-is-missing"><a class="header" href="#what-happens-if-a-variable-is-missing">What Happens If a Variable Is Missing</a></h2>
+<p><code>${VAR}</code>:</p>
+<ul>
+<li>If the variable exists, it is expanded</li>
+<li>If it does not exist, it stays as-is</li>
+</ul>
+<p><code>${VAR:default}</code>:</p>
+<ul>
+<li>If the variable exists, its value is used</li>
+<li>If it does not exist, the <code>default</code> value is used</li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-toml">path = "${WORK_ROOT:/tmp/wp}/data/logs"
+</code></pre>
+<p>If <code>WORK_ROOT</code> is not set, the final value becomes <code>/tmp/wp/data/logs</code>.</p>
+<h2 id="recommended-practice"><a class="header" href="#recommended-practice">Recommended Practice</a></h2>
+<ul>
+<li>Put normal values in environment variables, such as <code>ENV</code>, <code>WORK_ROOT</code>, and <code>OUTPUT_FILE</code></li>
+<li>Put sensitive values in <code>sec_key.toml</code></li>
+<li>Always reference them through <code>${...}</code> in configuration</li>
+<li>Add <code>.warp_parse/sec_key.toml</code> to <code>.gitignore</code></li>
+<li>Restrict file permissions on <code>sec_key.toml</code> so other users cannot read it</li>
+</ul>
+<h2 id="what-not-to-do"><a class="header" href="#what-not-to-do">What Not to Do</a></h2>
+<ul>
+<li>Do not write passwords, tokens, or connection strings directly into configuration files</li>
+<li>Do not write <code>SEC_MYSQL_URL = "..."</code> inside <code>sec_key.toml</code><br>This will be turned into <code>SEC_SEC_MYSQL_URL</code></li>
+<li>Do not place sensitive values in <code>tags</code>, <code>name</code>, or <code>id</code>, because those may appear in logs and diagnostics</li>
+</ul>
+<h2 id="common-examples"><a class="header" href="#common-examples">Common Examples</a></h2>
+<h3 id="example-1-use-an-environment-variable-for-the-log-directory"><a class="header" href="#example-1-use-an-environment-variable-for-the-log-directory">Example 1: Use an Environment Variable for the Log Directory</a></h3>
+<pre><code class="language-bash">export WORK_ROOT=/srv/wp
+</code></pre>
+<pre><code class="language-toml">[log_conf.file]
+path = "${WORK_ROOT}/data/logs"
+</code></pre>
+<h3 id="example-2-use-a-secure-variable-for-a-mysql-connection-string"><a class="header" href="#example-2-use-a-secure-variable-for-a-mysql-connection-string">Example 2: Use a Secure Variable for a MySQL Connection String</a></h3>
+<p><code>./.warp_parse/sec_key.toml</code></p>
+<pre><code class="language-toml">mysql_url = "mysql://writer:replace-me@127.0.0.1:3306/wparse"
+</code></pre>
+<p>Business route:</p>
+<pre><code class="language-toml">[[sink_group.sinks]]
+connect = "mysql_sink"
+
+[sink_group.sinks.params]
+url = "${SEC_MYSQL_URL}"
+table = "nginx_prod"
+</code></pre>
+<h3 id="example-3-mix-environment-variables-and-secure-variables"><a class="header" href="#example-3-mix-environment-variables-and-secure-variables">Example 3: Mix Environment Variables and Secure Variables</a></h3>
+<pre><code class="language-bash">export ENV=prod
+</code></pre>
+<p><code>./.warp_parse/sec_key.toml</code></p>
+<pre><code class="language-toml">mysql_url = "mysql://writer:replace-me@127.0.0.1:3306/wparse"
+</code></pre>
+<p>Configuration:</p>
+<pre><code class="language-toml">[sink_group.sinks.params]
+url = "${SEC_MYSQL_URL}"
+table = "nginx_${ENV}"
+</code></pre>
+<h2 id="troubleshooting-2"><a class="header" href="#troubleshooting-2">Troubleshooting</a></h2>
+<ul>
+<li><code>${ENV}</code> was not expanded:
+<ul>
+<li>Check whether you ran <code>export ENV=...</code></li>
+<li>Check whether you launched the program in the same shell session</li>
+</ul>
+</li>
+<li><code>${SEC_MYSQL_URL}</code> was not expanded:
+<ul>
+<li>Check whether <code>./.warp_parse/sec_key.toml</code> exists</li>
+<li>Check whether the current working directory is correct</li>
+<li>Check whether you mistakenly wrote <code>SEC_MYSQL_URL = "..."</code> in the file</li>
+</ul>
+</li>
+<li>To confirm fallback behavior:
+<ul>
+<li>If the project does not contain <code>.warp_parse/sec_key.toml</code>, the loader will try <code>$HOME/.warp_parse/sec_key.toml</code></li>
+</ul>
+</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="wpl-rule-language"><a class="header" href="#wpl-rule-language">WPL Rule Language</a></h1>
 <p>WPL (Warp Processing Language) is the rule language used by the Warp Parse parsing subsystem (warp-parse) to describe field extraction, protocol parsing, and simple decision logic.</p>
 <hr>
@@ -2241,8 +2530,8 @@ path = "./data/logs"
     (
       ip:client_ip,
       2*_,
-      time/clf&lt;[,]&gt;:time,
-      http/request":request,
+      time/clf:time&lt;[,]&gt;,
+      http/request:request",
       digit:status,
       digit:bytes
     )
@@ -2276,6 +2565,18 @@ path = "./data/logs"
 }
 </code></pre>
 <p>For more examples, see: <a href="#wpl-quick-start">01-quickstart.md</a> and <a href="#wpl-practical-guide">03-practical-guide.md</a></p>
+<hr>
+<h2 id="writing-wpl-correctly"><a class="header" href="#writing-wpl-correctly">Writing WPL Correctly</a></h2>
+<p>These rules reflect the current grammar:</p>
+<ul>
+<li>Field syntax order is <code>type [subfields] [:name] [format] [separator] {| pipe}</code>.</li>
+<li>Put the field name before the format: <code>time/clf:time&lt;[,]&gt;</code>.</li>
+<li>Quote format also comes after the name: <code>http/request:request"</code>.</li>
+<li><code>opt(...)</code>, <code>alt(...)</code>, <code>some_of(...)</code>, <code>seq(...)</code>, and <code>not(...)</code> are group-level constructs.</li>
+<li><code>opt(type)@key</code> is only for optional JSON/KV subfields.</li>
+<li><code>one_of(...)</code> is not valid WPL. Use <code>alt(...)</code>.</li>
+</ul>
+<p>For the authoritative grammar, see <a href="#wpl-grammar-reference-ebnf">06-grammar-reference.md</a>.</p>
 <hr>
 <h2 id="-complete-type-system-example"><a class="header" href="#-complete-type-system-example">🎯 Complete Type System Example</a></h2>
 <p><strong>Want to quickly understand all data types supported by WPL?</strong></p>
@@ -2318,168 +2619,229 @@ A: Refer to <a href="#quick-debugging-tips">01-quickstart.md § Debugging Tips</
 <p><strong>Start Learning:</strong> <a href="#wpl-quick-start">01-quickstart.md</a> - 5-minute quick start</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="wpl-quick-start"><a class="header" href="#wpl-quick-start">WPL Quick Start</a></h1>
-<blockquote>
-<p><strong>Translation in Progress</strong></p>
-<p>This document is currently being translated from Chinese to English.</p>
-<p>Please refer to the Chinese version: <code>docs/10-user/03-wpl-new/01-quickstart.md</code></p>
-</blockquote>
+<p>Start writing valid WPL in a few minutes.</p>
+<p>For the complete Chinese guide, see <a href="10-user/zh/01-quickstart.html">../zh/01-quickstart.md</a>.</p>
 <hr>
-<p>Get started with WPL in 5 minutes and start parsing your log data immediately.</p>
-<h2 id="what-is-wpl"><a class="header" href="#what-is-wpl">What is WPL?</a></h2>
-<p>WPL (Warp Processing Language) is a <strong>declarative rule language</strong> for describing how to <strong>extract fields</strong> and <strong>parse structures</strong> from text data such as logs and messages.</p>
-<h3 id="core-features"><a class="header" href="#core-features">Core Features</a></h3>
-<ul>
-<li><strong>Declarative</strong>: Describe “what data is” rather than “how to extract”</li>
-<li><strong>Type-Safe</strong>: Automatic validation and conversion (IP, time, JSON, and 37 types)</li>
-<li><strong>Powerful &amp; Flexible</strong>: Support for JSON/KV nested extraction, Base64 decoding, field validation</li>
-<li><strong>Easy to Learn</strong>: Get started with basics in 5 minutes</li>
-</ul>
-<h3 id="use-cases"><a class="header" href="#use-cases">Use Cases</a></h3>
-<ul>
-<li>Parse web server logs (Nginx, Apache)</li>
-<li>Extract JSON/KV structured data</li>
-<li>Process encoded data (Base64, Hex)</li>
-<li>Parse firewall and security device logs</li>
-<li>Custom log format parsing</li>
-</ul>
+<h2 id="what-wpl-looks-like"><a class="header" href="#what-wpl-looks-like">What WPL Looks Like</a></h2>
+<pre><code class="language-wpl">package nginx {
+  rule access_log {
+    (
+      ip:client_ip,
+      2*_,
+      time/clf:time&lt;[,]&gt;,
+      http/request:request",
+      digit:status,
+      digit:bytes
+    )
+  }
+}
+</code></pre>
+<p>The important syntax order is:</p>
+<pre><code class="language-text">type [subfields] [:name] [format] [separator] {| pipe}
+</code></pre>
+<p>Use <code>time/clf:time&lt;[,]&gt;</code>, not <code>time/clf&lt;[,]&gt;:time</code>.
+Use <code>http/request:request"</code>, not <code>http/request":request</code>.</p>
 <hr>
-<p><strong>For the complete English documentation, please check back later or refer to the Chinese version.</strong></p>
+<h2 id="three-common-patterns"><a class="header" href="#three-common-patterns">Three Common Patterns</a></h2>
+<h3 id="space-separated-text"><a class="header" href="#space-separated-text">Space-separated text</a></h3>
+<pre><code class="language-wpl">package demo {
+  rule simple_log {
+    (digit:code, ip:client, time:ts, chars:action)
+  }
+}
+</code></pre>
+<h3 id="json-subfields"><a class="header" href="#json-subfields">JSON subfields</a></h3>
+<pre><code class="language-wpl">package api {
+  rule response {
+    (json(
+      chars@user,
+      digit@code,
+      opt(chars)@message
+    ))
+  }
+}
+</code></pre>
+<p><code>opt(type)@key</code> is valid for JSON/KV subfields.</p>
+<h3 id="optional-groups"><a class="header" href="#optional-groups">Optional groups</a></h3>
+<pre><code class="language-wpl">package web {
+  rule log_line {
+    (ip:client_ip, digit:status),
+    opt(chars:tag")
+  }
+}
+</code></pre>
+<p><code>opt(...)</code>, <code>alt(...)</code>, <code>some_of(...)</code>, and <code>not(...)</code> are group-level constructs.
+Do not put them inside another field list as if they were field types.</p>
+<hr>
+<h2 id="debugging-rule-syntax"><a class="header" href="#debugging-rule-syntax">Debugging Rule Syntax</a></h2>
+<ul>
+<li>Start with one simple group.</li>
+<li>Add one field at a time.</li>
+<li>Verify separators and formats first.</li>
+<li>If one segment may be missing, split it into its own group and wrap that group with <code>opt(...)</code>.</li>
+</ul>
+<p>Authoritative syntax reference: <a href="#wpl-grammar-reference-ebnf">06-grammar-reference.md</a></p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="wpl-core-concepts"><a class="header" href="#wpl-core-concepts">WPL Core Concepts</a></h1>
-<blockquote>
-<p><strong>Translation in Progress</strong></p>
-<p>This document is currently being translated from Chinese to English.</p>
-<p>Please refer to the Chinese version: <code>docs/10-user/03-wpl-new/02-core-concepts.md</code></p>
-</blockquote>
+<p>This page keeps the core writing rules in sync with the Chinese reference.</p>
+<p>For the fuller Chinese document, see <a href="10-user/zh/02-core-concepts.html">../zh/02-core-concepts.md</a>.</p>
 <hr>
-<p>This document helps you understand WPL’s design philosophy and core concepts, building the right mental model.</p>
-<h2 id="quick-navigation"><a class="header" href="#quick-navigation">Quick Navigation</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Topic</th><th>Content</th></tr>
-</thead>
-<tbody>
-<tr><td><strong>Design Philosophy</strong></td><td>Why WPL is needed, core ideas, declarative design</td></tr>
-<tr><td><strong>Type System</strong></td><td>Role of types, type hierarchy, type composition</td></tr>
-<tr><td><strong>Matching Semantics</strong></td><td>seq, alt, opt, some_of</td></tr>
-<tr><td><strong>Pipeline System</strong></td><td>Preprocessing pipeline, field-level pipeline</td></tr>
-<tr><td><strong>Subfields &amp; Nesting</strong></td><td>JSON subfields, KV subfields, arrays</td></tr>
-<tr><td><strong>Separator Priority</strong></td><td>Priority rules, separator types</td></tr>
-<tr><td><strong>Design Principles</strong></td><td>Declarative, type-safe, composable</td></tr>
-<tr><td><strong>Common Misconceptions</strong></td><td>WPL vs regex, field continuity</td></tr>
-</tbody>
-</table>
-</div>
+<h2 id="mental-model"><a class="header" href="#mental-model">Mental Model</a></h2>
+<p>WPL is a typed pattern language:</p>
+<ul>
+<li>A rule describes the expected field sequence.</li>
+<li>Each type both parses and validates data.</li>
+<li>Names are attached after the type or subfield path.</li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-wpl">(ip:client, digit:status, time:ts)
+</code></pre>
 <hr>
-<p><strong>For the complete English documentation, please check back later or refer to the Chinese version.</strong></p>
+<h2 id="group-semantics"><a class="header" href="#group-semantics">Group Semantics</a></h2>
+<p>WPL groups control matching behavior:</p>
+<pre><code class="language-wpl">(ip, digit, time)              # seq, default
+alt(ip:addr, chars:addr)       # choose one
+opt(chars:tag")                # optional group
+some_of(kvarr, ip, digit)      # keep matching candidates
+not(peek_symbol(ERROR):check)  # negative assertion
+</code></pre>
+<p>Notes:</p>
+<ul>
+<li><code>opt(...)</code>, <code>alt(...)</code>, <code>some_of(...)</code>, <code>not(...)</code>, and <code>seq(...)</code> are groups.</li>
+<li>They are not field types.</li>
+<li>Nested groups such as <code>opt(alt(...))</code> are not supported by the current grammar.</li>
+</ul>
+<hr>
+<h2 id="field-syntax-order"><a class="header" href="#field-syntax-order">Field Syntax Order</a></h2>
+<p>The order matters:</p>
+<pre><code class="language-text">type [subfields] [:name] [format] [separator] {| pipe}
+</code></pre>
+<p>Valid:</p>
+<pre><code class="language-wpl">time/clf:access_time&lt;[,]&gt;
+http/request:request"
+json(chars@user, opt(chars)@email)
+</code></pre>
+<p>Invalid:</p>
+<pre><code class="language-wpl">time/clf&lt;[,]&gt;:access_time
+http/request":request
+</code></pre>
+<hr>
+<h2 id="optional-data"><a class="header" href="#optional-data">Optional Data</a></h2>
+<p>There are two different patterns:</p>
+<ul>
+<li>Optional group: <code>opt(chars:tag")</code></li>
+<li>Optional subfield: <code>opt(chars)@email</code></li>
+</ul>
+<p>Use the first for line-level segments and the second for JSON/KV members.</p>
+<hr>
+<h2 id="separators"><a class="header" href="#separators">Separators</a></h2>
+<p>Separator priority is:</p>
+<pre><code class="language-text">field-level &gt; group-level &gt; upstream/default
+</code></pre>
+<p>See <a href="#wpl-grammar-reference-ebnf">06-grammar-reference.md</a> and <a href="10-user/zh/08-sep-pattern.html">../zh/08-sep-pattern.md</a> for the exact grammar.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="wpl-practical-guide"><a class="header" href="#wpl-practical-guide">WPL Practical Guide</a></h1>
-<blockquote>
-<p><strong>Translation in Progress</strong></p>
-<p>This document is currently being translated from Chinese to English.</p>
-<p>Please refer to the Chinese version: <code>docs/10-user/03-wpl-new/03-practical-guide.md</code></p>
-</blockquote>
+<p>This page keeps a compact English checklist for writing working WPL.</p>
+<p>For the full scenario guide, see <a href="10-user/zh/03-practical-guide.html">../zh/03-practical-guide.md</a>.</p>
 <hr>
-<p>This document uses a task-oriented approach to help you quickly find solutions.</p>
-<h2 id="task-navigation"><a class="header" href="#task-navigation">Task Navigation</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Task Type</th><th>Jump To</th></tr>
-</thead>
-<tbody>
-<tr><td>Parse Web Server Logs</td><td>Nginx/Apache access logs, error logs</td></tr>
-<tr><td>Parse JSON Data</td><td>Extract JSON fields, nested JSON</td></tr>
-<tr><td>Parse KV Pairs</td><td>Basic KV, nested KV, mixed formats</td></tr>
-<tr><td>Handle Encoded Data</td><td>Base64, Hex decoding</td></tr>
-<tr><td>Field Validation &amp; Filtering</td><td>Check fields, IP ranges, port ranges</td></tr>
-<tr><td>Complex Scenarios</td><td>Variable fields, multiple formats, nested structures</td></tr>
-<tr><td>Common Issues</td><td>Debugging tips, performance optimization</td></tr>
-</tbody>
-</table>
-</div>
+<h2 id="common-patterns"><a class="header" href="#common-patterns">Common Patterns</a></h2>
+<h3 id="nginx-access-log-1"><a class="header" href="#nginx-access-log-1">Nginx access log</a></h3>
+<pre><code class="language-wpl">package nginx {
+  rule access_log {
+    (
+      ip:client_ip,
+      2*_,
+      time/clf:time&lt;[,]&gt;,
+      http/request:request",
+      http/status:status,
+      digit:bytes,
+      chars:referer",
+      http/agent:user_agent"
+    )
+  }
+}
+</code></pre>
+<h3 id="json-fields"><a class="header" href="#json-fields">JSON fields</a></h3>
+<pre><code class="language-wpl">(json(
+  chars@user,
+  digit@code,
+  opt(chars)@message
+))
+</code></pre>
+<h3 id="optional-trailing-segment"><a class="header" href="#optional-trailing-segment">Optional trailing segment</a></h3>
+<pre><code class="language-wpl">(digit:code, time:ts),
+opt(chars:tag")
+</code></pre>
+<p>Split optional content into its own group instead of trying to wrap a field inside another group.</p>
 <hr>
-<p><strong>For the complete English documentation, please check back later or refer to the Chinese version.</strong></p>
+<h2 id="quick-checks"><a class="header" href="#quick-checks">Quick Checks</a></h2>
+<ul>
+<li>Put <code>:name</code> before the format.</li>
+<li>Put formats after the field name: <code>chars:msg"</code> and <code>time/clf:ts&lt;[,]&gt;</code>.</li>
+<li>Use <code>alt(...)</code> for alternatives. <code>one_of(...)</code> is not valid WPL.</li>
+<li>Use <code>opt(type)@key</code> only for JSON/KV subfields.</li>
+<li>Keep <code>opt(...)</code>, <code>alt(...)</code>, <code>some_of(...)</code>, <code>not(...)</code> at group level.</li>
+</ul>
+<p>Primary syntax reference: <a href="#wpl-grammar-reference-ebnf">06-grammar-reference.md</a></p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="wpl-language-reference"><a class="header" href="#wpl-language-reference">WPL Language Reference</a></h1>
-<blockquote>
-<p><strong>Translation in Progress</strong></p>
-<p>This document is currently being translated from Chinese to English.</p>
-<p>Please refer to the Chinese version: <code>docs/10-user/03-wpl-new/04-language-reference.md</code></p>
-</blockquote>
+<p>This page summarizes the syntax details that are easy to get wrong when writing WPL.</p>
+<p>For the fuller Chinese reference, see <a href="10-user/zh/04-language-reference.html">../zh/04-language-reference.md</a>.</p>
 <hr>
-<p>This document provides a complete reference for WPL language elements, for quick lookup of types, syntax, and structures.</p>
-<h2 id="quick-navigation-1"><a class="header" href="#quick-navigation-1">Quick Navigation</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Topic</th><th>Content</th></tr>
-</thead>
-<tbody>
-<tr><td><strong>Type System</strong></td><td>All data type quick reference</td></tr>
-<tr><td><strong>Syntax Elements</strong></td><td>Basic structure, field definition, format control</td></tr>
-<tr><td><strong>Subfield Syntax</strong></td><td>JSON, KV, array subfields</td></tr>
-<tr><td><strong>Annotations</strong></td><td>tag, copy_raw annotations</td></tr>
-<tr><td><strong>Syntax Quick Reference</strong></td><td>Common pattern quick reference</td></tr>
-</tbody>
-</table>
-</div>
+<h2 id="field-syntax"><a class="header" href="#field-syntax">Field Syntax</a></h2>
+<p>Full order:</p>
+<pre><code class="language-text">[N*] type [symbol_content] [subfields] [:name] [length] [format] [separator] {| pipe}
+</code></pre>
+<p>Examples:</p>
+<pre><code class="language-wpl">digit:status
+time/clf:time&lt;[,]&gt;
+http/request:request"
+json(chars@name, opt(chars)@email)
+</code></pre>
 <hr>
-<p><strong>For the complete English documentation, please check back later or refer to the Chinese version.</strong></p>
+<h2 id="group-syntax"><a class="header" href="#group-syntax">Group Syntax</a></h2>
+<pre><code class="language-wpl">(field1, field2, field3)
+seq(field1, field2, field3)
+alt(ip:addr, chars:addr)
+opt(chars:tag")
+some_of(kvarr, ip, digit)
+not(peek_symbol(ERROR):check)
+</code></pre>
+<p>Rules:</p>
+<ul>
+<li>Group operators are <code>seq</code>, <code>alt</code>, <code>opt</code>, <code>some_of</code>, and <code>not</code>.</li>
+<li>They apply to groups, not to field types.</li>
+<li>Nested groups are not supported.</li>
+</ul>
+<hr>
+<h2 id="subfields"><a class="header" href="#subfields">Subfields</a></h2>
+<p>JSON and KV subfields support optional member types:</p>
+<pre><code class="language-wpl">json(chars@name, opt(chars)@email)
+kvarr(chars@host, digit@port, opt(chars)@user)
+</code></pre>
+<p>This is different from group-level <code>opt(...)</code>.</p>
+<hr>
+<h2 id="valid-and-invalid-forms"><a class="header" href="#valid-and-invalid-forms">Valid and Invalid Forms</a></h2>
+<p>Valid:</p>
+<pre><code class="language-wpl">time/clf:time&lt;[,]&gt;
+http/request:request"
+alt(ip:addr, chars:addr)
+</code></pre>
+<p>Invalid:</p>
+<pre><code class="language-wpl">time/clf&lt;[,]&gt;:time
+http/request":request
+one_of(ip, chars)
+</code></pre>
+<p>Authoritative grammar: <a href="#wpl-grammar-reference-ebnf">06-grammar-reference.md</a></p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="wpl-functions-reference"><a class="header" href="#wpl-functions-reference">WPL Functions Reference</a></h1>
-<blockquote>
-<p><strong>Translation in Progress</strong></p>
-<p>This document is currently being translated from Chinese to English.</p>
-<p>Please refer to the Chinese version: <code>docs/10-user/03-wpl-new/05-functions-reference.md</code></p>
-</blockquote>
-<hr>
-<p>This document provides standardized reference for all WPL functions.</p>
-<h2 id="wpl-all-functions-quick-reference"><a class="header" href="#wpl-all-functions-quick-reference">WPL All Functions Quick Reference</a></h2>
-<h3 id="preprocessing-pipeline-functions"><a class="header" href="#preprocessing-pipeline-functions">Preprocessing Pipeline Functions</a></h3>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Function</th><th>Description</th><th>Example</th></tr>
-</thead>
-<tbody>
-<tr><td><code>decode/base64</code></td><td>Decode entire line as Base64</td><td><code>|decode/base64|</code></td></tr>
-<tr><td><code>decode/hex</code></td><td>Decode entire line as hexadecimal</td><td><code>|decode/hex|</code></td></tr>
-<tr><td><code>unquote/unescape</code></td><td>Remove quotes and unescape</td><td><code>|unquote/unescape|</code></td></tr>
-<tr><td><code>plg_pipe/&lt;name&gt;</code></td><td>Custom preprocessing extension</td><td><code>|plg_pipe/dayu|</code></td></tr>
-</tbody>
-</table>
-</div>
-<h3 id="selector-functions"><a class="header" href="#selector-functions">Selector Functions</a></h3>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Function</th><th>Description</th><th>Example</th></tr>
-</thead>
-<tbody>
-<tr><td><code>take(name)</code></td><td>Select specified field as active</td><td><code>|take(name)|</code></td></tr>
-<tr><td><code>last()</code></td><td>Select last field as active</td><td><code>|last()|</code></td></tr>
-</tbody>
-</table>
-</div>
-<h3 id="field-set-operations-f_-prefix"><a class="header" href="#field-set-operations-f_-prefix">Field Set Operations (f_ prefix)</a></h3>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Function</th><th>Description</th><th>Example</th></tr>
-</thead>
-<tbody>
-<tr><td><code>f_has(name)</code></td><td>Check if field exists</td><td><code>|f_has(status)|</code></td></tr>
-<tr><td><code>f_chars_has(name, val)</code></td><td>Check field equals string</td><td><code>|f_chars_has(status, success)|</code></td></tr>
-<tr><td><code>f_chars_in(name, [...])</code></td><td>Check field in string list</td><td><code>|f_chars_in(method, [GET, POST])|</code></td></tr>
-<tr><td><code>f_digit_has(name, num)</code></td><td>Check field equals number</td><td><code>|f_digit_has(code, 200)|</code></td></tr>
-<tr><td><code>f_ip_in(name, [...])</code></td><td>Check IP in list</td><td><code>|f_ip_in(client_ip, [127.0.0.1])|</code></td></tr>
-</tbody>
-</table>
-</div>
-<hr>
-<p><strong>For the complete English documentation, please check back later or refer to the Chinese version.</strong></p>
+<p>The detailed English translation is not complete yet.</p>
+<p>For the full reference, see:</p>
+<ul>
+<li>Chinese index: <a href="10-user/zh/05-functions-reference.html">../zh/05-functions-reference.md</a></li>
+<li>English function pages: <a href="10-user/03-wpl/functions">functions/</a></li>
+</ul>
+<p>When the function behavior affects syntax, treat <a href="#wpl-grammar-reference-ebnf">06-grammar-reference.md</a> as the authoritative source.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="wpl-grammar-reference-ebnf"><a class="header" href="#wpl-grammar-reference-ebnf">WPL Grammar Reference (EBNF)</a></h1>
 <p>This document provides the formal grammar definition of WPL, suitable for:</p>
@@ -2511,9 +2873,9 @@ A: Refer to <a href="#quick-debugging-tips">01-quickstart.md § Debugging Tips</
 </div>
 <hr>
 <h2 id="complete-ebnf-definition"><a class="header" href="#complete-ebnf-definition">Complete EBNF Definition</a></h2>
-<p>The authoritative implementation is in the <code>crates/wp-lang</code> parser; this document is kept in sync with the source code.</p>
+<p>The authoritative implementation is in the <code>src/parser/</code> modules of this crate; this document is kept in sync with the source code.</p>
 <pre><code class="language-ebnf">; WPL Grammar (EBNF)
-; Based on the parser implementation (winnow) in crates/wp-lang
+; Based on the parser implementation (winnow) in src/parser/
 ; Note: This file provides grammar productions and necessary lexical conventions. Unless explicitly noted, optional whitespace `ws` is allowed between tokens.
 
 wpl_document     = { package_decl } ;
@@ -2541,7 +2903,7 @@ name             = ("base64" | "hex") | "unescape" | "bom" ;     ; Step name whi
 ;   strip/bom - Remove BOM (Byte Order Mark)
 
 group            = [ group_meta ] ws? "(" ws? field_list_opt ws? ")" [ ws? group_len ] [ ws? group_sep ] ;
-group_meta       = "alt" | "opt" | "some_of" | "seq" ;
+group_meta       = "alt" | "opt" | "some_of" | "seq" | "not" ;
 group_len        = "[" number "]" ;
 group_sep        = sep ;
 
@@ -2601,14 +2963,51 @@ subtype          = key ;                                      ; Can be any suppo
 symbol_content   = "(" symbol_chars ")" ;
 
 ; Field display/extraction format
-format           = scope_fmt | quote_fmt | field_cnt ;
+format           = scope_fmt | quote_fmt ;
 scope_fmt        = "&lt;" any_chars "," any_chars "&gt;" ;   ; Scope delimiters, e.g., &lt;[,]&gt;
 quote_fmt        = '"' ;                                ; Equivalent to '"' at both ends
-field_cnt        = "^" number ;                          ; Only valid for chars/_ (implementation constraint)
 
-; Separator (high/medium priority, concatenated as-is). Syntax is backslash-escaped character sequence, length&gt;=1
-sep              = sep_char , { sep_char } ;             ; e.g., "\\," =&gt; ","; "\\!\\|" =&gt; "!|"
+
+; Separator (two forms)
+sep              = shortcut_sep | pattern_sep ;
+
+; Shortcut separator: backslash-escaped character sequence
+shortcut_sep     = sep_char , { sep_char } ;             ; e.g., "\\," =&gt; ","; "\\!\\|" =&gt; "!|"
 sep_char         = '\\' , any_char ;
+
+; Pattern separator: brace-wrapped pattern expression
+pattern_sep      = "{" pattern_content "}" ;
+pattern_content  = glob_segments [ preserve ] ;
+glob_segments    = glob_segment { glob_segment } ;
+glob_segment     = literal_char | wildcard | escape_seq ;
+
+; Wildcards
+wildcard         = "*" | "?" ;                          ; "*" - zero or more arbitrary characters (non-greedy); "?" - exactly one arbitrary character
+; Constraint: at most one "*" allowed in a pattern
+
+; Escape sequences
+escape_seq       = "\\" ( special_char | macro_char ) ;
+special_char     = "\\" | "*" | "?" | "{" | "}" | "(" | ")" ;  ; Literal escape
+macro_char       = "s" | "S" | "h" | "H" | "0" | "n" | "t" | "r" ;  ; Macro characters
+; Supported macros:
+;   \s - one or more consecutive whitespace characters [ \t\r\n]+
+;   \S - one or more consecutive non-whitespace characters [^ \t\r\n]+
+;   \h - one or more consecutive horizontal whitespace [ \t]+
+;   \H - one or more consecutive non-horizontal-whitespace [^ \t]+
+;   \0 - null byte
+;   \n - newline
+;   \t - tab
+;   \r - carriage return
+
+; Preserve marker
+preserve         = "(" glob_segments ")" ;              ; Match but don't consume, only at pattern end
+; Constraints:
+;   1. preserve can only appear at the end of pattern_content
+;   2. preserve cannot contain "*" wildcard
+;   3. preserve cannot be nested
+
+; Literal character (any character except special characters)
+literal_char     = any_char_except_special ;            ; Any character except '\', '*', '?', '{', '}', '(', ')'
 
 ; Field-level pipe: function call or nested group
 pipe             = "|" ws? ( fun_call | group ) ;
@@ -2718,7 +3117,7 @@ ipv6             = ? valid IPv6 literal (RFC 4291), including compressed forms l
 ws               = { ' ' | '\t' | '\n' | '\r' } ;
 
 ; Reserved keywords (cannot be used as identifiers; conflict validation performed by implementation)
-ReservedKeyword  = "package" | "rule" | "alt" | "opt" | "some_of" | "seq" | "order"
+ReservedKeyword  = "package" | "rule" | "alt" | "opt" | "some_of" | "seq" | "not" | "order"
                  | "tag" | "copy_raw" | "include" | "macro" ;
 
 
@@ -2740,32 +3139,79 @@ ReservedKeyword  = "package" | "rule" | "alt" | "opt" | "some_of" | "seq" | "ord
 </ul>
 </li>
 </ul>
+<h3 id="group-metadata-group-meta"><a class="header" href="#group-metadata-group-meta">Group Metadata (Group Meta)</a></h3>
+<ul>
+<li><code>group_meta</code> specifies the behavior pattern of a group</li>
+<li><code>alt</code> - Alternative matching, matches any one field in the group</li>
+<li><code>opt</code> - Optional group, the entire group may not exist</li>
+<li><code>some_of</code> - Partial matching, matches some fields in the group</li>
+<li><code>seq</code> - Sequence matching, matches all fields in the group in order</li>
+<li><code>not</code> - Negation matching, matches content other than the fields in the group</li>
+<li>These forms are group-level only. They should not be used as field wrappers inside another group’s field list.</li>
+</ul>
 <h3 id="group-length-and-separator"><a class="header" href="#group-length-and-separator">Group Length and Separator</a></h3>
 <ul>
 <li><code>group</code> can be followed by <code>[n]</code> and separator <code>sep</code></li>
 <li>Length applies to all fields within the group</li>
 <li><code>sep</code> is only stored on the group, specific combination strategy see implementation</li>
 </ul>
-<h3 id="format-control"><a class="header" href="#format-control">Format Control</a></h3>
-<ul>
-<li><code>field_cnt</code> (<code>^n</code>) in <code>format</code> only applies to <code>chars/_</code> types</li>
-<li>Other types will be rejected (implementation constraint)</li>
-</ul>
 <h3 id="symbol-types"><a class="header" href="#symbol-types">Symbol Types</a></h3>
 <ul>
 <li><code>symbol/peek_symbol</code> can carry <code>symbol_content</code>, e.g., <code>symbol(boy)</code></li>
 <li><code>peek_symbol</code> is equivalent to <code>symbol</code>, only changing the “peek” semantics (lookahead without consuming)</li>
 </ul>
-<h3 id="subfields"><a class="header" href="#subfields">Subfields</a></h3>
+<h3 id="subfields-1"><a class="header" href="#subfields-1">Subfields</a></h3>
 <ul>
 <li>In <code>subfields</code>, when <code>"@ref"</code> is not explicitly specified, the key defaults to <code>"*"</code> (wildcard key)</li>
 <li>Subfields support <code>opt(type)</code> to mark as optional</li>
 </ul>
-<h3 id="separators"><a class="header" href="#separators">Separators</a></h3>
+<h3 id="separators-1"><a class="header" href="#separators-1">Separators</a></h3>
+<p>Separators support two forms:</p>
+<h4 id="shortcut-separator"><a class="header" href="#shortcut-separator">Shortcut Separator</a></h4>
 <ul>
-<li><code>sep</code> syntax requires backslash-escaping each character</li>
-<li>For example, <code>\\!\\|</code> represents the string <code>"!|"</code></li>
+<li>Single or multiple characters escaped with backslash</li>
+<li>For example, <code>\\,</code> represents comma <code>,</code>, <code>\\!\\|</code> represents string <code>"!|"</code></li>
 <li>Priority: field-level &gt; group-level &gt; upstream</li>
+</ul>
+<h4 id="pattern-separator"><a class="header" href="#pattern-separator">Pattern Separator</a></h4>
+<ul>
+<li>Pattern expression wrapped in braces <code>{...}</code></li>
+<li>Supports wildcards, whitespace macros, and preserve markers</li>
+<li>Suitable for complex separation scenarios</li>
+</ul>
+<p><strong>Wildcards:</strong></p>
+<ul>
+<li><code>*</code> - Zero or more arbitrary characters (non-greedy, shortest match)</li>
+<li><code>?</code> - Exactly one arbitrary character</li>
+<li>Constraint: at most one <code>*</code> allowed in a pattern</li>
+</ul>
+<p><strong>Whitespace Macros:</strong></p>
+<ul>
+<li><code>\s</code> - One or more consecutive whitespace characters <code>[ \t\r\n]+</code></li>
+<li><code>\S</code> - One or more consecutive non-whitespace characters <code>[^ \t\r\n]+</code></li>
+<li><code>\h</code> - One or more consecutive horizontal whitespace <code>[ \t]+</code></li>
+<li><code>\H</code> - One or more consecutive non-horizontal-whitespace <code>[^ \t]+</code></li>
+</ul>
+<p><strong>Preserve Marker:</strong></p>
+<ul>
+<li><code>(...)</code> - Match but don’t consume, leave matched content for next stage</li>
+<li>Can only appear at pattern end</li>
+<li>Cannot contain <code>*</code> wildcard inside</li>
+</ul>
+<p><strong>Examples:</strong></p>
+<ul>
+<li><code>chars{*=}</code> - Match to first <code>=</code> sign</li>
+<li><code>chars{\s=}</code> - Skip whitespace then match <code>=</code></li>
+<li><code>chars{*(key=)}</code> - Match to <code>key=</code> and preserve <code>key=</code> for next field</li>
+<li><code>chars{field?:\s}</code> - Match <code>field</code> + any char + <code>:</code> + whitespace</li>
+</ul>
+<p><strong>Constraints:</strong></p>
+<ul>
+<li>At most one <code>*</code> in a pattern</li>
+<li><code>()</code> only at pattern end</li>
+<li><code>*</code> not allowed inside <code>()</code></li>
+<li><code>()</code> cannot be nested</li>
+<li>Cannot be used with upstream separator</li>
 </ul>
 <h3 id="annotations"><a class="header" href="#annotations">Annotations</a></h3>
 <ul>
@@ -2793,43 +3239,280 @@ ReservedKeyword  = "package" | "rule" | "alt" | "opt" | "some_of" | "seq" | "ord
 <hr>
 <h2 id="implementation-reference"><a class="header" href="#implementation-reference">Implementation Reference</a></h2>
 <ul>
-<li>Grammar implementation: <code>crates/wp-lang/src/parser/</code></li>
-<li>Pipe functions: <code>crates/wp-lang/src/parser/wpl_fun.rs</code></li>
+<li>Grammar implementation: <code>src/parser/</code></li>
+<li>Pipe functions: <code>src/parser/wpl_fun.rs</code></li>
 <li>Data types: External crate <code>wp-model-core</code></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="wpl-complete-type-system-example"><a class="header" href="#wpl-complete-type-system-example">WPL Complete Type System Example</a></h1>
-<blockquote>
-<p><strong>Translation in Progress</strong></p>
-<p>This document is currently being translated from Chinese to English.</p>
-<p>Please refer to the Chinese version: <code>docs/10-user/03-wpl-new/07-complete-types-example.md</code></p>
-</blockquote>
+<p>This example set is still more complete in Chinese.</p>
+<p>Use:</p>
+<ul>
+<li>Chinese reference: <a href="10-user/zh/07-complete-types-example.html">../zh/07-complete-types-example.md</a></li>
+<li>Grammar rules: <a href="#wpl-grammar-reference-ebnf">06-grammar-reference.md</a></li>
+</ul>
+<p>Before copying any example, keep these syntax rules in mind:</p>
+<ul>
+<li>Write <code>time/clf:time&lt;[,]&gt;</code>, not <code>time/clf&lt;[,]&gt;:time</code>.</li>
+<li>Write <code>http/request:request"</code>, not <code>http/request":request</code>.</li>
+<li>Use group-level <code>opt(...)</code> for optional segments.</li>
+<li>Use <code>opt(type)@key</code> for optional JSON/KV subfields.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="separator-pattern-sep-pattern"><a class="header" href="#separator-pattern-sep-pattern">Separator Pattern (Sep Pattern)</a></h1>
+<p>This document introduces the <code>{...}</code> separator pattern syntax in WPL, used for flexible splitting at field separator positions using wildcards and special matching.</p>
+<p>Suitable for complex scenarios where shortcut separators (<code>\,</code>, <code>\s</code>, etc.) cannot meet requirements, such as “skip any content until a keyword” or “whitespace + specific prefix”.</p>
+<p>Tip: If your separator needs can be satisfied with a fixed string, prioritize using shortcut separators (refer to <a href="10-user/03-wpl/01-wpl_basics.html#separator-priority-and-merging">WPL Basics - Separator Priority and Merging</a>).</p>
 <hr>
-<blockquote>
-<p>One example demonstrating all major WPL data types</p>
-</blockquote>
-<p>This document provides a complete, runnable WPL rule example showcasing 23 major data types. This is the <strong>best reference</strong> for learning the WPL type system.</p>
-<h2 id="type-coverage-checklist"><a class="header" href="#type-coverage-checklist">Type Coverage Checklist</a></h2>
-<p>This example includes the following types:</p>
+<h2 id="-document-navigation-1"><a class="header" href="#-document-navigation-1">📚 Document Navigation</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Category</th><th>Included Types</th><th>Count</th></tr>
+<tr><th>Topic</th><th>Content</th></tr>
 </thead>
 <tbody>
-<tr><td><strong>Basic Types</strong></td><td><code>peek_symbol</code>, <code>symbol</code>, <code>bool</code>, <code>chars</code>, <code>digit</code>, <code>float</code>, <code>_</code></td><td>7</td></tr>
-<tr><td><strong>Time Types</strong></td><td><code>time_3339</code>, <code>time_2822</code>, <code>time/clf</code>, <code>time_timestamp</code></td><td>4</td></tr>
-<tr><td><strong>Network Types</strong></td><td><code>ip</code>, <code>ip_net</code>, <code>port</code></td><td>3</td></tr>
-<tr><td><strong>Structured Types</strong></td><td><code>kvarr</code>, <code>json</code></td><td>2</td></tr>
-<tr><td><strong>Protocol Types</strong></td><td><code>http/request</code>, <code>http/status</code>, <code>http/agent</code>, <code>http/method</code></td><td>4</td></tr>
-<tr><td><strong>Encoding Types</strong></td><td><code>hex</code>, <code>base64</code></td><td>2</td></tr>
-<tr><td><strong>Special Types</strong></td><td><code>sn</code></td><td>1</td></tr>
-<tr><td><strong>Total</strong></td><td></td><td><strong>23 types</strong></td></tr>
+<tr><td><a href="#basic-syntax"><strong>Basic Syntax</strong></a></td><td><code>{...}</code> notation, wildcards, escape characters</td></tr>
+<tr><td><a href="#syntax-table"><strong>Syntax Table</strong></a></td><td>Overview of all supported notations</td></tr>
+<tr><td><a href="#wildcards--and-"><strong>Wildcards <code>*</code> and <code>?</code></strong></a></td><td>Non-greedy matching, single character matching</td></tr>
+<tr><td><a href="#whitespace-matching-s-and-h"><strong>Whitespace Matching</strong></a></td><td><code>\s</code> continuous whitespace, <code>\h</code> horizontal whitespace</td></tr>
+<tr><td><a href="#preserve-marker-preserve"><strong>Preserve Marker <code>()</code></strong></a></td><td>Match but don’t consume, leave for next stage</td></tr>
+<tr><td><a href="#usage-constraints"><strong>Usage Constraints</strong></a></td><td>Restrictions on <code>*</code> and <code>()</code></td></tr>
+<tr><td><a href="#practical-examples"><strong>Practical Examples</strong></a></td><td>Common scenarios and complete rules</td></tr>
 </tbody>
 </table>
 </div>
 <hr>
-<p><strong>For the complete English documentation, please check back later or refer to the Chinese version.</strong></p>
+<h2 id="basic-syntax"><a class="header" href="#basic-syntax">Basic Syntax</a></h2>
+<p>Use curly braces <code>{...}</code> to wrap pattern expressions at field separator positions:</p>
+<pre><code class="language-wpl"># Shortcut separator
+chars\,
+
+# Pattern separator
+chars{*=}
+</code></pre>
+<p>Pattern separators follow the same priority rules as shortcut separators (field-level &gt; group-level &gt; upstream).</p>
+<hr>
+<h2 id="syntax-table"><a class="header" href="#syntax-table">Syntax Table</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Notation</th><th>Description</th><th>Example</th></tr>
+</thead>
+<tbody>
+<tr><td><code>a</code></td><td>Literal character <code>a</code></td><td><code>{abc}</code> matches <code>"abc"</code></td></tr>
+<tr><td><code>*</code></td><td>Zero or more arbitrary characters (<strong>non-greedy</strong>, shortest match)</td><td><code>{*=}</code> matches to first <code>=</code></td></tr>
+<tr><td><code>?</code></td><td>Exactly one arbitrary character</td><td><code>{field?:}</code> matches <code>"fieldA:"</code></td></tr>
+<tr><td><code>\0</code></td><td>Null byte</td><td></td></tr>
+<tr><td><code>\n</code></td><td>Newline</td><td></td></tr>
+<tr><td><code>\t</code></td><td>Tab</td><td></td></tr>
+<tr><td><code>\r</code></td><td>Carriage return</td><td></td></tr>
+<tr><td><code>\s</code></td><td>One or more consecutive whitespace <code>[ \t\r\n]+</code></td><td><code>{\s=}</code> skip whitespace then match <code>=</code></td></tr>
+<tr><td><code>\h</code></td><td>One or more horizontal whitespace <code>[ \t]+</code></td><td><code>{\h:\h}</code> matches <code>" : "</code></td></tr>
+<tr><td><code>\\</code> <code>\*</code> <code>\?</code> <code>\{</code> <code>\}</code> <code>\(</code> <code>\)</code></td><td>Literal escape</td><td><code>{\*}</code> matches literal <code>*</code></td></tr>
+<tr><td><code>(...)</code></td><td>Match but don’t consume (only at pattern end)</td><td><code>{*(key=)}</code> preserve <code>key=</code></td></tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<p>Note: <code>\s</code> and <code>\h</code> inside <code>{}</code> patterns match <strong>one or more</strong> consecutive whitespace; <code>\s</code> outside <code>{}</code> retains original semantics, existing configurations are unaffected.</p>
+</blockquote>
+<hr>
+<h2 id="wildcards--and-"><a class="header" href="#wildcards--and-">Wildcards <code>*</code> and <code>?</code></a></h2>
+<h3 id="--non-greedy-matching"><a class="header" href="#--non-greedy-matching"><code>*</code> — Non-greedy Matching</a></h3>
+<p><code>*</code> matches zero or more arbitrary characters using a <strong>shortest match</strong> strategy.</p>
+<pre><code>Input: a=b=c
+Pattern: {*=}
+Match: a=          ← stops at first "=", not "a=b="
+</code></pre>
+<p><strong>Typical scenarios:</strong> Consume until a key character.</p>
+<pre><code class="language-wpl"># Match to first equals sign
+chars{*=}
+
+# Match to first colon followed by space
+chars{*:\s}
+</code></pre>
+<h3 id="--single-character-matching"><a class="header" href="#--single-character-matching"><code>?</code> — Single Character Matching</a></h3>
+<p><code>?</code> matches exactly one arbitrary character.</p>
+<pre><code>Input: field1: value
+Pattern: {field?:\s}
+Match: field1:         ← "?" matched "1"
+</code></pre>
+<p><strong>Constraint:</strong> At most one <code>*</code> in a pattern, otherwise a configuration error is raised. No limit on <code>?</code>.</p>
+<hr>
+<h2 id="whitespace-matching-s-and-h"><a class="header" href="#whitespace-matching-s-and-h">Whitespace Matching <code>\s</code> and <code>\h</code></a></h2>
+<h3 id="s--continuous-whitespace"><a class="header" href="#s--continuous-whitespace"><code>\s</code> — Continuous Whitespace</a></h3>
+<p>Matches one or more whitespace characters (space, tab, carriage return, newline).</p>
+<pre><code>Input: key   =value
+Pattern: {\s=}
+Match:    =             ← three spaces + "="
+</code></pre>
+<h3 id="h--horizontal-whitespace"><a class="header" href="#h--horizontal-whitespace"><code>\h</code> — Horizontal Whitespace</a></h3>
+<p>Matches one or more horizontal whitespace characters (only space and tab, no newline).</p>
+<pre><code>Input: name    :    value
+Pattern: {\h:\h}
+Match:     :             ← tab/space + ":" + tab/space
+</code></pre>
+<h3 id="s-and-h"><a class="header" href="#s-and-h"><code>\S</code> and <code>\H</code></a></h3>
+<p>Opposite of above:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Notation</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>\S</code></td><td>One or more consecutive <strong>non-whitespace</strong> characters</td></tr>
+<tr><td><code>\H</code></td><td>One or more consecutive <strong>non-horizontal-whitespace</strong> characters</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="preserve-marker-preserve"><a class="header" href="#preserve-marker-preserve">Preserve Marker (Preserve)</a></h2>
+<p>Content wrapped in <code>()</code> participates in matching to confirm separator position, but <strong>is not consumed from the input stream</strong>. The next stage continues reading from the start of <code>()</code> content.</p>
+<pre><code>Input: hello  key=value
+Pattern: {*\s(key=)}
+
+Consumed: hello            ← truncated, becomes current field value
+Preserved: key=value        ← remains in input stream, next field starts here
+</code></pre>
+<h3 id="usage"><a class="header" href="#usage">Usage</a></h3>
+<pre><code class="language-wpl"># Consume until before "command=", preserve "command=" for next field
+chars{*(command=)}
+
+# Consume arbitrary content + whitespace area, preserve "next" for next field
+chars{*\s(next)}
+</code></pre>
+<h3 id="constraints"><a class="header" href="#constraints">Constraints</a></h3>
+<ul>
+<li><code>()</code> can only appear at pattern <strong>end</strong>. <code>{*(key=)}</code> is valid, <code>{(key)*=}</code> is invalid.</li>
+<li><code>()</code> cannot be nested.</li>
+<li><code>()</code> allows literals, <code>\s</code> <code>\h</code> <code>\0</code> <code>\n</code> <code>\t</code> <code>\r</code>, <code>?</code> and escaped characters.</li>
+<li><code>()</code> <strong>does not allow <code>*</code></strong> — preserve section must have determinate length.</li>
+</ul>
+<hr>
+<h2 id="usage-constraints"><a class="header" href="#usage-constraints">Usage Constraints</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Constraint</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td>At most one <code>*</code></td><td>Entire pattern can have at most one <code>*</code>, more than one raises error</td></tr>
+<tr><td><code>()</code> only at end</td><td>Preserve marker can only appear at pattern end</td></tr>
+<tr><td>No <code>*</code> inside <code>()</code></td><td>Preserve section cannot have indeterminate-length wildcards</td></tr>
+<tr><td><code>()</code> no nesting</td><td><code>((...))</code> not allowed</td></tr>
+<tr><td>Cannot mix with ups_val</td><td>Configuring both <code>{}</code> and sub-level terminator raises parse error</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="practical-examples"><a class="header" href="#practical-examples">Practical Examples</a></h2>
+<h3 id="scenario-1-keyvalue-style-logs"><a class="header" href="#scenario-1-keyvalue-style-logs">Scenario 1: Key=Value Style Logs</a></h3>
+<p>Log format where fields are arranged as <code>key=value</code>, each value followed by whitespace and the next key.</p>
+<pre><code>Input: src=192.168.1.1 dst=10.0.0.1 action=accept proto=TCP
+</code></pre>
+<pre><code class="language-wpl">rule kv_log {
+  (
+    ip{*\s(dst=)}:src,
+    ip{*\s(action=)}:dst,
+    chars{*\s(proto=)}:action,
+    chars:proto
+  )
+}
+# Output: src=192.168.1.1, dst=10.0.0.1, action=accept, proto=TCP
+</code></pre>
+<p>Explanation: Each field uses <code>{*\s(next_key=)}</code> to consume whitespace before the next key, while preserving the next key for subsequent fields.</p>
+<h3 id="scenario-2-separator-contains-whitespace"><a class="header" href="#scenario-2-separator-contains-whitespace">Scenario 2: Separator Contains Whitespace</a></h3>
+<p>Logs where fields are separated by <code>|</code> (space + pipe + space).</p>
+<pre><code>Input: 192.168.1.1 | admin | 2024-01-01 10:00:00
+</code></pre>
+<pre><code class="language-wpl">rule pipe_sep {
+  (ip:client, chars:user, time:ts){\h|\h}
+}
+# Output: client=192.168.1.1, user=admin, ts=2024-01-01 10:00:00
+</code></pre>
+<h3 id="scenario-3-match-to-specific-keyword"><a class="header" href="#scenario-3-match-to-specific-keyword">Scenario 3: Match to Specific Keyword</a></h3>
+<p>Consume until <code>command=</code> appears.</p>
+<pre><code>Input: user=admin role=root command=ls -la
+</code></pre>
+<pre><code class="language-wpl">rule cmd_log {
+  (
+    chars{*(command=)}:prefix,
+    chars:command
+  )
+}
+# prefix = "user=admin role=root "
+# command = "ls -la" (preceding "command=" consumed by consume_sep)
+</code></pre>
+<h3 id="scenario-4-field-name-followed-by-variable-character"><a class="header" href="#scenario-4-field-name-followed-by-variable-character">Scenario 4: Field Name Followed by Variable Character</a></h3>
+<p>Some logs have field names in format <code>fieldN:</code> where N is a variable character.</p>
+<pre><code>Input: field1: hello field2: world
+</code></pre>
+<pre><code class="language-wpl">rule field_var {
+  (chars{field?:\s}:f1, chars:f2)
+}
+# f1 = "hello", f2 = "world"
+</code></pre>
+<h3 id="scenario-5-pure-literal-pattern"><a class="header" href="#scenario-5-pure-literal-pattern">Scenario 5: Pure Literal Pattern</a></h3>
+<p>When <code>{}</code> contains no wildcards, it’s equivalent to a shortcut literal separator, but can express multi-character sequences.</p>
+<pre><code class="language-wpl"># The following two notations have the same effect
+chars{::}
+# Equivalent to
+chars\:\:
+</code></pre>
+<h3 id="scenario-6-combined-with-pipe-functions"><a class="header" href="#scenario-6-combined-with-pipe-functions">Scenario 6: Combined with Pipe Functions</a></h3>
+<p>Pattern separators can be combined with field-level pipes.</p>
+<pre><code class="language-wpl">rule combined {
+  (
+    chars{*\s(src=)}:header,
+    kvarr(\s):payload
+  ) |(take src)
+}
+</code></pre>
+<hr>
+<h2 id="comparison-with-shortcut-separators"><a class="header" href="#comparison-with-shortcut-separators">Comparison with Shortcut Separators</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Feature</th><th>Shortcut Separator</th><th>Pattern Separator</th></tr>
+</thead>
+<tbody>
+<tr><td>Syntax</td><td><code>\,</code> <code>\;</code> <code>\s</code> etc.</td><td><code>{...}</code></td></tr>
+<tr><td>Matching ability</td><td>Fixed string</td><td>Wildcards, whitespace areas, preserve markers</td></tr>
+<tr><td>Performance</td><td>Optimal (memchr)</td><td>Near-optimal (pure literal degenerates to memchr)</td></tr>
+<tr><td>Use cases</td><td>Separator is definite character</td><td>Separator logic contains variable parts</td></tr>
+<tr><td>Priority</td><td>Same as field/group-level</td><td>Same as field/group-level</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Selection recommendations:</strong></p>
+<ul>
+<li>Separator is fixed character (comma, space, pipe, etc.) → Use shortcut separator</li>
+<li>Separator contains whitespace areas, needs to skip to keyword, needs to preserve partial content → Use pattern separator</li>
+</ul>
+<hr>
+<h2 id="frequently-asked-questions"><a class="header" href="#frequently-asked-questions">Frequently Asked Questions</a></h2>
+<h3 id="q-is-s-inside--the-same-as-s-outside"><a class="header" href="#q-is-s-inside--the-same-as-s-outside">Q: Is <code>\s</code> inside <code>{...}</code> the same as <code>\s</code> outside?</a></h3>
+<p>Not exactly the same. <code>\s</code> inside <code>{}</code> matches <strong>one or more</strong> consecutive whitespace characters; <code>\s</code> outside <code>{}</code> retains original semantics (represents space separator). Existing configurations are unaffected.</p>
+<h3 id="q-can-pattern-separators-be-used-at-group-level"><a class="header" href="#q-can-pattern-separators-be-used-at-group-level">Q: Can pattern separators be used at group level?</a></h3>
+<p>Yes. Like shortcut separators, pattern separators support both field-level and group-level:</p>
+<pre><code class="language-wpl"># Field level
+(chars{*=}, digit)
+
+# Group level
+(chars, digit){*=}
+</code></pre>
+<h3 id="q-what-if--matches-to-end-of-line"><a class="header" href="#q-what-if--matches-to-end-of-line">Q: What if <code>*</code> matches to end of line?</a></h3>
+<p>If <code>*</code> has no subsequent matching content, <code>*</code> will match to input end. If no match for subsequent content is found, the entire pattern doesn’t match, and the field will read to end of line.</p>
+<h3 id="q-can-i-use--without-"><a class="header" href="#q-can-i-use--without-">Q: Can I use <code>()</code> without <code>*</code>?</a></h3>
+<p>Yes. <code>()</code> doesn’t depend on <code>*</code>, for example <code>{\s(key=)}</code> means: match whitespace area then confirm <code>key=</code> exists, consume whitespace part, preserve <code>key=</code>.</p>
+<hr>
+<h2 id="related-resources"><a class="header" href="#related-resources">Related Resources</a></h2>
+<ul>
+<li>WPL Basics: <a href="10-user/03-wpl/01-wpl_basics.html">01-wpl_basics.md</a> — Fields, groups, separator basics</li>
+<li>Core Concepts: <a href="#wpl-core-concepts">02-core-concepts.md</a> — Separator priority details</li>
+<li>Pipe Functions: <a href="10-user/03-wpl/03-wpl_pipe_functions.html">03-wpl_pipe_functions.md</a> — Field-level pipes</li>
+<li>Language Reference: <a href="#wpl-language-reference">04-language-reference.md</a> — Complete type list</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="strip-bom-processor-使用示例"><a class="header" href="#strip-bom-processor-使用示例">Strip BOM Processor 使用示例</a></h1>
 <h2 id="概述"><a class="header" href="#概述">概述</a></h2>
@@ -2959,7 +3642,7 @@ log_line | strip/bom | syslog_parse
 <h2 id="overview-2"><a class="header" href="#overview-2">Overview</a></h2>
 <p><code>chars_replace</code> is a string replacement function in WPL (WP Language) used to find and replace specified substrings in log fields.</p>
 <h2 id="quick-start-4"><a class="header" href="#quick-start-4">Quick Start</a></h2>
-<h3 id="basic-syntax"><a class="header" href="#basic-syntax">Basic Syntax</a></h3>
+<h3 id="basic-syntax-1"><a class="header" href="#basic-syntax-1">Basic Syntax</a></h3>
 <pre><code class="language-wpl">chars_replace(target, replacement)
 </code></pre>
 <ul>
@@ -3311,7 +3994,7 @@ chars_replace("
 <li><strong>Development Guide</strong>: <code>docs/guide/wpl_field_func_development_guide.md</code></li>
 <li><strong>Parser Implementation</strong>: <code>docs/guide/chars_replace_parser_tests.md</code></li>
 <li><strong>Performance Analysis</strong>: <code>docs/guide/take_quoted_string_performance.md</code></li>
-<li><strong>Source Code</strong>: <code>crates/wp-lang/src/ast/processor/function.rs</code></li>
+<li><strong>Source Code</strong>: <code>src/ast/processor/function.rs</code></li>
 </ul>
 <h2 id="version-history"><a class="header" href="#version-history">Version History</a></h2>
 <ul>
@@ -3331,7 +4014,7 @@ chars_replace("
 <h2 id="overview-3"><a class="header" href="#overview-3">Overview</a></h2>
 <p><code>digit_range</code> is a numeric range checking function in WPL (WP Language) used to determine whether a log field’s numeric value falls within a specified single range. This is a simple and efficient closed-interval checking function.</p>
 <h2 id="quick-start-5"><a class="header" href="#quick-start-5">Quick Start</a></h2>
-<h3 id="basic-syntax-1"><a class="header" href="#basic-syntax-1">Basic Syntax</a></h3>
+<h3 id="basic-syntax-2"><a class="header" href="#basic-syntax-2">Basic Syntax</a></h3>
 <pre><code class="language-wpl">digit_range(begin, end)
 </code></pre>
 <ul>
@@ -3793,8 +4476,8 @@ digit_in([200, 404, 500])  # Only matches these three values
 <h2 id="additional-resources-1"><a class="header" href="#additional-resources-1">Additional Resources</a></h2>
 <ul>
 <li><strong>Development Guide</strong>: <code>docs/guide/wpl_field_func_development_guide.md</code></li>
-<li><strong>Source Code</strong>: <code>crates/wp-lang/src/ast/processor/function.rs</code></li>
-<li><strong>Test Cases</strong>: <code>crates/wp-lang/src/eval/builtins/pipe_fun.rs</code></li>
+<li><strong>Source Code</strong>: <code>src/ast/processor/function.rs</code></li>
+<li><strong>Test Cases</strong>: <code>src/eval/builtins/pipe_fun.rs</code></li>
 </ul>
 <h2 id="version-history-1"><a class="header" href="#version-history-1">Version History</a></h2>
 <ul>
@@ -3819,7 +4502,7 @@ digit_in([200, 404, 500])  # Only matches these three values
 <li><strong>Single-quoted strings</strong>: <code>@'@special-field'</code> (for field names containing special characters)</li>
 </ul>
 <h2 id="quick-start-6"><a class="header" href="#quick-start-6">Quick Start</a></h2>
-<h3 id="basic-syntax-2"><a class="header" href="#basic-syntax-2">Basic Syntax</a></h3>
+<h3 id="basic-syntax-3"><a class="header" href="#basic-syntax-3">Basic Syntax</a></h3>
 <pre><code class="language-wpl"># Reference plain field
 @field_name
 
@@ -4033,7 +4716,7 @@ rule kv_special_keys {
 # Single-quoted field name
 | take('@special-field')
 </code></pre>
-<h3 id="use-cases-1"><a class="header" href="#use-cases-1">Use Cases</a></h3>
+<h3 id="use-cases"><a class="header" href="#use-cases">Use Cases</a></h3>
 <h4 id="1-selecting-fields-with-special-characters"><a class="header" href="#1-selecting-fields-with-special-characters">1. Selecting Fields with Special Characters</a></h4>
 <pre><code class="language-wpl">rule select_special_fields {
     # Double quotes
@@ -4396,8 +5079,8 @@ wp-motor --debug rule.wpl &lt; test.log
 <li><strong>WPL Field Function Development Guide</strong>: <code>docs/guide/en/wpl_field_func_development_guide.md</code></li>
 <li><strong>Source Code</strong>:
 <ul>
-<li><code>crates/wp-lang/src/parser/utils.rs</code> (take_ref_path_or_quoted)</li>
-<li><code>crates/wp-lang/src/parser/wpl_field.rs</code> (wpl_id_field)</li>
+<li><code>src/parser/utils.rs</code> (<code>take_ref_path_or_quoted</code>)</li>
+<li><code>src/parser/wpl_field.rs</code> (<code>wpl_id_field</code>)</li>
 </ul>
 </li>
 </ul>
@@ -4734,142 +5417,49 @@ wp-motor --debug rule.wpl &lt; test.log
 <p><strong>Tip</strong>: Choosing the right function type can significantly improve performance. Prioritize simple specialized functions, and only use regular expressions when complex pattern matching is needed.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="wpl-group-logic"><a class="header" href="#wpl-group-logic">WPL Group Logic</a></h1>
-<p>WPL provides multiple group wrappers to control the logical behavior of field parsing. Groups can contain one or more fields and determine parsing success or failure based on different logical semantics.</p>
+<p>WPL groups control matching behavior. They are not field types.</p>
 <h2 id="group-types"><a class="header" href="#group-types">Group Types</a></h2>
-<h3 id="seq---sequence-default"><a class="header" href="#seq---sequence-default">seq - Sequence (Default)</a></h3>
-<p>The default group type requires all fields to be parsed successfully in order.</p>
-<p><strong>Syntax:</strong></p>
-<pre><code class="language-wpl">(field1, field2, field3)
-seq(field1, field2, field3)
-</code></pre>
-<p><strong>Behavior:</strong></p>
-<ul>
-<li>Parses all fields in sequence</li>
-<li>All fields must succeed</li>
-<li>The entire group fails if any field fails</li>
-</ul>
-<p><strong>Example:</strong></p>
+<h3 id="seq---sequence"><a class="header" href="#seq---sequence">seq - Sequence</a></h3>
 <pre><code class="language-wpl">(digit:id, chars:name, ip:addr)
+seq(digit:id, chars:name, ip:addr)
 </code></pre>
-<h3 id="opt---optional"><a class="header" href="#opt---optional">opt - Optional</a></h3>
-<p>Marks a group as optional, so failure does not affect overall parsing.</p>
-<p><strong>Syntax:</strong></p>
-<pre><code class="language-wpl">opt(field1, field2)
+<p>All fields must match in order.</p>
+<h3 id="opt---optional-group"><a class="header" href="#opt---optional-group">opt - Optional Group</a></h3>
+<pre><code class="language-wpl">opt(chars:tag")
 </code></pre>
-<p><strong>Behavior:</strong></p>
+<p>The whole group may be absent without failing the rule.</p>
+<h3 id="alt---alternative-group"><a class="header" href="#alt---alternative-group">alt - Alternative Group</a></h3>
+<pre><code class="language-wpl">alt(ip:addr, chars:addr)
+</code></pre>
+<p>The first successful candidate wins.</p>
+<h3 id="some_of---repeated-candidate-matching"><a class="header" href="#some_of---repeated-candidate-matching">some_of - Repeated Candidate Matching</a></h3>
+<pre><code class="language-wpl">some_of(kvarr, ip, digit)
+</code></pre>
+<p>WPL keeps trying the candidates until none match anymore.</p>
+<h3 id="not---negative-assertion-group"><a class="header" href="#not---negative-assertion-group">not - Negative Assertion Group</a></h3>
+<pre><code class="language-wpl">not(peek_symbol(ERROR):check)
+</code></pre>
+<p>The group succeeds when the inner field does not match.</p>
+<h2 id="important-rules"><a class="header" href="#important-rules">Important Rules</a></h2>
 <ul>
-<li>Attempts to parse all fields</li>
-<li>Does not return an error on failure</li>
-<li>Returns parsed results on success, skips on failure</li>
+<li>Group operators are <code>seq</code>, <code>opt</code>, <code>alt</code>, <code>some_of</code>, and <code>not</code>.</li>
+<li>They operate at group level.</li>
+<li>Do not write nested groups such as <code>opt(alt(...))</code>.</li>
+<li>If one segment is optional, split it into its own group first.</li>
 </ul>
-<p><strong>Example:</strong></p>
-<pre><code class="language-wpl">opt(symbol([DEBUG]):level), chars:msg
+<p>Valid:</p>
+<pre><code class="language-wpl">(ip:client_ip, digit:status),
+opt(chars:tag")
 </code></pre>
-<h3 id="alt---alternative"><a class="header" href="#alt---alternative">alt - Alternative</a></h3>
-<p>Tries multiple parsing options, succeeding if any one succeeds.</p>
-<p><strong>Syntax:</strong></p>
-<pre><code class="language-wpl">alt(field1, field2, field3)
-</code></pre>
-<p><strong>Behavior:</strong></p>
-<ul>
-<li>Tries each field in sequence</li>
-<li>Uses the first successful field</li>
-<li>The group fails if all fields fail</li>
-</ul>
-<p><strong>Example:</strong></p>
-<pre><code class="language-wpl">alt(ip:addr, chars:addr)  # Try to parse as IP, fall back to string
-</code></pre>
-<h3 id="some_of---partial-match"><a class="header" href="#some_of---partial-match">some_of - Partial Match</a></h3>
-<p>Requires at least one field to succeed.</p>
-<p><strong>Syntax:</strong></p>
-<pre><code class="language-wpl">some_of(field1, field2, field3)
-</code></pre>
-<p><strong>Behavior:</strong></p>
-<ul>
-<li>Attempts to parse all fields</li>
-<li>Succeeds if at least one field succeeds</li>
-<li>The group fails if all fields fail</li>
-</ul>
-<p><strong>Example:</strong></p>
-<pre><code class="language-wpl">some_of(digit:port, chars:service)
-</code></pre>
-<h3 id="not---negative-assertion"><a class="header" href="#not---negative-assertion">not - Negative Assertion</a></h3>
-<p>Reverse logic: succeeds when the inner field fails to parse.</p>
-<p><strong>Syntax:</strong></p>
-<pre><code class="language-wpl">not(field)
-</code></pre>
-<p><strong>Behavior:</strong></p>
-<ul>
-<li>Attempts to parse the inner field</li>
-<li><code>not()</code> succeeds when the inner field fails</li>
-<li><code>not()</code> fails when the inner field succeeds</li>
-<li>Returns an <code>ignore</code> type field on success</li>
-</ul>
-<p><strong>Input Consumption:</strong></p>
-<ul>
-<li><code>not(symbol(...))</code> - Consumes input (symbol may consume whitespace on failure)</li>
-<li><code>not(peek_symbol(...))</code> - Does not consume input (peek_symbol never consumes)</li>
-</ul>
-<p><strong>Examples:</strong></p>
-<pre><code class="language-wpl"># Ensure ERROR keyword is not present
-not(symbol(ERROR):check)
-
-# Use with peek_symbol to avoid consuming input
-not(peek_symbol(ERROR):check), (chars:msg)
-</code></pre>
-<h2 id="use-cases-2"><a class="header" href="#use-cases-2">Use Cases</a></h2>
-<h3 id="1-conditional-parsing"><a class="header" href="#1-conditional-parsing">1. Conditional Parsing</a></h3>
-<pre><code class="language-wpl"># Parse optional debug information
-opt(symbol([DEBUG]):level), chars:msg
-</code></pre>
-<h3 id="2-format-compatibility"><a class="header" href="#2-format-compatibility">2. Format Compatibility</a></h3>
-<pre><code class="language-wpl"># Support multiple IP address formats
-alt(ip:addr, chars:addr)
-</code></pre>
-<h3 id="3-negative-filtering"><a class="header" href="#3-negative-filtering">3. Negative Filtering</a></h3>
-<pre><code class="language-wpl"># Process only non-error logs
-not(symbol(ERROR)), (chars:msg)
-</code></pre>
-<h3 id="4-lenient-matching"><a class="header" href="#4-lenient-matching">4. Lenient Matching</a></h3>
-<pre><code class="language-wpl"># Match at least port or service name
-some_of(digit:port, chars:service)
-</code></pre>
-<h2 id="combining-groups"><a class="header" href="#combining-groups">Combining Groups</a></h2>
-<p>Groups can be nested and combined to implement complex parsing logic:</p>
-<pre><code class="language-wpl"># Optional IP or domain
+<p>Invalid:</p>
+<pre><code class="language-wpl">(ip:client_ip, opt(chars:tag"))
 opt(alt(ip:addr, chars:domain))
-
-# Ensure not ERROR, then parse message
-not(peek_symbol(ERROR)), (alt(json, kv, chars):msg)
 </code></pre>
-<h2 id="important-notes"><a class="header" href="#important-notes">Important Notes</a></h2>
-<ol>
-<li>
-<p><strong>Groups cannot be nested inside other groups</strong></p>
-<pre><code class="language-wpl"># ❌ Wrong: nesting not supported
-(chars, (digit, chars))
-
-# ✓ Correct: use multiple parallel groups
-(chars), (digit, chars)
-</code></pre>
-</li>
-<li>
-<p><strong>not() can only contain a single field</strong></p>
-<pre><code class="language-wpl"># ✓ Correct
-not(symbol(ERROR):check)
-
-# ❌ Wrong
-not(symbol(ERROR), symbol(FATAL))
-</code></pre>
-</li>
-<li>
-<p><strong>Input consumption depends on the inner parser</strong></p>
+<h2 id="input-consumption"><a class="header" href="#input-consumption">Input Consumption</a></h2>
 <ul>
-<li>Using non-consuming parsers like <code>peek_symbol</code> enables lookahead assertions</li>
-<li>Using consuming parsers like <code>symbol</code>, <code>digit</code> will change the input position</li>
+<li><code>not(symbol(...))</code> may consume input depending on the inner parser behavior.</li>
+<li><code>not(peek_symbol(...))</code> is the safer lookahead form when you need non-consuming checks.</li>
 </ul>
-</li>
-</ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="not---result-inversion-wrapper-function"><a class="header" href="#not---result-inversion-wrapper-function">not() - Result Inversion Wrapper Function</a></h1>
 <h2 id="overview-5"><a class="header" href="#overview-5">Overview</a></h2>
@@ -5134,7 +5724,7 @@ not(symbol(ERROR):error_marker)
 # ✅ Recommended: Use positive form directly
 | chars_has(OK)
 </code></pre>
-<h2 id="troubleshooting-2"><a class="header" href="#troubleshooting-2">Troubleshooting</a></h2>
+<h2 id="troubleshooting-3"><a class="header" href="#troubleshooting-3">Troubleshooting</a></h2>
 <h3 id="issue-not-doesnt-invert-result"><a class="header" href="#issue-not-doesnt-invert-result">Issue: not() Doesn’t Invert Result</a></h3>
 <p><strong>Possible Cause</strong>: Confusing pipe-level and group-level <code>not()</code></p>
 <pre><code class="language-wpl"># Check if used in correct position
@@ -5170,7 +5760,7 @@ not(chars:status)                        # ❌ Wrong (group-level)
 <h2 id="overview-6"><a class="header" href="#overview-6">Overview</a></h2>
 <p><code>regex_match</code> is a regular expression matching function in WPL (WP Language) used to check whether log field string content matches a specified regular expression pattern. It uses Rust’s regex engine and supports complete regular expression syntax.</p>
 <h2 id="quick-start-7"><a class="header" href="#quick-start-7">Quick Start</a></h2>
-<h3 id="basic-syntax-3"><a class="header" href="#basic-syntax-3">Basic Syntax</a></h3>
+<h3 id="basic-syntax-4"><a class="header" href="#basic-syntax-4">Basic Syntax</a></h3>
 <pre><code class="language-wpl">regex_match('pattern')
 </code></pre>
 <ul>
@@ -5718,7 +6308,7 @@ regex_match('(?s)start.*end')  # Match across lines
 <h3 id="q7-can-i-extract-matched-content"><a class="header" href="#q7-can-i-extract-matched-content">Q7: Can I extract matched content?</a></h3>
 <p>Not supported. <code>regex_match</code> only performs match testing, doesn’t extract content.</p>
 <h2 id="regular-expression-quick-reference"><a class="header" href="#regular-expression-quick-reference">Regular Expression Quick Reference</a></h2>
-<h3 id="common-patterns"><a class="header" href="#common-patterns">Common Patterns</a></h3>
+<h3 id="common-patterns-1"><a class="header" href="#common-patterns-1">Common Patterns</a></h3>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -5747,8 +6337,8 @@ regex_match('(?s)start.*end')  # Match across lines
 <ul>
 <li><strong>Rust Regex Documentation</strong>: https://docs.rs/regex/</li>
 <li><strong>Development Guide</strong>: <code>docs/guide/wpl_field_func_development_guide.md</code></li>
-<li><strong>Source Code</strong>: <code>crates/wp-lang/src/ast/processor/function.rs</code></li>
-<li><strong>Test Cases</strong>: <code>crates/wp-lang/src/eval/builtins/pipe_fun.rs</code></li>
+<li><strong>Source Code</strong>: <code>src/ast/processor/function.rs</code></li>
+<li><strong>Test Cases</strong>: <code>src/eval/builtins/pipe_fun.rs</code></li>
 </ul>
 <h2 id="version-history-5"><a class="header" href="#version-history-5">Version History</a></h2>
 <ul>
@@ -5768,7 +6358,7 @@ regex_match('(?s)start.*end')  # Match across lines
 <h2 id="overview-7"><a class="header" href="#overview-7">Overview</a></h2>
 <p>Separator is a key syntax element in WPL used to split log fields. By flexibly using separators, you can parse various formats of structured log data.</p>
 <h2 id="quick-start-8"><a class="header" href="#quick-start-8">Quick Start</a></h2>
-<h3 id="basic-syntax-4"><a class="header" href="#basic-syntax-4">Basic Syntax</a></h3>
+<h3 id="basic-syntax-5"><a class="header" href="#basic-syntax-5">Basic Syntax</a></h3>
 <pre><code class="language-wpl">| take(field_name) separator
 </code></pre>
 <p>The separator is written after the field definition to indicate where the field ends.</p>
@@ -6237,7 +6827,7 @@ rule nested {
 <li><strong>WPL Syntax Reference</strong>: <code>docs/guide/wpl_syntax.md</code></li>
 <li><strong>Parser Development Guide</strong>: <code>docs/guide/wpl_field_func_development_guide.md</code></li>
 <li><strong>chars_replace Usage Guide</strong>: <code>docs/usage/wpl/chars_replace.md</code></li>
-<li><strong>Source Code</strong>: <code>crates/wp-lang/src/ast/syntax/wpl_sep.rs</code></li>
+<li><strong>Source Code</strong>: <code>src/ast/syntax/wpl_sep.rs</code></li>
 </ul>
 <h2 id="version-history-6"><a class="header" href="#version-history-6">Version History</a></h2>
 <ul>
@@ -6283,6 +6873,7 @@ rule nested {
 <li><strong>Type System</strong>: 8 data types with automatic inference and conversion</li>
 <li><strong>Powerful Functions</strong>: Built-in functions, pipeline functions, pattern matching</li>
 <li><strong>Flexible Operations</strong>: Field extraction, data aggregation, conditional processing</li>
+<li><strong>Pattern Matching</strong>: match expressions support range, negation, multi-source (any count), OR conditions</li>
 <li><strong>SQL Integration</strong>: Enrich data with database queries</li>
 </ul>
 <h2 id="quick-example"><a class="header" href="#quick-example">Quick Example</a></h2>
@@ -6375,12 +6966,13 @@ log : obj = object {
 <p>Get started with OML in 5 minutes and transform your parsed data.</p>
 <h2 id="what-is-oml"><a class="header" href="#what-is-oml">What is OML?</a></h2>
 <p>OML (Object Model Language) is a <strong>declarative transformation language</strong> that converts parsed data from WPL into the desired output format.</p>
-<h3 id="core-features-1"><a class="header" href="#core-features-1">Core Features</a></h3>
+<h3 id="core-features"><a class="header" href="#core-features">Core Features</a></h3>
 <ul>
 <li><strong>Declarative</strong>: Describe “what you want” rather than “how to implement”</li>
 <li><strong>Type System</strong>: 8 data types with automatic inference and conversion</li>
 <li><strong>Powerful Functions</strong>: Built-in functions, pipeline functions, pattern matching</li>
 <li><strong>Flexible Operations</strong>: Field extraction, data aggregation, conditional processing</li>
+<li><strong>Pattern Matching</strong>: match expressions support range, negation, multi-source (any count), OR conditions</li>
 <li><strong>SQL Integration</strong>: Enrich data with database queries</li>
 </ul>
 <h3 id="how-oml-works-with-wpl-1"><a class="header" href="#how-oml-works-with-wpl-1">How OML Works with WPL</a></h3>
@@ -6397,7 +6989,7 @@ log : obj = object {
 </blockquote>
 <hr>
 <p>This document introduces OML’s core design philosophy and fundamental concepts, helping you deeply understand how OML works.</p>
-<h2 id="quick-navigation-2"><a class="header" href="#quick-navigation-2">Quick Navigation</a></h2>
+<h2 id="quick-navigation"><a class="header" href="#quick-navigation">Quick Navigation</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -6407,7 +6999,7 @@ log : obj = object {
 <tr><td><strong>Design Philosophy</strong></td><td>WPL collaboration, declarative syntax, immutable data flow</td></tr>
 <tr><td><strong>Type System</strong></td><td>8 basic types, automatic inference, type conversion</td></tr>
 <tr><td><strong>Read Semantics</strong></td><td>read vs take, destructive vs non-destructive, read priority</td></tr>
-<tr><td><strong>Expression Types</strong></td><td>Value expressions, function calls, pipelines, conditionals, aggregation</td></tr>
+<tr><td><strong>Expression Types</strong></td><td>Value expressions, function calls, pipelines, conditionals (incl. OR), aggregation</td></tr>
 <tr><td><strong>Default Value Mechanism</strong></td><td>Default value syntax, function defaults, limitations</td></tr>
 <tr><td><strong>Wildcards</strong></td><td>Wildcard syntax, batch targets, usage restrictions</td></tr>
 <tr><td><strong>Parameterized Reading</strong></td><td>option priority, keys collection, JSON paths</td></tr>
@@ -6428,7 +7020,7 @@ log : obj = object {
 </blockquote>
 <hr>
 <p>Task-oriented practical guide to help you quickly find solutions.</p>
-<h2 id="task-navigation-1"><a class="header" href="#task-navigation-1">Task Navigation</a></h2>
+<h2 id="task-navigation"><a class="header" href="#task-navigation">Task Navigation</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -6439,7 +7031,7 @@ log : obj = object {
 <tr><td>Data Extraction</td><td>Various field extraction methods</td></tr>
 <tr><td>Data Transformation</td><td>Type conversion, time, URL, Base64, etc.</td></tr>
 <tr><td>Data Aggregation</td><td>Creating objects, arrays</td></tr>
-<tr><td>Conditional Processing</td><td>Status code classification, port identification, IP ranges, etc.</td></tr>
+<tr><td>Conditional Processing</td><td>Status code classification, port identification, IP ranges, OR conditions, multi-source + OR, etc.</td></tr>
 <tr><td>Data Enrichment (SQL Query)</td><td>SQL queries, multi-table joins</td></tr>
 <tr><td>Complex Scenarios</td><td>Web logs, system monitoring complete processing</td></tr>
 </tbody>
@@ -6464,6 +7056,7 @@ log : obj = object {
 <tr><th>Function</th><th>Description</th><th>Example</th></tr>
 </thead>
 <tbody>
+<tr><td><code>calc(...)</code></td><td>Evaluate an explicit arithmetic expression</td><td><code>score = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;</code></td></tr>
 <tr><td><code>Now::time()</code></td><td>Get current time</td><td><code>event_time = Now::time() ;</code></td></tr>
 <tr><td><code>Now::date()</code></td><td>Get current date (YYYYMMDD)</td><td><code>today = Now::date() ;</code></td></tr>
 <tr><td><code>Now::hour()</code></td><td>Get current hour (YYYYMMDDHH)</td><td><code>current_hour = Now::hour() ;</code></td></tr>
@@ -6494,6 +7087,8 @@ log : obj = object {
 </table>
 </div>
 <hr>
+<p><code>calc(...)</code> performs numeric arithmetic with <code>+ - * / %</code> and <code>abs/round/floor/ceil</code>.
+For full syntax and failure semantics, see <code>docs/usage/en/04-oml/06-grammar-reference.md</code>.</p>
 <p><strong>For the complete English documentation, please check back later or refer to the Chinese version.</strong></p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="oml-integration-guide"><a class="header" href="#oml-integration-guide">OML Integration Guide</a></h1>
@@ -6518,27 +7113,816 @@ log : obj = object {
 <p><strong>For the complete English documentation, please check back later or refer to the Chinese version.</strong></p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="oml-grammar-reference"><a class="header" href="#oml-grammar-reference">OML Grammar Reference</a></h1>
+<p>This document provides the complete grammar definition of OML in EBNF format for precise understanding of syntax rules.</p>
 <blockquote>
-<p><strong>Translation in Progress</strong></p>
-<p>This document is currently being translated from Chinese to English.</p>
-<p>Please refer to the Chinese version: <code>docs/10-user/04-oml-new/06-grammar-reference.md</code></p>
+<p>Based on the parser implementation in <code>crates/wp-oml</code>, with lexical details reusing <code>wp_parser</code> and <code>wpl</code> parsing capabilities.</p>
 </blockquote>
 <hr>
-<p>This document provides the formal grammar definition of OML, suitable for:</p>
+<h2 id="table-of-contents"><a class="header" href="#table-of-contents">Table of Contents</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Section</th><th>Content</th></tr>
+</thead>
+<tbody>
+<tr><td><a href="#ebnf-notation">EBNF Notation</a></td><td>Grammar symbol conventions</td></tr>
+<tr><td><a href="#top-level-structure">Top-Level Structure</a></td><td>OML file structure</td></tr>
+<tr><td><a href="#evaluation-expressions">Evaluation Expressions</a></td><td>Expression types, value expressions, function calls, etc.</td></tr>
+<tr><td><a href="#advanced-expressions">Advanced Expressions</a></td><td>Format strings, pipes, match, aggregation</td></tr>
+<tr><td><a href="#sql-expressions">SQL Expressions</a></td><td>SQL query syntax</td></tr>
+<tr><td><a href="#static-bindings">Static Bindings</a></td><td>Static constant definitions and references</td></tr>
+<tr><td><a href="#temporary-fields">Temporary Fields</a></td><td><code>__</code> prefixed intermediate fields</td></tr>
+<tr><td><a href="#privacy-section">Privacy Section</a></td><td>Data masking syntax</td></tr>
+<tr><td><a href="#lexical-conventions">Lexical Conventions</a></td><td>Identifiers, literals, comments</td></tr>
+<tr><td><a href="#data-types">Data Types</a></td><td>Data types</td></tr>
+<tr><td><a href="#complete-example">Complete Example</a></td><td>Comprehensive example</td></tr>
+<tr><td><a href="#pipe-function-reference">Pipe Function Reference</a></td><td>Common pipe functions</td></tr>
+<tr><td><a href="#syntax-summary">Syntax Summary</a></td><td>Required elements, optional elements, notes</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="ebnf-notation"><a class="header" href="#ebnf-notation">EBNF Notation</a></h2>
 <ul>
-<li>Compiler/parser developers</li>
-<li>Precise understanding of syntax rules</li>
-<li>Tool integration development</li>
-</ul>
-<p><strong>For regular users, please refer to:</strong></p>
-<ul>
-<li>Quick Start: <a href="#oml-quick-start">01-quickstart.md</a></li>
-<li>Core Concepts: <a href="#oml-core-concepts">02-core-concepts.md</a></li>
-<li>Practical Guide: <a href="#oml-practical-guide">03-practical-guide.md</a></li>
-<li>Functions Reference: <a href="#oml-functions-reference">04-functions-reference.md</a></li>
+<li><code>=</code> : Definition</li>
+<li><code>,</code> : Concatenation (sequence)</li>
+<li><code>|</code> : Alternation (choice)</li>
+<li><code>[ ]</code> : Optional (0 or 1 time)</li>
+<li><code>{ }</code> : Repetition (0 or more times)</li>
+<li><code>( )</code> : Grouping</li>
+<li><code>"text"</code> : Literal</li>
+<li><code>(* ... *)</code> : Comment</li>
 </ul>
 <hr>
-<p><strong>For the complete English documentation, please check back later or refer to the Chinese version.</strong></p>
+<h2 id="top-level-structure"><a class="header" href="#top-level-structure">Top-Level Structure</a></h2>
+<pre><code class="language-ebnf">oml              = header, sep_line, [ static_blocks ], aggregate_items,
+                   [ sep_line, privacy_items ] ;
+
+header           = "name", ":", name, eol,
+                   [ "rule", ":", rule_path, { rule_path }, eol ],
+                   [ "enable", ":", ("true" | "false"), eol ] ;
+
+sep_line         = "---" ;
+
+static_blocks    = { "static", "{", static_item, { static_item }, "}" } ;
+static_item      = target, "=", eval, ";" ;
+
+name             = path ;                       (* e.g.: test *)
+rule_path        = wild_path ;                  (* e.g.: wpx/abc, wpx/efg *)
+
+aggregate_items  = aggregate_item, { aggregate_item } ;
+aggregate_item   = target_list, "=", eval, ";" ;
+
+target_list      = target, { ",", target } ;
+target           = target_name, [ ":", data_type ] ;
+target_name      = wild_key | "_" ;            (* wildcards with '*' allowed; '_' means anonymous/discard *)
+data_type        = type_ident ;                (* auto|ip|chars|digit|float|time|bool|obj|array etc. *)
+</code></pre>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li><code>name : &lt;config_name&gt;</code> - Required configuration name declaration</li>
+<li><code>rule : &lt;rule_path&gt;</code> - Optional rule association, supports space or newline separated multiple rules</li>
+<li><code>enable : true|false</code> - Optional enable switch (default <code>true</code>); order of <code>rule</code> and <code>enable</code> is flexible</li>
+<li><code>static { ... }</code> - Optional static binding block, placed after <code>---</code> separator and before main bindings</li>
+<li><code>---</code> - Separator, distinguishes declaration section from configuration section</li>
+<li>Every configuration entry must end with <code>;</code></li>
+</ul>
+<hr>
+<h2 id="evaluation-expressions"><a class="header" href="#evaluation-expressions">Evaluation Expressions</a></h2>
+<h3 id="expression-types"><a class="header" href="#expression-types">Expression Types</a></h3>
+<pre><code class="language-ebnf">eval             = take_expr
+                 | read_expr
+                 | fmt_expr
+                 | pipe_expr
+                 | map_expr
+                 | collect_expr
+                 | calc_expr
+                 | match_expr
+                 | sql_expr
+                 | value_expr
+                 | fun_call
+                 | static_ref ;
+</code></pre>
+<h3 id="read-expressions"><a class="header" href="#read-expressions">Read Expressions</a></h3>
+<pre><code class="language-ebnf">(* Variable access: take/read support uniform parameter format; can be followed by default body *)
+take_expr        = "take", "(", [ arg_list ], ")", [ default_body ] ;
+read_expr        = "read", "(", [ arg_list ], ")", [ default_body ] ;
+
+arg_list         = arg, { ",", arg } ;
+arg              = "option", ":", "[", key, { ",", key }, "]"
+                 | ("in"|"keys"), ":", "[", key, { ",", key }, "]"
+                 | "get",    ":", simple
+                 | json_path ;                 (* see wp_parser::atom::take_json_path *)
+
+default_body     = "{", "_", ":", gen_acq, [ ";" ], "}" ;
+gen_acq          = take_expr | read_expr | value_expr | fun_call | static_ref ;
+</code></pre>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li><code>@</code> is only used as syntactic sugar for var_get positions in fmt/pipe/collect</li>
+<li><code>@ref</code> is equivalent to <code>read(ref)</code>, but does not support default body</li>
+<li>Not available as a standalone evaluation expression</li>
+</ul>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml"># Basic read
+value = read(field) ;
+
+# With default value
+value = read(field) { _ : chars(default) } ;
+
+# option parameter
+value = read(option:[id, uid, user_id]) ;
+
+# keys parameter
+values = collect read(keys:[field1, field2]) ;
+
+# JSON path
+name = read(/user/info/name) ;
+item = read(/data/[0]/name) ;
+</code></pre>
+<h3 id="value-expressions"><a class="header" href="#value-expressions">Value Expressions</a></h3>
+<pre><code class="language-ebnf">(* Constant value: type name + parenthesized literal *)
+value_expr       = data_type, "(", literal, ")" ;
+</code></pre>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml">text = chars(hello) ;
+text2 = chars('hello world') ;
+count = digit(42) ;
+ratio = float(3.14) ;
+address = ip(192.168.1.1) ;
+flag = bool(true) ;
+ts = time(2020-10-01 12:30:30) ;
+</code></pre>
+<h3 id="function-calls"><a class="header" href="#function-calls">Function Calls</a></h3>
+<pre><code class="language-ebnf">(* Built-in functions (zero-argument placeholders): Now::* family *)
+fun_call         = ("Now::time"
+                   |"Now::date"
+                   |"Now::hour"), "(", ")" ;
+</code></pre>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml">now = Now::time() ;
+today = Now::date() ;
+hour = Now::hour() ;
+</code></pre>
+<h3 id="static-symbol-references"><a class="header" href="#static-symbol-references">Static Symbol References</a></h3>
+<pre><code class="language-ebnf">(* Reference constants defined in static blocks, using identifier directly *)
+static_ref       = ident ;                     (* must be defined in static { } *)
+</code></pre>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml">static {
+    tpl = object { id = chars(E1) ; } ;
+}
+target = tpl ;                                 # reference tpl from static block
+</code></pre>
+<hr>
+<h2 id="advanced-expressions"><a class="header" href="#advanced-expressions">Advanced Expressions</a></h2>
+<h3 id="format-strings"><a class="header" href="#format-strings">Format Strings</a></h3>
+<pre><code class="language-ebnf">(* String formatting, requires at least 1 parameter *)
+fmt_expr         = "fmt", "(", string, ",", var_get, { ",", var_get }, ")" ;
+var_get          = ("read" | "take"), "(", [ arg_list ], ")"
+                 | "@", ident ;                  (* '@ref' equivalent to read(ref), no default body *)
+</code></pre>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml">message = fmt("{}-{}", @user, read(city)) ;
+id = fmt("{}:{}", read(host), read(port)) ;
+</code></pre>
+<h3 id="pipe-expressions"><a class="header" href="#pipe-expressions">Pipe Expressions</a></h3>
+<pre><code class="language-ebnf">(* Pipe: pipe keyword can be omitted *)
+pipe_expr        = ["pipe"], var_get, "|", pipe_fun, { "|", pipe_fun } ;
+
+pipe_fun         = "nth",           "(", unsigned, ")"
+                 | "get",           "(", ident,   ")"
+                 | "base64_decode", "(", [ encode_type ], ")"
+                 | "path",          "(", ("name"|"path"), ")"
+                 | "url",           "(", ("domain"|"host"|"uri"|"path"|"params"), ")"
+                 | "Time::to_ts_zone", "(", [ "-" ], unsigned, ",", ("ms"|"us"|"ss"|"s"), ")"
+                 | "starts_with",   "(", string, ")"
+                 | "map_to",        "(", (string | number | bool), ")"
+                 | "base64_encode" | "html_escape" | "html_unescape"
+                 | "str_escape" | "json_escape" | "json_unescape"
+                 | "Time::to_ts" | "Time::to_ts_ms" | "Time::to_ts_us"
+                 | "to_json" | "to_str" | "skip_empty" | "ip4_to_int"
+                 | "extract_main_word" | "extract_subject_object" ;
+
+encode_type      = ident ;                     (* e.g.: Utf8/Gbk/Imap/... *)
+</code></pre>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml"># With pipe keyword
+result = pipe read(data) | to_json | base64_encode ;
+
+# Without pipe keyword
+result = read(data) | to_json | base64_encode ;
+
+# Time conversion
+ts = read(time) | Time::to_ts_zone(0, ms) ;
+
+# URL parsing
+host = read(url) | url(host) ;
+
+# String prefix check
+is_http = read(url) | starts_with('http://') ;
+
+# Map to constant value
+status = read(code) | map_to(200) ;
+
+# Extract main word
+keyword = read(message) | extract_main_word ;
+
+# Extract subject-object structure
+log_struct = read(message) | extract_subject_object ;
+</code></pre>
+<h3 id="object-aggregation"><a class="header" href="#object-aggregation">Object Aggregation</a></h3>
+<pre><code class="language-ebnf">(* Aggregate to object: object body is a sequence of sub-assignments; semicolons optional but recommended *)
+map_expr         = "object", "{", map_item, { map_item }, "}" ;
+map_item         = map_targets, "=", sub_acq, [ ";" ] ;
+map_targets      = ident, { ",", ident }, [ ":", data_type ] ;
+sub_acq          = take_expr | read_expr | value_expr | fun_call | static_ref ;
+</code></pre>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml">info : obj = object {
+    name : chars = read(name) ;
+    age : digit = read(age) ;
+    city : chars = read(city) ;
+} ;
+</code></pre>
+<h3 id="array-aggregation"><a class="header" href="#array-aggregation">Array Aggregation</a></h3>
+<pre><code class="language-ebnf">(* Aggregate to array: collect from VarGet (supports keys/option wildcards) *)
+collect_expr     = "collect", var_get ;
+</code></pre>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml"># Collect multiple fields
+ports = collect read(keys:[sport, dport]) ;
+
+# Using wildcards
+metrics = collect read(keys:[cpu_*]) ;
+</code></pre>
+<h3 id="arithmetic-expressions"><a class="header" href="#arithmetic-expressions">Arithmetic Expressions</a></h3>
+<pre><code class="language-ebnf">calc_expr         = "calc", "(", calc_add_expr, ")" ;
+calc_add_expr     = calc_mul_expr, { ("+" | "-"), calc_mul_expr } ;
+calc_mul_expr     = calc_unary_expr, { ("*" | "/" | "%"), calc_unary_expr } ;
+calc_unary_expr   = [ "-" ], calc_primary_expr ;
+calc_primary_expr = number
+                  | var_get
+                  | calc_fun_expr
+                  | "(", calc_add_expr, ")" ;
+calc_fun_expr     = calc_fun, "(", calc_add_expr, ")" ;
+calc_fun          = "abs" | "round" | "floor" | "ceil" ;
+</code></pre>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li><code>var_get</code> supports <code>read(...)</code>, <code>take(...)</code>, and the <code>@field</code> shorthand</li>
+<li>Operands only accept numeric literals or numeric fields; <code>/</code> always returns <code>float</code></li>
+<li><code>%</code> only supports integer modulo; divide-by-zero, missing fields, non-numeric inputs, and invalid <code>%</code> return <code>ignore</code></li>
+<li><code>match</code> branch values still use the existing sub-expression set and do not accept <code>calc(...)</code> directly; bind a temp field first if needed</li>
+</ul>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml">risk_score : float = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;
+delta      : digit = calc(read(cur) - read(prev)) ;
+ratio      : float = calc(read(ok_cnt) / read(total_cnt)) ;
+bucket     : digit = calc(read(uid) % 16) ;
+error_pct  : digit = calc(round((read(err_cnt) * 100) / read(total_cnt))) ;
+</code></pre>
+<h3 id="pattern-matching"><a class="header" href="#pattern-matching">Pattern Matching</a></h3>
+<pre><code class="language-ebnf">(* Pattern matching: single-source/multi-source variants, supports in/!=/OR/function matching and default branch *)
+match_expr       = "match", match_source, "{", case1, { case1 }, [ default_case ], "}"
+                 | "match", "(", var_get, ",", var_get, { ",", var_get }, ")", "{", case_multi, { case_multi }, [ default_case ], "}" ;
+
+match_source     = var_get ;
+case1            = cond1, "=&gt;", match_value, [ "," ], [ ";" ] ;
+case_multi       = "(", cond1, ",", cond1, { ",", cond1 }, ")", "=&gt;", match_value, [ "," ], [ ";" ] ;
+default_case     = "_", "=&gt;", match_value, [ "," ], [ ";" ] ;
+match_value      = read_expr | take_expr | value_expr | collect_expr | static_ref ;
+
+cond1            = cond1_atom, { "|", cond1_atom }   (* OR: multiple conditions separated by | *)
+cond1_atom       = "in", "(", value_expr, ",", value_expr, ")"
+                 | "!", value_expr
+                 | match_fun                           (* function matching *)
+                 | value_expr ;                        (* omitted operator means equality *)
+
+match_fun        = "starts_with",  "(", string, ")"   (* prefix matching *)
+                 | "ends_with",    "(", string, ")"   (* suffix matching *)
+                 | "contains",     "(", string, ")"   (* substring matching *)
+                 | "regex_match",  "(", string, ")"   (* regex matching *)
+                 | "iequals",      "(", string, ")"   (* case-insensitive equality *)
+                 | "is_empty",     "(", ")"            (* empty value check *)
+                 | "gt",           "(", number, ")"    (* greater than *)
+                 | "lt",           "(", number, ")"    (* less than *)
+                 | "eq",           "(", number, ")"    (* equal (float tolerance) *)
+                 | "in_range",     "(", number, ",", number, ")" ; (* range check *)
+</code></pre>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li><strong>Multi-source matching</strong>: <code>match (src1, src2, ...)</code> supports any number of source fields (&gt;=2), not limited to two</li>
+<li><strong>OR syntax</strong>: Use <code>|</code> to separate multiple alternative conditions at a condition position; any match succeeds</li>
+<li><strong>Function matching</strong>: 11 built-in match functions for flexible string and numeric comparisons</li>
+</ul>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml"># Single-source matching
+level = match read(status) {
+    in (digit(200), digit(299)) =&gt; chars(success) ;
+    in (digit(400), digit(499)) =&gt; chars(error) ;
+    _ =&gt; chars(other) ;
+} ;
+
+# Single-source OR matching
+tier = match read(city) {
+    chars(bj) | chars(sh) | chars(gz) =&gt; chars(tier1) ;
+    chars(cd) | chars(wh) =&gt; chars(tier2) ;
+    _ =&gt; chars(other) ;
+} ;
+
+# Multi-source matching (two sources)
+result = match (read(a), read(b)) {
+    (digit(1), digit(2)) =&gt; chars(case1) ;
+    _ =&gt; chars(default) ;
+} ;
+
+# Multi-source matching (three sources)
+zone = match (read(city), read(region), read(country)) {
+    (chars(bj), chars(north), chars(cn)) =&gt; chars(result1) ;
+    _ =&gt; chars(default) ;
+} ;
+
+# Multi-source + OR matching
+priority = match (read(city), read(level)) {
+    (chars(bj) | chars(sh), chars(high)) =&gt; chars(priority) ;
+    (chars(gz), chars(low) | chars(mid)) =&gt; chars(normal) ;
+    _ =&gt; chars(default) ;
+} ;
+
+# Function matching
+event = match read(Content) {
+    starts_with('[ERROR]') =&gt; chars(error) ;
+    starts_with('[WARN]') =&gt; chars(warning) ;
+    contains('timeout') =&gt; chars(timeout) ;
+    ends_with('.failed') =&gt; chars(failure) ;
+    regex_match('^\d{4}-\d{2}-\d{2}') =&gt; chars(dated) ;
+    is_empty() =&gt; chars(empty) ;
+    _ =&gt; chars(other) ;
+} ;
+
+# Numeric function matching
+grade = match read(score) {
+    gt(90) =&gt; chars(excellent) ;
+    in_range(60, 90) =&gt; chars(pass) ;
+    lt(60) =&gt; chars(fail) ;
+    _ =&gt; chars(unknown) ;
+} ;
+
+# Case-insensitive matching
+status = match read(result) {
+    iequals('success') =&gt; chars(ok) ;
+    iequals('error') =&gt; chars(fail) ;
+    _ =&gt; chars(other) ;
+} ;
+
+# Case-insensitive multi-value matching
+status_class = match read(status) {
+    iequals_any('success', 'ok', 'done') =&gt; chars(good) ;
+    iequals_any('error', 'failed', 'timeout') =&gt; chars(bad) ;
+    _ =&gt; chars(other) ;
+} ;
+</code></pre>
+<h3 id="lookup_nocase"><a class="header" href="#lookup_nocase"><code>lookup_nocase</code></a></h3>
+<p><code>lookup_nocase(dict_symbol, key_expr, default_expr)</code> performs a case-insensitive lookup against a static object dictionary.</p>
+<pre><code class="language-oml">static {
+    status_score = object {
+        error = float(90.0);
+        warning = float(70.0);
+        success = float(20.0);
+    };
+}
+
+risk_score : float = lookup_nocase(status_score, read(status), 40.0) ;
+</code></pre>
+<ul>
+<li><code>dict_symbol</code> must reference an object defined in <code>static</code></li>
+<li><code>key_expr</code> is normalized with <code>trim + lowercase</code> before lookup</li>
+<li>If the key misses or is not a string, <code>default_expr</code> is returned</li>
+</ul>
+<h3 id="calc"><a class="header" href="#calc"><code>calc(...)</code></a></h3>
+<p><code>calc(expr)</code> evaluates an explicit numeric arithmetic expression.</p>
+<pre><code class="language-oml">risk_score : float = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;
+bucket     : digit = calc(read(uid) % 16) ;
+distance   : float = calc(abs(read(actual) - read(expect))) ;
+error_pct  : digit = calc(round((read(err_cnt) * 100) / read(total_cnt))) ;
+</code></pre>
+<ul>
+<li>Supported operators: <code>+ - * / %</code></li>
+<li>Supported functions: <code>abs(...)</code>, <code>round(...)</code>, <code>floor(...)</code>, <code>ceil(...)</code></li>
+<li>Supported field access: <code>read(...)</code>, <code>take(...)</code>, <code>@field</code></li>
+<li>Divide-by-zero, missing fields, non-numeric inputs, and float <code>%</code> all return <code>ignore</code></li>
+</ul>
+<hr>
+<h2 id="sql-expressions"><a class="header" href="#sql-expressions">SQL Expressions</a></h2>
+<pre><code class="language-ebnf">sql_expr        = "select", sql_body, "where", sql_cond, ";" ;
+sql_body        = sql_safe_body ;              (* source whitelisting: only [A-Za-z0-9_.] and '*' *)
+sql_cond        = cond_expr ;
+
+cond_expr       = cmp, { ("and" | "or"), cmp }
+                 | "not", cond_expr
+                 | "(", cond_expr, ")" ;
+
+cmp             = ident, sql_op, cond_rhs ;
+sql_op          = sql_cmp_op ;                 (* see wp_parser::sql_symbol::symbol_sql_cmp *)
+cond_rhs        = read_expr | take_expr | fun_call | sql_literal ;
+sql_literal     = number | string ;
+</code></pre>
+<h3 id="strict-mode"><a class="header" href="#strict-mode">Strict Mode</a></h3>
+<ul>
+<li><strong>Strict mode (enabled by default)</strong>: Parse error when <code>&lt;cols from table&gt;</code> violates whitelist rules</li>
+<li><strong>Compatibility mode</strong>: Set environment variable <code>OML_SQL_STRICT=0</code>, falls back to raw text on invalid body (not recommended)</li>
+<li><strong>Whitelist rules</strong>:
+<ul>
+<li>Column list: <code>*</code> or column names matching <code>[A-Za-z0-9_.]+</code> (dot allowed as qualifier)</li>
+<li>Table name: <code>[A-Za-z0-9_.]+</code> (single table, no join/subquery)</li>
+<li><code>from</code> is case-insensitive; extra whitespace allowed</li>
+</ul>
+</li>
+</ul>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml"># Valid examples
+name, email = select name, email from users where id = read(user_id) ;
+
+# Using string constants
+data = select * from table where type = 'admin' ;
+
+# IP range query
+zone = select zone from ip_geo
+    where ip_start_int &lt;= ip4_int(read(src_ip))
+      and ip_end_int &gt;= ip4_int(read(src_ip)) ;
+</code></pre>
+<p><strong>Invalid examples (strict mode)</strong>:</p>
+<pre><code class="language-oml"># Table name contains illegal characters
+data = select a, b from table-1 where ... ;
+
+# Column list contains functions
+data = select sum(a) from t where ... ;
+
+# Joins not supported
+data = select a from t1 join t2 ... ;
+</code></pre>
+<hr>
+<h2 id="static-bindings"><a class="header" href="#static-bindings">Static Bindings</a></h2>
+<p><code>static</code> blocks define compile-time constants that can be referenced in main bindings and match expressions.</p>
+<pre><code class="language-ebnf">static_blocks    = { "static", "{", static_item, { static_item }, "}" } ;
+static_item      = target, "=", eval, ";" ;
+</code></pre>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li><code>static</code> blocks are placed after the <code>---</code> separator and before the main bindings</li>
+<li>Each binding within the block is evaluated at compile time into a <code>DataField</code></li>
+<li>Reference in main bindings by using the identifier directly: <code>result = symbol_name ;</code></li>
+<li>Can be referenced in <code>match</code> conditions and results, <code>object</code> sub-bindings, and <code>read/take</code> default bodies</li>
+<li>Duplicate symbol names are not allowed</li>
+</ul>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml">name : model_with_static
+---
+static {
+    tpl = object {
+        id = chars(E1) ;
+        type = chars(default) ;
+    } ;
+    fallback = chars(N/A) ;
+}
+
+# Direct reference to static symbol
+template = tpl ;
+
+# Reference in match result
+target = match read(Content) {
+    starts_with('foo') =&gt; tpl ;
+    _ =&gt; tpl ;
+} ;
+
+# Reference in default body
+value = take(Value) { _ : fallback } ;
+
+# Reference in object sub-binding
+result = object {
+    clone = tpl ;
+} ;
+</code></pre>
+<hr>
+<h2 id="temporary-fields"><a class="header" href="#temporary-fields">Temporary Fields</a></h2>
+<p>Field names starting with <code>__</code> (double underscore) are marked as temporary fields and automatically converted to <code>Ignore</code> type in the output (they do not appear in the final data).</p>
+<p><strong>Purpose</strong>: Intermediate computation results that should not appear in the output record.</p>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml">name : temp_example
+---
+# Temporary field: participates in intermediate computation, not output
+__temp_type = chars(error) ;
+
+# Reference temporary field in matching
+result = match read(__temp_type) {
+    chars(error) =&gt; chars(failed) ;
+    _ =&gt; chars(ok) ;
+} ;
+</code></pre>
+<p>In the output record, <code>result</code> is output normally while <code>__temp_type</code> is automatically ignored.</p>
+<hr>
+<h2 id="privacy-section"><a class="header" href="#privacy-section">Privacy Section</a></h2>
+<blockquote>
+<p>Note: The engine does not enable runtime privacy/masking by default; the following describes the DSL syntax capability for reference in scenarios that require it.</p>
+</blockquote>
+<pre><code class="language-ebnf">privacy_items   = privacy_item, { privacy_item } ;
+privacy_item    = ident, ":", privacy_type ;
+
+privacy_type    = "privacy_ip"
+                 | "privacy_specify_ip"
+                 | "privacy_id_card"
+                 | "privacy_mobile"
+                 | "privacy_mail"
+                 | "privacy_domain"
+                 | "privacy_specify_name"
+                 | "privacy_specify_domain"
+                 | "privacy_specify_address"
+                 | "privacy_specify_company"
+                 | "privacy_keymsg" ;
+</code></pre>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml">name : privacy_example
+---
+field = read() ;
+---
+src_ip : privacy_ip
+pos_sn : privacy_keymsg
+</code></pre>
+<hr>
+<h2 id="lexical-conventions"><a class="header" href="#lexical-conventions">Lexical Conventions</a></h2>
+<pre><code class="language-ebnf">path            = ident, { ("/" | "."), ident } ;
+wild_path       = path | path, "*" ;          (* wildcards allowed *)
+wild_key        = ident, { ident | "*" } ;    (* '*' allowed within key names *)
+type_ident      = ident ;                      (* e.g. auto/ip/chars/digit/float/time/bool/obj/array *)
+ident           = letter, { letter | digit | "_" } ;
+key             = ident ;
+
+string          = "\"", { any-but-quote }, "\""
+                | "'", { any-but-quote }, "'" ;
+
+literal         = string | number | ip | bool | datetime | ... ;
+json_path       = "/" , ... ;                 (* e.g. /a/b/[0]/1 *)
+simple          = ident | number | string ;
+unsigned        = digit, { digit } ;
+eol             = { " " | "\t" | "\r" | "\n" } ;
+
+letter          = "A" | ... | "Z" | "a" | ... | "z" ;
+digit           = "0" | ... | "9" ;
+alnum           = letter | digit ;
+</code></pre>
+<hr>
+<h2 id="data-types"><a class="header" href="#data-types">Data Types</a></h2>
+<p>OML type annotations support the following values (parsed by <code>DataType::from()</code>):</p>
+<h3 id="common-types"><a class="header" href="#common-types">Common Types</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Type</th><th>Description</th><th>Example</th></tr>
+</thead>
+<tbody>
+<tr><td><code>auto</code></td><td>Auto-detect (default)</td><td><code>field = read() ;</code></td></tr>
+<tr><td><code>chars</code></td><td>String</td><td><code>name : chars = read() ;</code></td></tr>
+<tr><td><code>digit</code></td><td>Integer</td><td><code>count : digit = read() ;</code></td></tr>
+<tr><td><code>float</code></td><td>Floating-point</td><td><code>ratio : float = read() ;</code></td></tr>
+<tr><td><code>ip</code></td><td>IP address</td><td><code>addr : ip = read() ;</code></td></tr>
+<tr><td><code>time</code></td><td>Time</td><td><code>timestamp : time = Now::time() ;</code></td></tr>
+<tr><td><code>bool</code></td><td>Boolean</td><td><code>flag : bool = read() ;</code></td></tr>
+<tr><td><code>obj</code></td><td>Object</td><td><code>info : obj = object { ... } ;</code></td></tr>
+<tr><td><code>array</code></td><td>Array</td><td><code>items : array = collect read(...) ;</code></td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="extended-types"><a class="header" href="#extended-types">Extended Types</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>time_iso</code></td><td>ISO format time</td></tr>
+<tr><td><code>time_3339</code></td><td>RFC 3339 time</td></tr>
+<tr><td><code>time_2822</code></td><td>RFC 2822 time</td></tr>
+<tr><td><code>time_timestamp</code></td><td>Unix timestamp</td></tr>
+<tr><td><code>time_clf</code></td><td>CLF log time (Apache/Nginx)</td></tr>
+<tr><td><code>time/apache</code></td><td>CLF alias</td></tr>
+<tr><td><code>time/timestamp</code></td><td>Timestamp alias</td></tr>
+<tr><td><code>time/rfc3339</code></td><td>RFC 3339 alias</td></tr>
+<tr><td><code>url</code></td><td>URL</td></tr>
+<tr><td><code>domain</code></td><td>Domain name</td></tr>
+<tr><td><code>ip_net</code></td><td>Network segment</td></tr>
+<tr><td><code>kv</code></td><td>Key-Value text</td></tr>
+<tr><td><code>json</code></td><td>JSON text</td></tr>
+<tr><td><code>base64</code></td><td>Base64 encoded text</td></tr>
+<tr><td><code>array/&lt;sub&gt;</code></td><td>Typed array (e.g. <code>array/digit</code>)</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="complete-example"><a class="header" href="#complete-example">Complete Example</a></h2>
+<pre><code class="language-oml">name : csv_example
+rule : /csv/data
+enable : true
+---
+static {
+    ERROR_TPL = object {
+        type = chars(error) ;
+        level = digit(0) ;
+    } ;
+}
+
+# Basic value retrieval with default
+version : chars = Now::time() ;
+pos_sn = read() { _ : chars(FALLBACK) } ;
+
+# Temporary field (not included in output)
+__raw_type = read(type) ;
+
+# Object aggregation
+values : obj = object {
+    cpu_free, memory_free : digit = read() ;
+} ;
+
+# Collect array aggregation + pipe
+ports : array = collect read(keys:[sport, dport]) ;
+ports_json = pipe read(ports) | to_json ;
+first_port = pipe read(ports) | nth(0) ;
+
+# Pipe without pipe keyword
+url_host = read(http_url) | url(host) ;
+
+# match
+quarter : chars = match read(month) {
+    in (digit(1), digit(3))   =&gt; chars(Q1) ;
+    in (digit(4), digit(6))   =&gt; chars(Q2) ;
+    in (digit(7), digit(9))   =&gt; chars(Q3) ;
+    in (digit(10), digit(12)) =&gt; chars(Q4) ;
+    _ =&gt; chars(QX) ;
+} ;
+
+# Two-source match
+X : chars = match (read(city1), read(city2)) {
+    (ip(127.0.0.1), ip(127.0.0.100)) =&gt; chars(bj) ;
+    _ =&gt; chars(sz) ;
+} ;
+
+# Three-source match
+zone : chars = match (read(city), read(region), read(country)) {
+    (chars(bj), chars(north), chars(cn)) =&gt; chars(zone1) ;
+    (chars(sh), chars(east), chars(cn)) =&gt; chars(zone2) ;
+    _ =&gt; chars(unknown) ;
+} ;
+
+# OR matching (single source)
+tier : chars = match read(city) {
+    chars(bj) | chars(sh) | chars(gz) =&gt; chars(tier1) ;
+    chars(cd) | chars(wh) =&gt; chars(tier2) ;
+    _ =&gt; chars(other) ;
+} ;
+
+# OR matching (multi-source)
+priority : chars = match (read(city), read(level)) {
+    (chars(bj) | chars(sh), chars(high)) =&gt; chars(priority) ;
+    (chars(gz), chars(low) | chars(mid)) =&gt; chars(normal) ;
+    _ =&gt; chars(default) ;
+} ;
+
+# Function matching
+event = match read(log_line) {
+    starts_with('[ERROR]') =&gt; chars(error) ;
+    ends_with('.failed') =&gt; chars(failure) ;
+    contains('timeout') =&gt; chars(timeout) ;
+    regex_match('^\d{4}-\d{2}-\d{2}') =&gt; chars(dated) ;
+    is_empty() =&gt; chars(empty) ;
+    _ =&gt; chars(other) ;
+} ;
+
+# Numeric function matching
+grade = match read(score) {
+    gt(90) =&gt; chars(excellent) ;
+    in_range(60, 90) =&gt; chars(pass) ;
+    lt(60) =&gt; chars(fail) ;
+    _ =&gt; chars(unknown) ;
+} ;
+
+# Case-insensitive matching
+result = match read(status) {
+    iequals('success') =&gt; chars(ok) ;
+    _ =&gt; chars(fail) ;
+} ;
+
+# Static reference
+error_info = match read(__raw_type) {
+    chars(error) =&gt; ERROR_TPL ;
+    _ =&gt; chars(normal) ;
+} ;
+
+# SQL (where clause can mix read/take/Now::time/constants)
+name, pinying = select name, pinying from example where pinying = read(py) ;
+_, _ = select name, pinying from example where pinying = 'xiaolongnu' ;
+
+---
+# Privacy configuration (bind processor enum by key)
+src_ip : privacy_ip
+pos_sn : privacy_keymsg
+</code></pre>
+<hr>
+<h2 id="pipe-function-reference"><a class="header" href="#pipe-function-reference">Pipe Function Reference</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Function</th><th>Syntax</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>base64_encode</code></td><td><code>base64_encode</code></td><td>Base64 encode</td></tr>
+<tr><td><code>base64_decode</code></td><td><code>base64_decode</code> / <code>base64_decode(encoding)</code></td><td>Base64 decode</td></tr>
+<tr><td><code>html_escape</code></td><td><code>html_escape</code></td><td>HTML escape</td></tr>
+<tr><td><code>html_unescape</code></td><td><code>html_unescape</code></td><td>HTML unescape</td></tr>
+<tr><td><code>json_escape</code></td><td><code>json_escape</code></td><td>JSON escape</td></tr>
+<tr><td><code>json_unescape</code></td><td><code>json_unescape</code></td><td>JSON unescape</td></tr>
+<tr><td><code>str_escape</code></td><td><code>str_escape</code></td><td>String escape</td></tr>
+<tr><td><code>Time::to_ts</code></td><td><code>Time::to_ts</code></td><td>Time to timestamp (seconds, UTC+8)</td></tr>
+<tr><td><code>Time::to_ts_ms</code></td><td><code>Time::to_ts_ms</code></td><td>Time to timestamp (milliseconds, UTC+8)</td></tr>
+<tr><td><code>Time::to_ts_us</code></td><td><code>Time::to_ts_us</code></td><td>Time to timestamp (microseconds, UTC+8)</td></tr>
+<tr><td><code>Time::to_ts_zone</code></td><td><code>Time::to_ts_zone(timezone,unit)</code></td><td>Time to timestamp with timezone</td></tr>
+<tr><td><code>nth</code></td><td><code>nth(index)</code></td><td>Get array element</td></tr>
+<tr><td><code>get</code></td><td><code>get(field_name)</code></td><td>Get object field</td></tr>
+<tr><td><code>path</code></td><td><code>path(name|path)</code></td><td>Extract file path component</td></tr>
+<tr><td><code>url</code></td><td><code>url(domain|host|uri|path|params)</code></td><td>Extract URL component</td></tr>
+<tr><td><code>starts_with</code></td><td><code>starts_with('prefix')</code></td><td>Check if string starts with prefix</td></tr>
+<tr><td><code>map_to</code></td><td><code>map_to(value)</code></td><td>Map to constant value (string/number/boolean)</td></tr>
+<tr><td><code>extract_main_word</code></td><td><code>extract_main_word</code></td><td>Extract main word (first non-empty word)</td></tr>
+<tr><td><code>extract_subject_object</code></td><td><code>extract_subject_object</code></td><td>Extract log subject-object structure (subject/action/object/status)</td></tr>
+<tr><td><code>to_str</code></td><td><code>to_str</code></td><td>Convert to string</td></tr>
+<tr><td><code>to_json</code></td><td><code>to_json</code></td><td>Convert to JSON</td></tr>
+<tr><td><code>ip4_to_int</code></td><td><code>ip4_to_int</code></td><td>IPv4 to integer</td></tr>
+<tr><td><code>skip_empty</code></td><td><code>skip_empty</code></td><td>Skip empty values</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="match-function-reference-for-match-conditions"><a class="header" href="#match-function-reference-for-match-conditions">Match Function Reference (for match conditions)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Function</th><th>Syntax</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>starts_with</code></td><td><code>starts_with('prefix')</code></td><td>Prefix matching</td></tr>
+<tr><td><code>ends_with</code></td><td><code>ends_with('suffix')</code></td><td>Suffix matching</td></tr>
+<tr><td><code>contains</code></td><td><code>contains('substring')</code></td><td>Substring matching</td></tr>
+<tr><td><code>regex_match</code></td><td><code>regex_match('pattern')</code></td><td>Regular expression matching</td></tr>
+<tr><td><code>iequals</code></td><td><code>iequals('value')</code></td><td>Case-insensitive equality</td></tr>
+<tr><td><code>is_empty</code></td><td><code>is_empty()</code></td><td>Empty value check</td></tr>
+<tr><td><code>gt</code></td><td><code>gt(number)</code></td><td>Greater than</td></tr>
+<tr><td><code>lt</code></td><td><code>lt(number)</code></td><td>Less than</td></tr>
+<tr><td><code>eq</code></td><td><code>eq(number)</code></td><td>Equal (float tolerance)</td></tr>
+<tr><td><code>in_range</code></td><td><code>in_range(min, max)</code></td><td>Range check (closed interval)</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="syntax-summary"><a class="header" href="#syntax-summary">Syntax Summary</a></h2>
+<h3 id="required-elements"><a class="header" href="#required-elements">Required Elements</a></h3>
+<ol>
+<li><strong>Configuration name</strong>: <code>name : &lt;name&gt;</code></li>
+<li><strong>Separator</strong>: <code>---</code></li>
+<li><strong>Semicolons</strong>: Every top-level entry must end with <code>;</code></li>
+</ol>
+<h3 id="optional-elements"><a class="header" href="#optional-elements">Optional Elements</a></h3>
+<ol>
+<li><strong>Type declaration</strong>: <code>field : &lt;type&gt; = ...</code> (defaults to <code>auto</code>)</li>
+<li><strong>rule field</strong>: <code>rule : &lt;rule_path&gt;</code></li>
+<li><strong>enable field</strong>: <code>enable : true|false</code> (defaults to <code>true</code>)</li>
+<li><strong>static block</strong>: <code>static { ... }</code></li>
+<li><strong>Default value</strong>: <code>read() { _ : &lt;default&gt; }</code></li>
+<li><strong>pipe keyword</strong>: <code>pipe read() | func</code> can be shortened to <code>read() | func</code></li>
+</ol>
+<h3 id="comments"><a class="header" href="#comments">Comments</a></h3>
+<pre><code class="language-oml"># Single-line comment (using # or //)
+// C++ style comment also supported
+</code></pre>
+<h3 id="target-wildcards"><a class="header" href="#target-wildcards">Target Wildcards</a></h3>
+<pre><code class="language-oml">* = take() ;           # Take all fields
+alert* = take() ;      # Take all fields starting with alert
+*_log = take() ;       # Take all fields ending with _log
+</code></pre>
+<h3 id="temporary-fields-1"><a class="header" href="#temporary-fields-1">Temporary Fields</a></h3>
+<pre><code class="language-oml">__temp = chars(value) ;      # Starts with __, automatically ignored in output
+result = read(__temp) ;      # Can be referenced in other expressions
+</code></pre>
+<h3 id="read-semantics"><a class="header" href="#read-semantics">Read Semantics</a></h3>
+<ul>
+<li><strong>read</strong>: Non-destructive (can read repeatedly, does not remove from src)</li>
+<li><strong>take</strong>: Destructive (removed from src after taking, cannot be taken again)</li>
+</ul>
+<hr>
+<h2 id="next-steps-1"><a class="header" href="#next-steps-1">Next Steps</a></h2>
+<ul>
+<li><a href="#oml-core-concepts">Core Concepts</a> - Understand the design philosophy</li>
+<li><a href="#oml-practical-guide">Practical Guide</a> - See real-world examples</li>
+<li><a href="#oml-functions-reference">Functions Reference</a> - Browse all available functions</li>
+<li><a href="#oml-quick-start">Quick Start</a> - Get started with OML</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="oml-complete-feature-example"><a class="header" href="#oml-complete-feature-example">OML Complete Feature Example</a></h1>
 <blockquote>
@@ -6556,7 +7940,7 @@ log : obj = object {
 <ol>
 <li><strong>Basic Operations</strong> (8 types) - Literal assignment, value extraction, default values, wildcards, etc.</li>
 <li><strong>Built-in Functions</strong> - Time-related functions</li>
-<li><strong>Pattern Matching</strong> (5 types) - Single source, dual source, range judgment, negation conditions, etc.</li>
+<li><strong>Pattern Matching</strong> (7 types) - Single source, multi-source (any count), range judgment, negation conditions, boolean, OR conditions, multi-source + OR combination</li>
 <li><strong>Pipeline Functions</strong> (9 types) - Time conversion, encoding/decoding, data extraction, etc.</li>
 <li><strong>String Operations</strong> - Formatting functions</li>
 <li><strong>Objects &amp; Arrays</strong> - Aggregation and collection operations</li>
@@ -7372,6 +8756,397 @@ severity = match structure.status {
 <hr>
 <p>更新时间：2026-02-01</p>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="oml-match-expression-function-matching"><a class="header" href="#oml-match-expression-function-matching">OML Match Expression Function Matching</a></h1>
+<p>This document describes the function matching capabilities in OML <code>match</code> expressions.</p>
+<h2 id="overview-8"><a class="header" href="#overview-8">Overview</a></h2>
+<p>Since version 1.13.4, OML’s <code>match</code> expression supports function-based pattern matching, providing more flexible matching than simple value comparisons.</p>
+<h3 id="basic-syntax-6"><a class="header" href="#basic-syntax-6">Basic Syntax</a></h3>
+<pre><code class="language-oml">field_name = match read(source_field) {
+    function_name(arguments) =&gt; result_value,
+    _ =&gt; default_value,
+};
+</code></pre>
+<h3 id="difference-from-pipe-functions"><a class="header" href="#difference-from-pipe-functions">Difference from Pipe Functions</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Feature</th><th>Match Functions</th><th>Pipe Functions</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Purpose</strong></td><td>Multi-branch conditional evaluation</td><td>Binary filtering (keep/discard)</td></tr>
+<tr><td><strong>Return</strong></td><td>Returns different values based on conditions</td><td>Match returns original value, non-match returns ignore</td></tr>
+<tr><td><strong>Scenario</strong></td><td>Classification, routing, decision-making</td><td>Filtering, data cleaning</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Comparison Example</strong>:</p>
+<pre><code class="language-oml"># Match: classify by prefix into different results
+EventType = match read(log) {
+    starts_with('[ERROR]') =&gt; chars(error),
+    starts_with('[WARN]') =&gt; chars(warning),
+    starts_with('[INFO]') =&gt; chars(info),
+    _ =&gt; chars(other),
+};
+
+# Pipe: filter ERROR logs, others become ignore
+ErrorLog = pipe take(log) | starts_with('[ERROR]');
+</code></pre>
+<h2 id="supported-functions"><a class="header" href="#supported-functions">Supported Functions</a></h2>
+<h3 id="string-matching-functions"><a class="header" href="#string-matching-functions">String Matching Functions</a></h3>
+<h4 id="starts_withprefix"><a class="header" href="#starts_withprefix">starts_with(prefix)</a></h4>
+<p>Checks if the field value starts with the specified prefix.</p>
+<p><strong>Syntax</strong>: <code>starts_with('prefix')</code></p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>prefix</code>: String, the prefix to match (quotes required)</li>
+</ul>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>Field value starts with the specified prefix -&gt; match succeeds</li>
+<li>Field value does not start with the specified prefix -&gt; match fails</li>
+<li>Field is not a string type -&gt; match fails</li>
+<li>Case-sensitive</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">EventType = match read(log_line) {
+    starts_with('[ERROR]') =&gt; chars(error),
+    starts_with('[WARN]') =&gt; chars(warning),
+    _ =&gt; chars(info),
+};
+</code></pre>
+<h4 id="ends_withsuffix"><a class="header" href="#ends_withsuffix">ends_with(suffix)</a></h4>
+<p>Checks if the field value ends with the specified suffix.</p>
+<p><strong>Syntax</strong>: <code>ends_with('suffix')</code></p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>suffix</code>: String, the suffix to match (quotes required)</li>
+</ul>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>Field value ends with the specified suffix -&gt; match succeeds</li>
+<li>Field value does not end with the specified suffix -&gt; match fails</li>
+<li>Field is not a string type -&gt; match fails</li>
+<li>Case-sensitive</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">FileType = match read(filename) {
+    ends_with('.json') =&gt; chars(json),
+    ends_with('.xml') =&gt; chars(xml),
+    ends_with('.log') =&gt; chars(log),
+    _ =&gt; chars(unknown),
+};
+</code></pre>
+<h4 id="containssubstring"><a class="header" href="#containssubstring">contains(substring)</a></h4>
+<p>Checks if the field value contains the specified substring.</p>
+<p><strong>Syntax</strong>: <code>contains('substring')</code></p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>substring</code>: String, the substring to match (quotes required)</li>
+</ul>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>Field value contains the specified substring -&gt; match succeeds</li>
+<li>Field value does not contain the specified substring -&gt; match fails</li>
+<li>Field is not a string type -&gt; match fails</li>
+<li>Case-sensitive</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">ErrorType = match read(message) {
+    contains('exception') =&gt; chars(exception),
+    contains('timeout') =&gt; chars(timeout),
+    contains('failed') =&gt; chars(failure),
+    _ =&gt; chars(normal),
+};
+</code></pre>
+<h4 id="regex_matchpattern"><a class="header" href="#regex_matchpattern">regex_match(pattern)</a></h4>
+<p>Matches the field value against a regular expression.</p>
+<p><strong>Syntax</strong>: <code>regex_match('pattern')</code></p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>pattern</code>: String, the regex pattern (quotes required)</li>
+</ul>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>Field value matches the regex -&gt; match succeeds</li>
+<li>Field value does not match the regex -&gt; match fails</li>
+<li>Invalid regex syntax -&gt; match fails with a warning logged</li>
+<li>Field is not a string type -&gt; match fails</li>
+</ul>
+<p><strong>Note</strong>: Uses standard Rust regex syntax</p>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">EventPattern = match read(log_message) {
+    regex_match('^\[\d{4}-\d{2}-\d{2}') =&gt; chars(timestamped),
+    regex_match('^ERROR:.*timeout') =&gt; chars(error_timeout),
+    regex_match('^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}') =&gt; chars(ip_address),
+    _ =&gt; chars(unmatched),
+};
+</code></pre>
+<h4 id="is_empty"><a class="header" href="#is_empty">is_empty()</a></h4>
+<p>Checks if the field value is an empty string.</p>
+<p><strong>Syntax</strong>: <code>is_empty()</code></p>
+<p><strong>Parameters</strong>: None</p>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>Field value is an empty string -&gt; match succeeds</li>
+<li>Field value is non-empty -&gt; match fails</li>
+<li>Field is not a string type -&gt; match fails</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">Status = match read(field_value) {
+    is_empty() =&gt; chars(missing),
+    _ =&gt; chars(present),
+};
+</code></pre>
+<h4 id="iequalsvalue"><a class="header" href="#iequalsvalue">iequals(value)</a></h4>
+<p>Case-insensitive comparison of the field value.</p>
+<p><strong>Syntax</strong>: <code>iequals('value')</code></p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>value</code>: String, the value to compare (quotes required)</li>
+</ul>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>Field value equals the parameter value (case-insensitive) -&gt; match succeeds</li>
+<li>Field value does not equal the parameter value -&gt; match fails</li>
+<li>Field is not a string type -&gt; match fails</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">NormalizedStatus = match read(status) {
+    iequals('success') =&gt; chars(ok),
+    iequals('error') =&gt; chars(fail),
+    iequals('warning') =&gt; chars(warn),
+    _ =&gt; chars(unknown),
+};
+</code></pre>
+<h4 id="iequals_anyvalue1-value2-"><a class="header" href="#iequals_anyvalue1-value2-">iequals_any(value1, value2, …)</a></h4>
+<p>Performs case-insensitive comparison against multiple candidates and matches if any candidate matches.</p>
+<p><strong>Syntax</strong>: <code>iequals_any('success', 'ok', 'done')</code></p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>value1, value2, ...</code>: one or more string candidates (must be quoted)</li>
+</ul>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>Field value equals any candidate ignoring case -&gt; match succeeds</li>
+<li>No candidate matches -&gt; match fails</li>
+<li>Field is not a string type -&gt; match fails</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">StatusClass = match read(status) {
+    iequals_any('success', 'ok', 'done') =&gt; chars(good),
+    iequals_any('error', 'failed', 'timeout') =&gt; chars(bad),
+    _ =&gt; chars(other),
+};
+</code></pre>
+<h3 id="numeric-comparison-functions"><a class="header" href="#numeric-comparison-functions">Numeric Comparison Functions</a></h3>
+<h4 id="gtvalue"><a class="header" href="#gtvalue">gt(value)</a></h4>
+<p>Checks if the field value is greater than the specified value.</p>
+<p><strong>Syntax</strong>: <code>gt(100)</code> (numeric parameters do not need quotes)</p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>value</code>: Numeric, the threshold for comparison</li>
+</ul>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>Field value &gt; parameter value -&gt; match succeeds</li>
+<li>Field value &lt;= parameter value -&gt; match fails</li>
+<li>Field is not a numeric type -&gt; match fails</li>
+<li>Supports integers (digit) and floats (float)</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">Level = match read(count) {
+    gt(1000) =&gt; chars(critical),
+    gt(500) =&gt; chars(high),
+    gt(100) =&gt; chars(medium),
+    _ =&gt; chars(low),
+};
+</code></pre>
+<h4 id="ltvalue"><a class="header" href="#ltvalue">lt(value)</a></h4>
+<p>Checks if the field value is less than the specified value.</p>
+<p><strong>Syntax</strong>: <code>lt(60)</code> (numeric parameters do not need quotes)</p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>value</code>: Numeric, the threshold for comparison</li>
+</ul>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>Field value &lt; parameter value -&gt; match succeeds</li>
+<li>Field value &gt;= parameter value -&gt; match fails</li>
+<li>Field is not a numeric type -&gt; match fails</li>
+<li>Supports integers and floats</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">Grade = match read(score) {
+    lt(60) =&gt; chars(fail),
+    lt(70) =&gt; chars(pass),
+    lt(85) =&gt; chars(good),
+    _ =&gt; chars(excellent),
+};
+</code></pre>
+<h4 id="eqvalue"><a class="header" href="#eqvalue">eq(value)</a></h4>
+<p>Checks if the field value equals the specified numeric value.</p>
+<p><strong>Syntax</strong>: <code>eq(5)</code> (numeric parameters do not need quotes)</p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>value</code>: Numeric, the target value for comparison</li>
+</ul>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>Field value equals parameter value -&gt; match succeeds (float comparison tolerance 1e-10)</li>
+<li>Field value does not equal parameter value -&gt; match fails</li>
+<li>Field is not a numeric type -&gt; match fails</li>
+<li>Supports integers and floats</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">Status = match read(level) {
+    eq(0) =&gt; chars(disabled),
+    eq(5) =&gt; chars(max_level),
+    eq(1) =&gt; chars(minimum),
+    _ =&gt; chars(normal),
+};
+</code></pre>
+<h4 id="in_rangemin-max"><a class="header" href="#in_rangemin-max">in_range(min, max)</a></h4>
+<p>Checks if the field value is within the specified range.</p>
+<p><strong>Syntax</strong>: <code>in_range(20, 30)</code> (numeric parameters do not need quotes)</p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>min</code>: Numeric, the minimum value of the range</li>
+<li><code>max</code>: Numeric, the maximum value of the range</li>
+</ul>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>min &lt;= field value &lt;= max -&gt; match succeeds</li>
+<li>Field value &lt; min or field value &gt; max -&gt; match fails</li>
+<li>Field is not a numeric type -&gt; match fails</li>
+<li>Supports integers and floats</li>
+<li>Uses closed interval [min, max]</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">TempZone = match read(temperature) {
+    lt(0) =&gt; chars(freezing),
+    in_range(0, 10) =&gt; chars(cold),
+    in_range(10, 20) =&gt; chars(cool),
+    in_range(20, 30) =&gt; chars(comfortable),
+    gt(30) =&gt; chars(warm),
+    _ =&gt; chars(unknown),
+};
+</code></pre>
+<h2 id="or-condition-syntax"><a class="header" href="#or-condition-syntax">OR Condition Syntax</a></h2>
+<h3 id="single-source-or-matching"><a class="header" href="#single-source-or-matching">Single-source OR Matching</a></h3>
+<p>Use <code>|</code> to separate multiple alternative conditions within a single branch. Any match succeeds:</p>
+<pre><code class="language-oml">tier = match read(city) {
+    chars(bj) | chars(sh) | chars(gz) =&gt; chars(tier1),
+    chars(cd) | chars(wh) =&gt; chars(tier2),
+    _ =&gt; chars(other),
+};
+</code></pre>
+<p>OR syntax also works with function matching:</p>
+<pre><code class="language-oml">EventType = match read(log_line) {
+    starts_with('[ERROR]') | starts_with('[FATAL]') =&gt; chars(critical),
+    starts_with('[WARN]') =&gt; chars(warning),
+    _ =&gt; chars(info),
+};
+</code></pre>
+<h3 id="multi-source--or-matching"><a class="header" href="#multi-source--or-matching">Multi-source + OR Matching</a></h3>
+<p>Each condition position in a multi-source match supports OR syntax:</p>
+<pre><code class="language-oml">priority = match (read(city), read(level)) {
+    (chars(bj) | chars(sh), chars(high)) =&gt; chars(priority),
+    (chars(gz), chars(low) | chars(mid)) =&gt; chars(normal),
+    _ =&gt; chars(default),
+};
+</code></pre>
+<h2 id="notes-1"><a class="header" href="#notes-1">Notes</a></h2>
+<h3 id="1-parameter-quoting-rules"><a class="header" href="#1-parameter-quoting-rules">1. Parameter Quoting Rules</a></h3>
+<pre><code class="language-oml"># String parameters require quotes
+starts_with('prefix')
+iequals('value')
+
+# Numeric parameters do not need quotes
+gt(100)
+eq(5)
+in_range(20, 30)
+
+# Incorrect examples
+starts_with(prefix)   # missing quotes
+gt('100')             # should not have quotes
+</code></pre>
+<h3 id="2-case-sensitivity"><a class="header" href="#2-case-sensitivity">2. Case Sensitivity</a></h3>
+<pre><code class="language-oml"># Most string functions are case-sensitive
+starts_with('ERROR')  # will not match 'error:'
+
+# Use iequals for case-insensitive matching
+iequals('success')    # matches 'SUCCESS', 'Success', 'success'
+</code></pre>
+<h3 id="3-match-order"><a class="header" href="#3-match-order">3. Match Order</a></h3>
+<pre><code class="language-oml"># match evaluates top to bottom, first matching branch is executed
+Grade = match read(score) {
+    gt(90) =&gt; chars(A),        # check &gt; 90 first
+    gt(80) =&gt; chars(B),        # then &gt; 80
+    gt(70) =&gt; chars(C),        # then &gt; 70
+    _ =&gt; chars(F),
+};
+
+# If score = 95, only the first branch (A) matches
+</code></pre>
+<h2 id="best-practices-8"><a class="header" href="#best-practices-8">Best Practices</a></h2>
+<h3 id="1-prefer-simple-functions"><a class="header" href="#1-prefer-simple-functions">1. Prefer Simple Functions</a></h3>
+<pre><code class="language-oml"># Recommended: use simple starts_with
+match read(url) {
+    starts_with('https://') =&gt; chars(secure),
+    _ =&gt; chars(insecure),
+}
+
+# Avoid: unnecessary regex
+match read(url) {
+    regex_match('^https://') =&gt; chars(secure),  # worse performance
+    _ =&gt; chars(insecure),
+}
+</code></pre>
+<h3 id="2-organize-match-order-properly"><a class="header" href="#2-organize-match-order-properly">2. Organize Match Order Properly</a></h3>
+<pre><code class="language-oml"># Recommended: from specific to general
+match read(log) {
+    starts_with('[ERROR]') =&gt; chars(error),     # most specific
+    starts_with('[WARN]') =&gt; chars(warning),
+    contains('exception') =&gt; chars(exception),   # broader
+    _ =&gt; chars(other),                          # default
+}
+</code></pre>
+<h3 id="3-use-iequals-for-user-input"><a class="header" href="#3-use-iequals-for-user-input">3. Use iequals for User Input</a></h3>
+<pre><code class="language-oml"># Recommended: use iequals for case-uncertain input
+Status = match read(user_input) {
+    iequals('yes') =&gt; chars(confirmed),
+    iequals('no') =&gt; chars(rejected),
+    _ =&gt; chars(invalid),
+};
+</code></pre>
+<h2 id="version-history-7"><a class="header" href="#version-history-7">Version History</a></h2>
+<ul>
+<li>
+<p><strong>1.16.3</strong> (Unreleased)</p>
+<ul>
+<li>Added OR condition syntax: <code>cond1 | cond2 | ...</code>, express alternative conditions within a single branch</li>
+<li>Multi-source match supports any number of source fields (no longer limited to 2/3/4)</li>
+<li>Multi-source match condition positions support OR syntax</li>
+</ul>
+</li>
+<li>
+<p><strong>1.19.1</strong> (2026-03-12)</p>
+<ul>
+<li>Added <code>iequals_any(...)</code> for case-insensitive multi-candidate matching</li>
+</ul>
+</li>
+<li>
+<p><strong>1.13.4</strong> (2026-02-04)</p>
+<ul>
+<li>Added match expression function matching support</li>
+<li>String matching: <code>starts_with</code>, <code>ends_with</code>, <code>contains</code>, <code>regex_match</code>, <code>is_empty</code>, <code>iequals</code></li>
+<li>Numeric comparison: <code>gt</code>, <code>lt</code>, <code>eq</code>, <code>in_range</code></li>
+</ul>
+</li>
+</ul>
+<hr>
+<p><strong>Tip</strong>: Match functions are for multi-branch conditional evaluation, while Pipe functions are for binary filtering. Choose the appropriate function type based on your scenario for cleaner code.</p>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="oml-管道函数完整参考"><a class="header" href="#oml-管道函数完整参考">OML 管道函数完整参考</a></h1>
 <p>本文档列出了 OML 支持的所有管道函数（PipeFun），包括详细说明、参数、示例和注意事项。</p>
 <h2 id="目录"><a class="header" href="#目录">目录</a></h2>
@@ -8164,13 +9939,13 @@ EventTemplate = read(target) | get(tpl);
 <p>If a static symbol is referenced somewhere the parser doesn’t yet understand, the model will fail to load with <code>static reference symbol not found</code>, so issues are caught early.</p>
 <h2 id="performance-notes-5"><a class="header" href="#performance-notes-5">Performance Notes</a></h2>
 <p>A Criterion benchmark (<code>cargo bench -p wp-oml --bench oml_static_block</code>) shows a typical template assignment dropping from ~1.07µs/record to ~0.72µs when using <code>static</code>, because the literal object is no longer rebuilt per record. The larger the template, the bigger the win.</p>
-<h2 id="troubleshooting-3"><a class="header" href="#troubleshooting-3">Troubleshooting</a></h2>
+<h2 id="troubleshooting-4"><a class="header" href="#troubleshooting-4">Troubleshooting</a></h2>
 <ul>
 <li><strong>“need ‘=’” parse errors</strong> – remember to keep <code>static</code> block syntax identical to normal assignments; each statement still requires <code>=</code> and <code>;</code>.</li>
 <li><strong><code>static reference symbol not found</code></strong> – you referenced a name outside the <code>static</code> block or misspelled it. Check for typos and ensure the symbol is declared before use.</li>
 <li><strong>Strings with spaces</strong> – use quotes (<code>chars('foo bar')</code>) inside the block; unquoted tokens are split on whitespace.</li>
 </ul>
-<h2 id="best-practices-8"><a class="header" href="#best-practices-8">Best Practices</a></h2>
+<h2 id="best-practices-9"><a class="header" href="#best-practices-9">Best Practices</a></h2>
 <ul>
 <li>Prefer descriptive names (<code>error_tpl</code>, <code>ldap_template</code>) instead of <code>__E1</code>-style placeholders.</li>
 <li>Remove redundant <code>__temp</code> fields once you switch to <code>static</code>, so you avoid unnecessary <code>read()</code> calls.</li>
@@ -8219,7 +9994,7 @@ EventTemplate = read(target) | get(tpl);
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="source-basics"><a class="header" href="#source-basics">Source Basics</a></h1>
 <p>This document introduces the fundamental concepts and usage of data source configuration in the Warp Parse system.</p>
-<h2 id="overview-8"><a class="header" href="#overview-8">Overview</a></h2>
+<h2 id="overview-9"><a class="header" href="#overview-9">Overview</a></h2>
 <p>Sources are the data input endpoints of the Warp Parse system, responsible for receiving data from various sources and feeding it into the processing pipeline.</p>
 <h2 id="core-concepts-1"><a class="header" href="#core-concepts-1">Core Concepts</a></h2>
 <h3 id="1-connectors"><a class="header" href="#1-connectors">1. Connectors</a></h3>
@@ -8330,7 +10105,7 @@ protocol = "tcp"
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="file-source"><a class="header" href="#file-source">File Source</a></h1>
 <p>This document provides detailed instructions on configuring and using file data sources in the Warp Parse system.</p>
-<h2 id="overview-9"><a class="header" href="#overview-9">Overview</a></h2>
+<h2 id="overview-10"><a class="header" href="#overview-10">Overview</a></h2>
 <p>File sources are used to read data from the local file system, supporting multiple encoding formats and flexible path configuration.</p>
 <h2 id="connector-definition"><a class="header" href="#connector-definition">Connector Definition</a></h2>
 <h3 id="basic-file-connector"><a class="header" href="#basic-file-connector">Basic File Connector</a></h3>
@@ -8449,7 +10224,7 @@ encode = "hex"
 <p><strong>⚠️ Note</strong>: Kafka source is currently <strong>not implemented</strong>. This document is a design document for planned functionality; please refer to the actual code implementation when using.</p>
 </blockquote>
 <p>This document describes in detail how to configure and use the Kafka data source in the Warp Parse system.</p>
-<h2 id="overview-10"><a class="header" href="#overview-10">Overview</a></h2>
+<h2 id="overview-11"><a class="header" href="#overview-11">Overview</a></h2>
 <p>Kafka source is used to consume data from Apache Kafka message queues, supporting consumption from a single topic with flexible configuration options.</p>
 <blockquote>
 <p><strong>Note</strong>: The system will automatically create configured topics (if they don’t exist). The consumer group ID can be configured via the <code>group_id</code> parameter, defaulting to <code>wparse_default_group</code>.</p>
@@ -8627,7 +10402,7 @@ config = [
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="syslog-source-configuration-1"><a class="header" href="#syslog-source-configuration-1">Syslog Source Configuration</a></h1>
 <p>This document describes in detail how to configure and use the Syslog data source in the Warp Parse system.</p>
-<h2 id="overview-11"><a class="header" href="#overview-11">Overview</a></h2>
+<h2 id="overview-12"><a class="header" href="#overview-12">Overview</a></h2>
 <p>Syslog source is used to receive and parse standard Syslog protocol messages, supporting both UDP and TCP transport protocols, as well as multiple Syslog formats.</p>
 <h2 id="connector-definition-2"><a class="header" href="#connector-definition-2">Connector Definition</a></h2>
 <h3 id="udp-syslog-connector"><a class="header" href="#udp-syslog-connector">UDP Syslog Connector</a></h3>
@@ -8884,7 +10659,7 @@ framing = "line"  # or "len"
 </ul>
 </li>
 </ul>
-<h2 id="best-practices-9"><a class="header" href="#best-practices-9">Best Practices</a></h2>
+<h2 id="best-practices-10"><a class="header" href="#best-practices-10">Best Practices</a></h2>
 <ul>
 <li>Text only: <code>framing="line"</code></li>
 <li>Multi-line/binary: <code>framing="len"</code> (or <code>auto</code> default)</li>
@@ -8897,7 +10672,7 @@ framing = "line"  # or "len"
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="source-meta"><a class="header" href="#source-meta">Source Meta</a></h1>
-<h2 id="overview-12"><a class="header" href="#overview-12">Overview</a></h2>
+<h2 id="overview-13"><a class="header" href="#overview-13">Overview</a></h2>
 <p>When parsing data, the Warp Parse system automatically appends mechanism data fields to the DataRecord for tracking data origin and processing paths. These mechanism data fields are identified with the <code>wp_</code> prefix, providing data traceability and debugging capabilities for the system.</p>
 <h2 id="mechanism-data-field-list"><a class="header" href="#mechanism-data-field-list">Mechanism Data Field List</a></h2>
 <h3 id="1-wp_event_id"><a class="header" href="#1-wp_event_id">1. wp_event_id</a></h3>
@@ -8935,20 +10710,20 @@ framing = "line"  # or "len"
 <tr><td><code>file</code></td><td>Output to local file</td><td><a href="#file-sink">File Sink Configuration</a></td></tr>
 <tr><td><code>syslog</code></td><td>Output to Syslog server (UDP/TCP)</td><td><a href="#syslog-sink">Syslog Sink Configuration</a></td></tr>
 <tr><td><code>tcp</code></td><td>Output to TCP server</td><td><a href="#tcp-sink">TCP Sink Configuration</a></td></tr>
+<tr><td><code>arrow-ipc</code></td><td>Output as Arrow IPC frames over TCP</td><td><a href="#arrow-ipc-sink">Arrow IPC Sink Configuration</a></td></tr>
+<tr><td><code>arrow-file</code></td><td>Output Arrow IPC frames to a local file</td><td><a href="#arrow-file-sink">Arrow File Sink</a></td></tr>
 <tr><td><code>kafka</code></td><td>Output to Kafka</td><td>-</td></tr>
-<tr><td><code>postgresql</code></td><td>Output to PostgreSQL</td><td><a href="10-user/05-connectors/02-sinks/23-postgresql_sink.html">PostgreSQL Sink Configuration</a></td></tr>
-<tr><td><code>doris</code></td><td>Output to Doris</td><td><a href="#doris-sink">Doris Sink Configuration</a></td></tr>
-<tr><td><code>elasticsearch</code></td><td>Output to Elasticsearch</td><td><a href="#elasticsearch-sink">Elasticsearch Sink Configuration</a></td></tr>
 <tr><td><code>prometheus</code></td><td>Prometheus metrics exposure</td><td><a href="#prometheus-sink">Prometheus Sink Configuration</a></td></tr>
 <tr><td><code>victorialogs</code></td><td>Output to VictoriaLogs</td><td><a href="#victorialogs">VictoriaLogs Sink Configuration</a></td></tr>
+<tr><td><code>mysql</code></td><td>Output to MySQL database</td><td><a href="10-user/05-connectors/02-sinks/19-mysql_sink.html">MySQL Sink Configuration</a></td></tr>
 </tbody>
 </table>
 </div>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="sink-basics"><a class="header" href="#sink-basics">Sink Basics</a></h1>
 <p>This document introduces the fundamental concepts and configuration structure of data output endpoints (Sinks) in the warpparse system.</p>
-<h2 id="overview-13"><a class="header" href="#overview-13">Overview</a></h2>
-<p>Sinks are the data output endpoints of the warpparse system, responsible for sending processed data to various target systems. The system supports multiple output types, including file, Syslog, Prometheus, and more.</p>
+<h2 id="overview-14"><a class="header" href="#overview-14">Overview</a></h2>
+<p>Sinks are the data output endpoints of the warpparse system, responsible for sending processed data to various target systems. The system supports multiple output types, including file, Syslog, Arrow IPC, Prometheus, and more.</p>
 <h2 id="core-concepts-2"><a class="header" href="#core-concepts-2">Core Concepts</a></h2>
 <h3 id="1-configuration-hierarchy"><a class="header" href="#1-configuration-hierarchy">1. Configuration Hierarchy</a></h3>
 <p>The warpparse system adopts a layered configuration architecture:</p>
@@ -9225,7 +11000,7 @@ connect = "file_json_sink"
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="file-sink"><a class="header" href="#file-sink">File Sink</a></h1>
 <p>This document describes the current configuration and capabilities of File Sinks, aligned with the code implementation.</p>
-<h2 id="overview-14"><a class="header" href="#overview-14">Overview</a></h2>
+<h2 id="overview-15"><a class="header" href="#overview-15">Overview</a></h2>
 <p>File Sinks write processed data to the local file system, supporting multiple output formats and flexible path configuration. Commonly used for offline validation, archiving, and debugging.</p>
 <p>Supported output formats (<code>fmt</code>): <code>json</code>, <code>csv</code>, <code>kv</code>, <code>raw</code>, <code>proto</code>, <code>proto-text</code> (default: <code>json</code>).</p>
 <h2 id="connector-definition-3"><a class="header" href="#connector-definition-3">Connector Definition</a></h2>
@@ -9303,7 +11078,7 @@ params = { file = "err.json" }
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="syslog-sink"><a class="header" href="#syslog-sink">Syslog Sink</a></h1>
 <p>This document is aligned with the code implementation and describes the actual available parameters and examples for Syslog Sink.</p>
-<h2 id="overview-15"><a class="header" href="#overview-15">Overview</a></h2>
+<h2 id="overview-16"><a class="header" href="#overview-16">Overview</a></h2>
 <p>Syslog Sink sends data to Syslog servers in RFC3164 text format, supporting UDP and TCP. Message format: <code>&lt;PRI&gt;TIMESTAMP HOSTNAME APP_NAME: MESSAGE</code>.</p>
 <h2 id="connector-definition-4"><a class="header" href="#connector-definition-4">Connector Definition</a></h2>
 <p>Use the repository’s built-in templates (<code>connectors/sink.d/10-syslog-udp.toml</code>, <code>11-syslog-tcp.toml</code>):</p>
@@ -9504,7 +11279,7 @@ insert_path = "/insert/jsonline"
 create_time_field = "timestamp"
 fmt = "json"
 </code></pre>
-<h2 id="notes-1"><a class="header" href="#notes-1">Notes</a></h2>
+<h2 id="notes-2"><a class="header" href="#notes-2">Notes</a></h2>
 <ul>
 <li>The <code>endpoint</code> parameter cannot be empty, otherwise validation will fail</li>
 <li>HTTP request timeout is 5 seconds</li>
@@ -9532,8 +11307,8 @@ allow_override = [
 
 [connectors.params]
 endpoint = "http://localhost:8040"
-user = "root"
-password = ""
+user = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 database = "test_db"
 table = "events_parsed"
 timeout_secs = 30
@@ -9582,8 +11357,8 @@ connect = "doris_sink"
 endpoint = "http://localhost:8040"
 database = "test_db"
 table = "wp_nginx"
-user = "root"
-password = ""
+user = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 timeout_secs = 30
 max_retries = 1
 batch_size = 10_0000
@@ -9594,7 +11369,7 @@ strip_outer_array = "false"
 max_filter_ratio = "0.1"
 columns = "wp_event_id,wp_src_key,sip,timestamp,`http/request`,size,referer,`http/agent`"
 </code></pre>
-<h2 id="notes-2"><a class="header" href="#notes-2">Notes</a></h2>
+<h2 id="notes-3"><a class="header" href="#notes-3">Notes</a></h2>
 <ul>
 <li>Use BE HTTP port for <code>endpoint</code> (example: <code>8040</code>), not FE query port.</li>
 <li>Create database/table before writing. See <code>wp-examples/extensions/doris/test.sql</code>.</li>
@@ -9602,9 +11377,77 @@ columns = "wp_event_id,wp_src_key,sip,timestamp,`http/request`,size,referer,`htt
 <li>For an end-to-end example, see <code>wp-examples/extensions/doris/README.md</code>.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="arrow-ipc-sink"><a class="header" href="#arrow-ipc-sink">Arrow IPC Sink</a></h1>
+<p>The <code>arrow-ipc</code> sink encodes record batches as Arrow IPC payloads and sends them to a downstream consumer over TCP.</p>
+<p>Current implementation supports TCP targets only. The wire format is length-prefixed frames (<code>4-byte big-endian length + IPC payload</code>).</p>
+<h2 id="connector-definition-9"><a class="header" href="#connector-definition-9">Connector Definition</a></h2>
+<pre><code class="language-toml">[[connectors]]
+id = "arrow_ipc_sink"
+type = "arrow-ipc"
+allow_override = ["target", "tag", "fields"]
+
+[connectors.params]
+target = "tcp://127.0.0.1:9800"
+tag = "default"
+fields = [
+  { name = "sip", type = "ip" },
+  { name = "dport", type = "digit" },
+  { name = "action", type = "chars", nullable = false }
+]
+</code></pre>
+<h2 id="available-parameters-3"><a class="header" href="#available-parameters-3">Available Parameters</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>target</code></td><td>string</td><td><code>tcp://127.0.0.1:9800</code></td><td>Target endpoint, must be <code>tcp://host:port</code></td></tr>
+<tr><td><code>tag</code></td><td>string</td><td><code>default</code></td><td>Arrow IPC frame tag</td></tr>
+<tr><td><code>fields</code></td><td>array</td><td><code>[]</code></td><td>Schema definitions, each item is <code>{name,type,nullable?}</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>Supported <code>fields[].type</code> values: <code>chars</code>, <code>digit</code>, <code>float</code>, <code>bool</code>, <code>time</code>, <code>ip</code>, <code>hex</code>, <code>array&lt;...&gt;</code> (case-insensitive).</p>
+<h2 id="configuration-example-1"><a class="header" href="#configuration-example-1">Configuration Example</a></h2>
+<pre><code class="language-toml">version = "2.0"
+
+[sink_group]
+name = "/sink/arrow"
+oml = ["logs"]
+
+[[sink_group.sinks]]
+name = "arrow_out"
+connect = "arrow_ipc_sink"
+
+[sink_group.sinks.params]
+target = "tcp://127.0.0.1:9800"
+tag = "flow-log"
+fields = [
+  { name = "sip", type = "ip" },
+  { name = "dip", type = "ip" },
+  { name = "dport", type = "digit" },
+  { name = "action", type = "chars" },
+  { name = "event_time", type = "time" }
+]
+</code></pre>
+<h2 id="transport-and-fault-tolerance-behavior"><a class="header" href="#transport-and-fault-tolerance-behavior">Transport and Fault-Tolerance Behavior</a></h2>
+<ul>
+<li>Each send writes one frame: <code>[4B BE length][Arrow IPC payload]</code></li>
+<li>Initial connection failure makes sink build fail</li>
+<li>Runtime send failures switch to disconnected mode, then reconnect with backoff: <code>1s -&gt; 2s -&gt; 4s ... -&gt; 30s</code> (capped at 30 seconds)</li>
+<li>Data is dropped while disconnected (no WAL/replay in current implementation)</li>
+<li>Raw interfaces (<code>sink_str/sink_bytes</code>) are no-op; <code>arrow-ipc</code> is intended for record output</li>
+</ul>
+<h2 id="notes-4"><a class="header" href="#notes-4">Notes</a></h2>
+<ul>
+<li><code>target</code> currently rejects non-TCP schemes such as <code>unix://</code> or <code>http://</code></li>
+<li>Keep <code>fields</code> aligned with actual output records; type mismatch will fail batch conversion</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="elasticsearch-sink"><a class="header" href="#elasticsearch-sink">Elasticsearch Sink</a></h1>
 <p>Elasticsearch sink writes parsed records to Elasticsearch indexes in batches, which is useful for search, aggregation, and visualization workloads.</p>
-<h2 id="connector-definition-9"><a class="header" href="#connector-definition-9">Connector Definition</a></h2>
+<h2 id="connector-definition-10"><a class="header" href="#connector-definition-10">Connector Definition</a></h2>
 <p>Use the built-in template in the repository (<code>connectors/sink.d/90-elasticsearch.toml</code>):</p>
 <pre><code class="language-toml">[[connectors]]
 id = "elasticsearch_sink"
@@ -9625,14 +11468,14 @@ allow_override = [
 protocol = "http"
 host = "localhost"
 port = "9200"
-username = "elastic"
-password = ""
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 index = "wp_nginx"
 timeout_secs = 30
 max_retries = 3
 batch_size = 100_0000
 </code></pre>
-<h2 id="available-parameters-3"><a class="header" href="#available-parameters-3">Available Parameters</a></h2>
+<h2 id="available-parameters-4"><a class="header" href="#available-parameters-4">Available Parameters</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -9651,7 +11494,7 @@ batch_size = 100_0000
 </tbody>
 </table>
 </div>
-<h2 id="configuration-example"><a class="header" href="#configuration-example">Configuration Example</a></h2>
+<h2 id="configuration-example-2"><a class="header" href="#configuration-example-2">Configuration Example</a></h2>
 <h3 id="basic-usage-from-extensionselasticsearch"><a class="header" href="#basic-usage-from-extensionselasticsearch">Basic Usage (from <code>extensions/elasticsearch</code>)</a></h3>
 <pre><code class="language-toml">version = "2.0"
 
@@ -9669,14 +11512,14 @@ connect = "elasticsearch_sink"
 protocol = "http"
 host = "localhost"
 port = "9200"
-username = "elastic"
-password = "zgVClXP2"
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 index = "wp_nginx"
 timeout_secs = 30
 max_retries = 3
 batch_size = 100_0000
 </code></pre>
-<h2 id="notes-3"><a class="header" href="#notes-3">Notes</a></h2>
+<h2 id="notes-5"><a class="header" href="#notes-5">Notes</a></h2>
 <ul>
 <li>The example environment enables authentication, so valid username/password is required.</li>
 <li>On first write, the index is usually auto-created. In production, define mapping and shard strategy in advance.</li>
@@ -9684,9 +11527,54 @@ batch_size = 100_0000
 <li>For an end-to-end example, see <code>wp-examples/extensions/elasticsearch/README.md</code>.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="arrow-file-sink"><a class="header" href="#arrow-file-sink">Arrow File Sink</a></h1>
+<p>The <code>arrow-file</code> sink encodes record batches as Arrow IPC payloads and appends them to a local file.</p>
+<p>Each batch is written as a length-prefixed frame:</p>
+<ul>
+<li>outer frame: <code>[4B BE length][payload]</code></li>
+<li>payload: the same tagged Arrow IPC frame used by <code>arrow-ipc</code></li>
+</ul>
+<h2 id="connector-definition-11"><a class="header" href="#connector-definition-11">Connector Definition</a></h2>
+<pre><code class="language-toml">[[connectors]]
+id = "arrow_file_sink"
+type = "arrow-file"
+allow_override = ["base", "file", "tag", "fields", "sync"]
+
+[connectors.params]
+base = "./data/out_dat"
+file = "default.arrow"
+tag = "default"
+sync = false
+fields = [
+  { name = "sip", type = "ip" },
+  { name = "dport", type = "digit" }
+]
+</code></pre>
+<h2 id="parameters"><a class="header" href="#parameters">Parameters</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>base</code></td><td>string</td><td><code>./data/out_dat</code></td><td>Output directory</td></tr>
+<tr><td><code>file</code></td><td>string</td><td><code>default.arrow</code></td><td>Output file name</td></tr>
+<tr><td><code>tag</code></td><td>string</td><td><code>default</code></td><td>Arrow frame tag</td></tr>
+<tr><td><code>fields</code></td><td>array</td><td><code>[]</code></td><td>Schema definition array</td></tr>
+<tr><td><code>sync</code></td><td>bool</td><td><code>false</code></td><td>Call <code>fsync</code> after each write</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="notes-6"><a class="header" href="#notes-6">Notes</a></h2>
+<ul>
+<li>The file stores a sequence of Arrow frames, not JSON/text lines</li>
+<li><code>sink_str/sink_bytes</code> are no-op; this sink is intended for record output</li>
+<li>The on-disk payload format is aligned with <code>arrow-ipc</code>, which is convenient for local replay or offline inspection</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="clickhouse-sink"><a class="header" href="#clickhouse-sink">ClickHouse Sink</a></h1>
 <p>ClickHouse sink writes parsed records to ClickHouse database in batches, which is ideal for large-scale log analysis and real-time data query scenarios.</p>
-<h2 id="connector-definition-10"><a class="header" href="#connector-definition-10">Connector Definition</a></h2>
+<h2 id="connector-definition-12"><a class="header" href="#connector-definition-12">Connector Definition</a></h2>
 <pre><code class="language-toml">[[connectors]]
 id = "clickhouse_sink"
 type = "clickhouse"
@@ -9704,12 +11592,12 @@ allow_override = [
 endpoint = "http://clickhouse-server:8123"
 database = "default"
 table = "wp_nginx"
-username = "default"
-password = "default"
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 timeout_secs = 30
 max_retries = 3
 </code></pre>
-<h2 id="available-parameters-4"><a class="header" href="#available-parameters-4">Available Parameters</a></h2>
+<h2 id="available-parameters-5"><a class="header" href="#available-parameters-5">Available Parameters</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -9726,7 +11614,7 @@ max_retries = 3
 </tbody>
 </table>
 </div>
-<h2 id="configuration-example-1"><a class="header" href="#configuration-example-1">Configuration Example</a></h2>
+<h2 id="configuration-example-3"><a class="header" href="#configuration-example-3">Configuration Example</a></h2>
 <h3 id="basic-usage-2"><a class="header" href="#basic-usage-2">Basic Usage</a></h3>
 <pre><code class="language-toml">version = "2.0"
 
@@ -9744,8 +11632,8 @@ connect = "clickhouse_sink"
 endpoint = "http://localhost:8123"
 database = "default"
 table = "wp_nginx"
-username = "default"
-password = "default"
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 timeout_secs = 30
 max_retries = 3
 </code></pre>
@@ -9754,15 +11642,15 @@ max_retries = 3
 endpoint = "https://clickhouse.example.com:8443"
 database = "production"
 table = "logs"
-username = "app_user"
-password = "secure_password"
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 timeout_secs = 60
 max_retries = 5
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="http-sink"><a class="header" href="#http-sink">HTTP Sink</a></h1>
 <p>HTTP sink sends parsed records to HTTP/HTTPS endpoints in various formats, suitable for webhooks, API integration, and custom data pipeline scenarios.</p>
-<h2 id="connector-definition-11"><a class="header" href="#connector-definition-11">Connector Definition</a></h2>
+<h2 id="connector-definition-13"><a class="header" href="#connector-definition-13">Connector Definition</a></h2>
 <pre><code class="language-toml">[[connectors]]
 id = "http_sink"
 type = "http"
@@ -9782,15 +11670,15 @@ allow_override = [
 [connectors.params]
 endpoint = "http://localhost:8080/webhook"
 method = "POST"
-username = ""
-password = ""
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 fmt = "json"
 batch_size = 100
 timeout_secs = 60
 max_retries = 3
 compression = "none"
 </code></pre>
-<h2 id="available-parameters-5"><a class="header" href="#available-parameters-5">Available Parameters</a></h2>
+<h2 id="available-parameters-6"><a class="header" href="#available-parameters-6">Available Parameters</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -9851,8 +11739,8 @@ field1=value3 field2=value4
 <h3 id="http-basic-authentication"><a class="header" href="#http-basic-authentication">HTTP Basic Authentication</a></h3>
 <pre><code class="language-toml">[connectors.params]
 endpoint = "https://api.example.com/webhook"
-username = "myuser"
-password = "mypassword"
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 </code></pre>
 <h3 id="custom-headers-eg-bearer-token"><a class="header" href="#custom-headers-eg-bearer-token">Custom Headers (e.g., Bearer Token)</a></h3>
 <pre><code class="language-toml">[connectors.params]
@@ -9901,6 +11789,71 @@ compression = "none"
 <li><strong>Timeout</strong>: Adjust <code>timeout_secs</code> based on endpoint response time</li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="postgresql-sink"><a class="header" href="#postgresql-sink">PostgreSQL Sink</a></h1>
+<p>The PostgreSQL sink writes parsed records into PostgreSQL tables. It builds <code>INSERT IGNORE</code> statements from <code>columns</code>, which is suitable for idempotent retry scenarios. It only accepts Record data (raw input is not supported).</p>
+<h2 id="connector-definition-14"><a class="header" href="#connector-definition-14">Connector Definition</a></h2>
+<p>Use the built-in template (located at <code>connectors/sink.d/50-mysql.toml</code>; PostgreSQL uses the same configuration set as MySQL):</p>
+<pre><code class="language-toml">[[connectors]]
+id = "postgresql_sink"
+type = "postgresql"
+allow_override = ["endpoint", "username", "password", "database", "table", "columns", "batch_size"]
+
+[connectors.params]
+endpoint = "localhost:5432"
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
+database = "wparse"
+table = "nginx_logs"
+columns = ["sip", "timestamp", "http/request", "status", "size", "referer", "http/agent", "wp_event_id"]
+batch_size = 1024
+</code></pre>
+<h2 id="parameters-1"><a class="header" href="#parameters-1">Parameters</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>endpoint</code></td><td>string</td><td>PostgreSQL endpoint (<code>host:port</code>, required)</td></tr>
+<tr><td><code>username</code></td><td>string</td><td>Username (optional, default <code>postgres</code>)</td></tr>
+<tr><td><code>password</code></td><td>string</td><td>Password (optional)</td></tr>
+<tr><td><code>database</code></td><td>string</td><td>Target database (required)</td></tr>
+<tr><td><code>table</code></td><td>string</td><td>Target table name (required)</td></tr>
+<tr><td><code>columns</code></td><td>array</td><td>Column list that defines write order (required)</td></tr>
+<tr><td><code>batch_size</code></td><td>int</td><td>Batch insert size (optional)</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="configuration-example-4"><a class="header" href="#configuration-example-4">Configuration Example</a></h2>
+<h3 id="basic-usage-3"><a class="header" href="#basic-usage-3">Basic Usage</a></h3>
+<pre><code class="language-toml">version = "2.0"
+
+[sink_group]
+name = "all"
+oml = ["/*"]
+batch_timeout_ms=5000   # Auto flush when batch size is not reached within this time window
+parallel = 8
+
+[[sink_group.sinks]]
+name = "main"
+connect = "postgresql_sink"
+
+[sink_group.sinks.params]
+endpoint = "localhost:5432"
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
+database = "wparse"
+table = "nginx_logs"
+columns = ["sip", "timestamp", "http/request", "status", "size", "referer", "http/agent", "wp_event_id"]
+batch_size = 1024
+</code></pre>
+<h2 id="notes-7"><a class="header" href="#notes-7">Notes</a></h2>
+<ul>
+<li>Field names in <code>columns</code> must match OML output fields. Missing table columns are written as <code>NULL</code>.</li>
+<li>You can override the connection string with <code>POSTGRESQL_URL</code> (format: <code>postgresql://user:pass@host:port/db</code>).</li>
+<li>PostgreSQL uses the same configuration keys as MySQL. Only connector <code>type</code>, port, and connection details differ.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="troubleshootingmd"><a class="header" href="#troubleshootingmd">troubleshooting.md</a></h1>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="benchmark-report"><a class="header" href="#benchmark-report">Benchmark Report</a></h1>
@@ -9910,6 +11863,107 @@ compression = "none"
 <h1 id="connector-development-guide"><a class="header" href="#connector-development-guide">Connector Development Guide</a></h1>
 <p>Guide for developing custom connectors.</p>
 <p>Coming soon…</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="docs-aggregation-automation"><a class="header" href="#docs-aggregation-automation">Docs Aggregation Automation</a></h1>
+<h2 id="goal"><a class="header" href="#goal">Goal</a></h2>
+<p>This repository is acting as a documentation aggregation layer. The weak point is not mdBook itself, but the way upstream content is copied here: it is still driven by manual scripts and manual commits.</p>
+<p>The automation should solve four things:</p>
+<ol>
+<li>Upstream sources must be configuration-driven.</li>
+<li>Local sync and CI sync must use the same entry point.</li>
+<li><code>SUMMARY.md</code> should be regenerated automatically after sync.</li>
+<li>Aggregated changes should enter the default branch through pull requests.</li>
+</ol>
+<h2 id="proposed-structure"><a class="header" href="#proposed-structure">Proposed Structure</a></h2>
+<p>The implementation is split into three parts:</p>
+<ol>
+<li><code>docs-sources.json</code>
+<ul>
+<li>Declares every upstream documentation source.</li>
+<li>Each source defines the repo, branch, local development path, and source-to-target mappings.</li>
+</ul>
+</li>
+<li><code>scripts/sync_docs.py</code>
+<ul>
+<li>Performs the actual sync.</li>
+<li>Supports both local paths and git-based checkouts in CI.</li>
+<li>Default strategy is additive and non-destructive: create missing files and update changed files, without deleting destination-only files.</li>
+</ul>
+</li>
+<li><code>.github/workflows/sync-docs.yml</code>
+<ul>
+<li>Runs on schedule, manual dispatch, or <code>repository_dispatch</code> from upstream repos.</li>
+<li>Opens a pull request with the aggregated changes.</li>
+</ul>
+</li>
+</ol>
+<h2 id="current-example"><a class="header" href="#current-example">Current Example</a></h2>
+<p>The current <code>wp-motor/docs/usage</code> flow is now represented as a source entry:</p>
+<pre><code class="language-json">{
+  "sources": [
+    {
+      "name": "wp-motor-usage",
+      "repo": "https://github.com/wp-labs/wp-motor.git",
+      "ref": "main",
+      "checkout_subdir": "docs/usage",
+      "local_path": "../wp-motor/docs/usage",
+      "mappings": [
+        { "from": "zh", "to": "docs-zh/10-user" },
+        { "from": "en", "to": "docs-en/10-user" }
+      ]
+    }
+  ]
+}
+</code></pre>
+<p>Adding a new upstream repo now only requires another source object entry.</p>
+<h2 id="usage-1"><a class="header" href="#usage-1">Usage</a></h2>
+<p>Local sync:</p>
+<pre><code class="language-bash">make sync
+</code></pre>
+<p>Preview changes only:</p>
+<pre><code class="language-bash">make sync-dry-run
+</code></pre>
+<p>Sync one source with a temporary local override:</p>
+<pre><code class="language-bash">python3 scripts/sync_docs.py \
+  --source wp-motor-usage \
+  --local-override wp-motor-usage=../wp-motor/docs/usage \
+  --generate-summary
+</code></pre>
+<p>Legacy compatibility entry point:</p>
+<pre><code class="language-bash">bash sync-usage-docs.sh ../wp-motor/docs/usage
+</code></pre>
+<h2 id="ci-recommendation"><a class="header" href="#ci-recommendation">CI Recommendation</a></h2>
+<p>Keep three trigger modes in <code>sync-docs.yml</code>:</p>
+<ol>
+<li><code>schedule</code>
+<ul>
+<li>Serves as a fallback.</li>
+</ul>
+</li>
+<li><code>workflow_dispatch</code>
+<ul>
+<li>Allows manual reruns.</li>
+</ul>
+</li>
+<li><code>repository_dispatch</code>
+<ul>
+<li>Lets upstream repos notify this repo after docs changes land.</li>
+</ul>
+</li>
+</ol>
+<p>If the upstream repositories are private, provide <code>DOCS_SYNC_TOKEN</code> so the sync job can clone them.</p>
+<h2 id="recommended-upstream-trigger"><a class="header" href="#recommended-upstream-trigger">Recommended Upstream Trigger</a></h2>
+<p>Each upstream repo can add a lightweight workflow that emits <code>repository_dispatch</code> when its docs path changes. The resulting chain becomes:</p>
+<p><code>upstream docs change -&gt; notify wp-docs -&gt; wp-docs pulls latest docs -&gt; automated PR</code></p>
+<p>This is preferable to pushing directly into the aggregation repo because the sync logic stays centralized and every aggregated change remains reviewable.</p>
+<h2 id="next-steps-2"><a class="header" href="#next-steps-2">Next Steps</a></h2>
+<p>As the number of sources grows, the next practical improvements are:</p>
+<ol>
+<li>Add explicit <code>delete = true/false</code> behavior per source.</li>
+<li>Add destination path allowlists so sync can only write into approved directories.</li>
+<li>Run Markdown validation and mdBook build after sync.</li>
+<li>Record upstream commit SHAs in the generated PR description.</li>
+</ol>
 
                     </main>
 

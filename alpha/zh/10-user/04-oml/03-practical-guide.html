@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-bc033ace.js";
+            window.path_to_searchindex_js = "../../searchindex-37cffb89.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e2dc8458.js"></script>
+        <script src="../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -192,6 +192,9 @@
 <tr><td><a href="#wpl-与-oml-关联">WPL 与 OML 关联</a></td><td>理解关联机制、一对一/一对多关联</td></tr>
 <tr><td><a href="#数据提取">数据提取</a></td><td>字段提取的各种方式</td></tr>
 <tr><td><a href="#数据转换">数据转换</a></td><td>类型转换、时间、URL、Base64 等</td></tr>
+<tr><td><a href="#数值计算">数值计算</a></td><td>比例、差值、取整、分桶</td></tr>
+<tr><td><a href="#忽略大小写匹配">忽略大小写匹配</a></td><td><code>iequals</code> / <code>iequals_any(...)</code></td></tr>
+<tr><td><a href="#静态字典查表">静态字典查表</a></td><td><code>lookup_nocase(...)</code></td></tr>
 <tr><td><a href="#数据聚合">数据聚合</a></td><td>创建对象、数组</td></tr>
 <tr><td><a href="#条件处理">条件处理</a></td><td>状态码分类、端口识别、IP 范围等</td></tr>
 <tr><td><a href="#数据富化-sql-查询">数据富化</a></td><td>SQL 查询、多表关联</td></tr>
@@ -351,6 +354,79 @@ encoded = read(message) | base64_encode ;
 # IP 转整数
 ip_int = read(src_ip) | ip4_to_int ;
 </code></pre>
+<h2 id="数值计算"><a class="header" href="#数值计算">数值计算</a></h2>
+<h3 id="任务计算风险分数"><a class="header" href="#任务计算风险分数">任务：计算风险分数</a></h3>
+<pre><code class="language-oml">name : risk_score
+rule : /system/metrics
+---
+risk_score : float = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;
+</code></pre>
+<h3 id="任务计算差值和比例"><a class="header" href="#任务计算差值和比例">任务：计算差值和比例</a></h3>
+<pre><code class="language-oml">name : calc_delta_ratio
+rule : /app/stats
+---
+delta : digit = calc(read(cur) - read(prev)) ;
+ratio : float = calc(read(ok_cnt) / read(total_cnt)) ;
+</code></pre>
+<h3 id="任务分桶和百分比取整"><a class="header" href="#任务分桶和百分比取整">任务：分桶和百分比取整</a></h3>
+<pre><code class="language-oml">name : calc_bucket_pct
+rule : /user/metrics
+---
+bucket : digit = calc(read(uid) % 16) ;
+error_pct : digit = calc(round((read(err_cnt) * 100) / read(total_cnt))) ;
+</code></pre>
+<h3 id="任务处理算术失败"><a class="header" href="#任务处理算术失败">任务：处理算术失败</a></h3>
+<pre><code class="language-oml">name : calc_safe
+rule : /app/stats
+---
+raw_ratio : float = calc(read(ok_cnt) / read(total_cnt)) ;
+safe_ratio : float = read(raw_ratio) { _ : float(0.0) } ;
+</code></pre>
+<p><strong>说明</strong>：</p>
+<ul>
+<li><code>calc(...)</code> 失败时不会抛错，也不会返回 <code>0</code></li>
+<li>除零、字段缺失、非数值输入、整数溢出、<code>NaN/inf</code> 都会得到 <code>ignore</code></li>
+<li>如果业务上需要兜底值，请再配合 <code>read(...) { _ : ... }</code></li>
+</ul>
+<hr>
+<h2 id="忽略大小写匹配"><a class="header" href="#忽略大小写匹配">忽略大小写匹配</a></h2>
+<h3 id="任务状态归类时忽略大小写"><a class="header" href="#任务状态归类时忽略大小写">任务：状态归类时忽略大小写</a></h3>
+<pre><code class="language-oml">name : status_class
+rule : /app/status
+---
+status_class = match read(status) {
+    iequals_any('success', 'ok', 'done') =&gt; chars(good) ;
+    iequals_any('error', 'failed', 'timeout') =&gt; chars(bad) ;
+    _ =&gt; chars(other) ;
+} ;
+</code></pre>
+<p><strong>说明</strong>：</p>
+<ul>
+<li>适合处理 <code>SUCCESS</code> / <code>Success</code> / <code>success</code> 这类不稳定大小写输入</li>
+<li>如果只有一个候选值，用 <code>iequals('value')</code></li>
+</ul>
+<hr>
+<h2 id="静态字典查表"><a class="header" href="#静态字典查表">静态字典查表</a></h2>
+<h3 id="任务把状态映射成分值"><a class="header" href="#任务把状态映射成分值">任务：把状态映射成分值</a></h3>
+<pre><code class="language-oml">name : status_score
+rule : /app/status
+---
+static {
+    score_map = object {
+        error = float(90.0);
+        warning = float(70.0);
+        success = float(20.0);
+    };
+}
+
+risk_score : float = lookup_nocase(score_map, read(status), 40.0) ;
+</code></pre>
+<p><strong>说明</strong>：</p>
+<ul>
+<li><code>lookup_nocase(...)</code> 只查 <code>static</code> 中定义的 object</li>
+<li>key 会先做忽略大小写归一化</li>
+<li>未命中时返回第三个参数</li>
+</ul>
 <hr>
 <h2 id="数据聚合"><a class="header" href="#数据聚合">数据聚合</a></h2>
 <h3 id="任务创建对象"><a class="header" href="#任务创建对象">任务：创建对象</a></h3>
@@ -441,6 +517,45 @@ traffic_type = match (read(protocol), read(port)) {
     (chars(tcp), digit(443)) =&gt; chars(HTTPS) ;
     (chars(udp), digit(53)) =&gt; chars(DNS) ;
     _ =&gt; chars(Other) ;
+} ;
+</code></pre>
+<hr>
+<h3 id="任务or-条件匹配"><a class="header" href="#任务or-条件匹配">任务：OR 条件匹配</a></h3>
+<p><strong>场景</strong>：在 match 分支中使用 <code>|</code> 表示多个备选条件</p>
+<pre><code class="language-oml">name : or_match
+rule : /network/traffic
+---
+# 单源 OR：城市归类
+tier = match read(city) {
+    chars(bj) | chars(sh) | chars(gz) =&gt; chars(tier1) ;
+    chars(cd) | chars(wh) =&gt; chars(tier2) ;
+    _ =&gt; chars(other) ;
+} ;
+</code></pre>
+<hr>
+<h3 id="任务多源--or-条件组合"><a class="header" href="#任务多源--or-条件组合">任务：多源 + OR 条件组合</a></h3>
+<p><strong>场景</strong>：同时匹配多个字段，每个条件位置支持 OR 备选</p>
+<pre><code class="language-oml">name : multi_or_match
+rule : /network/traffic
+---
+# 多源 + OR
+priority = match (read(city), read(level)) {
+    (chars(bj) | chars(sh), chars(high)) =&gt; chars(priority) ;
+    (chars(gz), chars(low) | chars(mid)) =&gt; chars(normal) ;
+    _ =&gt; chars(default) ;
+} ;
+</code></pre>
+<hr>
+<h3 id="任务多源匹配三源及以上"><a class="header" href="#任务多源匹配三源及以上">任务：多源匹配（三源及以上）</a></h3>
+<p><strong>场景</strong>：需要同时匹配三个或更多字段</p>
+<pre><code class="language-oml">name : triple_match
+rule : /firewall/rule
+---
+# 三源 match
+action = match (read(protocol), read(port), read(zone)) {
+    (chars(tcp), digit(22), chars(internal)) =&gt; chars(allow) ;
+    (chars(tcp), digit(443), chars(external)) =&gt; chars(inspect) ;
+    _ =&gt; chars(deny) ;
 } ;
 </code></pre>
 <hr>

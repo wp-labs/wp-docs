@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>OML Pipe Functions 函数索引 - Warp Parse 文档 [ALPHA]</title>
+        <title>OML Functions 函数索引 - Warp Parse 文档 [ALPHA]</title>
 
 
         <!-- Custom HTML head -->
@@ -37,10 +37,10 @@
             const path_to_root = "../../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-bc033ace.js";
+            window.path_to_searchindex_js = "../../../searchindex-37cffb89.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../../toc-e2dc8458.js"></script>
+        <script src="../../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -179,8 +179,23 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="oml-pipe-functions-函数索引"><a class="header" href="#oml-pipe-functions-函数索引">OML Pipe Functions 函数索引</a></h1>
-<p>本文档列出了 WP-Motor OML 语言中所有可用的 pipe function（管道函数）。</p>
+                        <h1 id="oml-functions-函数索引"><a class="header" href="#oml-functions-函数索引">OML Functions 函数索引</a></h1>
+<p>本文档列出了 <code>docs/usage/zh/04-oml/functions/</code> 目录下的函数与专题文档。</p>
+<h2 id="内置表达式--内置函数"><a class="header" href="#内置表达式--内置函数">内置表达式 / 内置函数</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>名称</th><th>语法</th><th>说明</th><th>文档</th></tr>
+</thead>
+<tbody>
+<tr><td><code>calc(...)</code></td><td><code>calc(expr)</code></td><td>显式数值表达式，支持 <code>+ - * / %</code> 与 <code>abs/round/floor/ceil</code></td><td><a href="./calc.html">📖 详细文档</a></td></tr>
+<tr><td><code>lookup_nocase(...)</code></td><td><code>lookup_nocase(dict, key, default)</code></td><td>对 <code>static</code> object 做忽略大小写查表</td><td><a href="./lookup_nocase.html">📖 详细文档</a></td></tr>
+<tr><td><code>iequals_any(...)</code></td><td><code>iequals_any(v1, v2, ...)</code></td><td>忽略大小写的多候选匹配，用于 <code>match</code> 条件</td><td><a href="./match_functions.html">📖 详细文档</a></td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="pipe-functions"><a class="header" href="#pipe-functions">Pipe Functions</a></h2>
+<p>以下为可通过管道调用的函数：</p>
 <h2 id="字段访问函数-field-accessors"><a class="header" href="#字段访问函数-field-accessors">字段访问函数 (Field Accessors)</a></h2>
 <div class="table-wrapper">
 <table>
@@ -487,11 +502,11 @@ path = pipe take(url) | url(path);
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../../10-user/04-oml/functions/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../../10-user/04-oml/functions/extract_subject_object.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../../10-user/04-oml/functions/map_to.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../../10-user/04-oml/functions/lookup_nocase.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -501,11 +516,11 @@ path = pipe take(url) | url(path);
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../../10-user/04-oml/functions/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../../10-user/04-oml/functions/extract_subject_object.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../../10-user/04-oml/functions/map_to.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../../10-user/04-oml/functions/lookup_nocase.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

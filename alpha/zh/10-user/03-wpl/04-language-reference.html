@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-bc033ace.js";
+            window.path_to_searchindex_js = "../../searchindex-37cffb89.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e2dc8458.js"></script>
+        <script src="../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -359,7 +359,7 @@
 <tbody>
 <tr><td><code>seq</code></td><td>顺序匹配（默认）</td><td><code>seq(ip, digit, time)</code></td><td>按顺序依次匹配</td></tr>
 <tr><td><code>alt</code></td><td>择一匹配</td><td><code>alt(ip, digit)</code></td><td>匹配其中一个</td></tr>
-<tr><td><code>opt</code></td><td>可选匹配</td><td><code>opt(chars)</code></td><td>失败不报错</td></tr>
+<tr><td><code>opt</code></td><td>可选匹配</td><td><code>opt(chars:tag)</code></td><td>分组失败不报错</td></tr>
 <tr><td><code>some_of</code></td><td>尽可能多</td><td><code>some_of(ip, digit)</code></td><td>循环匹配</td></tr>
 </tbody>
 </table>
@@ -446,9 +446,9 @@ N*_                    # 忽略 N 个
 kvarr                  # 自动解析KV
 N*ip                   # 固定 N 次
 
-# 可选字段
-opt(chars)             # 单个可选
-opt(kvarr)             # 可选 KV
+# 可选分组
+opt(chars:tag)         # 单个可选分组
+opt(kvarr)             # 可选 KV 分组
 
 # 格式控制
 &lt;[,]&gt;                  # 方括号包裹

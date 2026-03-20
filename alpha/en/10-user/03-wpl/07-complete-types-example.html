@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-29d9a526.js";
+            window.path_to_searchindex_js = "../../searchindex-bab637e3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-6cff5523.js"></script>
+        <script src="../../toc-6f276faf.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -180,37 +180,19 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="wpl-complete-type-system-example"><a class="header" href="#wpl-complete-type-system-example">WPL Complete Type System Example</a></h1>
-<blockquote>
-<p><strong>Translation in Progress</strong></p>
-<p>This document is currently being translated from Chinese to English.</p>
-<p>Please refer to the Chinese version: <code>docs/10-user/03-wpl-new/07-complete-types-example.md</code></p>
-</blockquote>
-<hr>
-<blockquote>
-<p>One example demonstrating all major WPL data types</p>
-</blockquote>
-<p>This document provides a complete, runnable WPL rule example showcasing 23 major data types. This is the <strong>best reference</strong> for learning the WPL type system.</p>
-<h2 id="type-coverage-checklist"><a class="header" href="#type-coverage-checklist">Type Coverage Checklist</a></h2>
-<p>This example includes the following types:</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Category</th><th>Included Types</th><th>Count</th></tr>
-</thead>
-<tbody>
-<tr><td><strong>Basic Types</strong></td><td><code>peek_symbol</code>, <code>symbol</code>, <code>bool</code>, <code>chars</code>, <code>digit</code>, <code>float</code>, <code>_</code></td><td>7</td></tr>
-<tr><td><strong>Time Types</strong></td><td><code>time_3339</code>, <code>time_2822</code>, <code>time/clf</code>, <code>time_timestamp</code></td><td>4</td></tr>
-<tr><td><strong>Network Types</strong></td><td><code>ip</code>, <code>ip_net</code>, <code>port</code></td><td>3</td></tr>
-<tr><td><strong>Structured Types</strong></td><td><code>kvarr</code>, <code>json</code></td><td>2</td></tr>
-<tr><td><strong>Protocol Types</strong></td><td><code>http/request</code>, <code>http/status</code>, <code>http/agent</code>, <code>http/method</code></td><td>4</td></tr>
-<tr><td><strong>Encoding Types</strong></td><td><code>hex</code>, <code>base64</code></td><td>2</td></tr>
-<tr><td><strong>Special Types</strong></td><td><code>sn</code></td><td>1</td></tr>
-<tr><td><strong>Total</strong></td><td></td><td><strong>23 types</strong></td></tr>
-</tbody>
-</table>
-</div>
-<hr>
-<p><strong>For the complete English documentation, please check back later or refer to the Chinese version.</strong></p>
+<p>This example set is still more complete in Chinese.</p>
+<p>Use:</p>
+<ul>
+<li>Chinese reference: <a href="../zh/07-complete-types-example.html">../zh/07-complete-types-example.md</a></li>
+<li>Grammar rules: <a href="./06-grammar-reference.html">06-grammar-reference.md</a></li>
+</ul>
+<p>Before copying any example, keep these syntax rules in mind:</p>
+<ul>
+<li>Write <code>time/clf:time&lt;[,]&gt;</code>, not <code>time/clf&lt;[,]&gt;:time</code>.</li>
+<li>Write <code>http/request:request"</code>, not <code>http/request":request</code>.</li>
+<li>Use group-level <code>opt(...)</code> for optional segments.</li>
+<li>Use <code>opt(type)@key</code> for optional JSON/KV subfields.</li>
+</ul>
 
                     </main>
 
@@ -220,7 +202,7 @@
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../10-user/03-wpl/examples/bom_clear_example.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../10-user/03-wpl/08-sep-pattern.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -234,7 +216,7 @@
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../10-user/03-wpl/examples/bom_clear_example.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../10-user/03-wpl/08-sep-pattern.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-bc033ace.js";
+            window.path_to_searchindex_js = "../../searchindex-37cffb89.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e2dc8458.js"></script>
+        <script src="../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -331,21 +331,21 @@ seq(ip, digit, time)
 <p><strong>何时使用：</strong> 同一位置可能是不同类型</p>
 <p><strong>示例场景：</strong></p>
 <pre><code class="language-wpl"># 日志中 user_id 可能是数字或字符串
-(time, alt(digit, chars):user_id, chars:action)
+(time), alt(digit:user_id, chars:user_id), (chars:action)
 </code></pre>
 <hr>
 <h3 id="opt可选匹配"><a class="header" href="#opt可选匹配">opt（可选匹配）</a></h3>
-<p><strong>语义</strong>：字段可选，失败不报错</p>
-<pre><code class="language-wpl">opt(chars)
+<p><strong>语义</strong>：分组可选，失败不报错</p>
+<pre><code class="language-wpl">opt(chars:tag)
 </code></pre>
 <p><strong>匹配过程：</strong></p>
 <pre><code>输入：有内容 → 尝试匹配，成功则提取
 输入：无内容 → 跳过，继续下一个字段
 </code></pre>
-<p><strong>何时使用：</strong> 某些字段可能不存在</p>
+<p><strong>何时使用：</strong> 某个分组可能不存在</p>
 <p><strong>示例场景：</strong></p>
-<pre><code class="language-wpl"># HTTP 日志中 referer 可能为空
-(ip, time, http/request, digit, opt(chars):referer)
+<pre><code class="language-wpl"># HTTP 日志中 referer 分组可能不存在
+(ip, time, http/request, digit), opt(chars:referer")
 </code></pre>
 <hr>
 <h3 id="some_of尽可能多"><a class="header" href="#some_of尽可能多">some_of（尽可能多）</a></h3>
@@ -373,7 +373,7 @@ seq(ip, digit, time)
 <tbody>
 <tr><td><code>seq</code></td><td>顺序固定</td><td><code>(ip, digit, time)</code></td><td>每个字段 1 次</td></tr>
 <tr><td><code>alt</code></td><td>类型不定</td><td><code>alt(ip, digit)</code></td><td>其中 1 个</td></tr>
-<tr><td><code>opt</code></td><td>可选字段</td><td><code>opt(chars)</code></td><td>0 或 1 次</td></tr>
+<tr><td><code>opt</code></td><td>可选分组</td><td><code>opt(chars:tag)</code></td><td>0 或 1 次</td></tr>
 <tr><td><code>some_of</code></td><td>混合重复</td><td><code>some_of(kvarr, ip)</code></td><td>尽可能多</td></tr>
 </tbody>
 </table>
@@ -596,7 +596,7 @@ rule log2 { (ip, time, json) }       # 重复 ip, time
 <hr>
 <h3 id="4-明确优于隐含"><a class="header" href="#4-明确优于隐含">4. 明确优于隐含</a></h3>
 <pre><code class="language-wpl"># 明确指定
-time/clf&lt;[,]&gt;:access_time
+time/clf:access_time&lt;[,]&gt;
 
 # 隐含（可能失败）
 time:access_time
@@ -620,9 +620,9 @@ time:access_time
 <h3 id="误解-3只能解析固定格式"><a class="header" href="#误解-3只能解析固定格式">误解 3：只能解析固定格式</a></h3>
 <p><strong>错误认知：</strong> WPL 只能解析固定格式的数据</p>
 <p><strong>正确理解：</strong> 支持可选、重复、择一等灵活模式</p>
-<pre><code class="language-wpl">opt(chars)                # 可选
-kvarr                     # 自动解析KV
-alt(ip, digit)            # 择一
+<pre><code class="language-wpl">opt(chars:tag)            # 单字段可选分组
+kvarr                     # 自动解析 KV
+alt(ip:addr, digit:id)    # 择一分组
 </code></pre>
 <hr>
 <h2 id="下一步"><a class="header" href="#下一步">下一步</a></h2>

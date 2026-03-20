@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-29d9a526.js";
+            window.path_to_searchindex_js = "../../searchindex-bab637e3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-6cff5523.js"></script>
+        <script src="../../toc-6f276faf.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -180,32 +180,48 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="wpl-practical-guide"><a class="header" href="#wpl-practical-guide">WPL Practical Guide</a></h1>
-<blockquote>
-<p><strong>Translation in Progress</strong></p>
-<p>This document is currently being translated from Chinese to English.</p>
-<p>Please refer to the Chinese version: <code>docs/10-user/03-wpl-new/03-practical-guide.md</code></p>
-</blockquote>
+<p>This page keeps a compact English checklist for writing working WPL.</p>
+<p>For the full scenario guide, see <a href="../zh/03-practical-guide.html">../zh/03-practical-guide.md</a>.</p>
 <hr>
-<p>This document uses a task-oriented approach to help you quickly find solutions.</p>
-<h2 id="task-navigation"><a class="header" href="#task-navigation">Task Navigation</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Task Type</th><th>Jump To</th></tr>
-</thead>
-<tbody>
-<tr><td>Parse Web Server Logs</td><td>Nginx/Apache access logs, error logs</td></tr>
-<tr><td>Parse JSON Data</td><td>Extract JSON fields, nested JSON</td></tr>
-<tr><td>Parse KV Pairs</td><td>Basic KV, nested KV, mixed formats</td></tr>
-<tr><td>Handle Encoded Data</td><td>Base64, Hex decoding</td></tr>
-<tr><td>Field Validation &amp; Filtering</td><td>Check fields, IP ranges, port ranges</td></tr>
-<tr><td>Complex Scenarios</td><td>Variable fields, multiple formats, nested structures</td></tr>
-<tr><td>Common Issues</td><td>Debugging tips, performance optimization</td></tr>
-</tbody>
-</table>
-</div>
+<h2 id="common-patterns"><a class="header" href="#common-patterns">Common Patterns</a></h2>
+<h3 id="nginx-access-log"><a class="header" href="#nginx-access-log">Nginx access log</a></h3>
+<pre><code class="language-wpl">package nginx {
+  rule access_log {
+    (
+      ip:client_ip,
+      2*_,
+      time/clf:time&lt;[,]&gt;,
+      http/request:request",
+      http/status:status,
+      digit:bytes,
+      chars:referer",
+      http/agent:user_agent"
+    )
+  }
+}
+</code></pre>
+<h3 id="json-fields"><a class="header" href="#json-fields">JSON fields</a></h3>
+<pre><code class="language-wpl">(json(
+  chars@user,
+  digit@code,
+  opt(chars)@message
+))
+</code></pre>
+<h3 id="optional-trailing-segment"><a class="header" href="#optional-trailing-segment">Optional trailing segment</a></h3>
+<pre><code class="language-wpl">(digit:code, time:ts),
+opt(chars:tag")
+</code></pre>
+<p>Split optional content into its own group instead of trying to wrap a field inside another group.</p>
 <hr>
-<p><strong>For the complete English documentation, please check back later or refer to the Chinese version.</strong></p>
+<h2 id="quick-checks"><a class="header" href="#quick-checks">Quick Checks</a></h2>
+<ul>
+<li>Put <code>:name</code> before the format.</li>
+<li>Put formats after the field name: <code>chars:msg"</code> and <code>time/clf:ts&lt;[,]&gt;</code>.</li>
+<li>Use <code>alt(...)</code> for alternatives. <code>one_of(...)</code> is not valid WPL.</li>
+<li>Use <code>opt(type)@key</code> only for JSON/KV subfields.</li>
+<li>Keep <code>opt(...)</code>, <code>alt(...)</code>, <code>some_of(...)</code>, <code>not(...)</code> at group level.</li>
+</ul>
+<p>Primary syntax reference: <a href="./06-grammar-reference.html">06-grammar-reference.md</a></p>
 
                     </main>
 

@@ -37,10 +37,10 @@
             const path_to_root = "../../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-bc033ace.js";
+            window.path_to_searchindex_js = "../../../searchindex-37cffb89.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../../toc-e2dc8458.js"></script>
+        <script src="../../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -199,8 +199,8 @@ allow_override = [
 endpoint = "http://clickhouse-server:8123"
 database = ""
 table = ""
-username = ""
-password = ""
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 timeout_secs = 30
 max_retries = 3
 </code></pre>
@@ -239,8 +239,8 @@ connect = "clickhouse_sink"
 endpoint = "http://localhost:8123"
 database = "default"
 table = "wp_nginx"
-username = "default"
-password = "default"
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 timeout_secs = 30
 max_retries = 3
 </code></pre>
@@ -249,8 +249,8 @@ max_retries = 3
 endpoint = "https://clickhouse.example.com:8443"
 database = "production"
 table = "logs"
-username = "app_user"
-password = "secure_password"
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 timeout_secs = 60
 max_retries = 5
 </code></pre>
@@ -259,7 +259,7 @@ max_retries = 5
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../../10-user/05-connectors/02-sinks/20-elasticsearch_sink.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../../10-user/05-connectors/02-sinks/21-arrow_file_sink.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
@@ -273,7 +273,7 @@ max_retries = 5
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../../10-user/05-connectors/02-sinks/20-elasticsearch_sink.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../../10-user/05-connectors/02-sinks/21-arrow_file_sink.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 

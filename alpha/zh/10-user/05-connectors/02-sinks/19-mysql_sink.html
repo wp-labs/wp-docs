@@ -37,10 +37,10 @@
             const path_to_root = "../../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-bc033ace.js";
+            window.path_to_searchindex_js = "../../../searchindex-37cffb89.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../../toc-e2dc8458.js"></script>
+        <script src="../../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -186,16 +186,16 @@
 <pre><code class="language-toml">[[connectors]]
 id = "mysql_sink"
 type = "mysql"
-allow_override = ["endpoint", "username", "password", "database", "table", "columns", "batch"]
+allow_override = ["endpoint", "username", "password", "database", "table", "columns", "batch_size"]
 
 [connectors.params]
 endpoint = "localhost:3306"
-username = "root"
-password = "123456"
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 database = "wparse"
 table = "nginx_logs"
 columns = ["sip", "timestamp", "http/request", "status", "size", "referer", "http/agent", "wp_event_id"]
-batch = 20
+batch_size = 1024
 </code></pre>
 <h2 id="可用参数"><a class="header" href="#可用参数">可用参数</a></h2>
 <div class="table-wrapper">
@@ -208,19 +208,20 @@ batch = 20
 <tr><td><code>username</code></td><td>string</td><td>用户名（可选，默认 <code>root</code>）</td></tr>
 <tr><td><code>password</code></td><td>string</td><td>密码（可选）</td></tr>
 <tr><td><code>database</code></td><td>string</td><td>目标数据库（必填）</td></tr>
-<tr><td><code>table</code></td><td>string</td><td>目标表名（可选，未设置时使用 sink 名称）</td></tr>
-<tr><td><code>columns</code></td><td>array</td><td>列名列表，决定写入字段顺序；必须包含 <code>wp_event_id</code>（缺省会自动补齐）</td></tr>
-<tr><td><code>batch</code></td><td>int</td><td>批量写入条数（可选）</td></tr>
+<tr><td><code>table</code></td><td>string</td><td>目标表名（必填）</td></tr>
+<tr><td><code>columns</code></td><td>array</td><td>列名列表，决定写入字段顺序(必填)）</td></tr>
+<tr><td><code>batch_size</code></td><td>int</td><td>批量写入条数（可选）</td></tr>
 </tbody>
 </table>
 </div>
 <h2 id="配置示例"><a class="header" href="#配置示例">配置示例</a></h2>
-<h3 id="基础用法参考-extensionstcp_mysql"><a class="header" href="#基础用法参考-extensionstcp_mysql">基础用法（参考 <code>extensions/tcp_mysql</code>）</a></h3>
+<h3 id="基础用法"><a class="header" href="#基础用法">基础用法</a></h3>
 <pre><code class="language-toml">version = "2.0"
 
 [sink_group]
 name = "all"
-rule = ["/*"]
+oml = ["/*"]
+batch_timeout_ms=5000   # 当数据在设置的这个时间范围类不满足批量插入的数量时自动插入
 parallel = 8
 
 [[sink_group.sinks]]
@@ -229,17 +230,16 @@ connect = "mysql_sink"
 
 [sink_group.sinks.params]
 endpoint = "localhost:3306"
-username = "root"
-password = "123456"
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 database = "wparse"
 table = "nginx_logs"
 columns = ["sip", "timestamp", "http/request", "status", "size", "referer", "http/agent", "wp_event_id"]
-batch = 20
+batch_size = 1024   
 </code></pre>
 <h2 id="注意事项"><a class="header" href="#注意事项">注意事项</a></h2>
 <ul>
-<li>表结构必须包含 <code>wp_event_id</code>（建议为 <code>BIGINT</code> 主键），否则写入会失败或产生重复。</li>
-<li><code>columns</code> 中的字段名需与 OML 输出字段一致；缺失字段会以 <code>NULL</code> 写入。</li>
+<li><code>columns</code> 中的字段名需与 OML 输出字段一致；缺失的表字段会以 <code>NULL</code> 写入。</li>
 <li>可通过环境变量 <code>MYSQL_URL</code> 覆盖连接串（格式：<code>mysql://user:pass@host:port/db</code>）。</li>
 <li>端到端示例可参考 <code>wp-examples/extensions/tcp_mysql/README.md</code>。</li>
 </ul>
@@ -252,7 +252,7 @@ batch = 20
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../../10-user/05-connectors/02-sinks/20-elasticsearch_sink.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../../10-user/05-connectors/02-sinks/20-arrow_ipc_sink.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -266,7 +266,7 @@ batch = 20
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../../10-user/05-connectors/02-sinks/20-elasticsearch_sink.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../../10-user/05-connectors/02-sinks/20-arrow_ipc_sink.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

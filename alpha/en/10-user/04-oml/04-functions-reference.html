@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-29d9a526.js";
+            window.path_to_searchindex_js = "../../searchindex-bab637e3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-6cff5523.js"></script>
+        <script src="../../toc-6f276faf.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -195,6 +195,7 @@
 <tr><th>Function</th><th>Description</th><th>Example</th></tr>
 </thead>
 <tbody>
+<tr><td><code>calc(...)</code></td><td>Evaluate an explicit arithmetic expression</td><td><code>score = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;</code></td></tr>
 <tr><td><code>Now::time()</code></td><td>Get current time</td><td><code>event_time = Now::time() ;</code></td></tr>
 <tr><td><code>Now::date()</code></td><td>Get current date (YYYYMMDD)</td><td><code>today = Now::date() ;</code></td></tr>
 <tr><td><code>Now::hour()</code></td><td>Get current hour (YYYYMMDDHH)</td><td><code>current_hour = Now::hour() ;</code></td></tr>
@@ -225,6 +226,8 @@
 </table>
 </div>
 <hr>
+<p><code>calc(...)</code> performs numeric arithmetic with <code>+ - * / %</code> and <code>abs/round/floor/ceil</code>.
+For full syntax and failure semantics, see <code>docs/usage/en/04-oml/06-grammar-reference.md</code>.</p>
 <p><strong>For the complete English documentation, please check back later or refer to the Chinese version.</strong></p>
 
                     </main>

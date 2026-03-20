@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-29d9a526.js";
+            window.path_to_searchindex_js = "../../searchindex-bab637e3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-6cff5523.js"></script>
+        <script src="../../toc-6f276faf.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -180,27 +180,816 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="oml-grammar-reference"><a class="header" href="#oml-grammar-reference">OML Grammar Reference</a></h1>
+<p>This document provides the complete grammar definition of OML in EBNF format for precise understanding of syntax rules.</p>
 <blockquote>
-<p><strong>Translation in Progress</strong></p>
-<p>This document is currently being translated from Chinese to English.</p>
-<p>Please refer to the Chinese version: <code>docs/10-user/04-oml-new/06-grammar-reference.md</code></p>
+<p>Based on the parser implementation in <code>crates/wp-oml</code>, with lexical details reusing <code>wp_parser</code> and <code>wpl</code> parsing capabilities.</p>
 </blockquote>
 <hr>
-<p>This document provides the formal grammar definition of OML, suitable for:</p>
+<h2 id="table-of-contents"><a class="header" href="#table-of-contents">Table of Contents</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Section</th><th>Content</th></tr>
+</thead>
+<tbody>
+<tr><td><a href="#ebnf-notation">EBNF Notation</a></td><td>Grammar symbol conventions</td></tr>
+<tr><td><a href="#top-level-structure">Top-Level Structure</a></td><td>OML file structure</td></tr>
+<tr><td><a href="#evaluation-expressions">Evaluation Expressions</a></td><td>Expression types, value expressions, function calls, etc.</td></tr>
+<tr><td><a href="#advanced-expressions">Advanced Expressions</a></td><td>Format strings, pipes, match, aggregation</td></tr>
+<tr><td><a href="#sql-expressions">SQL Expressions</a></td><td>SQL query syntax</td></tr>
+<tr><td><a href="#static-bindings">Static Bindings</a></td><td>Static constant definitions and references</td></tr>
+<tr><td><a href="#temporary-fields">Temporary Fields</a></td><td><code>__</code> prefixed intermediate fields</td></tr>
+<tr><td><a href="#privacy-section">Privacy Section</a></td><td>Data masking syntax</td></tr>
+<tr><td><a href="#lexical-conventions">Lexical Conventions</a></td><td>Identifiers, literals, comments</td></tr>
+<tr><td><a href="#data-types">Data Types</a></td><td>Data types</td></tr>
+<tr><td><a href="#complete-example">Complete Example</a></td><td>Comprehensive example</td></tr>
+<tr><td><a href="#pipe-function-reference">Pipe Function Reference</a></td><td>Common pipe functions</td></tr>
+<tr><td><a href="#syntax-summary">Syntax Summary</a></td><td>Required elements, optional elements, notes</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="ebnf-notation"><a class="header" href="#ebnf-notation">EBNF Notation</a></h2>
 <ul>
-<li>Compiler/parser developers</li>
-<li>Precise understanding of syntax rules</li>
-<li>Tool integration development</li>
-</ul>
-<p><strong>For regular users, please refer to:</strong></p>
-<ul>
-<li>Quick Start: <a href="./01-quickstart.html">01-quickstart.md</a></li>
-<li>Core Concepts: <a href="./02-core-concepts.html">02-core-concepts.md</a></li>
-<li>Practical Guide: <a href="./03-practical-guide.html">03-practical-guide.md</a></li>
-<li>Functions Reference: <a href="./04-functions-reference.html">04-functions-reference.md</a></li>
+<li><code>=</code> : Definition</li>
+<li><code>,</code> : Concatenation (sequence)</li>
+<li><code>|</code> : Alternation (choice)</li>
+<li><code>[ ]</code> : Optional (0 or 1 time)</li>
+<li><code>{ }</code> : Repetition (0 or more times)</li>
+<li><code>( )</code> : Grouping</li>
+<li><code>"text"</code> : Literal</li>
+<li><code>(* ... *)</code> : Comment</li>
 </ul>
 <hr>
-<p><strong>For the complete English documentation, please check back later or refer to the Chinese version.</strong></p>
+<h2 id="top-level-structure"><a class="header" href="#top-level-structure">Top-Level Structure</a></h2>
+<pre><code class="language-ebnf">oml              = header, sep_line, [ static_blocks ], aggregate_items,
+                   [ sep_line, privacy_items ] ;
+
+header           = "name", ":", name, eol,
+                   [ "rule", ":", rule_path, { rule_path }, eol ],
+                   [ "enable", ":", ("true" | "false"), eol ] ;
+
+sep_line         = "---" ;
+
+static_blocks    = { "static", "{", static_item, { static_item }, "}" } ;
+static_item      = target, "=", eval, ";" ;
+
+name             = path ;                       (* e.g.: test *)
+rule_path        = wild_path ;                  (* e.g.: wpx/abc, wpx/efg *)
+
+aggregate_items  = aggregate_item, { aggregate_item } ;
+aggregate_item   = target_list, "=", eval, ";" ;
+
+target_list      = target, { ",", target } ;
+target           = target_name, [ ":", data_type ] ;
+target_name      = wild_key | "_" ;            (* wildcards with '*' allowed; '_' means anonymous/discard *)
+data_type        = type_ident ;                (* auto|ip|chars|digit|float|time|bool|obj|array etc. *)
+</code></pre>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li><code>name : &lt;config_name&gt;</code> - Required configuration name declaration</li>
+<li><code>rule : &lt;rule_path&gt;</code> - Optional rule association, supports space or newline separated multiple rules</li>
+<li><code>enable : true|false</code> - Optional enable switch (default <code>true</code>); order of <code>rule</code> and <code>enable</code> is flexible</li>
+<li><code>static { ... }</code> - Optional static binding block, placed after <code>---</code> separator and before main bindings</li>
+<li><code>---</code> - Separator, distinguishes declaration section from configuration section</li>
+<li>Every configuration entry must end with <code>;</code></li>
+</ul>
+<hr>
+<h2 id="evaluation-expressions"><a class="header" href="#evaluation-expressions">Evaluation Expressions</a></h2>
+<h3 id="expression-types"><a class="header" href="#expression-types">Expression Types</a></h3>
+<pre><code class="language-ebnf">eval             = take_expr
+                 | read_expr
+                 | fmt_expr
+                 | pipe_expr
+                 | map_expr
+                 | collect_expr
+                 | calc_expr
+                 | match_expr
+                 | sql_expr
+                 | value_expr
+                 | fun_call
+                 | static_ref ;
+</code></pre>
+<h3 id="read-expressions"><a class="header" href="#read-expressions">Read Expressions</a></h3>
+<pre><code class="language-ebnf">(* Variable access: take/read support uniform parameter format; can be followed by default body *)
+take_expr        = "take", "(", [ arg_list ], ")", [ default_body ] ;
+read_expr        = "read", "(", [ arg_list ], ")", [ default_body ] ;
+
+arg_list         = arg, { ",", arg } ;
+arg              = "option", ":", "[", key, { ",", key }, "]"
+                 | ("in"|"keys"), ":", "[", key, { ",", key }, "]"
+                 | "get",    ":", simple
+                 | json_path ;                 (* see wp_parser::atom::take_json_path *)
+
+default_body     = "{", "_", ":", gen_acq, [ ";" ], "}" ;
+gen_acq          = take_expr | read_expr | value_expr | fun_call | static_ref ;
+</code></pre>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li><code>@</code> is only used as syntactic sugar for var_get positions in fmt/pipe/collect</li>
+<li><code>@ref</code> is equivalent to <code>read(ref)</code>, but does not support default body</li>
+<li>Not available as a standalone evaluation expression</li>
+</ul>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml"># Basic read
+value = read(field) ;
+
+# With default value
+value = read(field) { _ : chars(default) } ;
+
+# option parameter
+value = read(option:[id, uid, user_id]) ;
+
+# keys parameter
+values = collect read(keys:[field1, field2]) ;
+
+# JSON path
+name = read(/user/info/name) ;
+item = read(/data/[0]/name) ;
+</code></pre>
+<h3 id="value-expressions"><a class="header" href="#value-expressions">Value Expressions</a></h3>
+<pre><code class="language-ebnf">(* Constant value: type name + parenthesized literal *)
+value_expr       = data_type, "(", literal, ")" ;
+</code></pre>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml">text = chars(hello) ;
+text2 = chars('hello world') ;
+count = digit(42) ;
+ratio = float(3.14) ;
+address = ip(192.168.1.1) ;
+flag = bool(true) ;
+ts = time(2020-10-01 12:30:30) ;
+</code></pre>
+<h3 id="function-calls"><a class="header" href="#function-calls">Function Calls</a></h3>
+<pre><code class="language-ebnf">(* Built-in functions (zero-argument placeholders): Now::* family *)
+fun_call         = ("Now::time"
+                   |"Now::date"
+                   |"Now::hour"), "(", ")" ;
+</code></pre>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml">now = Now::time() ;
+today = Now::date() ;
+hour = Now::hour() ;
+</code></pre>
+<h3 id="static-symbol-references"><a class="header" href="#static-symbol-references">Static Symbol References</a></h3>
+<pre><code class="language-ebnf">(* Reference constants defined in static blocks, using identifier directly *)
+static_ref       = ident ;                     (* must be defined in static { } *)
+</code></pre>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml">static {
+    tpl = object { id = chars(E1) ; } ;
+}
+target = tpl ;                                 # reference tpl from static block
+</code></pre>
+<hr>
+<h2 id="advanced-expressions"><a class="header" href="#advanced-expressions">Advanced Expressions</a></h2>
+<h3 id="format-strings"><a class="header" href="#format-strings">Format Strings</a></h3>
+<pre><code class="language-ebnf">(* String formatting, requires at least 1 parameter *)
+fmt_expr         = "fmt", "(", string, ",", var_get, { ",", var_get }, ")" ;
+var_get          = ("read" | "take"), "(", [ arg_list ], ")"
+                 | "@", ident ;                  (* '@ref' equivalent to read(ref), no default body *)
+</code></pre>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml">message = fmt("{}-{}", @user, read(city)) ;
+id = fmt("{}:{}", read(host), read(port)) ;
+</code></pre>
+<h3 id="pipe-expressions"><a class="header" href="#pipe-expressions">Pipe Expressions</a></h3>
+<pre><code class="language-ebnf">(* Pipe: pipe keyword can be omitted *)
+pipe_expr        = ["pipe"], var_get, "|", pipe_fun, { "|", pipe_fun } ;
+
+pipe_fun         = "nth",           "(", unsigned, ")"
+                 | "get",           "(", ident,   ")"
+                 | "base64_decode", "(", [ encode_type ], ")"
+                 | "path",          "(", ("name"|"path"), ")"
+                 | "url",           "(", ("domain"|"host"|"uri"|"path"|"params"), ")"
+                 | "Time::to_ts_zone", "(", [ "-" ], unsigned, ",", ("ms"|"us"|"ss"|"s"), ")"
+                 | "starts_with",   "(", string, ")"
+                 | "map_to",        "(", (string | number | bool), ")"
+                 | "base64_encode" | "html_escape" | "html_unescape"
+                 | "str_escape" | "json_escape" | "json_unescape"
+                 | "Time::to_ts" | "Time::to_ts_ms" | "Time::to_ts_us"
+                 | "to_json" | "to_str" | "skip_empty" | "ip4_to_int"
+                 | "extract_main_word" | "extract_subject_object" ;
+
+encode_type      = ident ;                     (* e.g.: Utf8/Gbk/Imap/... *)
+</code></pre>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml"># With pipe keyword
+result = pipe read(data) | to_json | base64_encode ;
+
+# Without pipe keyword
+result = read(data) | to_json | base64_encode ;
+
+# Time conversion
+ts = read(time) | Time::to_ts_zone(0, ms) ;
+
+# URL parsing
+host = read(url) | url(host) ;
+
+# String prefix check
+is_http = read(url) | starts_with('http://') ;
+
+# Map to constant value
+status = read(code) | map_to(200) ;
+
+# Extract main word
+keyword = read(message) | extract_main_word ;
+
+# Extract subject-object structure
+log_struct = read(message) | extract_subject_object ;
+</code></pre>
+<h3 id="object-aggregation"><a class="header" href="#object-aggregation">Object Aggregation</a></h3>
+<pre><code class="language-ebnf">(* Aggregate to object: object body is a sequence of sub-assignments; semicolons optional but recommended *)
+map_expr         = "object", "{", map_item, { map_item }, "}" ;
+map_item         = map_targets, "=", sub_acq, [ ";" ] ;
+map_targets      = ident, { ",", ident }, [ ":", data_type ] ;
+sub_acq          = take_expr | read_expr | value_expr | fun_call | static_ref ;
+</code></pre>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml">info : obj = object {
+    name : chars = read(name) ;
+    age : digit = read(age) ;
+    city : chars = read(city) ;
+} ;
+</code></pre>
+<h3 id="array-aggregation"><a class="header" href="#array-aggregation">Array Aggregation</a></h3>
+<pre><code class="language-ebnf">(* Aggregate to array: collect from VarGet (supports keys/option wildcards) *)
+collect_expr     = "collect", var_get ;
+</code></pre>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml"># Collect multiple fields
+ports = collect read(keys:[sport, dport]) ;
+
+# Using wildcards
+metrics = collect read(keys:[cpu_*]) ;
+</code></pre>
+<h3 id="arithmetic-expressions"><a class="header" href="#arithmetic-expressions">Arithmetic Expressions</a></h3>
+<pre><code class="language-ebnf">calc_expr         = "calc", "(", calc_add_expr, ")" ;
+calc_add_expr     = calc_mul_expr, { ("+" | "-"), calc_mul_expr } ;
+calc_mul_expr     = calc_unary_expr, { ("*" | "/" | "%"), calc_unary_expr } ;
+calc_unary_expr   = [ "-" ], calc_primary_expr ;
+calc_primary_expr = number
+                  | var_get
+                  | calc_fun_expr
+                  | "(", calc_add_expr, ")" ;
+calc_fun_expr     = calc_fun, "(", calc_add_expr, ")" ;
+calc_fun          = "abs" | "round" | "floor" | "ceil" ;
+</code></pre>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li><code>var_get</code> supports <code>read(...)</code>, <code>take(...)</code>, and the <code>@field</code> shorthand</li>
+<li>Operands only accept numeric literals or numeric fields; <code>/</code> always returns <code>float</code></li>
+<li><code>%</code> only supports integer modulo; divide-by-zero, missing fields, non-numeric inputs, and invalid <code>%</code> return <code>ignore</code></li>
+<li><code>match</code> branch values still use the existing sub-expression set and do not accept <code>calc(...)</code> directly; bind a temp field first if needed</li>
+</ul>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml">risk_score : float = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;
+delta      : digit = calc(read(cur) - read(prev)) ;
+ratio      : float = calc(read(ok_cnt) / read(total_cnt)) ;
+bucket     : digit = calc(read(uid) % 16) ;
+error_pct  : digit = calc(round((read(err_cnt) * 100) / read(total_cnt))) ;
+</code></pre>
+<h3 id="pattern-matching"><a class="header" href="#pattern-matching">Pattern Matching</a></h3>
+<pre><code class="language-ebnf">(* Pattern matching: single-source/multi-source variants, supports in/!=/OR/function matching and default branch *)
+match_expr       = "match", match_source, "{", case1, { case1 }, [ default_case ], "}"
+                 | "match", "(", var_get, ",", var_get, { ",", var_get }, ")", "{", case_multi, { case_multi }, [ default_case ], "}" ;
+
+match_source     = var_get ;
+case1            = cond1, "=&gt;", match_value, [ "," ], [ ";" ] ;
+case_multi       = "(", cond1, ",", cond1, { ",", cond1 }, ")", "=&gt;", match_value, [ "," ], [ ";" ] ;
+default_case     = "_", "=&gt;", match_value, [ "," ], [ ";" ] ;
+match_value      = read_expr | take_expr | value_expr | collect_expr | static_ref ;
+
+cond1            = cond1_atom, { "|", cond1_atom }   (* OR: multiple conditions separated by | *)
+cond1_atom       = "in", "(", value_expr, ",", value_expr, ")"
+                 | "!", value_expr
+                 | match_fun                           (* function matching *)
+                 | value_expr ;                        (* omitted operator means equality *)
+
+match_fun        = "starts_with",  "(", string, ")"   (* prefix matching *)
+                 | "ends_with",    "(", string, ")"   (* suffix matching *)
+                 | "contains",     "(", string, ")"   (* substring matching *)
+                 | "regex_match",  "(", string, ")"   (* regex matching *)
+                 | "iequals",      "(", string, ")"   (* case-insensitive equality *)
+                 | "is_empty",     "(", ")"            (* empty value check *)
+                 | "gt",           "(", number, ")"    (* greater than *)
+                 | "lt",           "(", number, ")"    (* less than *)
+                 | "eq",           "(", number, ")"    (* equal (float tolerance) *)
+                 | "in_range",     "(", number, ",", number, ")" ; (* range check *)
+</code></pre>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li><strong>Multi-source matching</strong>: <code>match (src1, src2, ...)</code> supports any number of source fields (&gt;=2), not limited to two</li>
+<li><strong>OR syntax</strong>: Use <code>|</code> to separate multiple alternative conditions at a condition position; any match succeeds</li>
+<li><strong>Function matching</strong>: 11 built-in match functions for flexible string and numeric comparisons</li>
+</ul>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml"># Single-source matching
+level = match read(status) {
+    in (digit(200), digit(299)) =&gt; chars(success) ;
+    in (digit(400), digit(499)) =&gt; chars(error) ;
+    _ =&gt; chars(other) ;
+} ;
+
+# Single-source OR matching
+tier = match read(city) {
+    chars(bj) | chars(sh) | chars(gz) =&gt; chars(tier1) ;
+    chars(cd) | chars(wh) =&gt; chars(tier2) ;
+    _ =&gt; chars(other) ;
+} ;
+
+# Multi-source matching (two sources)
+result = match (read(a), read(b)) {
+    (digit(1), digit(2)) =&gt; chars(case1) ;
+    _ =&gt; chars(default) ;
+} ;
+
+# Multi-source matching (three sources)
+zone = match (read(city), read(region), read(country)) {
+    (chars(bj), chars(north), chars(cn)) =&gt; chars(result1) ;
+    _ =&gt; chars(default) ;
+} ;
+
+# Multi-source + OR matching
+priority = match (read(city), read(level)) {
+    (chars(bj) | chars(sh), chars(high)) =&gt; chars(priority) ;
+    (chars(gz), chars(low) | chars(mid)) =&gt; chars(normal) ;
+    _ =&gt; chars(default) ;
+} ;
+
+# Function matching
+event = match read(Content) {
+    starts_with('[ERROR]') =&gt; chars(error) ;
+    starts_with('[WARN]') =&gt; chars(warning) ;
+    contains('timeout') =&gt; chars(timeout) ;
+    ends_with('.failed') =&gt; chars(failure) ;
+    regex_match('^\d{4}-\d{2}-\d{2}') =&gt; chars(dated) ;
+    is_empty() =&gt; chars(empty) ;
+    _ =&gt; chars(other) ;
+} ;
+
+# Numeric function matching
+grade = match read(score) {
+    gt(90) =&gt; chars(excellent) ;
+    in_range(60, 90) =&gt; chars(pass) ;
+    lt(60) =&gt; chars(fail) ;
+    _ =&gt; chars(unknown) ;
+} ;
+
+# Case-insensitive matching
+status = match read(result) {
+    iequals('success') =&gt; chars(ok) ;
+    iequals('error') =&gt; chars(fail) ;
+    _ =&gt; chars(other) ;
+} ;
+
+# Case-insensitive multi-value matching
+status_class = match read(status) {
+    iequals_any('success', 'ok', 'done') =&gt; chars(good) ;
+    iequals_any('error', 'failed', 'timeout') =&gt; chars(bad) ;
+    _ =&gt; chars(other) ;
+} ;
+</code></pre>
+<h3 id="lookup_nocase"><a class="header" href="#lookup_nocase"><code>lookup_nocase</code></a></h3>
+<p><code>lookup_nocase(dict_symbol, key_expr, default_expr)</code> performs a case-insensitive lookup against a static object dictionary.</p>
+<pre><code class="language-oml">static {
+    status_score = object {
+        error = float(90.0);
+        warning = float(70.0);
+        success = float(20.0);
+    };
+}
+
+risk_score : float = lookup_nocase(status_score, read(status), 40.0) ;
+</code></pre>
+<ul>
+<li><code>dict_symbol</code> must reference an object defined in <code>static</code></li>
+<li><code>key_expr</code> is normalized with <code>trim + lowercase</code> before lookup</li>
+<li>If the key misses or is not a string, <code>default_expr</code> is returned</li>
+</ul>
+<h3 id="calc"><a class="header" href="#calc"><code>calc(...)</code></a></h3>
+<p><code>calc(expr)</code> evaluates an explicit numeric arithmetic expression.</p>
+<pre><code class="language-oml">risk_score : float = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;
+bucket     : digit = calc(read(uid) % 16) ;
+distance   : float = calc(abs(read(actual) - read(expect))) ;
+error_pct  : digit = calc(round((read(err_cnt) * 100) / read(total_cnt))) ;
+</code></pre>
+<ul>
+<li>Supported operators: <code>+ - * / %</code></li>
+<li>Supported functions: <code>abs(...)</code>, <code>round(...)</code>, <code>floor(...)</code>, <code>ceil(...)</code></li>
+<li>Supported field access: <code>read(...)</code>, <code>take(...)</code>, <code>@field</code></li>
+<li>Divide-by-zero, missing fields, non-numeric inputs, and float <code>%</code> all return <code>ignore</code></li>
+</ul>
+<hr>
+<h2 id="sql-expressions"><a class="header" href="#sql-expressions">SQL Expressions</a></h2>
+<pre><code class="language-ebnf">sql_expr        = "select", sql_body, "where", sql_cond, ";" ;
+sql_body        = sql_safe_body ;              (* source whitelisting: only [A-Za-z0-9_.] and '*' *)
+sql_cond        = cond_expr ;
+
+cond_expr       = cmp, { ("and" | "or"), cmp }
+                 | "not", cond_expr
+                 | "(", cond_expr, ")" ;
+
+cmp             = ident, sql_op, cond_rhs ;
+sql_op          = sql_cmp_op ;                 (* see wp_parser::sql_symbol::symbol_sql_cmp *)
+cond_rhs        = read_expr | take_expr | fun_call | sql_literal ;
+sql_literal     = number | string ;
+</code></pre>
+<h3 id="strict-mode"><a class="header" href="#strict-mode">Strict Mode</a></h3>
+<ul>
+<li><strong>Strict mode (enabled by default)</strong>: Parse error when <code>&lt;cols from table&gt;</code> violates whitelist rules</li>
+<li><strong>Compatibility mode</strong>: Set environment variable <code>OML_SQL_STRICT=0</code>, falls back to raw text on invalid body (not recommended)</li>
+<li><strong>Whitelist rules</strong>:
+<ul>
+<li>Column list: <code>*</code> or column names matching <code>[A-Za-z0-9_.]+</code> (dot allowed as qualifier)</li>
+<li>Table name: <code>[A-Za-z0-9_.]+</code> (single table, no join/subquery)</li>
+<li><code>from</code> is case-insensitive; extra whitespace allowed</li>
+</ul>
+</li>
+</ul>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml"># Valid examples
+name, email = select name, email from users where id = read(user_id) ;
+
+# Using string constants
+data = select * from table where type = 'admin' ;
+
+# IP range query
+zone = select zone from ip_geo
+    where ip_start_int &lt;= ip4_int(read(src_ip))
+      and ip_end_int &gt;= ip4_int(read(src_ip)) ;
+</code></pre>
+<p><strong>Invalid examples (strict mode)</strong>:</p>
+<pre><code class="language-oml"># Table name contains illegal characters
+data = select a, b from table-1 where ... ;
+
+# Column list contains functions
+data = select sum(a) from t where ... ;
+
+# Joins not supported
+data = select a from t1 join t2 ... ;
+</code></pre>
+<hr>
+<h2 id="static-bindings"><a class="header" href="#static-bindings">Static Bindings</a></h2>
+<p><code>static</code> blocks define compile-time constants that can be referenced in main bindings and match expressions.</p>
+<pre><code class="language-ebnf">static_blocks    = { "static", "{", static_item, { static_item }, "}" } ;
+static_item      = target, "=", eval, ";" ;
+</code></pre>
+<p><strong>Notes</strong>:</p>
+<ul>
+<li><code>static</code> blocks are placed after the <code>---</code> separator and before the main bindings</li>
+<li>Each binding within the block is evaluated at compile time into a <code>DataField</code></li>
+<li>Reference in main bindings by using the identifier directly: <code>result = symbol_name ;</code></li>
+<li>Can be referenced in <code>match</code> conditions and results, <code>object</code> sub-bindings, and <code>read/take</code> default bodies</li>
+<li>Duplicate symbol names are not allowed</li>
+</ul>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml">name : model_with_static
+---
+static {
+    tpl = object {
+        id = chars(E1) ;
+        type = chars(default) ;
+    } ;
+    fallback = chars(N/A) ;
+}
+
+# Direct reference to static symbol
+template = tpl ;
+
+# Reference in match result
+target = match read(Content) {
+    starts_with('foo') =&gt; tpl ;
+    _ =&gt; tpl ;
+} ;
+
+# Reference in default body
+value = take(Value) { _ : fallback } ;
+
+# Reference in object sub-binding
+result = object {
+    clone = tpl ;
+} ;
+</code></pre>
+<hr>
+<h2 id="temporary-fields"><a class="header" href="#temporary-fields">Temporary Fields</a></h2>
+<p>Field names starting with <code>__</code> (double underscore) are marked as temporary fields and automatically converted to <code>Ignore</code> type in the output (they do not appear in the final data).</p>
+<p><strong>Purpose</strong>: Intermediate computation results that should not appear in the output record.</p>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml">name : temp_example
+---
+# Temporary field: participates in intermediate computation, not output
+__temp_type = chars(error) ;
+
+# Reference temporary field in matching
+result = match read(__temp_type) {
+    chars(error) =&gt; chars(failed) ;
+    _ =&gt; chars(ok) ;
+} ;
+</code></pre>
+<p>In the output record, <code>result</code> is output normally while <code>__temp_type</code> is automatically ignored.</p>
+<hr>
+<h2 id="privacy-section"><a class="header" href="#privacy-section">Privacy Section</a></h2>
+<blockquote>
+<p>Note: The engine does not enable runtime privacy/masking by default; the following describes the DSL syntax capability for reference in scenarios that require it.</p>
+</blockquote>
+<pre><code class="language-ebnf">privacy_items   = privacy_item, { privacy_item } ;
+privacy_item    = ident, ":", privacy_type ;
+
+privacy_type    = "privacy_ip"
+                 | "privacy_specify_ip"
+                 | "privacy_id_card"
+                 | "privacy_mobile"
+                 | "privacy_mail"
+                 | "privacy_domain"
+                 | "privacy_specify_name"
+                 | "privacy_specify_domain"
+                 | "privacy_specify_address"
+                 | "privacy_specify_company"
+                 | "privacy_keymsg" ;
+</code></pre>
+<p><strong>Examples</strong>:</p>
+<pre><code class="language-oml">name : privacy_example
+---
+field = read() ;
+---
+src_ip : privacy_ip
+pos_sn : privacy_keymsg
+</code></pre>
+<hr>
+<h2 id="lexical-conventions"><a class="header" href="#lexical-conventions">Lexical Conventions</a></h2>
+<pre><code class="language-ebnf">path            = ident, { ("/" | "."), ident } ;
+wild_path       = path | path, "*" ;          (* wildcards allowed *)
+wild_key        = ident, { ident | "*" } ;    (* '*' allowed within key names *)
+type_ident      = ident ;                      (* e.g. auto/ip/chars/digit/float/time/bool/obj/array *)
+ident           = letter, { letter | digit | "_" } ;
+key             = ident ;
+
+string          = "\"", { any-but-quote }, "\""
+                | "'", { any-but-quote }, "'" ;
+
+literal         = string | number | ip | bool | datetime | ... ;
+json_path       = "/" , ... ;                 (* e.g. /a/b/[0]/1 *)
+simple          = ident | number | string ;
+unsigned        = digit, { digit } ;
+eol             = { " " | "\t" | "\r" | "\n" } ;
+
+letter          = "A" | ... | "Z" | "a" | ... | "z" ;
+digit           = "0" | ... | "9" ;
+alnum           = letter | digit ;
+</code></pre>
+<hr>
+<h2 id="data-types"><a class="header" href="#data-types">Data Types</a></h2>
+<p>OML type annotations support the following values (parsed by <code>DataType::from()</code>):</p>
+<h3 id="common-types"><a class="header" href="#common-types">Common Types</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Type</th><th>Description</th><th>Example</th></tr>
+</thead>
+<tbody>
+<tr><td><code>auto</code></td><td>Auto-detect (default)</td><td><code>field = read() ;</code></td></tr>
+<tr><td><code>chars</code></td><td>String</td><td><code>name : chars = read() ;</code></td></tr>
+<tr><td><code>digit</code></td><td>Integer</td><td><code>count : digit = read() ;</code></td></tr>
+<tr><td><code>float</code></td><td>Floating-point</td><td><code>ratio : float = read() ;</code></td></tr>
+<tr><td><code>ip</code></td><td>IP address</td><td><code>addr : ip = read() ;</code></td></tr>
+<tr><td><code>time</code></td><td>Time</td><td><code>timestamp : time = Now::time() ;</code></td></tr>
+<tr><td><code>bool</code></td><td>Boolean</td><td><code>flag : bool = read() ;</code></td></tr>
+<tr><td><code>obj</code></td><td>Object</td><td><code>info : obj = object { ... } ;</code></td></tr>
+<tr><td><code>array</code></td><td>Array</td><td><code>items : array = collect read(...) ;</code></td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="extended-types"><a class="header" href="#extended-types">Extended Types</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>time_iso</code></td><td>ISO format time</td></tr>
+<tr><td><code>time_3339</code></td><td>RFC 3339 time</td></tr>
+<tr><td><code>time_2822</code></td><td>RFC 2822 time</td></tr>
+<tr><td><code>time_timestamp</code></td><td>Unix timestamp</td></tr>
+<tr><td><code>time_clf</code></td><td>CLF log time (Apache/Nginx)</td></tr>
+<tr><td><code>time/apache</code></td><td>CLF alias</td></tr>
+<tr><td><code>time/timestamp</code></td><td>Timestamp alias</td></tr>
+<tr><td><code>time/rfc3339</code></td><td>RFC 3339 alias</td></tr>
+<tr><td><code>url</code></td><td>URL</td></tr>
+<tr><td><code>domain</code></td><td>Domain name</td></tr>
+<tr><td><code>ip_net</code></td><td>Network segment</td></tr>
+<tr><td><code>kv</code></td><td>Key-Value text</td></tr>
+<tr><td><code>json</code></td><td>JSON text</td></tr>
+<tr><td><code>base64</code></td><td>Base64 encoded text</td></tr>
+<tr><td><code>array/&lt;sub&gt;</code></td><td>Typed array (e.g. <code>array/digit</code>)</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="complete-example"><a class="header" href="#complete-example">Complete Example</a></h2>
+<pre><code class="language-oml">name : csv_example
+rule : /csv/data
+enable : true
+---
+static {
+    ERROR_TPL = object {
+        type = chars(error) ;
+        level = digit(0) ;
+    } ;
+}
+
+# Basic value retrieval with default
+version : chars = Now::time() ;
+pos_sn = read() { _ : chars(FALLBACK) } ;
+
+# Temporary field (not included in output)
+__raw_type = read(type) ;
+
+# Object aggregation
+values : obj = object {
+    cpu_free, memory_free : digit = read() ;
+} ;
+
+# Collect array aggregation + pipe
+ports : array = collect read(keys:[sport, dport]) ;
+ports_json = pipe read(ports) | to_json ;
+first_port = pipe read(ports) | nth(0) ;
+
+# Pipe without pipe keyword
+url_host = read(http_url) | url(host) ;
+
+# match
+quarter : chars = match read(month) {
+    in (digit(1), digit(3))   =&gt; chars(Q1) ;
+    in (digit(4), digit(6))   =&gt; chars(Q2) ;
+    in (digit(7), digit(9))   =&gt; chars(Q3) ;
+    in (digit(10), digit(12)) =&gt; chars(Q4) ;
+    _ =&gt; chars(QX) ;
+} ;
+
+# Two-source match
+X : chars = match (read(city1), read(city2)) {
+    (ip(127.0.0.1), ip(127.0.0.100)) =&gt; chars(bj) ;
+    _ =&gt; chars(sz) ;
+} ;
+
+# Three-source match
+zone : chars = match (read(city), read(region), read(country)) {
+    (chars(bj), chars(north), chars(cn)) =&gt; chars(zone1) ;
+    (chars(sh), chars(east), chars(cn)) =&gt; chars(zone2) ;
+    _ =&gt; chars(unknown) ;
+} ;
+
+# OR matching (single source)
+tier : chars = match read(city) {
+    chars(bj) | chars(sh) | chars(gz) =&gt; chars(tier1) ;
+    chars(cd) | chars(wh) =&gt; chars(tier2) ;
+    _ =&gt; chars(other) ;
+} ;
+
+# OR matching (multi-source)
+priority : chars = match (read(city), read(level)) {
+    (chars(bj) | chars(sh), chars(high)) =&gt; chars(priority) ;
+    (chars(gz), chars(low) | chars(mid)) =&gt; chars(normal) ;
+    _ =&gt; chars(default) ;
+} ;
+
+# Function matching
+event = match read(log_line) {
+    starts_with('[ERROR]') =&gt; chars(error) ;
+    ends_with('.failed') =&gt; chars(failure) ;
+    contains('timeout') =&gt; chars(timeout) ;
+    regex_match('^\d{4}-\d{2}-\d{2}') =&gt; chars(dated) ;
+    is_empty() =&gt; chars(empty) ;
+    _ =&gt; chars(other) ;
+} ;
+
+# Numeric function matching
+grade = match read(score) {
+    gt(90) =&gt; chars(excellent) ;
+    in_range(60, 90) =&gt; chars(pass) ;
+    lt(60) =&gt; chars(fail) ;
+    _ =&gt; chars(unknown) ;
+} ;
+
+# Case-insensitive matching
+result = match read(status) {
+    iequals('success') =&gt; chars(ok) ;
+    _ =&gt; chars(fail) ;
+} ;
+
+# Static reference
+error_info = match read(__raw_type) {
+    chars(error) =&gt; ERROR_TPL ;
+    _ =&gt; chars(normal) ;
+} ;
+
+# SQL (where clause can mix read/take/Now::time/constants)
+name, pinying = select name, pinying from example where pinying = read(py) ;
+_, _ = select name, pinying from example where pinying = 'xiaolongnu' ;
+
+---
+# Privacy configuration (bind processor enum by key)
+src_ip : privacy_ip
+pos_sn : privacy_keymsg
+</code></pre>
+<hr>
+<h2 id="pipe-function-reference"><a class="header" href="#pipe-function-reference">Pipe Function Reference</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Function</th><th>Syntax</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>base64_encode</code></td><td><code>base64_encode</code></td><td>Base64 encode</td></tr>
+<tr><td><code>base64_decode</code></td><td><code>base64_decode</code> / <code>base64_decode(encoding)</code></td><td>Base64 decode</td></tr>
+<tr><td><code>html_escape</code></td><td><code>html_escape</code></td><td>HTML escape</td></tr>
+<tr><td><code>html_unescape</code></td><td><code>html_unescape</code></td><td>HTML unescape</td></tr>
+<tr><td><code>json_escape</code></td><td><code>json_escape</code></td><td>JSON escape</td></tr>
+<tr><td><code>json_unescape</code></td><td><code>json_unescape</code></td><td>JSON unescape</td></tr>
+<tr><td><code>str_escape</code></td><td><code>str_escape</code></td><td>String escape</td></tr>
+<tr><td><code>Time::to_ts</code></td><td><code>Time::to_ts</code></td><td>Time to timestamp (seconds, UTC+8)</td></tr>
+<tr><td><code>Time::to_ts_ms</code></td><td><code>Time::to_ts_ms</code></td><td>Time to timestamp (milliseconds, UTC+8)</td></tr>
+<tr><td><code>Time::to_ts_us</code></td><td><code>Time::to_ts_us</code></td><td>Time to timestamp (microseconds, UTC+8)</td></tr>
+<tr><td><code>Time::to_ts_zone</code></td><td><code>Time::to_ts_zone(timezone,unit)</code></td><td>Time to timestamp with timezone</td></tr>
+<tr><td><code>nth</code></td><td><code>nth(index)</code></td><td>Get array element</td></tr>
+<tr><td><code>get</code></td><td><code>get(field_name)</code></td><td>Get object field</td></tr>
+<tr><td><code>path</code></td><td><code>path(name|path)</code></td><td>Extract file path component</td></tr>
+<tr><td><code>url</code></td><td><code>url(domain|host|uri|path|params)</code></td><td>Extract URL component</td></tr>
+<tr><td><code>starts_with</code></td><td><code>starts_with('prefix')</code></td><td>Check if string starts with prefix</td></tr>
+<tr><td><code>map_to</code></td><td><code>map_to(value)</code></td><td>Map to constant value (string/number/boolean)</td></tr>
+<tr><td><code>extract_main_word</code></td><td><code>extract_main_word</code></td><td>Extract main word (first non-empty word)</td></tr>
+<tr><td><code>extract_subject_object</code></td><td><code>extract_subject_object</code></td><td>Extract log subject-object structure (subject/action/object/status)</td></tr>
+<tr><td><code>to_str</code></td><td><code>to_str</code></td><td>Convert to string</td></tr>
+<tr><td><code>to_json</code></td><td><code>to_json</code></td><td>Convert to JSON</td></tr>
+<tr><td><code>ip4_to_int</code></td><td><code>ip4_to_int</code></td><td>IPv4 to integer</td></tr>
+<tr><td><code>skip_empty</code></td><td><code>skip_empty</code></td><td>Skip empty values</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="match-function-reference-for-match-conditions"><a class="header" href="#match-function-reference-for-match-conditions">Match Function Reference (for match conditions)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Function</th><th>Syntax</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>starts_with</code></td><td><code>starts_with('prefix')</code></td><td>Prefix matching</td></tr>
+<tr><td><code>ends_with</code></td><td><code>ends_with('suffix')</code></td><td>Suffix matching</td></tr>
+<tr><td><code>contains</code></td><td><code>contains('substring')</code></td><td>Substring matching</td></tr>
+<tr><td><code>regex_match</code></td><td><code>regex_match('pattern')</code></td><td>Regular expression matching</td></tr>
+<tr><td><code>iequals</code></td><td><code>iequals('value')</code></td><td>Case-insensitive equality</td></tr>
+<tr><td><code>is_empty</code></td><td><code>is_empty()</code></td><td>Empty value check</td></tr>
+<tr><td><code>gt</code></td><td><code>gt(number)</code></td><td>Greater than</td></tr>
+<tr><td><code>lt</code></td><td><code>lt(number)</code></td><td>Less than</td></tr>
+<tr><td><code>eq</code></td><td><code>eq(number)</code></td><td>Equal (float tolerance)</td></tr>
+<tr><td><code>in_range</code></td><td><code>in_range(min, max)</code></td><td>Range check (closed interval)</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="syntax-summary"><a class="header" href="#syntax-summary">Syntax Summary</a></h2>
+<h3 id="required-elements"><a class="header" href="#required-elements">Required Elements</a></h3>
+<ol>
+<li><strong>Configuration name</strong>: <code>name : &lt;name&gt;</code></li>
+<li><strong>Separator</strong>: <code>---</code></li>
+<li><strong>Semicolons</strong>: Every top-level entry must end with <code>;</code></li>
+</ol>
+<h3 id="optional-elements"><a class="header" href="#optional-elements">Optional Elements</a></h3>
+<ol>
+<li><strong>Type declaration</strong>: <code>field : &lt;type&gt; = ...</code> (defaults to <code>auto</code>)</li>
+<li><strong>rule field</strong>: <code>rule : &lt;rule_path&gt;</code></li>
+<li><strong>enable field</strong>: <code>enable : true|false</code> (defaults to <code>true</code>)</li>
+<li><strong>static block</strong>: <code>static { ... }</code></li>
+<li><strong>Default value</strong>: <code>read() { _ : &lt;default&gt; }</code></li>
+<li><strong>pipe keyword</strong>: <code>pipe read() | func</code> can be shortened to <code>read() | func</code></li>
+</ol>
+<h3 id="comments"><a class="header" href="#comments">Comments</a></h3>
+<pre><code class="language-oml"># Single-line comment (using # or //)
+// C++ style comment also supported
+</code></pre>
+<h3 id="target-wildcards"><a class="header" href="#target-wildcards">Target Wildcards</a></h3>
+<pre><code class="language-oml">* = take() ;           # Take all fields
+alert* = take() ;      # Take all fields starting with alert
+*_log = take() ;       # Take all fields ending with _log
+</code></pre>
+<h3 id="temporary-fields-1"><a class="header" href="#temporary-fields-1">Temporary Fields</a></h3>
+<pre><code class="language-oml">__temp = chars(value) ;      # Starts with __, automatically ignored in output
+result = read(__temp) ;      # Can be referenced in other expressions
+</code></pre>
+<h3 id="read-semantics"><a class="header" href="#read-semantics">Read Semantics</a></h3>
+<ul>
+<li><strong>read</strong>: Non-destructive (can read repeatedly, does not remove from src)</li>
+<li><strong>take</strong>: Destructive (removed from src after taking, cannot be taken again)</li>
+</ul>
+<hr>
+<h2 id="next-steps"><a class="header" href="#next-steps">Next Steps</a></h2>
+<ul>
+<li><a href="./02-core-concepts.html">Core Concepts</a> - Understand the design philosophy</li>
+<li><a href="./03-practical-guide.html">Practical Guide</a> - See real-world examples</li>
+<li><a href="./04-functions-reference.html">Functions Reference</a> - Browse all available functions</li>
+<li><a href="./01-quickstart.html">Quick Start</a> - Get started with OML</li>
+</ul>
 
                     </main>
 

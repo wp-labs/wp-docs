@@ -37,10 +37,10 @@
             const path_to_root = "../../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-c41ccb19.js";
+            window.path_to_searchindex_js = "../../../searchindex-bab637e3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../../toc-6cff5523.js"></script>
+        <script src="../../../toc-6f276faf.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -180,142 +180,49 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="wpl-group-logic"><a class="header" href="#wpl-group-logic">WPL Group Logic</a></h1>
-<p>WPL provides multiple group wrappers to control the logical behavior of field parsing. Groups can contain one or more fields and determine parsing success or failure based on different logical semantics.</p>
+<p>WPL groups control matching behavior. They are not field types.</p>
 <h2 id="group-types"><a class="header" href="#group-types">Group Types</a></h2>
-<h3 id="seq---sequence-default"><a class="header" href="#seq---sequence-default">seq - Sequence (Default)</a></h3>
-<p>The default group type requires all fields to be parsed successfully in order.</p>
-<p><strong>Syntax:</strong></p>
-<pre><code class="language-wpl">(field1, field2, field3)
-seq(field1, field2, field3)
-</code></pre>
-<p><strong>Behavior:</strong></p>
-<ul>
-<li>Parses all fields in sequence</li>
-<li>All fields must succeed</li>
-<li>The entire group fails if any field fails</li>
-</ul>
-<p><strong>Example:</strong></p>
+<h3 id="seq---sequence"><a class="header" href="#seq---sequence">seq - Sequence</a></h3>
 <pre><code class="language-wpl">(digit:id, chars:name, ip:addr)
+seq(digit:id, chars:name, ip:addr)
 </code></pre>
-<h3 id="opt---optional"><a class="header" href="#opt---optional">opt - Optional</a></h3>
-<p>Marks a group as optional, so failure does not affect overall parsing.</p>
-<p><strong>Syntax:</strong></p>
-<pre><code class="language-wpl">opt(field1, field2)
+<p>All fields must match in order.</p>
+<h3 id="opt---optional-group"><a class="header" href="#opt---optional-group">opt - Optional Group</a></h3>
+<pre><code class="language-wpl">opt(chars:tag")
 </code></pre>
-<p><strong>Behavior:</strong></p>
+<p>The whole group may be absent without failing the rule.</p>
+<h3 id="alt---alternative-group"><a class="header" href="#alt---alternative-group">alt - Alternative Group</a></h3>
+<pre><code class="language-wpl">alt(ip:addr, chars:addr)
+</code></pre>
+<p>The first successful candidate wins.</p>
+<h3 id="some_of---repeated-candidate-matching"><a class="header" href="#some_of---repeated-candidate-matching">some_of - Repeated Candidate Matching</a></h3>
+<pre><code class="language-wpl">some_of(kvarr, ip, digit)
+</code></pre>
+<p>WPL keeps trying the candidates until none match anymore.</p>
+<h3 id="not---negative-assertion-group"><a class="header" href="#not---negative-assertion-group">not - Negative Assertion Group</a></h3>
+<pre><code class="language-wpl">not(peek_symbol(ERROR):check)
+</code></pre>
+<p>The group succeeds when the inner field does not match.</p>
+<h2 id="important-rules"><a class="header" href="#important-rules">Important Rules</a></h2>
 <ul>
-<li>Attempts to parse all fields</li>
-<li>Does not return an error on failure</li>
-<li>Returns parsed results on success, skips on failure</li>
+<li>Group operators are <code>seq</code>, <code>opt</code>, <code>alt</code>, <code>some_of</code>, and <code>not</code>.</li>
+<li>They operate at group level.</li>
+<li>Do not write nested groups such as <code>opt(alt(...))</code>.</li>
+<li>If one segment is optional, split it into its own group first.</li>
 </ul>
-<p><strong>Example:</strong></p>
-<pre><code class="language-wpl">opt(symbol([DEBUG]):level), chars:msg
+<p>Valid:</p>
+<pre><code class="language-wpl">(ip:client_ip, digit:status),
+opt(chars:tag")
 </code></pre>
-<h3 id="alt---alternative"><a class="header" href="#alt---alternative">alt - Alternative</a></h3>
-<p>Tries multiple parsing options, succeeding if any one succeeds.</p>
-<p><strong>Syntax:</strong></p>
-<pre><code class="language-wpl">alt(field1, field2, field3)
-</code></pre>
-<p><strong>Behavior:</strong></p>
-<ul>
-<li>Tries each field in sequence</li>
-<li>Uses the first successful field</li>
-<li>The group fails if all fields fail</li>
-</ul>
-<p><strong>Example:</strong></p>
-<pre><code class="language-wpl">alt(ip:addr, chars:addr)  # Try to parse as IP, fall back to string
-</code></pre>
-<h3 id="some_of---partial-match"><a class="header" href="#some_of---partial-match">some_of - Partial Match</a></h3>
-<p>Requires at least one field to succeed.</p>
-<p><strong>Syntax:</strong></p>
-<pre><code class="language-wpl">some_of(field1, field2, field3)
-</code></pre>
-<p><strong>Behavior:</strong></p>
-<ul>
-<li>Attempts to parse all fields</li>
-<li>Succeeds if at least one field succeeds</li>
-<li>The group fails if all fields fail</li>
-</ul>
-<p><strong>Example:</strong></p>
-<pre><code class="language-wpl">some_of(digit:port, chars:service)
-</code></pre>
-<h3 id="not---negative-assertion"><a class="header" href="#not---negative-assertion">not - Negative Assertion</a></h3>
-<p>Reverse logic: succeeds when the inner field fails to parse.</p>
-<p><strong>Syntax:</strong></p>
-<pre><code class="language-wpl">not(field)
-</code></pre>
-<p><strong>Behavior:</strong></p>
-<ul>
-<li>Attempts to parse the inner field</li>
-<li><code>not()</code> succeeds when the inner field fails</li>
-<li><code>not()</code> fails when the inner field succeeds</li>
-<li>Returns an <code>ignore</code> type field on success</li>
-</ul>
-<p><strong>Input Consumption:</strong></p>
-<ul>
-<li><code>not(symbol(...))</code> - Consumes input (symbol may consume whitespace on failure)</li>
-<li><code>not(peek_symbol(...))</code> - Does not consume input (peek_symbol never consumes)</li>
-</ul>
-<p><strong>Examples:</strong></p>
-<pre><code class="language-wpl"># Ensure ERROR keyword is not present
-not(symbol(ERROR):check)
-
-# Use with peek_symbol to avoid consuming input
-not(peek_symbol(ERROR):check), (chars:msg)
-</code></pre>
-<h2 id="use-cases"><a class="header" href="#use-cases">Use Cases</a></h2>
-<h3 id="1-conditional-parsing"><a class="header" href="#1-conditional-parsing">1. Conditional Parsing</a></h3>
-<pre><code class="language-wpl"># Parse optional debug information
-opt(symbol([DEBUG]):level), chars:msg
-</code></pre>
-<h3 id="2-format-compatibility"><a class="header" href="#2-format-compatibility">2. Format Compatibility</a></h3>
-<pre><code class="language-wpl"># Support multiple IP address formats
-alt(ip:addr, chars:addr)
-</code></pre>
-<h3 id="3-negative-filtering"><a class="header" href="#3-negative-filtering">3. Negative Filtering</a></h3>
-<pre><code class="language-wpl"># Process only non-error logs
-not(symbol(ERROR)), (chars:msg)
-</code></pre>
-<h3 id="4-lenient-matching"><a class="header" href="#4-lenient-matching">4. Lenient Matching</a></h3>
-<pre><code class="language-wpl"># Match at least port or service name
-some_of(digit:port, chars:service)
-</code></pre>
-<h2 id="combining-groups"><a class="header" href="#combining-groups">Combining Groups</a></h2>
-<p>Groups can be nested and combined to implement complex parsing logic:</p>
-<pre><code class="language-wpl"># Optional IP or domain
+<p>Invalid:</p>
+<pre><code class="language-wpl">(ip:client_ip, opt(chars:tag"))
 opt(alt(ip:addr, chars:domain))
-
-# Ensure not ERROR, then parse message
-not(peek_symbol(ERROR)), (alt(json, kv, chars):msg)
 </code></pre>
-<h2 id="important-notes"><a class="header" href="#important-notes">Important Notes</a></h2>
-<ol>
-<li>
-<p><strong>Groups cannot be nested inside other groups</strong></p>
-<pre><code class="language-wpl"># ❌ Wrong: nesting not supported
-(chars, (digit, chars))
-
-# ✓ Correct: use multiple parallel groups
-(chars), (digit, chars)
-</code></pre>
-</li>
-<li>
-<p><strong>not() can only contain a single field</strong></p>
-<pre><code class="language-wpl"># ✓ Correct
-not(symbol(ERROR):check)
-
-# ❌ Wrong
-not(symbol(ERROR), symbol(FATAL))
-</code></pre>
-</li>
-<li>
-<p><strong>Input consumption depends on the inner parser</strong></p>
+<h2 id="input-consumption"><a class="header" href="#input-consumption">Input Consumption</a></h2>
 <ul>
-<li>Using non-consuming parsers like <code>peek_symbol</code> enables lookahead assertions</li>
-<li>Using consuming parsers like <code>symbol</code>, <code>digit</code> will change the input position</li>
+<li><code>not(symbol(...))</code> may consume input depending on the inner parser behavior.</li>
+<li><code>not(peek_symbol(...))</code> is the safer lookahead form when you need non-consuming checks.</li>
 </ul>
-</li>
-</ol>
 
                     </main>
 

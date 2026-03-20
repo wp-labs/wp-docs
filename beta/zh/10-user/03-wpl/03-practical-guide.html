@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-13cbdaee.js";
+            window.path_to_searchindex_js = "../../searchindex-37cffb89.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e2dc8458.js"></script>
+        <script src="../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -208,14 +208,14 @@
 <tr><th>模式</th><th>语法</th><th>说明</th></tr>
 </thead>
 <tbody>
-<tr><td><strong>可选字段</strong></td><td><code>opt(type:name)</code></td><td>字段可能不存在</td></tr>
-<tr><td><strong>重复字段</strong></td><td><code>some_of(type:name)</code></td><td>匹配 1 到多个</td></tr>
+<tr><td><strong>可选分组</strong></td><td><code>opt(chars:tag)</code></td><td>某个分组可能不存在</td></tr>
+<tr><td><strong>重复候选分组</strong></td><td><code>some_of(kvarr, ip, digit)</code></td><td>尽可能多匹配</td></tr>
 <tr><td><strong>跳过字段</strong></td><td><code>_</code> 或 <code>n*_</code></td><td>跳过 1 个或 n 个字段</td></tr>
 <tr><td><strong>JSON 提取</strong></td><td><code>json(type@path:name)</code></td><td>提取 JSON 字段</td></tr>
 <tr><td><strong>KV 提取</strong></td><td><code>kvarr</code></td><td>解析键值对</td></tr>
 <tr><td><strong>Base64 解码</strong></td><td><code>|decode/base64|</code></td><td>预处理管道</td></tr>
-<tr><td><strong>字段验证</strong></td><td><code>type/check</code></td><td>验证字段值</td></tr>
-<tr><td><strong>择一匹配</strong></td><td><code>one_of(...)</code></td><td>多个模式选一个</td></tr>
+<tr><td><strong>字段验证</strong></td><td><code>|take(status)| digit_has(200)|</code></td><td>通过字段管道验证</td></tr>
+<tr><td><strong>择一匹配</strong></td><td><code>alt(ip:addr, chars:addr)</code></td><td>多个候选匹配一个</td></tr>
 </tbody>
 </table>
 </div>
@@ -252,12 +252,12 @@
     (
       ip:client_ip,
       2*_,
-      time/clf&lt;[,]&gt;:time,
-      http/request":request,
+      time/clf:time&lt;[,]&gt;,
+      http/request:request",
       http/status:status,
       digit:bytes,
-      chars":referer,
-      http/agent":user_agent
+      chars:referer",
+      http/agent:user_agent"
     )
   }
 }
@@ -316,8 +316,8 @@ response_time: 0.123
 <li><code>float</code> 解析浮点数（响应时间）</li>
 </ul>
 <hr>
-<h3 id="任务-13解析带-referer-为空的日志"><a class="header" href="#任务-13解析带-referer-为空的日志">任务 1.3：解析带 referer 为空的日志</a></h3>
-<p><strong>场景：</strong> referer 可能为 <code>-</code> 或空</p>
+<h3 id="任务-13解析-referer-为---的日志"><a class="header" href="#任务-13解析-referer-为---的日志">任务 1.3：解析 referer 为 <code>-</code> 的日志</a></h3>
+<p><strong>场景：</strong> referer 字段存在，但值可能为 <code>-</code></p>
 <p><strong>输入：</strong></p>
 <pre><code>192.168.1.1 [06/Aug/2019:12:12:19 +0800] "GET /index.html" 200 1024 "-"
 </code></pre>
@@ -326,11 +326,11 @@ response_time: 0.123
   rule access_log_optional {
     (
       ip:client_ip,
-      time/clf&lt;[,]&gt;:time,
-      http/request":request,
+      time/clf:time&lt;[,]&gt;,
+      http/request:request",
       http/status:status,
       digit:bytes,
-      opt(chars"):referer
+      chars:referer"
     )
   }
 }
@@ -345,8 +345,8 @@ referer: -
 </code></pre>
 <p><strong>要点：</strong></p>
 <ul>
-<li><code>opt(chars")</code> 将 referer 标记为可选字段</li>
-<li>即使 referer 解析失败，其他字段仍能正常提取</li>
+<li><code>chars:referer"</code> 可以正常读取 <code>"-"</code> 这种占位值</li>
+<li>如果某一整段真的可能缺失，应把它拆成独立分组再使用 <code>opt(...)</code></li>
 </ul>
 <hr>
 <h2 id="2-解析-json-数据"><a class="header" href="#2-解析-json-数据">2. 解析 JSON 数据</a></h2>
@@ -923,9 +923,9 @@ some_of(ip, digit, kvarr)
 <pre><code class="language-wpl"># 原规则（失败）
 (digit, time, chars, json)
 
-# 调试规则
-(digit, opt(time), opt(chars), opt(json))
-# 逐步确定哪个字段导致失败
+# 调试规则：把字段拆成多个分组，再单独套 opt(...)
+(digit), opt(time), opt(chars), opt(json)
+# 逐步确定哪个分组导致失败
 </code></pre>
 <hr>
 <h2 id="下一步"><a class="header" href="#下一步">下一步</a></h2>

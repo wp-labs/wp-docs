@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-13cbdaee.js";
+            window.path_to_searchindex_js = "../../searchindex-37cffb89.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e2dc8458.js"></script>
+        <script src="../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -206,6 +206,8 @@
 <tr><th>函数</th><th>说明</th><th>示例</th></tr>
 </thead>
 <tbody>
+<tr><td><a href="#calc"><code>calc(...)</code></a></td><td>执行显式算术表达式</td><td><code>score = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;</code></td></tr>
+<tr><td><a href="#lookup_nocase"><code>lookup_nocase(...)</code></a></td><td>对静态 object 做忽略大小写查表</td><td><code>score = lookup_nocase(status_score, read(status), 40.0) ;</code></td></tr>
 <tr><td><a href="#nowtime-1"><code>Now::time()</code></a></td><td>获取当前时间</td><td><code>event_time = Now::time() ;</code></td></tr>
 <tr><td><a href="#nowdate-1"><code>Now::date()</code></a></td><td>获取当前日期（YYYYMMDD）</td><td><code>today = Now::date() ;</code></td></tr>
 <tr><td><a href="#nowhour-1"><code>Now::hour()</code></a></td><td>获取当前小时（YYYYMMDDHH）</td><td><code>current_hour = Now::hour() ;</code></td></tr>
@@ -262,17 +264,82 @@
 <tr><td><strong>链式处理</strong></td><td><code>result = read(data) | to_json | base64_encode ;</code></td></tr>
 <tr><td><strong>字符串格式化</strong></td><td><code>msg = fmt("{}:{}", @ip, @port) ;</code></td></tr>
 <tr><td><strong>条件匹配</strong></td><td><code>level = match read(status) { ... } ;</code></td></tr>
+<tr><td><strong>忽略大小写多值匹配</strong></td><td><code>iequals_any('success', 'ok', 'done') =&gt; chars(good)</code></td></tr>
+<tr><td><strong>静态字典查表</strong></td><td><code>lookup_nocase(status_score, read(status), 40.0)</code></td></tr>
 <tr><td><strong>创建对象</strong></td><td><code>info : obj = object { ... } ;</code></td></tr>
 <tr><td><strong>创建数组</strong></td><td><code>items : array = collect read(keys:[...]) ;</code></td></tr>
 <tr><td><strong>提供默认值</strong></td><td><code>country = read(country) { _ : chars(CN) } ;</code></td></tr>
 <tr><td><strong>选择性读取</strong></td><td><code>id = read(option:[id, uid, user_id]) ;</code></td></tr>
 <tr><td><strong>批量收集</strong></td><td><code>metrics = collect read(keys:[cpu_*]) ;</code></td></tr>
+<tr><td><strong>算术计算</strong></td><td><code>risk = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;</code></td></tr>
 </tbody>
 </table>
 </div>
 <hr>
 <h2 id="内置函数-1"><a class="header" href="#内置函数-1">内置函数</a></h2>
 <p>内置函数可以直接在赋值表达式中使用，无需 <code>pipe</code> 关键字。</p>
+<h3 id="calc"><a class="header" href="#calc">calc(…)</a></h3>
+<p>执行显式算术表达式。</p>
+<p><strong>语法</strong>：</p>
+<pre><code class="language-oml">calc(&lt;expr&gt;)
+</code></pre>
+<p><strong>支持能力</strong>：</p>
+<ul>
+<li>运算符：<code>+ - * / %</code></li>
+<li>函数：<code>abs(...)</code>、<code>round(...)</code>、<code>floor(...)</code>、<code>ceil(...)</code></li>
+<li>操作数：数值字面量、<code>read(...)</code>、<code>take(...)</code>、<code>@field</code></li>
+</ul>
+<p><strong>返回类型</strong>：</p>
+<ul>
+<li><code>+ - *</code>：若存在浮点操作数则返回 <code>float</code>，否则返回 <code>digit</code></li>
+<li><code>/</code>：始终返回 <code>float</code></li>
+<li><code>%</code>：仅支持整数取模，返回 <code>digit</code></li>
+</ul>
+<p><strong>失败行为</strong>：</p>
+<ul>
+<li>除零、字段缺失、非数值输入、浮点 <code>%</code>、整数溢出、<code>NaN/inf</code> 都返回 <code>ignore</code></li>
+</ul>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-oml">risk_score : float = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;
+delta      : digit = calc(read(cur) - read(prev)) ;
+distance   : float = calc(abs(read(actual) - read(expect))) ;
+error_pct  : digit = calc(round((read(err_cnt) * 100) / read(total_cnt))) ;
+</code></pre>
+<hr>
+<h3 id="lookup_nocase"><a class="header" href="#lookup_nocase">lookup_nocase(…)</a></h3>
+<p>基于 <code>static</code> 中定义的 object 做忽略大小写查表。</p>
+<p><strong>语法</strong>：</p>
+<pre><code class="language-oml">lookup_nocase(&lt;dict_symbol&gt;, &lt;key_expr&gt;, &lt;default_expr&gt;)
+</code></pre>
+<p><strong>参数</strong>：</p>
+<ul>
+<li><code>dict_symbol</code>：<code>static</code> 中定义的 object 符号</li>
+<li><code>key_expr</code>：待查 key，通常是 <code>read(...)</code></li>
+<li><code>default_expr</code>：未命中时返回的默认值</li>
+</ul>
+<p><strong>查表规则</strong>：</p>
+<ul>
+<li>key 会先做 <code>trim + lowercase</code></li>
+<li>命中后返回字典中的对应值</li>
+<li>未命中或 key 不是字符串时，返回 <code>default_expr</code></li>
+</ul>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-oml">static {
+    status_score = object {
+        error = float(90.0);
+        warning = float(70.0);
+        success = float(20.0);
+    };
+}
+
+risk_score : float = lookup_nocase(status_score, read(status), 40.0) ;
+</code></pre>
+<p><strong>更多说明</strong>：</p>
+<ul>
+<li><code>iequals_any(...)</code> 详见 <a href="./functions/match_functions.html">functions/match_functions.md</a></li>
+<li><code>lookup_nocase(...)</code> 详见 <a href="./functions/lookup_nocase.html">functions/lookup_nocase.md</a></li>
+</ul>
+<hr>
 <h3 id="nowtime"><a class="header" href="#nowtime">Now::time()</a></h3>
 <p>获取当前时间。</p>
 <p><strong>语法</strong>：</p>

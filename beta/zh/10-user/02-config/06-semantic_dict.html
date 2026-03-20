@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-13cbdaee.js";
+            window.path_to_searchindex_js = "../../searchindex-37cffb89.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e2dc8458.js"></script>
+        <script src="../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -186,7 +186,7 @@
 <li><strong>系统内置词典</strong>：代码内置，涵盖日志分析的常用词汇</li>
 <li><strong>外部配置支持</strong>：可选，支持添加或替换内置词典</li>
 </ul>
-<p><strong>配置文件位置</strong>：<code>models/knowledge/semantic_dict.toml</code>（知识配置目录）</p>
+<p><strong>配置文件位置</strong>：<code>${models.knowledge}/semantic_dict.toml</code>（知识配置目录，默认 <code>models/knowledge/semantic_dict.toml</code>）</p>
 <h2 id="系统内置词典"><a class="header" href="#系统内置词典">系统内置词典</a></h2>
 <h3 id="内置词汇类别"><a class="header" href="#内置词汇类别">内置词汇类别</a></h3>
 <p>所有词典都内置在代码中（<code>semantic_dict_loader.rs</code>），包括：</p>
@@ -251,9 +251,12 @@
 </ol>
 <h2 id="外部配置可选"><a class="header" href="#外部配置可选">外部配置（可选）</a></h2>
 <h3 id="配置方式"><a class="header" href="#配置方式">配置方式</a></h3>
-<p>通过环境变量指定外部配置文件：</p>
-<pre><code class="language-bash">export SEMANTIC_DICT_CONFIG=/path/to/custom_semantic_dict.toml
-</code></pre>
+<p>默认读取以下路径（按顺序）：</p>
+<ul>
+<li><code>${models.knowledge}/semantic_dict.toml</code></li>
+<li><code>knowledge/semantic_dict.toml</code>（兼容旧布局）</li>
+</ul>
+<p>无需设置环境变量。</p>
 <h3 id="配置模式"><a class="header" href="#配置模式">配置模式</a></h3>
 <h4 id="1-add-模式默认"><a class="header" href="#1-add-模式默认">1. ADD 模式（默认）</a></h4>
 <p>将外部配置的词汇<strong>添加</strong>到系统内置词典：</p>
@@ -288,6 +291,9 @@ chinese = ["运行中", "等待中"]
 <h3 id="配置文件结构"><a class="header" href="#配置文件结构">配置文件结构</a></h3>
 <pre><code class="language-toml"># 版本号（必须）
 version = 1
+
+# 外部词典开关（可选，默认 true）
+enabled = true
 
 # 模式（可选，默认 "add"）
 mode = "add"  # 或 "replace"
@@ -330,7 +336,7 @@ chinese = ["迁移任务", "通知"]
 </code></pre>
 <h2 id="配置示例"><a class="header" href="#配置示例">配置示例</a></h2>
 <h3 id="示例-1扩展内置词典add-模式"><a class="header" href="#示例-1扩展内置词典add-模式">示例 1：扩展内置词典（ADD 模式）</a></h3>
-<p>文件：<code>models/knowledge/semantic_dict.toml</code></p>
+<p>文件：<code>${models.knowledge}/semantic_dict.toml</code></p>
 <pre><code class="language-toml">version = 1
 mode = "add"
 
@@ -345,8 +351,7 @@ english = ["calculate", "aggregate", "transform"]
 chinese = ["计算", "聚合", "转换"]
 </code></pre>
 <p>使用：</p>
-<pre><code class="language-bash">export SEMANTIC_DICT_CONFIG=models/knowledge/semantic_dict.toml
-./wp-engine
+<pre><code class="language-bash">./wp-engine
 </code></pre>
 <h3 id="示例-2kubernetes-专用词典replace-模式"><a class="header" href="#示例-2kubernetes-专用词典replace-模式">示例 2：Kubernetes 专用词典（REPLACE 模式）</a></h3>
 <p>文件：<code>k8s_semantic_dict.toml</code></p>
@@ -417,23 +422,20 @@ chinese = ["自定义状态1"]
 </ul>
 <h3 id="2-版本控制"><a class="header" href="#2-版本控制">2. 版本控制</a></h3>
 <p>将配置文件纳入版本控制：</p>
-<pre><code class="language-bash">git add models/knowledge/semantic_dict.toml
+<pre><code class="language-bash">git add ${models.knowledge}/semantic_dict.toml
 git commit -m "Add custom semantic dictionary for production"
 </code></pre>
 <h3 id="3-环境分离"><a class="header" href="#3-环境分离">3. 环境分离</a></h3>
-<p>为不同环境使用不同配置：</p>
+<p>为不同环境准备不同文件，在启动前拷贝到默认路径：</p>
 <pre><code class="language-bash"># 开发环境
-export SEMANTIC_DICT_CONFIG=models/knowledge/dev_semantic_dict.toml
+cp ${models.knowledge}/dev_semantic_dict.toml ${models.knowledge}/semantic_dict.toml
 
 # 生产环境
-export SEMANTIC_DICT_CONFIG=models/knowledge/prod_semantic_dict.toml
+cp ${models.knowledge}/prod_semantic_dict.toml ${models.knowledge}/semantic_dict.toml
 </code></pre>
 <h3 id="4-配置验证"><a class="header" href="#4-配置验证">4. 配置验证</a></h3>
 <p>测试配置是否正确加载：</p>
-<pre><code class="language-bash"># 设置配置
-export SEMANTIC_DICT_CONFIG=/path/to/config.toml
-
-# 运行测试
+<pre><code class="language-bash"># 运行测试
 cargo test -p wp-oml test_extract_main_word -- --nocapture
 </code></pre>
 <h2 id="故障排查"><a class="header" href="#故障排查">故障排查</a></h2>
@@ -449,21 +451,20 @@ cargo test -p wp-oml test_extract_main_word -- --nocapture
 </ol>
 <p><strong>解决方法：</strong></p>
 <pre><code class="language-bash"># 检查文件是否存在
-ls -l $SEMANTIC_DICT_CONFIG
+ls -l ${models.knowledge}/semantic_dict.toml
 
 # 验证 TOML 格式
-cat $SEMANTIC_DICT_CONFIG
+cat ${models.knowledge}/semantic_dict.toml
 
 # 检查版本号
-grep "version" $SEMANTIC_DICT_CONFIG
+grep "version" ${models.knowledge}/semantic_dict.toml
 </code></pre>
 <h3 id="词汇未生效"><a class="header" href="#词汇未生效">词汇未生效</a></h3>
 <p><strong>检查步骤：</strong></p>
 <ol>
 <li>
-<p>确认环境变量已设置：</p>
-<pre><code class="language-bash">echo $SEMANTIC_DICT_CONFIG
-</code></pre>
+<p>确认默认路径配置存在且已启用：
+<code>${models.knowledge}/semantic_dict.toml</code> 中 <code>enabled = true</code></p>
 </li>
 <li>
 <p>确认模式正确：</p>

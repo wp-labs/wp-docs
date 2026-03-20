@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-c41ccb19.js";
+            window.path_to_searchindex_js = "../../searchindex-bab637e3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-6cff5523.js"></script>
+        <script src="../../toc-6f276faf.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -187,6 +187,7 @@ robust  = "normal"           # debug|normal|strict
 [models]
 wpl     = "./models/wpl"
 oml     = "./models/oml"
+knowledge = "./models/knowledge"
 
 [topology]
 sources = "./topology/sources"
@@ -220,6 +221,12 @@ target = "*"
 key    = "sink_stat"
 target = "*"
 </code></pre>
+<p>Notes:</p>
+<ul>
+<li><code>[models].knowledge</code> is the root directory for knowledge-related config, defaulting to <code>./models/knowledge</code></li>
+<li><code>semantic_dict.toml</code> is loaded from <code>${models.knowledge}/semantic_dict.toml</code> by default</li>
+<li><code>knowdb.toml</code> is loaded from <code>${models.knowledge}/knowdb.toml</code> by default</li>
+</ul>
 
                     </main>
 

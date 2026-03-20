@@ -1,0 +1,633 @@
+<!DOCTYPE HTML>
+<html lang="en" class="ayu sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>OML Match Expression Function Matching - Warp Parse Documentation [BETA]</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../../../../theme/lang-switch.css">
+        <link rel="stylesheet" href="../../../../theme/version-badge.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../../../";
+            const default_light_theme = "ayu";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "../../../searchindex-bab637e3.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../../../toc-6f276faf.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../../../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Warp Parse Documentation [BETA]</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+                        <a href="https://github.com/wp-labs/warp-parse" title="Git repository" aria-label="Git repository">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="oml-match-expression-function-matching"><a class="header" href="#oml-match-expression-function-matching">OML Match Expression Function Matching</a></h1>
+<p>This document describes the function matching capabilities in OML <code>match</code> expressions.</p>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>Since version 1.13.4, OML’s <code>match</code> expression supports function-based pattern matching, providing more flexible matching than simple value comparisons.</p>
+<h3 id="basic-syntax"><a class="header" href="#basic-syntax">Basic Syntax</a></h3>
+<pre><code class="language-oml">field_name = match read(source_field) {
+    function_name(arguments) =&gt; result_value,
+    _ =&gt; default_value,
+};
+</code></pre>
+<h3 id="difference-from-pipe-functions"><a class="header" href="#difference-from-pipe-functions">Difference from Pipe Functions</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Feature</th><th>Match Functions</th><th>Pipe Functions</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Purpose</strong></td><td>Multi-branch conditional evaluation</td><td>Binary filtering (keep/discard)</td></tr>
+<tr><td><strong>Return</strong></td><td>Returns different values based on conditions</td><td>Match returns original value, non-match returns ignore</td></tr>
+<tr><td><strong>Scenario</strong></td><td>Classification, routing, decision-making</td><td>Filtering, data cleaning</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Comparison Example</strong>:</p>
+<pre><code class="language-oml"># Match: classify by prefix into different results
+EventType = match read(log) {
+    starts_with('[ERROR]') =&gt; chars(error),
+    starts_with('[WARN]') =&gt; chars(warning),
+    starts_with('[INFO]') =&gt; chars(info),
+    _ =&gt; chars(other),
+};
+
+# Pipe: filter ERROR logs, others become ignore
+ErrorLog = pipe take(log) | starts_with('[ERROR]');
+</code></pre>
+<h2 id="supported-functions"><a class="header" href="#supported-functions">Supported Functions</a></h2>
+<h3 id="string-matching-functions"><a class="header" href="#string-matching-functions">String Matching Functions</a></h3>
+<h4 id="starts_withprefix"><a class="header" href="#starts_withprefix">starts_with(prefix)</a></h4>
+<p>Checks if the field value starts with the specified prefix.</p>
+<p><strong>Syntax</strong>: <code>starts_with('prefix')</code></p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>prefix</code>: String, the prefix to match (quotes required)</li>
+</ul>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>Field value starts with the specified prefix -&gt; match succeeds</li>
+<li>Field value does not start with the specified prefix -&gt; match fails</li>
+<li>Field is not a string type -&gt; match fails</li>
+<li>Case-sensitive</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">EventType = match read(log_line) {
+    starts_with('[ERROR]') =&gt; chars(error),
+    starts_with('[WARN]') =&gt; chars(warning),
+    _ =&gt; chars(info),
+};
+</code></pre>
+<h4 id="ends_withsuffix"><a class="header" href="#ends_withsuffix">ends_with(suffix)</a></h4>
+<p>Checks if the field value ends with the specified suffix.</p>
+<p><strong>Syntax</strong>: <code>ends_with('suffix')</code></p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>suffix</code>: String, the suffix to match (quotes required)</li>
+</ul>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>Field value ends with the specified suffix -&gt; match succeeds</li>
+<li>Field value does not end with the specified suffix -&gt; match fails</li>
+<li>Field is not a string type -&gt; match fails</li>
+<li>Case-sensitive</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">FileType = match read(filename) {
+    ends_with('.json') =&gt; chars(json),
+    ends_with('.xml') =&gt; chars(xml),
+    ends_with('.log') =&gt; chars(log),
+    _ =&gt; chars(unknown),
+};
+</code></pre>
+<h4 id="containssubstring"><a class="header" href="#containssubstring">contains(substring)</a></h4>
+<p>Checks if the field value contains the specified substring.</p>
+<p><strong>Syntax</strong>: <code>contains('substring')</code></p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>substring</code>: String, the substring to match (quotes required)</li>
+</ul>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>Field value contains the specified substring -&gt; match succeeds</li>
+<li>Field value does not contain the specified substring -&gt; match fails</li>
+<li>Field is not a string type -&gt; match fails</li>
+<li>Case-sensitive</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">ErrorType = match read(message) {
+    contains('exception') =&gt; chars(exception),
+    contains('timeout') =&gt; chars(timeout),
+    contains('failed') =&gt; chars(failure),
+    _ =&gt; chars(normal),
+};
+</code></pre>
+<h4 id="regex_matchpattern"><a class="header" href="#regex_matchpattern">regex_match(pattern)</a></h4>
+<p>Matches the field value against a regular expression.</p>
+<p><strong>Syntax</strong>: <code>regex_match('pattern')</code></p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>pattern</code>: String, the regex pattern (quotes required)</li>
+</ul>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>Field value matches the regex -&gt; match succeeds</li>
+<li>Field value does not match the regex -&gt; match fails</li>
+<li>Invalid regex syntax -&gt; match fails with a warning logged</li>
+<li>Field is not a string type -&gt; match fails</li>
+</ul>
+<p><strong>Note</strong>: Uses standard Rust regex syntax</p>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">EventPattern = match read(log_message) {
+    regex_match('^\[\d{4}-\d{2}-\d{2}') =&gt; chars(timestamped),
+    regex_match('^ERROR:.*timeout') =&gt; chars(error_timeout),
+    regex_match('^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}') =&gt; chars(ip_address),
+    _ =&gt; chars(unmatched),
+};
+</code></pre>
+<h4 id="is_empty"><a class="header" href="#is_empty">is_empty()</a></h4>
+<p>Checks if the field value is an empty string.</p>
+<p><strong>Syntax</strong>: <code>is_empty()</code></p>
+<p><strong>Parameters</strong>: None</p>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>Field value is an empty string -&gt; match succeeds</li>
+<li>Field value is non-empty -&gt; match fails</li>
+<li>Field is not a string type -&gt; match fails</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">Status = match read(field_value) {
+    is_empty() =&gt; chars(missing),
+    _ =&gt; chars(present),
+};
+</code></pre>
+<h4 id="iequalsvalue"><a class="header" href="#iequalsvalue">iequals(value)</a></h4>
+<p>Case-insensitive comparison of the field value.</p>
+<p><strong>Syntax</strong>: <code>iequals('value')</code></p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>value</code>: String, the value to compare (quotes required)</li>
+</ul>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>Field value equals the parameter value (case-insensitive) -&gt; match succeeds</li>
+<li>Field value does not equal the parameter value -&gt; match fails</li>
+<li>Field is not a string type -&gt; match fails</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">NormalizedStatus = match read(status) {
+    iequals('success') =&gt; chars(ok),
+    iequals('error') =&gt; chars(fail),
+    iequals('warning') =&gt; chars(warn),
+    _ =&gt; chars(unknown),
+};
+</code></pre>
+<h4 id="iequals_anyvalue1-value2-"><a class="header" href="#iequals_anyvalue1-value2-">iequals_any(value1, value2, …)</a></h4>
+<p>Performs case-insensitive comparison against multiple candidates and matches if any candidate matches.</p>
+<p><strong>Syntax</strong>: <code>iequals_any('success', 'ok', 'done')</code></p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>value1, value2, ...</code>: one or more string candidates (must be quoted)</li>
+</ul>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>Field value equals any candidate ignoring case -&gt; match succeeds</li>
+<li>No candidate matches -&gt; match fails</li>
+<li>Field is not a string type -&gt; match fails</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">StatusClass = match read(status) {
+    iequals_any('success', 'ok', 'done') =&gt; chars(good),
+    iequals_any('error', 'failed', 'timeout') =&gt; chars(bad),
+    _ =&gt; chars(other),
+};
+</code></pre>
+<h3 id="numeric-comparison-functions"><a class="header" href="#numeric-comparison-functions">Numeric Comparison Functions</a></h3>
+<h4 id="gtvalue"><a class="header" href="#gtvalue">gt(value)</a></h4>
+<p>Checks if the field value is greater than the specified value.</p>
+<p><strong>Syntax</strong>: <code>gt(100)</code> (numeric parameters do not need quotes)</p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>value</code>: Numeric, the threshold for comparison</li>
+</ul>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>Field value &gt; parameter value -&gt; match succeeds</li>
+<li>Field value &lt;= parameter value -&gt; match fails</li>
+<li>Field is not a numeric type -&gt; match fails</li>
+<li>Supports integers (digit) and floats (float)</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">Level = match read(count) {
+    gt(1000) =&gt; chars(critical),
+    gt(500) =&gt; chars(high),
+    gt(100) =&gt; chars(medium),
+    _ =&gt; chars(low),
+};
+</code></pre>
+<h4 id="ltvalue"><a class="header" href="#ltvalue">lt(value)</a></h4>
+<p>Checks if the field value is less than the specified value.</p>
+<p><strong>Syntax</strong>: <code>lt(60)</code> (numeric parameters do not need quotes)</p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>value</code>: Numeric, the threshold for comparison</li>
+</ul>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>Field value &lt; parameter value -&gt; match succeeds</li>
+<li>Field value &gt;= parameter value -&gt; match fails</li>
+<li>Field is not a numeric type -&gt; match fails</li>
+<li>Supports integers and floats</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">Grade = match read(score) {
+    lt(60) =&gt; chars(fail),
+    lt(70) =&gt; chars(pass),
+    lt(85) =&gt; chars(good),
+    _ =&gt; chars(excellent),
+};
+</code></pre>
+<h4 id="eqvalue"><a class="header" href="#eqvalue">eq(value)</a></h4>
+<p>Checks if the field value equals the specified numeric value.</p>
+<p><strong>Syntax</strong>: <code>eq(5)</code> (numeric parameters do not need quotes)</p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>value</code>: Numeric, the target value for comparison</li>
+</ul>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>Field value equals parameter value -&gt; match succeeds (float comparison tolerance 1e-10)</li>
+<li>Field value does not equal parameter value -&gt; match fails</li>
+<li>Field is not a numeric type -&gt; match fails</li>
+<li>Supports integers and floats</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">Status = match read(level) {
+    eq(0) =&gt; chars(disabled),
+    eq(5) =&gt; chars(max_level),
+    eq(1) =&gt; chars(minimum),
+    _ =&gt; chars(normal),
+};
+</code></pre>
+<h4 id="in_rangemin-max"><a class="header" href="#in_rangemin-max">in_range(min, max)</a></h4>
+<p>Checks if the field value is within the specified range.</p>
+<p><strong>Syntax</strong>: <code>in_range(20, 30)</code> (numeric parameters do not need quotes)</p>
+<p><strong>Parameters</strong>:</p>
+<ul>
+<li><code>min</code>: Numeric, the minimum value of the range</li>
+<li><code>max</code>: Numeric, the maximum value of the range</li>
+</ul>
+<p><strong>Matching Rules</strong>:</p>
+<ul>
+<li>min &lt;= field value &lt;= max -&gt; match succeeds</li>
+<li>Field value &lt; min or field value &gt; max -&gt; match fails</li>
+<li>Field is not a numeric type -&gt; match fails</li>
+<li>Supports integers and floats</li>
+<li>Uses closed interval [min, max]</li>
+</ul>
+<p><strong>Example</strong>:</p>
+<pre><code class="language-oml">TempZone = match read(temperature) {
+    lt(0) =&gt; chars(freezing),
+    in_range(0, 10) =&gt; chars(cold),
+    in_range(10, 20) =&gt; chars(cool),
+    in_range(20, 30) =&gt; chars(comfortable),
+    gt(30) =&gt; chars(warm),
+    _ =&gt; chars(unknown),
+};
+</code></pre>
+<h2 id="or-condition-syntax"><a class="header" href="#or-condition-syntax">OR Condition Syntax</a></h2>
+<h3 id="single-source-or-matching"><a class="header" href="#single-source-or-matching">Single-source OR Matching</a></h3>
+<p>Use <code>|</code> to separate multiple alternative conditions within a single branch. Any match succeeds:</p>
+<pre><code class="language-oml">tier = match read(city) {
+    chars(bj) | chars(sh) | chars(gz) =&gt; chars(tier1),
+    chars(cd) | chars(wh) =&gt; chars(tier2),
+    _ =&gt; chars(other),
+};
+</code></pre>
+<p>OR syntax also works with function matching:</p>
+<pre><code class="language-oml">EventType = match read(log_line) {
+    starts_with('[ERROR]') | starts_with('[FATAL]') =&gt; chars(critical),
+    starts_with('[WARN]') =&gt; chars(warning),
+    _ =&gt; chars(info),
+};
+</code></pre>
+<h3 id="multi-source--or-matching"><a class="header" href="#multi-source--or-matching">Multi-source + OR Matching</a></h3>
+<p>Each condition position in a multi-source match supports OR syntax:</p>
+<pre><code class="language-oml">priority = match (read(city), read(level)) {
+    (chars(bj) | chars(sh), chars(high)) =&gt; chars(priority),
+    (chars(gz), chars(low) | chars(mid)) =&gt; chars(normal),
+    _ =&gt; chars(default),
+};
+</code></pre>
+<h2 id="notes"><a class="header" href="#notes">Notes</a></h2>
+<h3 id="1-parameter-quoting-rules"><a class="header" href="#1-parameter-quoting-rules">1. Parameter Quoting Rules</a></h3>
+<pre><code class="language-oml"># String parameters require quotes
+starts_with('prefix')
+iequals('value')
+
+# Numeric parameters do not need quotes
+gt(100)
+eq(5)
+in_range(20, 30)
+
+# Incorrect examples
+starts_with(prefix)   # missing quotes
+gt('100')             # should not have quotes
+</code></pre>
+<h3 id="2-case-sensitivity"><a class="header" href="#2-case-sensitivity">2. Case Sensitivity</a></h3>
+<pre><code class="language-oml"># Most string functions are case-sensitive
+starts_with('ERROR')  # will not match 'error:'
+
+# Use iequals for case-insensitive matching
+iequals('success')    # matches 'SUCCESS', 'Success', 'success'
+</code></pre>
+<h3 id="3-match-order"><a class="header" href="#3-match-order">3. Match Order</a></h3>
+<pre><code class="language-oml"># match evaluates top to bottom, first matching branch is executed
+Grade = match read(score) {
+    gt(90) =&gt; chars(A),        # check &gt; 90 first
+    gt(80) =&gt; chars(B),        # then &gt; 80
+    gt(70) =&gt; chars(C),        # then &gt; 70
+    _ =&gt; chars(F),
+};
+
+# If score = 95, only the first branch (A) matches
+</code></pre>
+<h2 id="best-practices"><a class="header" href="#best-practices">Best Practices</a></h2>
+<h3 id="1-prefer-simple-functions"><a class="header" href="#1-prefer-simple-functions">1. Prefer Simple Functions</a></h3>
+<pre><code class="language-oml"># Recommended: use simple starts_with
+match read(url) {
+    starts_with('https://') =&gt; chars(secure),
+    _ =&gt; chars(insecure),
+}
+
+# Avoid: unnecessary regex
+match read(url) {
+    regex_match('^https://') =&gt; chars(secure),  # worse performance
+    _ =&gt; chars(insecure),
+}
+</code></pre>
+<h3 id="2-organize-match-order-properly"><a class="header" href="#2-organize-match-order-properly">2. Organize Match Order Properly</a></h3>
+<pre><code class="language-oml"># Recommended: from specific to general
+match read(log) {
+    starts_with('[ERROR]') =&gt; chars(error),     # most specific
+    starts_with('[WARN]') =&gt; chars(warning),
+    contains('exception') =&gt; chars(exception),   # broader
+    _ =&gt; chars(other),                          # default
+}
+</code></pre>
+<h3 id="3-use-iequals-for-user-input"><a class="header" href="#3-use-iequals-for-user-input">3. Use iequals for User Input</a></h3>
+<pre><code class="language-oml"># Recommended: use iequals for case-uncertain input
+Status = match read(user_input) {
+    iequals('yes') =&gt; chars(confirmed),
+    iequals('no') =&gt; chars(rejected),
+    _ =&gt; chars(invalid),
+};
+</code></pre>
+<h2 id="version-history"><a class="header" href="#version-history">Version History</a></h2>
+<ul>
+<li>
+<p><strong>1.16.3</strong> (Unreleased)</p>
+<ul>
+<li>Added OR condition syntax: <code>cond1 | cond2 | ...</code>, express alternative conditions within a single branch</li>
+<li>Multi-source match supports any number of source fields (no longer limited to 2/3/4)</li>
+<li>Multi-source match condition positions support OR syntax</li>
+</ul>
+</li>
+<li>
+<p><strong>1.19.1</strong> (2026-03-12)</p>
+<ul>
+<li>Added <code>iequals_any(...)</code> for case-insensitive multi-candidate matching</li>
+</ul>
+</li>
+<li>
+<p><strong>1.13.4</strong> (2026-02-04)</p>
+<ul>
+<li>Added match expression function matching support</li>
+<li>String matching: <code>starts_with</code>, <code>ends_with</code>, <code>contains</code>, <code>regex_match</code>, <code>is_empty</code>, <code>iequals</code></li>
+<li>Numeric comparison: <code>gt</code>, <code>lt</code>, <code>eq</code>, <code>in_range</code></li>
+</ul>
+</li>
+</ul>
+<hr>
+<p><strong>Tip</strong>: Match functions are for multi-branch conditional evaluation, while Pipe functions are for binary filtering. Choose the appropriate function type based on your scenario for cleaner code.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../../10-user/04-oml/functions/extract_subject_object.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../../../10-user/04-oml/functions/pipe_functions.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../../10-user/04-oml/functions/extract_subject_object.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../../../10-user/04-oml/functions/pipe_functions.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../../mark-09e88c2c.min.js"></script>
+        <script src="../../../searcher-c2a407aa.js"></script>
+
+        <script src="../../../clipboard-1626706a.min.js"></script>
+        <script src="../../../highlight-abc7f01d.js"></script>
+        <script src="../../../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="../../../../theme/lang-switch.js"></script>
+        <script src="../../../../theme/version-badge.js"></script>
+        <script src="../../../mermaid-eefea253.min.js"></script>
+        <script src="../../../mermaid-init-ccf746f1.js"></script>
+
+
+
+    </div>
+    </body>
+</html>

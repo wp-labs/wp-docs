@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-13cbdaee.js";
+            window.path_to_searchindex_js = "../../searchindex-37cffb89.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e2dc8458.js"></script>
+        <script src="../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -180,7 +180,7 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="wpl-规则语言"><a class="header" href="#wpl-规则语言">WPL 规则语言</a></h1>
-<p>WPL (Warp Processing Language) 是 Warp Parse 解析子系统（warp-parse）使用的规则语言，用于描述字段抽取、协议解析与简单判定逻辑。</p>
+<p>WPL (Warp Processing Language) 是 <code>wp-lang</code> 使用的规则语言，用于描述字段抽取、协议解析与简单判定逻辑。</p>
 <hr>
 <h2 id="-文档导航"><a class="header" href="#-文档导航">📚 文档导航</a></h2>
 <h3 id="按学习路径"><a class="header" href="#按学习路径">按学习路径</a></h3>
@@ -188,7 +188,7 @@
    ↓
 01-quickstart.md ────→ 5分钟上手，复制即用
    ↓
-07-complete-types-examplemd ──→ 🌟 完整功能演示（强烈推荐）
+07-complete-types-example.md ──→ 🌟 完整功能演示（强烈推荐）
    ↓
 02-core-concepts.md ──→ 理解设计理念和核心概念
    ↓
@@ -259,8 +259,8 @@
     (
       ip:client_ip,
       2*_,
-      time/clf&lt;[,]&gt;:time,
-      http/request":request,
+      time/clf:time&lt;[,]&gt;,
+      http/request:request",
       digit:status,
       digit:bytes
     )
@@ -287,7 +287,6 @@
       time:timestamp,
       sn:serial,
       chars:type\:,
-      opt(kvarr),
       kvarr
     )
   }
@@ -339,7 +338,7 @@ A: 参考 <a href="./01-quickstart.html#快速调试技巧">01-quickstart.md § 
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../10-user/02-config/08-logging.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../10-user/02-config/08-variables_and_sec_key.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
@@ -353,7 +352,7 @@ A: 参考 <a href="./01-quickstart.html#快速调试技巧">01-quickstart.md § 
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../10-user/02-config/08-logging.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../10-user/02-config/08-variables_and_sec_key.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 

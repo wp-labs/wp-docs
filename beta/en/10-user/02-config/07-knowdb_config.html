@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-c41ccb19.js";
+            window.path_to_searchindex_js = "../../searchindex-bab637e3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-6cff5523.js"></script>
+        <script src="../../toc-6f276faf.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -191,8 +191,8 @@
 <li>Security: Runtime only allows access to table names declared in configuration; SQL only supports {table} placeholder</li>
 <li>Ready to use by default: Most fields can be omitted; built-in defaults and auto-detection satisfy common scenarios</li>
 </ul>
-<p>Directory Layout (Recommended)</p>
-<pre><code>models/knowledge/
+<p>Directory Layout (Recommended, default under <code>${models.knowledge}</code>)</p>
+<pre><code>${models.knowledge}/
   knowdb.toml                     # This configuration
   example/
     create.sql
@@ -203,12 +203,12 @@
     insert.sql
     data.csv
 </code></pre>
-<p>Top-level Configuration (models/knowledge/knowdb.toml)</p>
+<p>Top-level Configuration (<code>${models.knowledge}/knowdb.toml</code>)</p>
 <pre><code class="language-toml">version = 2
 
 [[tables]]
 name = "example"
-# dir defaults to name when omitted; this example uses directory models/knowledge/example
+# dir defaults to name when omitted; this example uses directory ${models.knowledge}/example
 # data_file defaults to data.csv in table directory when omitted
 columns.by_header = ["name", "pinying"]
 
@@ -250,7 +250,7 @@ columns.by_header = ["name", "pinying"]
 <ol>
 <li>Directory</li>
 </ol>
-<pre><code>models/knowledge/knowdb.toml
+<pre><code>${models.knowledge}/knowdb.toml
 models/knowledge/example/{create.sql, insert.sql, data.csv}
 </code></pre>
 <ol start="2">

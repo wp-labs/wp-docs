@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-13cbdaee.js";
+            window.path_to_searchindex_js = "../../searchindex-37cffb89.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e2dc8458.js"></script>
+        <script src="../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -191,8 +191,8 @@
 <li>安全：运行期只允许访问配置里声明过的表名；SQL 仅支持 {table} 占位符</li>
 <li>默认可用：多数字段可省略，内置默认值与自动探测能满足常见场景</li>
 </ul>
-<p>目录布局（推荐）</p>
-<pre><code>models/knowledge/
+<p>目录布局（推荐，默认位于 <code>${models.knowledge}</code>）</p>
+<pre><code>${models.knowledge}/
   knowdb.toml                     # 本配置
   example/
     create.sql
@@ -203,12 +203,12 @@
     insert.sql
     data.csv
 </code></pre>
-<p>顶层配置（models/knowledge/knowdb.toml）</p>
+<p>顶层配置（<code>${models.knowledge}/knowdb.toml</code>）</p>
 <pre><code class="language-toml">version = 2
 
 [[tables]]
 name = "example"
-# dir 省略时等于 name；此示例即使用目录 models/knowledge/example
+# dir 省略时等于 name；此示例即使用目录 ${models.knowledge}/example
 # data_file 省略时使用表目录下的 data.csv
 columns.by_header = ["name", "pinying"]
 
@@ -250,7 +250,7 @@ columns.by_header = ["name", "pinying"]
 <ol>
 <li>目录</li>
 </ol>
-<pre><code>models/knowledge/knowdb.toml
+<pre><code>${models.knowledge}/knowdb.toml
 models/knowledge/example/{create.sql, insert.sql, data.csv}
 </code></pre>
 <ol start="2">

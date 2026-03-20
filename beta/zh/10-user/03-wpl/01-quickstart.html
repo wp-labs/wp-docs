@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-13cbdaee.js";
+            window.path_to_searchindex_js = "../../searchindex-37cffb89.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e2dc8458.js"></script>
+        <script src="../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -249,8 +249,8 @@
     (
       ip:client_ip,
       2*_,
-      time/clf&lt;[,]&gt;:time,
-      http/request":request,
+      time/clf:time&lt;[,]&gt;,
+      http/request:request",
       digit:status,
       digit:bytes
     )
@@ -405,9 +405,9 @@ http/agent":ua         # "Mozilla/5.0..."
 # 字段级分隔符（优先级更高）
 digit\,, ip\;, chars\s
 </code></pre>
-<h3 id="可选字段"><a class="header" href="#可选字段">可选字段</a></h3>
-<pre><code class="language-wpl">opt(chars)             # 可选字段
-(digit, opt(chars), time)
+<h3 id="可选分组"><a class="header" href="#可选分组">可选分组</a></h3>
+<pre><code class="language-wpl">opt(chars:tag)         # 单字段可选分组
+(digit, time), opt(chars:tag)
 </code></pre>
 <h3 id="base64-解码"><a class="header" href="#base64-解码">Base64 解码</a></h3>
 <pre><code class="language-wpl">|decode/base64|
@@ -429,9 +429,9 @@ digit\,, ip\;, chars\s
 (digit:status, ip:client, json(chars@name))
 </code></pre>
 <h3 id="2-使用-opt-定位问题"><a class="header" href="#2-使用-opt-定位问题">2. 使用 opt() 定位问题</a></h3>
-<pre><code class="language-wpl"># 如果某个字段导致失败，用 opt 包裹
-(digit, opt(ip), time, chars)
-# 如果 ip 解析失败，其他字段仍然可以解析
+<pre><code class="language-wpl"># 如果某个部分导致失败，把它拆成独立分组再用 opt 包裹
+(digit), opt(ip), (time, chars)
+# 如果 ip 解析失败，其他分组仍然可以继续定位问题
 </code></pre>
 <h3 id="3-检查分隔符"><a class="header" href="#3-检查分隔符">3. 检查分隔符</a></h3>
 <p>打印原始数据，确认字段间的分隔符：</p>
@@ -484,7 +484,7 @@ digit\,, ip\;, chars\s
 <pre><code class="language-wpl">package practice {
   rule custom_log {
     (
-      time&lt;[,]&gt;:timestamp,
+      time:timestamp&lt;[,]&gt;,
       _,
       ip:client,
       kvarr

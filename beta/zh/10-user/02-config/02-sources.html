@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-13cbdaee.js";
+            window.path_to_searchindex_js = "../../searchindex-37cffb89.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e2dc8458.js"></script>
+        <script src="../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -222,6 +222,23 @@ params = {                 # 参数覆写（可选）
     # 覆写连接器参数
 }
 </code></pre>
+<h3 id="变量化示例"><a class="header" href="#变量化示例">变量化示例</a></h3>
+<pre><code class="language-toml">[[sources]]
+key = "access_${ENV}"
+connect = "file_src_${ENV}"
+tags = ["env:${ENV}", "team:${TEAM}"]
+params = {
+    base = "${WORK_ROOT}/logs",
+    file = "${ACCESS_FILE}",
+    encode = "text"
+}
+</code></pre>
+<p>说明：</p>
+<ul>
+<li><code>key</code>、<code>connect</code>、<code>tags</code> 以及 <code>params</code> 中的字符串字段，都适合做 <code>${VAR}</code> 变量化</li>
+<li>若值属于密码、Token、连接串等敏感信息，建议放入 <code>SEC_</code> 变量，而不是直接写明文</li>
+<li>变量来源与 <code>sec_key.toml</code> 约定见：<a href="08-variables_and_sec_key.html">配置变量与安全字典（<code>${VAR}</code> / <code>sec_key.toml</code>）</a></li>
+</ul>
 <h2 id="配置示例"><a class="header" href="#配置示例">配置示例</a></h2>
 <h3 id="最小示例"><a class="header" href="#最小示例">最小示例</a></h3>
 <pre><code class="language-toml">[[sources]]

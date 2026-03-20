@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-13cbdaee.js";
+            window.path_to_searchindex_js = "../../searchindex-37cffb89.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e2dc8458.js"></script>
+        <script src="../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -197,9 +197,11 @@
 <tr><td><a href="#求值表达式">求值表达式</a></td><td>表达式类型、值表达式、函数调用等</td></tr>
 <tr><td><a href="#高级表达式">高级表达式</a></td><td>格式化字符串、管道、match、聚合</td></tr>
 <tr><td><a href="#sql-表达式">SQL 表达式</a></td><td>SQL 查询语法</td></tr>
+<tr><td><a href="#静态绑定">静态绑定</a></td><td>static 常量定义与引用</td></tr>
+<tr><td><a href="#临时字段">临时字段</a></td><td><code>__</code> 前缀中间字段</td></tr>
 <tr><td><a href="#隐私段">隐私段</a></td><td>数据脱敏语法</td></tr>
 <tr><td><a href="#词法与约定">词法与约定</a></td><td>标识符、字面量、注释</td></tr>
-<tr><td><a href="#数据类型">数据类型</a></td><td>8 种数据类型</td></tr>
+<tr><td><a href="#数据类型">数据类型</a></td><td>数据类型</td></tr>
 <tr><td><a href="#完整示例">完整示例</a></td><td>综合示例</td></tr>
 <tr><td><a href="#管道函数速查">管道函数速查</a></td><td>常用管道函数</td></tr>
 <tr><td><a href="#语法要点">语法要点</a></td><td>必需元素、可选元素、注意事项</td></tr>
@@ -220,12 +222,17 @@
 </ul>
 <hr>
 <h2 id="顶层结构"><a class="header" href="#顶层结构">顶层结构</a></h2>
-<pre><code class="language-ebnf">oml              = header, sep_line, aggregate_items, [ sep_line, privacy_items ] ;
+<pre><code class="language-ebnf">oml              = header, sep_line, [ static_blocks ], aggregate_items,
+                   [ sep_line, privacy_items ] ;
 
 header           = "name", ":", name, eol,
-                   [ "rule", ":", rule_path, { rule_path }, eol ] ;
+                   [ "rule", ":", rule_path, { rule_path }, eol ],
+                   [ "enable", ":", ("true" | "false"), eol ] ;
 
 sep_line         = "---" ;
+
+static_blocks    = { "static", "{", static_item, { static_item }, "}" } ;
+static_item      = target, "=", eval, ";" ;
 
 name             = path ;                       (* 例如: test *)
 rule_path        = wild_path ;                  (* 例如: wpx/abc, wpx/efg *)
@@ -236,12 +243,14 @@ aggregate_item   = target_list, "=", eval, ";" ;
 target_list      = target, { ",", target } ;
 target           = target_name, [ ":", data_type ] ;
 target_name      = wild_key | "_" ;            (* 允许带通配符 '*'；'_' 表示匿名/丢弃 *)
-data_type        = type_ident ;                (* auto|ip|chars|digit|float|time|bool|obj|array *)
+data_type        = type_ident ;                (* auto|ip|chars|digit|float|time|bool|obj|array 等 *)
 </code></pre>
 <p><strong>说明</strong>：</p>
 <ul>
 <li><code>name : &lt;配置名称&gt;</code> - 必需的配置名称声明</li>
-<li><code>rule : &lt;规则路径&gt;</code> - 可选的规则关联</li>
+<li><code>rule : &lt;规则路径&gt;</code> - 可选的规则关联，支持空格或换行分隔多个规则</li>
+<li><code>enable : true|false</code> - 可选的启用开关（默认 <code>true</code>）；<code>rule</code> 与 <code>enable</code> 的顺序不限</li>
+<li><code>static { ... }</code> - 可选的静态绑定块，位于 <code>---</code> 分隔线之后、主绑定之前</li>
 <li><code>---</code> - 分隔符，区分声明区和配置区</li>
 <li>每个配置条目必须以 <code>;</code> 结束</li>
 </ul>
@@ -254,10 +263,12 @@ data_type        = type_ident ;                (* auto|ip|chars|digit|float|time
                  | pipe_expr
                  | map_expr
                  | collect_expr
+                 | calc_expr
                  | match_expr
                  | sql_expr
                  | value_expr
-                 | fun_call ;
+                 | fun_call
+                 | static_ref ;
 </code></pre>
 <h3 id="读取表达式"><a class="header" href="#读取表达式">读取表达式</a></h3>
 <pre><code class="language-ebnf">(* 变量获取：take/read 支持统一参数形态；可跟缺省体 *)
@@ -271,7 +282,7 @@ arg              = "option", ":", "[", key, { ",", key }, "]"
                  | json_path ;                 (* 见 wp_parser::atom::take_json_path *)
 
 default_body     = "{", "_", ":", gen_acq, [ ";" ], "}" ;
-gen_acq          = take_expr | read_expr | value_expr | fun_call ;
+gen_acq          = take_expr | read_expr | value_expr | fun_call | static_ref ;
 </code></pre>
 <p><strong>说明</strong>：</p>
 <ul>
@@ -294,6 +305,7 @@ values = collect read(keys:[field1, field2]) ;
 
 # JSON 路径
 name = read(/user/info/name) ;
+item = read(/data/[0]/name) ;
 </code></pre>
 <h3 id="值表达式"><a class="header" href="#值表达式">值表达式</a></h3>
 <pre><code class="language-ebnf">(* 常量值：类型名+括号包裹的字面量 *)
@@ -301,9 +313,12 @@ value_expr       = data_type, "(", literal, ")" ;
 </code></pre>
 <p><strong>示例</strong>：</p>
 <pre><code class="language-oml">text = chars(hello) ;
+text2 = chars('hello world') ;
 count = digit(42) ;
+ratio = float(3.14) ;
 address = ip(192.168.1.1) ;
 flag = bool(true) ;
+ts = time(2020-10-01 12:30:30) ;
 </code></pre>
 <h3 id="函数调用"><a class="header" href="#函数调用">函数调用</a></h3>
 <pre><code class="language-ebnf">(* 内置函数（零参占位）：Now::* 家族 *)
@@ -315,6 +330,16 @@ fun_call         = ("Now::time"
 <pre><code class="language-oml">now = Now::time() ;
 today = Now::date() ;
 hour = Now::hour() ;
+</code></pre>
+<h3 id="静态符号引用"><a class="header" href="#静态符号引用">静态符号引用</a></h3>
+<pre><code class="language-ebnf">(* 引用 static 块中定义的常量，直接使用标识符 *)
+static_ref       = ident ;                     (* 必须在 static { } 中已定义 *)
+</code></pre>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-oml">static {
+    tpl = object { id = chars(E1) ; } ;
+}
+target = tpl ;                                 # 引用 static 中的 tpl
 </code></pre>
 <hr>
 <h2 id="高级表达式"><a class="header" href="#高级表达式">高级表达式</a></h2>
@@ -341,7 +366,7 @@ pipe_fun         = "nth",           "(", unsigned, ")"
                  | "starts_with",   "(", string, ")"
                  | "map_to",        "(", (string | number | bool), ")"
                  | "base64_encode" | "html_escape" | "html_unescape"
-                 | "str_escape" | "str_unescape" | "json_escape" | "json_unescape"
+                 | "str_escape" | "json_escape" | "json_unescape"
                  | "Time::to_ts" | "Time::to_ts_ms" | "Time::to_ts_us"
                  | "to_json" | "to_str" | "skip_empty" | "ip4_to_int"
                  | "extract_main_word" | "extract_subject_object" ;
@@ -372,16 +397,13 @@ keyword = read(message) | extract_main_word ;
 
 # 提取主客体结构
 log_struct = read(message) | extract_subject_object ;
-
-# 字符串反转义
-text = read(escaped) | str_unescape ;
 </code></pre>
 <h3 id="对象聚合"><a class="header" href="#对象聚合">对象聚合</a></h3>
 <pre><code class="language-ebnf">(* 聚合到对象：object 内部为子赋值序列；分号可选但推荐 *)
 map_expr         = "object", "{", map_item, { map_item }, "}" ;
 map_item         = map_targets, "=", sub_acq, [ ";" ] ;
 map_targets      = ident, { ",", ident }, [ ":", data_type ] ;
-sub_acq          = take_expr | read_expr | value_expr | fun_call ;
+sub_acq          = take_expr | read_expr | value_expr | fun_call | static_ref ;
 </code></pre>
 <p><strong>示例</strong>：</p>
 <pre><code class="language-oml">info : obj = object {
@@ -401,21 +423,66 @@ ports = collect read(keys:[sport, dport]) ;
 # 使用通配符
 metrics = collect read(keys:[cpu_*]) ;
 </code></pre>
+<h3 id="算术表达式"><a class="header" href="#算术表达式">算术表达式</a></h3>
+<pre><code class="language-ebnf">calc_expr         = "calc", "(", calc_add_expr, ")" ;
+calc_add_expr     = calc_mul_expr, { ("+" | "-"), calc_mul_expr } ;
+calc_mul_expr     = calc_unary_expr, { ("*" | "/" | "%"), calc_unary_expr } ;
+calc_unary_expr   = [ "-" ], calc_primary_expr ;
+calc_primary_expr = number
+                  | var_get
+                  | calc_fun_expr
+                  | "(", calc_add_expr, ")" ;
+calc_fun_expr     = calc_fun, "(", calc_add_expr, ")" ;
+calc_fun          = "abs" | "round" | "floor" | "ceil" ;
+</code></pre>
+<p><strong>说明</strong>：</p>
+<ul>
+<li><code>var_get</code> 支持 <code>read(...)</code>、<code>take(...)</code>，也支持 <code>@field</code> 语法糖</li>
+<li>操作数仅接受数值字面量或数值字段；<code>/</code> 始终返回 <code>float</code></li>
+<li><code>%</code> 仅支持整数取模；除零、字段缺失、非数值输入、非法 <code>%</code> 都会返回 <code>ignore</code></li>
+<li>当前 <code>match</code> 分支值仍沿用既有子表达式，不直接接受 <code>calc(...)</code>；如需复用，先绑定到临时字段</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-oml">risk_score : float = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;
+delta      : digit = calc(read(cur) - read(prev)) ;
+ratio      : float = calc(read(ok_cnt) / read(total_cnt)) ;
+bucket     : digit = calc(read(uid) % 16) ;
+error_pct  : digit = calc(round((read(err_cnt) * 100) / read(total_cnt))) ;
+</code></pre>
 <h3 id="模式匹配"><a class="header" href="#模式匹配">模式匹配</a></h3>
-<pre><code class="language-ebnf">(* 模式匹配：单源/双源两种形态，支持 in/!= 与缺省分支 *)
+<pre><code class="language-ebnf">(* 模式匹配：单源/多源两种形态，支持 in/!=/OR/函数匹配 与缺省分支 *)
 match_expr       = "match", match_source, "{", case1, { case1 }, [ default_case ], "}"
-                 | "match", "(", var_get, ",", var_get, ")", "{", case2, { case2 }, [ default_case ], "}" ;
+                 | "match", "(", var_get, ",", var_get, { ",", var_get }, ")", "{", case_multi, { case_multi }, [ default_case ], "}" ;
 
 match_source     = var_get ;
-case1            = cond1, "=&gt;", calc, [ "," ], [ ";" ] ;
-case2            = "(", cond1, ",", cond1, ")", "=&gt;", calc, [ "," ], [ ";" ] ;
-default_case     = "_", "=&gt;", calc, [ "," ], [ ";" ] ;
-calc             = read_expr | take_expr | value_expr | collect_expr ;
+case1            = cond1, "=&gt;", match_value, [ "," ], [ ";" ] ;
+case_multi       = "(", cond1, ",", cond1, { ",", cond1 }, ")", "=&gt;", match_value, [ "," ], [ ";" ] ;
+default_case     = "_", "=&gt;", match_value, [ "," ], [ ";" ] ;
+match_value      = read_expr | take_expr | value_expr | collect_expr | static_ref ;
 
-cond1            = "in", "(", value_expr, ",", value_expr, ")"
+cond1            = cond1_atom, { "|", cond1_atom }   (* OR：多个条件用 | 分隔 *)
+cond1_atom       = "in", "(", value_expr, ",", value_expr, ")"
                  | "!", value_expr
-                 | value_expr ;                 (* 省略运算符表示等于 *)
+                 | match_fun                           (* 函数匹配 *)
+                 | value_expr ;                        (* 省略运算符表示等于 *)
+
+match_fun        = "starts_with",  "(", string, ")"   (* 前缀匹配 *)
+                 | "ends_with",    "(", string, ")"   (* 后缀匹配 *)
+                 | "contains",     "(", string, ")"   (* 子串匹配 *)
+                 | "regex_match",  "(", string, ")"   (* 正则匹配 *)
+                 | "iequals",      "(", string, ")"   (* 忽略大小写等于 *)
+                 | "is_empty",     "(", ")"            (* 空值判断 *)
+                 | "gt",           "(", number, ")"    (* 大于 *)
+                 | "lt",           "(", number, ")"    (* 小于 *)
+                 | "eq",           "(", number, ")"    (* 等于（浮点容差） *)
+                 | "in_range",     "(", number, ",", number, ")" ; (* 范围判断 *)
 </code></pre>
+<p><strong>说明</strong>：</p>
+<ul>
+<li><strong>多源匹配</strong>：<code>match (src1, src2, ...)</code> 支持任意数量的源字段（≥2），不再限于双源</li>
+<li><strong>OR 语法</strong>：在条件位置使用 <code>|</code> 分隔多个备选条件，任一匹配即成功</li>
+<li><strong>函数匹配</strong>：支持 11 种内置匹配函数，用于字符串、数值的灵活判断</li>
+</ul>
 <p><strong>示例</strong>：</p>
 <pre><code class="language-oml"># 单源匹配
 level = match read(status) {
@@ -424,12 +491,95 @@ level = match read(status) {
     _ =&gt; chars(other) ;
 } ;
 
-# 双源匹配
+# 单源 OR 匹配
+tier = match read(city) {
+    chars(bj) | chars(sh) | chars(gz) =&gt; chars(tier1) ;
+    chars(cd) | chars(wh) =&gt; chars(tier2) ;
+    _ =&gt; chars(other) ;
+} ;
+
+# 多源匹配（双源）
 result = match (read(a), read(b)) {
     (digit(1), digit(2)) =&gt; chars(case1) ;
     _ =&gt; chars(default) ;
 } ;
+
+# 多源匹配（三源）
+zone = match (read(city), read(region), read(country)) {
+    (chars(bj), chars(north), chars(cn)) =&gt; chars(result1) ;
+    _ =&gt; chars(default) ;
+} ;
+
+# 多源 + OR 匹配
+priority = match (read(city), read(level)) {
+    (chars(bj) | chars(sh), chars(high)) =&gt; chars(priority) ;
+    (chars(gz), chars(low) | chars(mid)) =&gt; chars(normal) ;
+    _ =&gt; chars(default) ;
+} ;
+
+# 函数匹配
+event = match read(Content) {
+    starts_with('[ERROR]') =&gt; chars(error) ;
+    starts_with('[WARN]') =&gt; chars(warning) ;
+    contains('timeout') =&gt; chars(timeout) ;
+    ends_with('.failed') =&gt; chars(failure) ;
+    regex_match('^\d{4}-\d{2}-\d{2}') =&gt; chars(dated) ;
+    is_empty() =&gt; chars(empty) ;
+    _ =&gt; chars(other) ;
+} ;
+
+# 数值函数匹配
+grade = match read(score) {
+    gt(90) =&gt; chars(excellent) ;
+    in_range(60, 90) =&gt; chars(pass) ;
+    lt(60) =&gt; chars(fail) ;
+    _ =&gt; chars(unknown) ;
+} ;
+
+# 忽略大小写匹配
+status = match read(result) {
+    iequals('success') =&gt; chars(ok) ;
+    iequals('error') =&gt; chars(fail) ;
+    _ =&gt; chars(other) ;
+} ;
+
+# 忽略大小写多值匹配
+status_class = match read(status) {
+    iequals_any('success', 'ok', 'done') =&gt; chars(good) ;
+    iequals_any('error', 'failed', 'timeout') =&gt; chars(bad) ;
+    _ =&gt; chars(other) ;
+} ;
 </code></pre>
+<h3 id="lookup_nocase"><a class="header" href="#lookup_nocase"><code>lookup_nocase</code></a></h3>
+<p><code>lookup_nocase(dict_symbol, key_expr, default_expr)</code> 用于基于静态 object 做忽略大小写查表。</p>
+<pre><code class="language-oml">static {
+    status_score = object {
+        error = float(90.0);
+        warning = float(70.0);
+        success = float(20.0);
+    };
+}
+
+risk_score : float = lookup_nocase(status_score, read(status), 40.0) ;
+</code></pre>
+<ul>
+<li><code>dict_symbol</code> 必须引用 <code>static</code> 中定义的 object</li>
+<li><code>key_expr</code> 会按 <code>trim + lowercase</code> 归一化后查表</li>
+<li>未命中或 key 不是字符串时，返回 <code>default_expr</code></li>
+</ul>
+<h3 id="calc"><a class="header" href="#calc"><code>calc(...)</code></a></h3>
+<p><code>calc(expr)</code> 用于显式执行数值算术表达式。</p>
+<pre><code class="language-oml">risk_score : float = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;
+bucket     : digit = calc(read(uid) % 16) ;
+distance   : float = calc(abs(read(actual) - read(expect))) ;
+error_pct  : digit = calc(round((read(err_cnt) * 100) / read(total_cnt))) ;
+</code></pre>
+<ul>
+<li>支持运算符：<code>+ - * / %</code></li>
+<li>支持函数：<code>abs(...)</code>、<code>round(...)</code>、<code>floor(...)</code>、<code>ceil(...)</code></li>
+<li>支持字段访问：<code>read(...)</code>、<code>take(...)</code>、<code>@field</code></li>
+<li>除零、字段缺失、非数值输入、浮点 <code>%</code> 都返回 <code>ignore</code></li>
+</ul>
 <hr>
 <h2 id="sql-表达式"><a class="header" href="#sql-表达式">SQL 表达式</a></h2>
 <pre><code class="language-ebnf">sql_expr        = "select", sql_body, "where", sql_cond, ";" ;
@@ -479,6 +629,65 @@ data = select sum(a) from t where ... ;
 # ❌ 不支持 join
 data = select a from t1 join t2 ... ;
 </code></pre>
+<hr>
+<h2 id="静态绑定"><a class="header" href="#静态绑定">静态绑定</a></h2>
+<p><code>static</code> 块用于定义编译期常量，可在主绑定和 match 表达式中引用。</p>
+<pre><code class="language-ebnf">static_blocks    = { "static", "{", static_item, { static_item }, "}" } ;
+static_item      = target, "=", eval, ";" ;
+</code></pre>
+<p><strong>说明</strong>：</p>
+<ul>
+<li><code>static</code> 块位于 <code>---</code> 分隔线之后、主绑定之前</li>
+<li>块内每个绑定会在编译期求值为 <code>DataField</code></li>
+<li>主绑定中通过标识符直接引用：<code>result = symbol_name ;</code></li>
+<li>支持在 <code>match</code> 的条件和结果、<code>object</code> 子绑定、<code>read/take</code> 的缺省体中引用</li>
+<li>同名符号不允许重复定义</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-oml">name : model_with_static
+---
+static {
+    tpl = object {
+        id = chars(E1) ;
+        type = chars(default) ;
+    } ;
+    fallback = chars(N/A) ;
+}
+
+# 直接引用 static 符号
+template = tpl ;
+
+# 在 match 结果中引用
+target = match read(Content) {
+    starts_with('foo') =&gt; tpl ;
+    _ =&gt; tpl ;
+} ;
+
+# 在缺省体中引用
+value = take(Value) { _ : fallback } ;
+
+# 在 object 子绑定中引用
+result = object {
+    clone = tpl ;
+} ;
+</code></pre>
+<hr>
+<h2 id="临时字段"><a class="header" href="#临时字段">临时字段</a></h2>
+<p>以 <code>__</code>（双下划线）开头的字段名被标记为临时字段，在输出时自动转换为 <code>Ignore</code> 类型（不出现在最终数据中）。</p>
+<p><strong>用途</strong>：中间计算结果，不希望出现在输出记录中。</p>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-oml">name : temp_example
+---
+# 临时字段：参与中间计算，不输出
+__temp_type = chars(error) ;
+
+# 引用临时字段进行匹配
+result = match read(__temp_type) {
+    chars(error) =&gt; chars(failed) ;
+    _ =&gt; chars(ok) ;
+} ;
+</code></pre>
+<p>输出记录中 <code>result</code> 正常输出，<code>__temp_type</code> 被自动忽略。</p>
 <hr>
 <h2 id="隐私段"><a class="header" href="#隐私段">隐私段</a></h2>
 <blockquote>
@@ -531,7 +740,8 @@ alnum           = letter | digit ;
 </code></pre>
 <hr>
 <h2 id="数据类型"><a class="header" href="#数据类型">数据类型</a></h2>
-<p>OML 支持以下数据类型：</p>
+<p>OML 类型注解支持以下值（由 <code>DataType::from()</code> 解析）：</p>
+<h3 id="常用类型"><a class="header" href="#常用类型">常用类型</a></h3>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -550,14 +760,50 @@ alnum           = letter | digit ;
 </tbody>
 </table>
 </div>
+<h3 id="扩展类型"><a class="header" href="#扩展类型">扩展类型</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>类型</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><code>time_iso</code></td><td>ISO 格式时间</td></tr>
+<tr><td><code>time_3339</code></td><td>RFC 3339 时间</td></tr>
+<tr><td><code>time_2822</code></td><td>RFC 2822 时间</td></tr>
+<tr><td><code>time_timestamp</code></td><td>Unix 时间戳</td></tr>
+<tr><td><code>time_clf</code></td><td>CLF 日志时间（Apache/Nginx）</td></tr>
+<tr><td><code>time/apache</code></td><td>CLF 别名</td></tr>
+<tr><td><code>time/timestamp</code></td><td>时间戳别名</td></tr>
+<tr><td><code>time/rfc3339</code></td><td>RFC 3339 别名</td></tr>
+<tr><td><code>url</code></td><td>URL</td></tr>
+<tr><td><code>domain</code></td><td>域名</td></tr>
+<tr><td><code>ip_net</code></td><td>网段</td></tr>
+<tr><td><code>kv</code></td><td>Key-Value 文本</td></tr>
+<tr><td><code>json</code></td><td>JSON 文本</td></tr>
+<tr><td><code>base64</code></td><td>Base64 编码文本</td></tr>
+<tr><td><code>array/&lt;sub&gt;</code></td><td>带子类型的数组（如 <code>array/digit</code>）</td></tr>
+</tbody>
+</table>
+</div>
 <hr>
 <h2 id="完整示例"><a class="header" href="#完整示例">完整示例</a></h2>
 <pre><code class="language-oml">name : csv_example
 rule : /csv/data
+enable : true
 ---
+static {
+    ERROR_TPL = object {
+        type = chars(error) ;
+        level = digit(0) ;
+    } ;
+}
+
 # 基本取值与缺省
 version : chars = Now::time() ;
 pos_sn = read() { _ : chars(FALLBACK) } ;
+
+# 临时字段（不出现在输出中）
+__raw_type = read(type) ;
 
 # object 聚合
 values : obj = object {
@@ -587,6 +833,57 @@ X : chars = match (read(city1), read(city2)) {
     _ =&gt; chars(sz) ;
 } ;
 
+# 三源 match
+zone : chars = match (read(city), read(region), read(country)) {
+    (chars(bj), chars(north), chars(cn)) =&gt; chars(zone1) ;
+    (chars(sh), chars(east), chars(cn)) =&gt; chars(zone2) ;
+    _ =&gt; chars(unknown) ;
+} ;
+
+# OR 匹配（单源）
+tier : chars = match read(city) {
+    chars(bj) | chars(sh) | chars(gz) =&gt; chars(tier1) ;
+    chars(cd) | chars(wh) =&gt; chars(tier2) ;
+    _ =&gt; chars(other) ;
+} ;
+
+# OR 匹配（多源）
+priority : chars = match (read(city), read(level)) {
+    (chars(bj) | chars(sh), chars(high)) =&gt; chars(priority) ;
+    (chars(gz), chars(low) | chars(mid)) =&gt; chars(normal) ;
+    _ =&gt; chars(default) ;
+} ;
+
+# 函数匹配
+event = match read(log_line) {
+    starts_with('[ERROR]') =&gt; chars(error) ;
+    ends_with('.failed') =&gt; chars(failure) ;
+    contains('timeout') =&gt; chars(timeout) ;
+    regex_match('^\d{4}-\d{2}-\d{2}') =&gt; chars(dated) ;
+    is_empty() =&gt; chars(empty) ;
+    _ =&gt; chars(other) ;
+} ;
+
+# 数值函数匹配
+grade = match read(score) {
+    gt(90) =&gt; chars(excellent) ;
+    in_range(60, 90) =&gt; chars(pass) ;
+    lt(60) =&gt; chars(fail) ;
+    _ =&gt; chars(unknown) ;
+} ;
+
+# 忽略大小写匹配
+result = match read(status) {
+    iequals('success') =&gt; chars(ok) ;
+    _ =&gt; chars(fail) ;
+} ;
+
+# static 引用
+error_info = match read(__raw_type) {
+    chars(error) =&gt; ERROR_TPL ;
+    _ =&gt; chars(normal) ;
+} ;
+
 # SQL（where 中可混用 read/take/Now::time/常量）
 name, pinying = select name, pinying from example where pinying = read(py) ;
 _, _ = select name, pinying from example where pinying = 'xiaolongnu' ;
@@ -611,7 +908,6 @@ pos_sn : privacy_keymsg
 <tr><td><code>json_escape</code></td><td><code>json_escape</code></td><td>JSON 转义</td></tr>
 <tr><td><code>json_unescape</code></td><td><code>json_unescape</code></td><td>JSON 反转义</td></tr>
 <tr><td><code>str_escape</code></td><td><code>str_escape</code></td><td>字符串转义</td></tr>
-<tr><td><code>str_unescape</code></td><td><code>str_unescape</code></td><td>字符串反转义</td></tr>
 <tr><td><code>Time::to_ts</code></td><td><code>Time::to_ts</code></td><td>时间转时间戳（秒，UTC+8）</td></tr>
 <tr><td><code>Time::to_ts_ms</code></td><td><code>Time::to_ts_ms</code></td><td>时间转时间戳（毫秒，UTC+8）</td></tr>
 <tr><td><code>Time::to_ts_us</code></td><td><code>Time::to_ts_us</code></td><td>时间转时间戳（微秒，UTC+8）</td></tr>
@@ -621,13 +917,33 @@ pos_sn : privacy_keymsg
 <tr><td><code>path</code></td><td><code>path(name|path)</code></td><td>提取文件路径部分</td></tr>
 <tr><td><code>url</code></td><td><code>url(domain|host|uri|path|params)</code></td><td>提取 URL 部分</td></tr>
 <tr><td><code>starts_with</code></td><td><code>starts_with('前缀')</code></td><td>检查字符串是否以指定前缀开始</td></tr>
-<tr><td><code>map_to</code></td><td><code>map_to(值)</code></td><td>映射到指定常量值</td></tr>
+<tr><td><code>map_to</code></td><td><code>map_to(值)</code></td><td>映射到指定常量值（字符串/数字/布尔）</td></tr>
 <tr><td><code>extract_main_word</code></td><td><code>extract_main_word</code></td><td>提取主要单词（第一个非空单词）</td></tr>
 <tr><td><code>extract_subject_object</code></td><td><code>extract_subject_object</code></td><td>提取日志主客体结构（subject/action/object/status）</td></tr>
 <tr><td><code>to_str</code></td><td><code>to_str</code></td><td>转换为字符串</td></tr>
 <tr><td><code>to_json</code></td><td><code>to_json</code></td><td>转换为 JSON</td></tr>
 <tr><td><code>ip4_to_int</code></td><td><code>ip4_to_int</code></td><td>IPv4 转整数</td></tr>
 <tr><td><code>skip_empty</code></td><td><code>skip_empty</code></td><td>跳过空值</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="匹配函数速查用于-match-条件"><a class="header" href="#匹配函数速查用于-match-条件">匹配函数速查（用于 match 条件）</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>函数</th><th>语法</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><code>starts_with</code></td><td><code>starts_with('前缀')</code></td><td>前缀匹配</td></tr>
+<tr><td><code>ends_with</code></td><td><code>ends_with('后缀')</code></td><td>后缀匹配</td></tr>
+<tr><td><code>contains</code></td><td><code>contains('子串')</code></td><td>子串匹配</td></tr>
+<tr><td><code>regex_match</code></td><td><code>regex_match('正则')</code></td><td>正则表达式匹配</td></tr>
+<tr><td><code>iequals</code></td><td><code>iequals('值')</code></td><td>忽略大小写等于</td></tr>
+<tr><td><code>is_empty</code></td><td><code>is_empty()</code></td><td>值为空判断</td></tr>
+<tr><td><code>gt</code></td><td><code>gt(数值)</code></td><td>大于</td></tr>
+<tr><td><code>lt</code></td><td><code>lt(数值)</code></td><td>小于</td></tr>
+<tr><td><code>eq</code></td><td><code>eq(数值)</code></td><td>等于（浮点容差）</td></tr>
+<tr><td><code>in_range</code></td><td><code>in_range(最小值, 最大值)</code></td><td>范围判断（闭区间）</td></tr>
 </tbody>
 </table>
 </div>
@@ -643,6 +959,8 @@ pos_sn : privacy_keymsg
 <ol>
 <li><strong>类型声明</strong>：<code>field : &lt;type&gt; = ...</code>（默认为 <code>auto</code>）</li>
 <li><strong>rule 字段</strong>：<code>rule : &lt;规则路径&gt;</code></li>
+<li><strong>enable 字段</strong>：<code>enable : true|false</code>（默认为 <code>true</code>）</li>
+<li><strong>static 块</strong>：<code>static { ... }</code></li>
 <li><strong>默认值</strong>：<code>read() { _ : &lt;默认值&gt; }</code></li>
 <li><strong>pipe 关键字</strong>：<code>pipe read() | func</code> 可简写为 <code>read() | func</code></li>
 </ol>
@@ -654,6 +972,10 @@ pos_sn : privacy_keymsg
 <pre><code class="language-oml">* = take() ;           # 取走所有字段
 alert* = take() ;      # 取走所有以 alert 开头的字段
 *_log = take() ;       # 取走所有以 _log 结尾的字段
+</code></pre>
+<h3 id="临时字段-1"><a class="header" href="#临时字段-1">临时字段</a></h3>
+<pre><code class="language-oml">__temp = chars(value) ;      # 以 __ 开头，输出时自动忽略
+result = read(__temp) ;      # 可在其他表达式中引用
 </code></pre>
 <h3 id="读取语义"><a class="header" href="#读取语义">读取语义</a></h3>
 <ul>

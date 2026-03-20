@@ -37,10 +37,10 @@
             const path_to_root = "../../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-13cbdaee.js";
+            window.path_to_searchindex_js = "../../../searchindex-37cffb89.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../../toc-e2dc8458.js"></script>
+        <script src="../../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -339,6 +339,26 @@ ErrorLog = pipe take(log) | starts_with('[ERROR]');
     iequals('error') =&gt; chars(fail),
     iequals('warning') =&gt; chars(warn),
     _ =&gt; chars(unknown),
+};
+</code></pre>
+<h4 id="iequals_anyvalue1-value2-"><a class="header" href="#iequals_anyvalue1-value2-">iequals_any(value1, value2, …)</a></h4>
+<p>忽略大小写比较多个候选值，任一命中即匹配成功。</p>
+<p><strong>语法</strong>: <code>iequals_any('success', 'ok', 'done')</code></p>
+<p><strong>参数</strong>:</p>
+<ul>
+<li><code>value1, value2, ...</code>: 一个或多个字符串候选值（必须使用引号）</li>
+</ul>
+<p><strong>匹配规则</strong>:</p>
+<ul>
+<li>字段值与任一参数值在忽略大小写的情况下相等 → 匹配成功</li>
+<li>所有参数都不匹配 → 匹配失败</li>
+<li>字段不是字符串类型 → 匹配失败</li>
+</ul>
+<p><strong>示例</strong>:</p>
+<pre><code class="language-oml">StatusClass = match read(status) {
+    iequals_any('success', 'ok', 'done') =&gt; chars(good),
+    iequals_any('error', 'failed', 'timeout') =&gt; chars(bad),
+    _ =&gt; chars(other),
 };
 </code></pre>
 <h3 id="数值比较函数"><a class="header" href="#数值比较函数">数值比较函数</a></h3>
@@ -694,6 +714,31 @@ Status = match read(user_input) {
 };
 </code></pre>
 <p><strong>特点</strong>: 精确匹配固定值</p>
+<h3 id="or-条件匹配"><a class="header" href="#or-条件匹配">OR 条件匹配</a></h3>
+<p>使用 <code>|</code> 分隔多个备选条件，任一匹配即成功：</p>
+<pre><code class="language-oml"># 单源 OR 匹配
+tier = match read(city) {
+    chars(bj) | chars(sh) | chars(gz) =&gt; chars(tier1),
+    chars(cd) | chars(wh) =&gt; chars(tier2),
+    _ =&gt; chars(other),
+};
+</code></pre>
+<p><strong>特点</strong>: 在同一分支中表达“或“的关系，减少重复分支</p>
+<p>OR 语法也可以与函数匹配组合使用：</p>
+<pre><code class="language-oml">EventType = match read(log_line) {
+    starts_with('[ERROR]') | starts_with('[FATAL]') =&gt; chars(critical),
+    starts_with('[WARN]') =&gt; chars(warning),
+    _ =&gt; chars(info),
+};
+</code></pre>
+<h3 id="多源--or-匹配"><a class="header" href="#多源--or-匹配">多源 + OR 匹配</a></h3>
+<p>多源 match 中的每个条件位置都支持 OR 语法：</p>
+<pre><code class="language-oml">priority = match (read(city), read(level)) {
+    (chars(bj) | chars(sh), chars(high)) =&gt; chars(priority),
+    (chars(gz), chars(low) | chars(mid)) =&gt; chars(normal),
+    _ =&gt; chars(default),
+};
+</code></pre>
 <h3 id="函数匹配"><a class="header" href="#函数匹配">函数匹配</a></h3>
 <pre><code class="language-oml">EventType = match read(log_line) {
     starts_with('ERROR:') =&gt; chars(error),
@@ -712,7 +757,22 @@ Status = match read(user_input) {
 </ul>
 <h2 id="版本历史"><a class="header" href="#版本历史">版本历史</a></h2>
 <ul>
-<li><strong>1.13.4</strong> (2026-02-04)
+<li>
+<p><strong>1.16.3</strong> (Unreleased)</p>
+<ul>
+<li>新增 OR 条件语法：<code>cond1 | cond2 | ...</code>，在同一分支中表达备选条件</li>
+<li>多源 match 支持任意数量源字段（不再限于 2/3/4 个）</li>
+<li>多源 match 条件位置支持 OR 语法</li>
+</ul>
+</li>
+<li>
+<p><strong>1.19.1</strong> (2026-03-12)</p>
+<ul>
+<li>新增 <code>iequals_any(...)</code>，用于忽略大小写的多候选值匹配</li>
+</ul>
+</li>
+<li>
+<p><strong>1.13.4</strong> (2026-02-04)</p>
 <ul>
 <li>新增 match 表达式函数匹配支持</li>
 <li>字符串匹配：<code>starts_with</code>, <code>ends_with</code>, <code>contains</code>, <code>regex_match</code>, <code>is_empty</code>, <code>iequals</code></li>

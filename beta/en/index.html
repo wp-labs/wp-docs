@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>User Guide - Warp Parse Documentation [BETA]</title>
+        <title>0.20 Release Notes - Warp Parse Documentation [BETA]</title>
 
 
         <!-- Custom HTML head -->
@@ -37,10 +37,10 @@
             const path_to_root = "";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-c41ccb19.js";
+            window.path_to_searchindex_js = "searchindex-bab637e3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-6cff5523.js"></script>
+        <script src="toc-6f276faf.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -179,41 +179,100 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="user-guide"><a class="header" href="#user-guide">User Guide</a></h1>
-<p>Welcome to the Warp Parse documentation.</p>
-<blockquote>
-<p>This is the English version. 中文版请点击 <a href="/zh/">中文</a>.</p>
-</blockquote>
-<h2 id="quick-start"><a class="header" href="#quick-start">Quick Start</a></h2>
-<ol>
-<li><a href="01-cli/01-getting_started.html">Getting Started</a> - Quick start guide</li>
-<li><a href="02-config/README.html">Configuration</a> - Basic configuration</li>
-<li><a href="03-wpl/README.html">WPL Language</a> - WPL rule language</li>
-<li><a href="05-connectors/README.html">Connectors</a> - Sources and Sinks management</li>
-</ol>
-<h2 id="documentation-navigation"><a class="header" href="#documentation-navigation">Documentation Navigation</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Section</th><th>Description</th></tr>
-</thead>
-<tbody>
-<tr><td><a href="01-cli/README.html">CLI Tools</a></td><td>Command-line tools reference</td></tr>
-<tr><td><a href="02-config/README.html">Configuration</a></td><td>Configuration files and options</td></tr>
-<tr><td><a href="03-wpl/README.html">WPL Language</a></td><td>Warp Parse Language guide</td></tr>
-<tr><td><a href="04-oml/README.html">OML Language</a></td><td>Object Model Language guide</td></tr>
-<tr><td><a href="05-connectors/README.html">Connectors</a></td><td>Sources and Sinks configuration</td></tr>
-<tr><td><a href="09-FQA/troubleshooting.html">Troubleshooting</a></td><td>Common issues and solutions</td></tr>
-</tbody>
-</table>
-</div>
+                        <h1 id="020-release-notes"><a class="header" href="#020-release-notes">0.20 Release Notes</a></h1>
+<h2 id="added"><a class="header" href="#added">Added</a></h2>
+<h3 id="added-elasticsearch-sink"><a class="header" href="#added-elasticsearch-sink">Added Elasticsearch Sink.</a></h3>
+<p>Supports batch writing parsed records to the Elasticsearch <code>/_bulk</code> API over HTTP/HTTPS, with timeout, retry, and password authentication support.
+Example:</p>
+<pre><code class="language-toml">[connectors.params]
+protocol = "http"      # Transport protocol; switch to https if needed
+host = "localhost"     # Elasticsearch server host
+port = "9200"          # Elasticsearch service port
+index = "wp_nginx"     # Target index name
+username = "${SEC_USERNAME}"   # Username
+password = "${SEC_PASSWORD}"   # Password
+batch_size = 1_0000     # Number of records per batch
+</code></pre>
+<ul>
+<li>Usage doc: <a href="../10-user/05-connectors/02-sinks/20-elasticsearch_sink.html">Elasticsearch Sink</a></li>
+<li>Example index: <a href="https://github.com/wp-labs/wp-examples/blob/main/extensions/elasticsearch/README.md">wp-examples/extensions/elasticsearch/README.md</a></li>
+</ul>
+<h3 id="added-postgresql-sink"><a class="header" href="#added-postgresql-sink">Added PostgreSQL Sink.</a></h3>
+<ul>
+<li>Usage doc: <a href="../10-user/05-connectors/02-sinks/23-postgresql_sink.html">PostgreSQL Sink</a></li>
+<li>Example index: <a href="https://github.com/wp-labs/wp-examples/blob/main/extensions/tcp_postgres/README.md">wp-examples/extensions/tcp_postgres/README.md</a></li>
+</ul>
+<h3 id="added-doris-sink"><a class="header" href="#added-doris-sink">Added Doris Sink.</a></h3>
+<p>Supports batch loading data into Apache Doris through the Stream Load API, with custom Stream Load headers, timeout, retry, and password authentication support.
+Example:</p>
+<pre><code class="language-toml">[connectors.params]
+endpoint = "http://localhost:8040"  # Use the BE HTTP port
+user = "${SEC_USERNAME}"           # Username
+password = "${SEC_PASSWORD}"       # Password
+database = ""                       # Database name
+table = ""                          # Table name
+batch_size = 1_0000                  # Request batch size
+
+# Optional: custom Stream Load parameters
+[connectors.params.headers]
+strip_outer_array = "false"
+max_filter_ratio = "0.1"
+strict_mode = "false"
+</code></pre>
+<ul>
+<li>Usage doc: <a href="../10-user/05-connectors/02-sinks/17-doris.html">Doris Sink</a></li>
+<li>Example index: <a href="https://github.com/wp-labs/wp-examples/blob/main/extensions/doris/README.md">wp-examples/extensions/doris/README.md</a></li>
+</ul>
+<h3 id="added-clickhouse-sink"><a class="header" href="#added-clickhouse-sink">Added ClickHouse Sink.</a></h3>
+<p>Supports writing to ClickHouse with the RowBinary format over HTTP, with timeout, retry, and password authentication support.
+Example:</p>
+<pre><code class="language-toml">[connectors.params]
+endpoint = "http://localhost:8123"
+username = "${SEC_USERNAME}"       # Username
+password = "${SEC_PASSWORD}"       # Password
+database = ""                       # Database name
+table = ""                          # Table name
+batch_size = 1_0000                  # Request batch size
+</code></pre>
+<ul>
+<li>Usage doc: <a href="../10-user/05-connectors/02-sinks/21-clickhouse.html">ClickHouse Sink</a></li>
+<li>Example index: <a href="https://github.com/wp-labs/wp-examples/tree/main/extensions/clickhouse">wp-examples/extensions/clickhouse</a></li>
+</ul>
+<h3 id="added-http-sink"><a class="header" href="#added-http-sink">Added HTTP Sink.</a></h3>
+<p>Supports sending parsed records to HTTP/HTTPS endpoints for webhooks, API integrations, and custom pipelines, with <code>json</code>, <code>ndjson</code>, <code>csv</code>, <code>kv</code>, <code>raw</code>, and <code>proto-text</code> output formats, plus Basic Auth, custom headers, gzip compression, timeout, and retry support.
+Example:</p>
+<pre><code class="language-toml">[sink_group.sinks.params]
+endpoint = "http://localhost:8080/webhook" # Target HTTP endpoint
+method = "POST"                            # HTTP method
+username = "${SEC_USERNAME}"               # Use HTTP Basic authentication
+password = "${SEC_PASSWORD}"               # Use HTTP Basic authentication
+fmt = "json"                               # Output format: `json`, `ndjson`, `csv`, `kv`, `raw`, `proto-text` (default `json`)
+batch_size = 1_0000                         # Batch send size
+compression = "none"                       # Whether to enable gzip compression
+
+# Optional: custom header parameters
+[connectors.params.headers]
+# content-type = "application/json"
+</code></pre>
+<ul>
+<li>Usage doc: <a href="../10-user/05-connectors/02-sinks/22-http.html">HTTP Sink</a></li>
+<li>Example index: <a href="https://github.com/wp-labs/wp-examples/blob/main/extensions/http/README.md">wp-examples/extensions/http/README.md</a></li>
+</ul>
+<h2 id="changed"><a class="header" href="#changed">Changed</a></h2>
+<ul>
+<li>Upgraded <code>wp-connector-api</code> to <code>0.8</code> to reduce unnecessary dependencies.</li>
+</ul>
+<h2 id="fixed"><a class="header" href="#fixed">Fixed</a></h2>
+<ul>
+<li>Event ID: synced with the upstream <code>wp-motor</code> fix to unify <code>wp_event_id</code> generation logic and avoid duplicate IDs caused by falling back to an in-process seed after runtime restarts.</li>
+</ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
 
-                            <a rel="next prefetch" href="10-user/01-cli/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="10-user/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -224,7 +283,7 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
 
-                    <a rel="next prefetch" href="10-user/01-cli/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="10-user/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

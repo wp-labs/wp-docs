@@ -122,22 +122,45 @@ current_time = Now::time();  // 获取当前完整时间
 current_date = Now::date();  // 获取当前日期（YYYYMMDD）
 current_hour = Now::hour();  // 获取当前小时（YYYYMMDDHH）
 
-// ==================== 3. 模式匹配 ====================
+// ==================== 3. 数值表达式 ====================
 
-// 3.1 单源 match（简单匹配）
+// 3.1 风险分数
+risk_score : float = calc(read(simple_port) * 0.1 + digit(5));
+
+// 3.2 取整百分比
+status_pct : digit = calc(round((read(num_range) * 100) / digit(1000)));
+
+// 3.3 分桶
+bucket : digit = calc(read(simple_port) % 16);
+
+// ==================== 4. 静态字典与查表 ====================
+
+static {
+    status_score = object {
+        success = float(20.0);
+        warning = float(70.0);
+        error = float(90.0);
+    };
+}
+
+status_score_v2 : float = lookup_nocase(status_score, read(status), 40.0);
+
+// ==================== 5. 模式匹配 ====================
+
+// 5.1 单源 match（简单匹配）
 match_chars = match read(option:[match_chars]) {
     chars(left) => chars(1);
     chars(middle) => chars(2);
     chars(right) => chars(3);
 };
 
-// 3.2 范围判断（in 操作符）
+// 5.2 范围判断（in 操作符）
 num_range = match read(option:[num_range]) {
     in (digit(0), digit(1000)) => read(num_range);
     _ => digit(0);
 };
 
-// 3.3 双源 match（匹配两个字段的组合）
+// 5.3 多源 match（匹配多个字段的组合）
 location : chars = match (read(city1), read(city2)) {
     (chars(beijing), chars(shanghai)) => chars(east_region);
     (chars(chengdu), chars(chongqing)) => chars(west_region);
@@ -149,50 +172,71 @@ region_by_ip : chars = match (read(src_ip), read(dst_ip)) {
     _ => chars(external);
 };
 
-// 3.4 match 否定条件（! 操作符）
+// 5.4 match 否定条件（! 操作符）
 valid_status = match read(status) {
     !chars(error) => chars(ok);
     !chars(failed) => chars(success);
     _ => chars(unknown);
 };
 
-// 3.5 布尔类型 match
+// 5.5 布尔类型 match
 is_enabled : digit = match read(enabled) {
     bool(true) => digit(1);
     bool(false) => digit(0);
     _ => digit(-1);
 };
 
-// ==================== 4. 管道函数 ====================
+// 5.6 OR 条件匹配（使用 | 表示备选条件）
+city_tier : chars = match read(city1) {
+    chars(beijing) | chars(shanghai) | chars(guangzhou) => chars(tier1);
+    chars(chengdu) | chars(wuhan) => chars(tier2);
+    _ => chars(other);
+};
 
-// 4.1 时间转换
+// 5.7 多源 + OR 组合匹配
+priority : chars = match (read(city1), read(status)) {
+    (chars(beijing) | chars(shanghai), chars(success)) => chars(high);
+    (chars(chengdu), chars(success) | chars(pending)) => chars(medium);
+    _ => chars(low);
+};
+
+// 5.8 忽略大小写多值匹配
+status_class = match read(status) {
+    iequals_any('success', 'ok', 'done') => chars(good);
+    iequals_any('error', 'failed', 'timeout') => chars(bad);
+    _ => chars(other);
+};
+
+// ==================== 6. 管道函数 ====================
+
+// 6.1 时间转换
 timestamp_zone = pipe read(timestamp_zone) | Time::to_ts_zone(0, ms);  // 修改时区
 timestamp_s = pipe read(timestamp_zone) | Time::to_ts;                 // 转秒级时间戳
 timestamp_ms = pipe @current_time | Time::to_ts_ms;                    // 转毫秒级时间戳
 timestamp_us = pipe @current_time | Time::to_ts_us;                    // 转微秒级时间戳
 timestamp_zone_8 = pipe @current_time | Time::to_ts_zone(8, s);        // UTC+8 时区
 
-// 4.2 编码/解码
+// 6.2 编码/解码
 base64_decoded = pipe read(base64) | base64_decode(Utf8);  // Base64 解码
 base64_encoded = pipe read(base64) | base64_encode;        // Base64 编码
 
-// 4.3 转义/反转义
+// 6.3 转义/反转义
 html_escaped = pipe read(html) | html_escape;              // HTML 转义
 html_unescaped = pipe read(html) | html_unescape;          // HTML 反转义
 json_escaped = pipe read(json_escape) | json_escape;       // JSON 转义
 json_unescaped = pipe @json_escaped | json_unescape;       // JSON 反转义
 str_escaped = pipe read(str) | str_escape;                 // 字符串转义
 
-// 4.4 数据转换
+// 6.4 数据转换
 to_str_result = pipe read(str) | to_str;                   // 转为字符串
 array_json = pipe read(array_str) | to_json;               // 数组转 JSON
 ip_to_int = pipe read(simple_ip) | ip4_to_int;             // IPv4 转整数
 
-// 4.5 集合操作
+// 6.5 集合操作
 array_first = pipe read(array_str) | nth(0);               // 获取数组第 0 个元素
 obj_nested = pipe read(obj) | nth(0) | get(one/two);       // 对象嵌套取值
 
-// 4.6 数据提取
+// 6.6 数据提取
 file_name = pipe read(path) | path(name);                  // 提取文件名
 file_path = pipe read(path) | path(path);                  // 提取文件路径
 url_domain = pipe read(url) | url(domain);                 // 提取 URL domain
@@ -201,31 +245,31 @@ url_uri = pipe read(url) | url(uri);                       // 提取 URL uri
 url_path = pipe read(url) | url(path);                     // 提取 URL path
 url_params = pipe read(url) | url(params);                 // 提取 URL params
 
-// 4.7 其他管道函数
+// 6.7 其他管道函数
 skip_empty_result = pipe read(empty_chars) | skip_empty;   // 跳过空值
 
-// 4.8 省略 pipe 关键字（新语法）
+// 6.8 省略 pipe 关键字（新语法）
 simple_transform = read(data) | to_json;                   // 直接省略 pipe
 chained_ops = read(array_data) | nth(0) | to_str;          // 链式调用
 url_extract = read(url_field) | url(domain);               // 简化写法
 
-// 4.9 链式管道操作
+// 6.9 链式管道操作
 nested_extract = pipe read(complex_obj) | nth(0) | get(level1/level2/level3);
 multi_transform = pipe read(raw_data) | base64_decode(Utf8) | to_json;
 
-// ==================== 5. 字符串操作 ====================
+// ==================== 7. 字符串操作 ====================
 
-// 5.1 字符串格式化（fmt 函数）
+// 7.1 字符串格式化（fmt 函数）
 splice = fmt("{one}:{two}|{three}:{four}", read(one), read(two), read(three), read(four));
 
-// ==================== 6. 对象与数组 ====================
+// ==================== 8. 对象与数组 ====================
 
-// 6.1 对象创建（聚合多个字段）
+// 8.1 对象创建（聚合多个字段）
 extends = object {
     extend1, extend2 = read();
 };
 
-// 6.2 数组收集（collect）
+// 8.2 数组收集（collect）
 collected_ports : array = collect read(keys:[sport, dport, extra_port]);
 wildcard_items : array = collect take(keys:[details[*]/process_name]);  // 支持通配符收集
 ```
@@ -312,9 +356,45 @@ current_hour = Now::hour();  // 2025122912
 
 ---
 
-### 3. 模式匹配
+### 3. 数值表达式
 
-#### 3.1 单源 match
+使用 `calc(...)` 直接做算术：
+
+```oml
+risk_score : float = calc(read(simple_port) * 0.1 + digit(5));
+status_pct : digit = calc(round((read(num_range) * 100) / digit(1000)));
+bucket : digit = calc(read(simple_port) % 16);
+```
+
+**说明**：
+- 支持 `+ - * / %` 与 `abs/round/floor/ceil`
+- 可以混合字段和常量
+- `/` 返回 `float`，`%` 仅支持整数
+- 除零、字段缺失、非数值输入、整数溢出、`NaN/inf` 都会得到 `ignore`
+
+---
+
+### 4. 静态字典与查表
+
+```oml
+static {
+    status_score = object {
+        success = float(20.0);
+        warning = float(70.0);
+        error = float(90.0);
+    };
+}
+
+status_score_v2 : float = lookup_nocase(status_score, read(status), 40.0);
+```
+
+这适合把状态、等级等字符串映射到固定分值，且不区分大小写。
+
+---
+
+### 5. 模式匹配
+
+#### 5.1 单源 match
 基于单个字段的值进行匹配：
 ```oml
 match_chars = match read(option:[match_chars]) {
@@ -324,7 +404,7 @@ match_chars = match read(option:[match_chars]) {
 };
 ```
 
-#### 3.2 范围判断
+#### 5.2 范围判断
 使用 `in` 操作符判断范围：
 ```oml
 num_range = match read(option:[num_range]) {
@@ -333,8 +413,8 @@ num_range = match read(option:[num_range]) {
 };
 ```
 
-#### 3.3 双源 match
-匹配两个字段的组合：
+#### 5.3 多源 match
+匹配多个字段的组合（支持 2 个及以上源字段）：
 ```oml
 location : chars = match (read(city1), read(city2)) {
     (chars(beijing), chars(shanghai)) => chars(east_region);
@@ -343,7 +423,7 @@ location : chars = match (read(city1), read(city2)) {
 };
 ```
 
-#### 3.4 否定条件
+#### 5.4 否定条件
 使用 `!` 操作符进行否定匹配：
 ```oml
 valid_status = match read(status) {
@@ -353,7 +433,7 @@ valid_status = match read(status) {
 };
 ```
 
-#### 3.5 布尔类型 match
+#### 5.5 布尔类型 match
 匹配布尔值：
 ```oml
 is_enabled : digit = match read(enabled) {
@@ -363,11 +443,41 @@ is_enabled : digit = match read(enabled) {
 };
 ```
 
+#### 5.6 OR 条件匹配
+使用 `|` 分隔多个备选条件，任一匹配即成功：
+```oml
+city_tier : chars = match read(city1) {
+    chars(beijing) | chars(shanghai) | chars(guangzhou) => chars(tier1);
+    chars(chengdu) | chars(wuhan) => chars(tier2);
+    _ => chars(other);
+};
+```
+
+#### 5.7 多源 + OR 组合匹配
+多源 match 的每个条件位置都支持 OR：
+```oml
+priority : chars = match (read(city1), read(status)) {
+    (chars(beijing) | chars(shanghai), chars(success)) => chars(high);
+    (chars(chengdu), chars(success) | chars(pending)) => chars(medium);
+    _ => chars(low);
+};
+```
+
+#### 5.8 忽略大小写多值匹配
+
+```oml
+status_class = match read(status) {
+    iequals_any('success', 'ok', 'done') => chars(good);
+    iequals_any('error', 'failed', 'timeout') => chars(bad);
+    _ => chars(other);
+};
+```
+
 ---
 
-### 4. 管道函数
+### 6. 管道函数
 
-#### 4.1 时间转换
+#### 6.1 时间转换
 ```oml
 timestamp_zone = pipe read(timestamp_zone) | Time::to_ts_zone(0, ms);  // UTC 毫秒
 timestamp_s = pipe read(timestamp_zone) | Time::to_ts;                 // 秒级
@@ -376,13 +486,13 @@ timestamp_us = pipe @current_time | Time::to_ts_us;                    // 微秒
 timestamp_zone_8 = pipe @current_time | Time::to_ts_zone(8, s);        // UTC+8
 ```
 
-#### 4.2 编码/解码
+#### 6.2 编码/解码
 ```oml
 base64_decoded = pipe read(base64) | base64_decode(Utf8);
 base64_encoded = pipe read(base64) | base64_encode;
 ```
 
-#### 4.3 转义/反转义
+#### 6.3 转义/反转义
 ```oml
 html_escaped = pipe read(html) | html_escape;
 html_unescaped = pipe read(html) | html_unescape;
@@ -391,20 +501,20 @@ json_unescaped = pipe @json_escaped | json_unescape;
 str_escaped = pipe read(str) | str_escape;
 ```
 
-#### 4.4 数据转换
+#### 6.4 数据转换
 ```oml
 to_str_result = pipe read(str) | to_str;
 array_json = pipe read(array_str) | to_json;
 ip_to_int = pipe read(simple_ip) | ip4_to_int;
 ```
 
-#### 4.5 集合操作
+#### 6.5 集合操作
 ```oml
 array_first = pipe read(array_str) | nth(0);           // 获取第 0 个元素
 obj_nested = pipe read(obj) | nth(0) | get(one/two);   // 嵌套取值
 ```
 
-#### 4.6 数据提取
+#### 6.6 数据提取
 ```oml
 file_name = pipe read(path) | path(name);      // file.txt
 file_path = pipe read(path) | path(path);      // /home/user
@@ -415,12 +525,12 @@ url_path = pipe read(url) | url(path);         // /path/to/resource
 url_params = pipe read(url) | url(params);     // foo=1&bar=2
 ```
 
-#### 4.7 控制函数
+#### 6.7 控制函数
 ```oml
 skip_empty_result = pipe read(empty_chars) | skip_empty;  // 跳过空值
 ```
 
-#### 4.8 简化语法
+#### 6.8 简化语法
 省略 `pipe` 关键字：
 ```oml
 simple_transform = read(data) | to_json;
@@ -428,7 +538,7 @@ chained_ops = read(array_data) | nth(0) | to_str;
 url_extract = read(url_field) | url(domain);
 ```
 
-#### 4.9 链式操作
+#### 6.9 链式操作
 ```oml
 nested_extract = pipe read(complex_obj) | nth(0) | get(level1/level2/level3);
 multi_transform = pipe read(raw_data) | base64_decode(Utf8) | to_json;
@@ -436,7 +546,7 @@ multi_transform = pipe read(raw_data) | base64_decode(Utf8) | to_json;
 
 ---
 
-### 5. 字符串操作
+### 7. 字符串操作
 
 格式化字符串：
 ```oml
@@ -446,9 +556,9 @@ splice = fmt("{one}:{two}|{three}:{four}", read(one), read(two), read(three), re
 
 ---
 
-### 6. 对象与数组
+### 8. 对象与数组
 
-#### 6.1 对象创建
+#### 8.1 对象创建
 聚合多个字段为对象：
 ```oml
 extends = object {
@@ -456,7 +566,7 @@ extends = object {
 };
 ```
 
-#### 6.2 数组收集
+#### 8.2 数组收集
 收集多个字段为数组：
 ```oml
 collected_ports : array = collect read(keys:[sport, dport, extra_port]);
@@ -492,7 +602,9 @@ wildcard_items : array = collect take(keys:[details[*]/process_name]);
 
 - ✅ 基础操作：字面量、取值、默认值、通配符
 - ✅ 内置函数：时间函数
-- ✅ 模式匹配：单源、双源、范围、否定、布尔
+- ✅ 数值表达式：`calc(...)`、取整、分桶、比例计算
+- ✅ 静态字典查表：`lookup_nocase(...)`
+- ✅ 模式匹配：单源、多源（任意数量）、范围、否定、布尔、OR 条件、`iequals_any(...)`
 - ✅ 管道函数：时间、编解码、转义、转换、集合、提取
 - ✅ 字符串操作：格式化
 - ✅ 对象与数组：聚合、收集

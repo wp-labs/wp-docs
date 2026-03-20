@@ -1,34 +1,88 @@
 # WPL Quick Start
 
-> **Translation in Progress**
-> 
-> This document is currently being translated from Chinese to English.
-> 
-> Please refer to the Chinese version: `docs/10-user/03-wpl-new/01-quickstart.md`
+Start writing valid WPL in a few minutes.
+
+For the complete Chinese guide, see [../zh/01-quickstart.md](../zh/01-quickstart.md).
 
 ---
 
-Get started with WPL in 5 minutes and start parsing your log data immediately.
+## What WPL Looks Like
 
-## What is WPL?
+```wpl
+package nginx {
+  rule access_log {
+    (
+      ip:client_ip,
+      2*_,
+      time/clf:time<[,]>,
+      http/request:request",
+      digit:status,
+      digit:bytes
+    )
+  }
+}
+```
 
-WPL (Warp Processing Language) is a **declarative rule language** for describing how to **extract fields** and **parse structures** from text data such as logs and messages.
+The important syntax order is:
 
-### Core Features
+```text
+type [subfields] [:name] [format] [separator] {| pipe}
+```
 
-- **Declarative**: Describe "what data is" rather than "how to extract"
-- **Type-Safe**: Automatic validation and conversion (IP, time, JSON, and 37 types)
-- **Powerful & Flexible**: Support for JSON/KV nested extraction, Base64 decoding, field validation
-- **Easy to Learn**: Get started with basics in 5 minutes
-
-### Use Cases
-
-- Parse web server logs (Nginx, Apache)
-- Extract JSON/KV structured data
-- Process encoded data (Base64, Hex)
-- Parse firewall and security device logs
-- Custom log format parsing
+Use `time/clf:time<[,]>`, not `time/clf<[,]>:time`.
+Use `http/request:request"`, not `http/request":request`.
 
 ---
 
-**For the complete English documentation, please check back later or refer to the Chinese version.**
+## Three Common Patterns
+
+### Space-separated text
+
+```wpl
+package demo {
+  rule simple_log {
+    (digit:code, ip:client, time:ts, chars:action)
+  }
+}
+```
+
+### JSON subfields
+
+```wpl
+package api {
+  rule response {
+    (json(
+      chars@user,
+      digit@code,
+      opt(chars)@message
+    ))
+  }
+}
+```
+
+`opt(type)@key` is valid for JSON/KV subfields.
+
+### Optional groups
+
+```wpl
+package web {
+  rule log_line {
+    (ip:client_ip, digit:status),
+    opt(chars:tag")
+  }
+}
+```
+
+`opt(...)`, `alt(...)`, `some_of(...)`, and `not(...)` are group-level constructs.
+Do not put them inside another field list as if they were field types.
+
+---
+
+## Debugging Rule Syntax
+
+- Start with one simple group.
+- Add one field at a time.
+- Verify separators and formats first.
+- If one segment may be missing, split it into its own group and wrap that group with `opt(...)`.
+
+Authoritative syntax reference: [06-grammar-reference.md](./06-grammar-reference.md)

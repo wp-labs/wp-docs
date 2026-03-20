@@ -582,8 +582,8 @@ digit_in([200, 404, 500])  # Only matches these three values
 ## Additional Resources
 
 - **Development Guide**: `docs/guide/wpl_field_func_development_guide.md`
-- **Source Code**: `crates/wp-lang/src/ast/processor/function.rs`
-- **Test Cases**: `crates/wp-lang/src/eval/builtins/pipe_fun.rs`
+- **Source Code**: `src/ast/processor/function.rs`
+- **Test Cases**: `src/eval/builtins/pipe_fun.rs`
 
 ## Version History
 

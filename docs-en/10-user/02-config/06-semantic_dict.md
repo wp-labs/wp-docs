@@ -6,7 +6,7 @@ The semantic dictionary system provides semantic support for log parsing, includ
 - **Built-in System Dictionary**: Code-embedded, covering common vocabulary for log analysis
 - **External Configuration Support**: Optional, supports adding or replacing the built-in dictionary
 
-**Configuration File Location**: `models/knowledge/semantic_dict.toml` (knowledge configuration directory)
+**Configuration File Location**: `${models.knowledge}/semantic_dict.toml` (knowledge configuration directory, default `models/knowledge/semantic_dict.toml`)
 
 ## Built-in System Dictionary
 
@@ -51,11 +51,11 @@ All dictionaries are built into the code (`semantic_dict_loader.rs`), including:
 
 ### Configuration Method
 
-Specify the external configuration file via environment variable:
+The loader checks these paths by default (in order):
+- `${models.knowledge}/semantic_dict.toml`
+- `knowledge/semantic_dict.toml` (legacy compatibility)
 
-```bash
-export SEMANTIC_DICT_CONFIG=/path/to/custom_semantic_dict.toml
-```
+No environment variable is required.
 
 ### Configuration Modes
 
@@ -101,6 +101,9 @@ chinese = ["运行中", "等待中"]
 # Version number (required)
 version = 1
 
+# External dictionary switch (optional, defaults to true)
+enabled = true
+
 # Mode (optional, defaults to "add")
 mode = "add"  # or "replace"
 
@@ -145,7 +148,7 @@ chinese = ["迁移任务", "通知"]
 
 ### Example 1: Extend Built-in Dictionary (ADD Mode)
 
-File: `models/knowledge/semantic_dict.toml`
+File: `${models.knowledge}/semantic_dict.toml`
 
 ```toml
 version = 1
@@ -164,7 +167,6 @@ chinese = ["计算", "聚合", "转换"]
 
 Usage:
 ```bash
-export SEMANTIC_DICT_CONFIG=models/knowledge/semantic_dict.toml
 ./wp-engine
 ```
 
@@ -242,20 +244,20 @@ chinese = ["自定义状态1"]
 Include configuration file in version control:
 
 ```bash
-git add models/knowledge/semantic_dict.toml
+git add ${models.knowledge}/semantic_dict.toml
 git commit -m "Add custom semantic dictionary for production"
 ```
 
 ### 3. Environment Separation
 
-Use different configurations for different environments:
+Use different files per environment, then copy to the default path before startup:
 
 ```bash
 # Development environment
-export SEMANTIC_DICT_CONFIG=models/knowledge/dev_semantic_dict.toml
+cp ${models.knowledge}/dev_semantic_dict.toml ${models.knowledge}/semantic_dict.toml
 
 # Production environment
-export SEMANTIC_DICT_CONFIG=models/knowledge/prod_semantic_dict.toml
+cp ${models.knowledge}/prod_semantic_dict.toml ${models.knowledge}/semantic_dict.toml
 ```
 
 ### 4. Configuration Validation
@@ -263,9 +265,6 @@ export SEMANTIC_DICT_CONFIG=models/knowledge/prod_semantic_dict.toml
 Test if configuration loads correctly:
 
 ```bash
-# Set configuration
-export SEMANTIC_DICT_CONFIG=/path/to/config.toml
-
 # Run tests
 cargo test -p wp-oml test_extract_main_word -- --nocapture
 ```
@@ -288,23 +287,21 @@ Warning: Failed to load external semantic dict config: <error message>.
 **Solutions:**
 ```bash
 # Check if file exists
-ls -l $SEMANTIC_DICT_CONFIG
+ls -l ${models.knowledge}/semantic_dict.toml
 
 # Verify TOML format
-cat $SEMANTIC_DICT_CONFIG
+cat ${models.knowledge}/semantic_dict.toml
 
 # Check version number
-grep "version" $SEMANTIC_DICT_CONFIG
+grep "version" ${models.knowledge}/semantic_dict.toml
 ```
 
 ### Vocabulary Not Taking Effect
 
 **Troubleshooting Steps:**
 
-1. Confirm environment variable is set:
-   ```bash
-   echo $SEMANTIC_DICT_CONFIG
-   ```
+1. Confirm default config exists and is enabled:
+   `enabled = true` in `${models.knowledge}/semantic_dict.toml`
 
 2. Confirm correct mode:
    - ADD mode: New vocabulary should **add** to built-in dictionary

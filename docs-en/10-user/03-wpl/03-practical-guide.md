@@ -1,27 +1,59 @@
 # WPL Practical Guide
 
-> **Translation in Progress**
-> 
-> This document is currently being translated from Chinese to English.
-> 
-> Please refer to the Chinese version: `docs/10-user/03-wpl-new/03-practical-guide.md`
+This page keeps a compact English checklist for writing working WPL.
+
+For the full scenario guide, see [../zh/03-practical-guide.md](../zh/03-practical-guide.md).
 
 ---
 
-This document uses a task-oriented approach to help you quickly find solutions.
+## Common Patterns
 
-## Task Navigation
+### Nginx access log
 
-| Task Type | Jump To |
-|-----------|---------|
-| Parse Web Server Logs | Nginx/Apache access logs, error logs |
-| Parse JSON Data | Extract JSON fields, nested JSON |
-| Parse KV Pairs | Basic KV, nested KV, mixed formats |
-| Handle Encoded Data | Base64, Hex decoding |
-| Field Validation & Filtering | Check fields, IP ranges, port ranges |
-| Complex Scenarios | Variable fields, multiple formats, nested structures |
-| Common Issues | Debugging tips, performance optimization |
+```wpl
+package nginx {
+  rule access_log {
+    (
+      ip:client_ip,
+      2*_,
+      time/clf:time<[,]>,
+      http/request:request",
+      http/status:status,
+      digit:bytes,
+      chars:referer",
+      http/agent:user_agent"
+    )
+  }
+}
+```
+
+### JSON fields
+
+```wpl
+(json(
+  chars@user,
+  digit@code,
+  opt(chars)@message
+))
+```
+
+### Optional trailing segment
+
+```wpl
+(digit:code, time:ts),
+opt(chars:tag")
+```
+
+Split optional content into its own group instead of trying to wrap a field inside another group.
 
 ---
 
-**For the complete English documentation, please check back later or refer to the Chinese version.**
+## Quick Checks
+
+- Put `:name` before the format.
+- Put formats after the field name: `chars:msg"` and `time/clf:ts<[,]>`.
+- Use `alt(...)` for alternatives. `one_of(...)` is not valid WPL.
+- Use `opt(type)@key` only for JSON/KV subfields.
+- Keep `opt(...)`, `alt(...)`, `some_of(...)`, `not(...)` at group level.
+
+Primary syntax reference: [06-grammar-reference.md](./06-grammar-reference.md)

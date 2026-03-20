@@ -1,25 +1,78 @@
 # WPL Language Reference
 
-> **Translation in Progress**
-> 
-> This document is currently being translated from Chinese to English.
-> 
-> Please refer to the Chinese version: `docs/10-user/03-wpl-new/04-language-reference.md`
+This page summarizes the syntax details that are easy to get wrong when writing WPL.
+
+For the fuller Chinese reference, see [../zh/04-language-reference.md](../zh/04-language-reference.md).
 
 ---
 
-This document provides a complete reference for WPL language elements, for quick lookup of types, syntax, and structures.
+## Field Syntax
 
-## Quick Navigation
+Full order:
 
-| Topic | Content |
-|-------|---------|
-| **Type System** | All data type quick reference |
-| **Syntax Elements** | Basic structure, field definition, format control |
-| **Subfield Syntax** | JSON, KV, array subfields |
-| **Annotations** | tag, copy_raw annotations |
-| **Syntax Quick Reference** | Common pattern quick reference |
+```text
+[N*] type [symbol_content] [subfields] [:name] [length] [format] [separator] {| pipe}
+```
+
+Examples:
+
+```wpl
+digit:status
+time/clf:time<[,]>
+http/request:request"
+json(chars@name, opt(chars)@email)
+```
 
 ---
 
-**For the complete English documentation, please check back later or refer to the Chinese version.**
+## Group Syntax
+
+```wpl
+(field1, field2, field3)
+seq(field1, field2, field3)
+alt(ip:addr, chars:addr)
+opt(chars:tag")
+some_of(kvarr, ip, digit)
+not(peek_symbol(ERROR):check)
+```
+
+Rules:
+
+- Group operators are `seq`, `alt`, `opt`, `some_of`, and `not`.
+- They apply to groups, not to field types.
+- Nested groups are not supported.
+
+---
+
+## Subfields
+
+JSON and KV subfields support optional member types:
+
+```wpl
+json(chars@name, opt(chars)@email)
+kvarr(chars@host, digit@port, opt(chars)@user)
+```
+
+This is different from group-level `opt(...)`.
+
+---
+
+## Valid and Invalid Forms
+
+Valid:
+
+```wpl
+time/clf:time<[,]>
+http/request:request"
+alt(ip:addr, chars:addr)
+```
+
+Invalid:
+
+```wpl
+time/clf<[,]>:time
+http/request":request
+one_of(ip, chars)
+```
+
+Authoritative grammar: [06-grammar-reference.md](./06-grammar-reference.md)

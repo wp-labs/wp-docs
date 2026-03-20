@@ -459,7 +459,7 @@ For most log processing scenarios, performance is more than sufficient:
 - **Development Guide**: `docs/guide/wpl_field_func_development_guide.md`
 - **Parser Implementation**: `docs/guide/chars_replace_parser_tests.md`
 - **Performance Analysis**: `docs/guide/take_quoted_string_performance.md`
-- **Source Code**: `crates/wp-lang/src/ast/processor/function.rs`
+- **Source Code**: `src/ast/processor/function.rs`
 
 ## Version History
 

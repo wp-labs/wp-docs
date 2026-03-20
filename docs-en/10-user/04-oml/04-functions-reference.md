@@ -16,6 +16,7 @@ This document provides complete reference for all built-in functions and pipelin
 
 | Function | Description | Example |
 |----------|-------------|---------|
+| `calc(...)` | Evaluate an explicit arithmetic expression | `score = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;` |
 | `Now::time()` | Get current time | `event_time = Now::time() ;` |
 | `Now::date()` | Get current date (YYYYMMDD) | `today = Now::date() ;` |
 | `Now::hour()` | Get current hour (YYYYMMDDHH) | `current_hour = Now::hour() ;` |
@@ -39,5 +40,8 @@ This document provides complete reference for all built-in functions and pipelin
 | **Control** | `skip_empty` | Skip empty values | `read(field) \| skip_empty` |
 
 ---
+
+`calc(...)` performs numeric arithmetic with `+ - * / %` and `abs/round/floor/ceil`.
+For full syntax and failure semantics, see `docs/usage/en/04-oml/06-grammar-reference.md`.
 
 **For the complete English documentation, please check back later or refer to the Chinese version.**

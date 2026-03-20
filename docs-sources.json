@@ -1,0 +1,44 @@
+{
+  "default_generate_summary": true,
+  "source_defaults": {
+    "ignore": [
+      ".DS_Store"
+    ]
+  },
+  "sources": [
+    {
+      "name": "wp-motor-usage",
+      "repo": "https://github.com/wp-labs/wp-motor.git",
+      "ref": "main",
+      "checkout_subdir": "docs/usage",
+      "local_path": "../wp-motor/docs/usage",
+      "mappings": [
+        {
+          "from": "zh",
+          "to": "docs-zh/10-user"
+        },
+        {
+          "from": "en",
+          "to": "docs-en/10-user"
+        }
+      ]
+    },
+    {
+      "name": "wp-lang-docs",
+      "repo": "https://github.com/wp-labs/wp-lang.git",
+      "ref": "main",
+      "checkout_subdir": "docs",
+      "local_path": "../wp-lang/docs",
+      "mappings": [
+        {
+          "from": "zh",
+          "to": "docs-zh/10-user/03-wpl"
+        },
+        {
+          "from": "en",
+          "to": "docs-en/10-user/03-wpl"
+        }
+      ]
+    }
+  ]
+}

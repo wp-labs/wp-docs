@@ -25,6 +25,8 @@
 
 | 函数 | 说明 | 示例 |
 |------|------|------|
+| [`calc(...)`](#calc) | 执行显式算术表达式 | `score = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;` |
+| [`lookup_nocase(...)`](#lookup_nocase) | 对静态 object 做忽略大小写查表 | `score = lookup_nocase(status_score, read(status), 40.0) ;` |
 | [`Now::time()`](#nowtime-1) | 获取当前时间 | `event_time = Now::time() ;` |
 | [`Now::date()`](#nowdate-1) | 获取当前日期（YYYYMMDD） | `today = Now::date() ;` |
 | [`Now::hour()`](#nowhour-1) | 获取当前小时（YYYYMMDDHH） | `current_hour = Now::hour() ;` |
@@ -71,17 +73,90 @@
 | **链式处理** | `result = read(data) \| to_json \| base64_encode ;` |
 | **字符串格式化** | `msg = fmt("{}:{}", @ip, @port) ;` |
 | **条件匹配** | `level = match read(status) { ... } ;` |
+| **忽略大小写多值匹配** | `iequals_any('success', 'ok', 'done') => chars(good)` |
+| **静态字典查表** | `lookup_nocase(status_score, read(status), 40.0)` |
 | **创建对象** | `info : obj = object { ... } ;` |
 | **创建数组** | `items : array = collect read(keys:[...]) ;` |
 | **提供默认值** | `country = read(country) { _ : chars(CN) } ;` |
 | **选择性读取** | `id = read(option:[id, uid, user_id]) ;` |
 | **批量收集** | `metrics = collect read(keys:[cpu_*]) ;` |
+| **算术计算** | `risk = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;` |
 
 ---
 
 ## 内置函数
 
 内置函数可以直接在赋值表达式中使用，无需 `pipe` 关键字。
+
+### calc(...)
+
+执行显式算术表达式。
+
+**语法**：
+```oml
+calc(<expr>)
+```
+
+**支持能力**：
+- 运算符：`+ - * / %`
+- 函数：`abs(...)`、`round(...)`、`floor(...)`、`ceil(...)`
+- 操作数：数值字面量、`read(...)`、`take(...)`、`@field`
+
+**返回类型**：
+- `+ - *`：若存在浮点操作数则返回 `float`，否则返回 `digit`
+- `/`：始终返回 `float`
+- `%`：仅支持整数取模，返回 `digit`
+
+**失败行为**：
+- 除零、字段缺失、非数值输入、浮点 `%`、整数溢出、`NaN/inf` 都返回 `ignore`
+
+**示例**：
+```oml
+risk_score : float = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;
+delta      : digit = calc(read(cur) - read(prev)) ;
+distance   : float = calc(abs(read(actual) - read(expect))) ;
+error_pct  : digit = calc(round((read(err_cnt) * 100) / read(total_cnt))) ;
+```
+
+---
+
+### lookup_nocase(...)
+
+基于 `static` 中定义的 object 做忽略大小写查表。
+
+**语法**：
+```oml
+lookup_nocase(<dict_symbol>, <key_expr>, <default_expr>)
+```
+
+**参数**：
+- `dict_symbol`：`static` 中定义的 object 符号
+- `key_expr`：待查 key，通常是 `read(...)`
+- `default_expr`：未命中时返回的默认值
+
+**查表规则**：
+- key 会先做 `trim + lowercase`
+- 命中后返回字典中的对应值
+- 未命中或 key 不是字符串时，返回 `default_expr`
+
+**示例**：
+```oml
+static {
+    status_score = object {
+        error = float(90.0);
+        warning = float(70.0);
+        success = float(20.0);
+    };
+}
+
+risk_score : float = lookup_nocase(status_score, read(status), 40.0) ;
+```
+
+**更多说明**：
+- `iequals_any(...)` 详见 [functions/match_functions.md](./functions/match_functions.md)
+- `lookup_nocase(...)` 详见 [functions/lookup_nocase.md](./functions/lookup_nocase.md)
+
+---
 
 ### Now::time()
 

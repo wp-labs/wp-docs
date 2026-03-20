@@ -1,5 +1,8 @@
 # Summary
 
+- [Release Notes](00-release/0.20.md)
+  - [0.20](00-release/0.20.md)
+
 - [User Guide](10-user/README.md)
   - [CLI Tools](10-user/01-cli/README.md)
     - [WarpParse Core Concepts Quick Reference](10-user/01-cli/00-concepts-guide.md)

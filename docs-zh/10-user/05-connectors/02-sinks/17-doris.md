@@ -13,10 +13,17 @@ type = "doris"
 allow_override = ["endpoint", "user", "password", "database", "table", "create_table"]
 
 [connectors.params]
+<<<<<<< HEAD
 endpoint = "mysql://localhost:9030?charset=utf8mb4&connect_timeout=10"
 user = "root"
 password = ""
 database = "wp_test"
+=======
+endpoint = "http://localhost:8040"
+user = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
+database = "test_db"
+>>>>>>> 728fbffd4a42b5dc14af2c748f651badecfed1c2
 table = "events_parsed"
 ```
 
@@ -49,16 +56,28 @@ name = "doris_stream_load"
 connect = "doris_sink"
 
 [sink_group.sinks.params]
+<<<<<<< HEAD
 endpoint = "mysql://localhost:9030?charset=utf8mb4&connect_timeout=10"
 database = "wp_test"
 table = "events_parsed"
 user = "root"
 password = ""
+=======
+endpoint = "http://localhost:8040"
+database = "test_db"
+table = "wp_nginx"
+user = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
+timeout_secs = 30
+max_retries = 1
+batch_size = 10_0000
+>>>>>>> 728fbffd4a42b5dc14af2c748f651badecfed1c2
 ```
 
 ### 自动建表
 
 ```toml
+<<<<<<< HEAD
 [[sink_group.sinks]]
 name = "doris_stream_load"
 connect = "doris_sink"
@@ -97,3 +116,10 @@ password = ""
 - 确保 Doris FE 的 MySQL 端口可访问，并开启 Stream Load 能力。
 - 需要为账号授予 `SELECT/INSERT` 以及 `LOAD` 权限。
 - 完整端到端示例可参考 `wp-examples/extensions/doris/README.md`。
+=======
+[sink_group.sinks.params.headers]
+strip_outer_array = "false"
+max_filter_ratio = "0.1"
+columns = "wp_event_id,wp_src_key,sip,timestamp,`http/request`,size,referer,`http/agent`"
+```
+>>>>>>> 728fbffd4a42b5dc14af2c748f651badecfed1c2

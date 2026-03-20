@@ -1,0 +1,53 @@
+name: Sync aggregated docs
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 2 * * *"
+  repository_dispatch:
+    types:
+      - docs-updated
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout docs repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Sync from upstream sources
+        env:
+          DOCS_SYNC_TOKEN: ${{ secrets.DOCS_SYNC_TOKEN }}
+        run: |
+          python3 scripts/sync_docs.py \
+            --generate-summary \
+            --git-token-env DOCS_SYNC_TOKEN
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: automation/sync-docs
+          delete-branch: true
+          commit-message: "chore: sync aggregated docs"
+          title: "chore: sync aggregated docs"
+          body: |
+            This PR was created automatically by the docs sync workflow.
+
+            Trigger sources:
+            - `schedule`
+            - `workflow_dispatch`
+            - `repository_dispatch`
+          labels: |
+            documentation
+            automated-pr

@@ -10,9 +10,9 @@ Core Principles
 - Security: Runtime only allows access to table names declared in configuration; SQL only supports {table} placeholder
 - Ready to use by default: Most fields can be omitted; built-in defaults and auto-detection satisfy common scenarios
 
-Directory Layout (Recommended)
+Directory Layout (Recommended, default under `${models.knowledge}`)
 ```
-models/knowledge/
+${models.knowledge}/
   knowdb.toml                     # This configuration
   example/
     create.sql
@@ -24,13 +24,13 @@ models/knowledge/
     data.csv
 ```
 
-Top-level Configuration (models/knowledge/knowdb.toml)
+Top-level Configuration (`${models.knowledge}/knowdb.toml`)
 ```toml
 version = 2
 
 [[tables]]
 name = "example"
-# dir defaults to name when omitted; this example uses directory models/knowledge/example
+# dir defaults to name when omitted; this example uses directory ${models.knowledge}/example
 # data_file defaults to data.csv in table directory when omitted
 columns.by_header = ["name", "pinying"]
 
@@ -64,7 +64,7 @@ Security Constraints
 Minimal Runnable Example
 1) Directory
 ```
-models/knowledge/knowdb.toml
+${models.knowledge}/knowdb.toml
 models/knowledge/example/{create.sql, insert.sql, data.csv}
 ```
 2) create.sql

@@ -459,7 +459,7 @@ chars_replace 是大小写敏感的，需要多次调用：
 - **开发指南**: `docs/guide/wpl_field_func_development_guide.md`
 - **解析器实现**: `docs/guide/chars_replace_parser_tests.md`
 - **性能分析**: `docs/guide/take_quoted_string_performance.md`
-- **源代码**: `crates/wp-lang/src/ast/processor/function.rs`
+- **源代码**: `src/ast/processor/function.rs`
 
 ## 版本历史
 

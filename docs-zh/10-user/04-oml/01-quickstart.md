@@ -14,6 +14,7 @@
 | [最小示例](#最小示例) | 5 行代码上手 |
 | [基本语法](#基本语法) | 配置结构、WPL 关联、语法规则 |
 | [三个最常用操作](#三个最常用操作) | 读取字段、类型转换、数据聚合 |
+| [常见数值计算](#常见数值计算) | `calc(...)` 算术表达式 |
 | [常用数据类型](#常用数据类型) | 8 种数据类型速查 |
 | [常用内置函数](#常用内置函数) | 时间函数 |
 | [read vs take](#read-vs-take两种读取模式) | 两种读取模式对比 |
@@ -208,6 +209,26 @@ dport = "443"
 ports = [8080, 443]
 ```
 
+## 常见数值计算
+
+**场景**：计算比例、差值、分桶、取整百分比
+
+```oml
+name : calc_example
+---
+risk_score : float = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;
+delta : digit = calc(read(cur) - read(prev)) ;
+error_pct : digit = calc(round((read(err_cnt) * 100) / read(total_cnt))) ;
+bucket : digit = calc(read(uid) % 16) ;
+```
+
+**规则**：
+- 支持 `+ - * / %`
+- 支持 `abs(...)`、`round(...)`、`floor(...)`、`ceil(...)`
+- `/` 始终返回 `float`
+- `%` 仅支持整数取模
+- 除零、字段缺失、非数值输入、整数溢出、`NaN/inf` 都会返回 `ignore`
+
 ## 常用数据类型
 
 | 类型 | 说明 | 示例 |
@@ -235,6 +256,8 @@ today : digit = Now::date() ;
 # 获取当前小时（YYYYMMDDHH 格式）
 current_hour : digit = Now::hour() ;
 ```
+
+除了 `Now::*`，也可以使用 `calc(...)` 执行显式算术表达式；详见 [04-functions-reference.md](./04-functions-reference.md#calc)。
 
 ## read vs take：两种读取模式
 
@@ -345,7 +368,7 @@ log_entry : obj = object {
 - **基础操作**：字面量赋值、取值、默认值、通配符批量操作
 - **内置函数**：`Now::time()`、`Now::date()`、`Now::hour()`
 - **管道函数**：Base64 编解码、HTML 转义、时间转换、URL 解析
-- **模式匹配**：单源/双源 match、范围判断、否定条件
+- **模式匹配**：单源/多源 match、范围判断、否定条件、OR 条件
 - **数据聚合**：对象创建、数组收集
 - **SQL 集成**：数据库查询和富化
 

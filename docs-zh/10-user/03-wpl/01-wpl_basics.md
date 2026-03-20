@@ -1,10 +1,10 @@
 # WPL 语言基础
 
-本文档介绍 Warp Parse 中的 WPL 规则语言的基础元素与常用写法，内容与 `crates/wp-lang` 的解析实现保持一致。
+本文档介绍 `wp-lang` 中的 WPL 规则语言基础元素与常用写法，内容与当前解析实现保持一致。
 
 WPL 用于定义“规则（rule）”，每条规则由一个或多个“分组（group）”构成，分组内包含若干“字段（field）”抽取项。
 
-提示：完整的形式化语法见《WPL 语法（EBNF）》：`./03-wpl_grammar.md`。
+提示：完整的形式化语法见《WPL 语法（EBNF）》：`./06-grammar-reference.md`。
 
 ## 最小示例
 
@@ -38,8 +38,8 @@ package demo {
   rule /service/http {
     |decode/base64|unquote/unescape|     # 预处理（可选）
     (
-      ip@sip:src_ip,                    # 基本字段
-      ip@dip:dst_ip,
+      ip:src_ip,                        # 基本字段
+      ip:dst_ip,
       time:occur_time,
       5*_,                               # 连续占位字段（忽略）
       http/request<[,]>,                 # 范围定界格式 <beg,end>
@@ -58,7 +58,7 @@ package demo {
 
 示例：
 ```wpl
-seq(ip:sip,_^2,time<[,]>,http/request",http/status,digit,chars",http/agent",_")
+seq(ip:sip,2*_,time:recv_time<[,]>,http/request:req",http/status:status,digit:bytes,chars:referer",http/agent:ua",chars:xff")
 ```
 
 尾随逗号规则（两者均允许）：

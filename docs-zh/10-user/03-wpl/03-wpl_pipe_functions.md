@@ -674,9 +674,7 @@ rule mixed_style {
 ```
 
 ---
->>>>>>> 805600da457bb0fcfd70e2d5ce70e7774105068b
-
 ## 相关文档
 
-- 语法定义：[WPL 语法（EBNF）](./03-wpl_grammar.md)
-- 实现代码：`crates/wp-lang/src/parser/wpl_fun.rs`
+- 语法定义：[WPL 语法（EBNF）](./06-grammar-reference.md)
+- 实现代码：`src/parser/wpl_fun.rs`

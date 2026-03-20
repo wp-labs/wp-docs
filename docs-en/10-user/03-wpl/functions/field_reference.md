@@ -705,8 +705,8 @@ Yes, field names can contain any Unicode characters:
 - **chars_replace Usage Guide**: `docs/usage/wpl/en/chars_replace.md`
 - **WPL Field Function Development Guide**: `docs/guide/en/wpl_field_func_development_guide.md`
 - **Source Code**:
-  - `crates/wp-lang/src/parser/utils.rs` (take_ref_path_or_quoted)
-  - `crates/wp-lang/src/parser/wpl_field.rs` (wpl_id_field)
+  - `src/parser/utils.rs` (`take_ref_path_or_quoted`)
+  - `src/parser/wpl_field.rs` (`wpl_id_field`)
 
 ## Version History
 

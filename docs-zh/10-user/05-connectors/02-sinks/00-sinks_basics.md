@@ -4,7 +4,7 @@
 
 ## 概述
 
-Sink 是 warpparse 系统的数据输出端，负责将处理后的数据发送到各种目标系统。系统支持多种输出类型，包括文件、Syslog、Prometheus 等。
+Sink 是 warpparse 系统的数据输出端，负责将处理后的数据发送到各种目标系统。系统支持多种输出类型，包括文件、Syslog、Arrow IPC、Prometheus 等。
 
 ## 核心概念
 

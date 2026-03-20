@@ -705,8 +705,8 @@ WPL 只支持单引号 `'` 用于字段名引用。双引号 `"` 用于其他语
 - **chars_replace 使用指南**: `docs/usage/wpl/chars_replace.md`
 - **WPL Field Function 开发指南**: `docs/guide/wpl_field_func_development_guide.md`
 - **源代码**:
-  - `crates/wp-lang/src/parser/utils.rs` (take_ref_path_or_quoted)
-  - `crates/wp-lang/src/parser/wpl_field.rs` (wpl_id_field)
+  - `src/parser/utils.rs` (`take_ref_path_or_quoted`)
+  - `src/parser/wpl_field.rs` (`wpl_id_field`)
 
 ## 版本历史
 

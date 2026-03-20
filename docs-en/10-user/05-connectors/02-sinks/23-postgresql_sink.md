@@ -14,8 +14,8 @@ allow_override = ["endpoint", "username", "password", "database", "table", "colu
 
 [connectors.params]
 endpoint = "localhost:5432"
-username = "postgres"
-password = "123456"
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 database = "wparse"
 table = "nginx_logs"
 columns = ["sip", "timestamp", "http/request", "status", "size", "referer", "http/agent", "wp_event_id"]
@@ -53,8 +53,8 @@ connect = "postgresql_sink"
 
 [sink_group.sinks.params]
 endpoint = "localhost:5432"
-username = "postgres"
-password = "123456"
+username = "${SEC_USERNAME}"
+password = "${SEC_PASSWORD}"
 database = "wparse"
 table = "nginx_logs"
 columns = ["sip", "timestamp", "http/request", "status", "size", "referer", "http/agent", "wp_event_id"]

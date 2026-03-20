@@ -31,6 +31,30 @@ output = "file"
 file_path = "./data/logs/"
 ```
 
+## 变量化示例
+
+`wpgen.toml` 也适合用 `${VAR}` 提升环境切换效率：
+
+```toml
+version = "1.0"
+
+[generator]
+mode = "rule"
+rule_root = "${WORK_ROOT}/models/wpl"
+
+[output]
+connect = "file_${ENV}"
+name = "gen_${ENV}"
+params = { base = "${WORK_ROOT}/data/out", file = "${OUTPUT_FILE}" }
+
+[logging]
+level = "${LOG_LEVEL}"
+output = "file"
+file_path = "${WORK_ROOT}/data/logs"
+```
+
+如果输出目标依赖账号、密码或连接串，建议改用 `SEC_` 变量，并把敏感值放到 `sec_key.toml` 或其他受控外部变量源中。详细约定见：[配置变量与安全字典（`${VAR}` / `sec_key.toml`）](08-variables_and_sec_key.md)。
+
 ## 动态速度模型
 
 除了使用 `speed` 字段指定恒定速率外，还可以使用 `speed_profile` 配置动态速度变化模型。

@@ -646,7 +646,7 @@ For complex formats with quotes, it's recommended to use specialized parsers (su
 - **WPL Syntax Reference**: `docs/guide/wpl_syntax.md`
 - **Parser Development Guide**: `docs/guide/wpl_field_func_development_guide.md`
 - **chars_replace Usage Guide**: `docs/usage/wpl/chars_replace.md`
-- **Source Code**: `crates/wp-lang/src/ast/syntax/wpl_sep.rs`
+- **Source Code**: `src/ast/syntax/wpl_sep.rs`
 
 ## Version History
 

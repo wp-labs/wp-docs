@@ -119,10 +119,10 @@ rule protocol_filter {
 
 ## 实现细节
 
-- 定义位置: `crates/wp-lang/src/ast/processor/function.rs`
-- 实现位置: `crates/wp-lang/src/eval/builtins/pipe_fun.rs`
-- 解析器: `crates/wp-lang/src/parser/wpl_fun.rs`
-- 测试: `crates/wp-lang/src/eval/builtins/pipe_fun.rs` (tests 模块)
+- 定义位置: `src/ast/processor/function.rs`
+- 实现位置: `src/eval/builtins/pipe_fun.rs`
+- 解析器: `src/parser/wpl_fun.rs`
+- 测试: `src/eval/builtins/pipe_fun.rs`（tests 模块）
 
 ## 相关函数
 

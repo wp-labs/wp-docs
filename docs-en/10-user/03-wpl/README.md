@@ -75,8 +75,8 @@ package nginx {
     (
       ip:client_ip,
       2*_,
-      time/clf<[,]>:time,
-      http/request":request,
+      time/clf:time<[,]>,
+      http/request:request",
       digit:status,
       digit:bytes
     )
@@ -117,6 +117,21 @@ package firewall {
 ```
 
 For more examples, see: [01-quickstart.md](./01-quickstart.md) and [03-practical-guide.md](./03-practical-guide.md)
+
+---
+
+## Writing WPL Correctly
+
+These rules reflect the current grammar:
+
+- Field syntax order is `type [subfields] [:name] [format] [separator] {| pipe}`.
+- Put the field name before the format: `time/clf:time<[,]>`.
+- Quote format also comes after the name: `http/request:request"`.
+- `opt(...)`, `alt(...)`, `some_of(...)`, `seq(...)`, and `not(...)` are group-level constructs.
+- `opt(type)@key` is only for optional JSON/KV subfields.
+- `one_of(...)` is not valid WPL. Use `alt(...)`.
+
+For the authoritative grammar, see [06-grammar-reference.md](./06-grammar-reference.md).
 
 ---
 

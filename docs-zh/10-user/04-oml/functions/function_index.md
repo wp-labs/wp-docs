@@ -1,6 +1,18 @@
-# OML Pipe Functions 函数索引
+# OML Functions 函数索引
 
-本文档列出了 WP-Motor OML 语言中所有可用的 pipe function（管道函数）。
+本文档列出了 `docs/usage/zh/04-oml/functions/` 目录下的函数与专题文档。
+
+## 内置表达式 / 内置函数
+
+| 名称 | 语法 | 说明 | 文档 |
+|------|------|------|------|
+| `calc(...)` | `calc(expr)` | 显式数值表达式，支持 `+ - * / %` 与 `abs/round/floor/ceil` | [📖 详细文档](./calc.md) |
+| `lookup_nocase(...)` | `lookup_nocase(dict, key, default)` | 对 `static` object 做忽略大小写查表 | [📖 详细文档](./lookup_nocase.md) |
+| `iequals_any(...)` | `iequals_any(v1, v2, ...)` | 忽略大小写的多候选匹配，用于 `match` 条件 | [📖 详细文档](./match_functions.md) |
+
+## Pipe Functions
+
+以下为可通过管道调用的函数：
 
 ## 字段访问函数 (Field Accessors)
 

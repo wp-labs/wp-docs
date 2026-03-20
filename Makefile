@@ -1,6 +1,6 @@
 # Makefile for mdbook documentation management
 
-.PHONY: help build serve install clean summary summary-simple validate build-zh build-en build-all serve-zh serve-en sync
+.PHONY: help build serve install clean summary summary-simple validate build-zh build-en build-all serve-zh serve-en sync sync-dry-run
 
 # Default target
 help:
@@ -16,7 +16,8 @@ help:
 	@echo "  summary       - Generate structured SUMMARY.md"
 	@echo "  summary-simple- Generate simple SUMMARY.md"
 	@echo "  validate      - Validate markdown links and formatting"
-	@echo "  sync          - Sync user docs from wp-motor/docs/usage"
+	@echo "  sync          - Sync docs from configured upstream sources"
+	@echo "  sync-dry-run  - Preview sync changes without writing files"
 	@echo "  clean         - Clean build artifacts"
 
 # Install required tools
@@ -92,10 +93,14 @@ validate:
 		echo "markdown-link-check not found. Install with: npm install -g markdown-link-check"; \
 	fi
 
-# Sync user docs from wp-motor
+# Sync docs from configured upstream sources
 sync:
-	@echo "Syncing user docs from wp-motor/docs/usage..."
-	@bash sync-usage-docs.sh
+	@echo "Syncing docs from docs-sources.json..."
+	@python3 scripts/sync_docs.py --prefer-local --generate-summary
+
+sync-dry-run:
+	@echo "Previewing docs sync from docs-sources.json..."
+	@python3 scripts/sync_docs.py --prefer-local --dry-run
 
 # Clean build artifacts
 clean:

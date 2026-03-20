@@ -14,6 +14,7 @@
 | [**类型系统**](#类型系统) | 8 种基本类型、自动推断、类型转换 |
 | [**读取语义**](#读取语义read-vs-take) | read vs take、破坏性与非破坏性、读取优先级 |
 | [**表达式类型**](#表达式类型) | 值表达式、函数调用、管道、条件、聚合 |
+| [**数值表达式**](#数值表达式calc) | 算术语法、类型规则、失败行为 |
 | [**默认值机制**](#默认值机制) | 默认值语法、函数默认值、限制说明 |
 | [**通配符**](#通配符与批量处理) | 通配符语法、批量目标、使用限制 |
 | [**参数化读取**](#参数化读取) | option 优先级、keys 收集、JSON 路径 |
@@ -267,6 +268,38 @@ encoded = pipe read(data) | to_json | base64_encode ;
 encoded2 = read(data) | to_json | base64_encode ;
 ```
 
+### 数值表达式
+
+使用 `calc(...)` 显式执行算术表达式：
+
+```oml
+name : calc_expr
+---
+risk_score : float = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;
+bucket     : digit = calc(read(uid) % 16) ;
+distance   : float = calc(abs(read(actual) - read(expect))) ;
+```
+
+### 数值表达式：`calc(...)`
+
+**支持范围**：
+- 运算符：`+ - * / %`
+- 函数：`abs(...)`、`round(...)`、`floor(...)`、`ceil(...)`
+- 操作数：数值字面量、`read(...)`、`take(...)`、`@field`
+
+**类型规则**：
+- `digit op digit` 在 `+ - *` 下返回 `digit`
+- 只要任一操作数是浮点，`+ - *` 返回 `float`
+- `/` 始终返回 `float`
+- `%` 仅支持 `digit % digit`
+
+**失败行为**：
+- 除零、缺失字段、非数值输入返回 `ignore`
+- 整数溢出返回 `ignore`
+- `NaN` / `inf` 输入或结果返回 `ignore`
+
+这意味着 `calc(...)` 不会隐式兜底为 `0`，也不会把非法结果继续传给后续步骤。
+
 ### 条件表达式
 
 基于条件选择值：
@@ -277,6 +310,28 @@ name : match_expr
 level = match read(status) {
     in (digit(200), digit(299)) => chars(success) ;
     in (digit(400), digit(499)) => chars(error) ;
+    _ => chars(other) ;
+} ;
+```
+
+`match` 分支值仍然使用既有子表达式集合，不直接写 `calc(...)`。如果需要先算再匹配，建议先绑定到临时字段：
+
+```oml
+__risk_score : float = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;
+level = match read(__risk_score) {
+    gt(80) => chars(high) ;
+    _ => chars(normal) ;
+} ;
+```
+
+支持 OR 语法（`|` 分隔多个备选条件）：
+
+```oml
+name : match_or_expr
+---
+tier = match read(city) {
+    chars(bj) | chars(sh) | chars(gz) => chars(tier1) ;
+    chars(cd) | chars(wh) => chars(tier2) ;
     _ => chars(other) ;
 } ;
 ```
@@ -451,9 +506,23 @@ first_user = read(users) | nth(0) | get(name) ;
 ```oml
 name : complex_match
 ---
+# 单源 match + collect
 status = match read(code) {
     in (digit(200), digit(299)) => collect read(keys:[a, b]) ;
     _ => read(default_value) ;
+} ;
+
+# 多源 match（支持任意数量源字段）
+zone = match (read(city), read(region), read(country)) {
+    (chars(bj), chars(north), chars(cn)) => chars(zone1) ;
+    _ => chars(unknown) ;
+} ;
+
+# OR + 多源 match
+priority = match (read(city), read(level)) {
+    (chars(bj) | chars(sh), chars(high)) => chars(priority) ;
+    (chars(gz), chars(low) | chars(mid)) => chars(normal) ;
+    _ => chars(default) ;
 } ;
 ```
 

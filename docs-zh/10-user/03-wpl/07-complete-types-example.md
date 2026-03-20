@@ -59,7 +59,7 @@ package wpl_example {
       bool:bool_val,
 
       // 4. chars - 字符串（带引号）
-      chars":quoted_str,
+      chars:quoted_str",
 
       // 5. digit - 整数
       digit:integer,
@@ -77,7 +77,7 @@ package wpl_example {
       time_2822:time_rfc2822,
 
       // 10. time/clf - Common Log Format（Apache/Nginx）
-      time/clf<[,]>:time_clf,
+      time/clf:time_clf<[,]>,
 
       // 11. time_timestamp - Unix 时间戳
       time_timestamp:timestamp,
@@ -95,16 +95,16 @@ package wpl_example {
       json(bool@strict):json_data,
 
       // 16. http/request - HTTP 请求行
-      http/request":http_req,
+      http/request:http_req",
 
       // 17. http/status - HTTP 状态码
       http/status:http_status,
 
       // 18. http/agent - User-Agent
-      http/agent":user_agent,
+      http/agent:user_agent",
 
       // 19. http/method - HTTP 方法
-      http/method":http_method,
+      http/method:http_method",
 
       // 20. port - 端口号
       port:port_num,
@@ -181,7 +181,7 @@ bool:bool_val
 
 #### 4. chars - 字符串
 ```wpl
-chars":quoted_str
+chars:quoted_str"
 ```
 - **格式**：支持引号包裹 `"hello"` 或裸字符串 `hello`
 - **用途**：提取任意字符串
@@ -221,7 +221,7 @@ time_2822:time_rfc2822
 
 #### 10. time/clf - Common Log Format
 ```wpl
-time/clf<[,]>:time_clf
+time/clf:time_clf<[,]>
 ```
 - **格式**：`[06/Aug/2019:12:12:19 +0800]`
 - **用途**：Apache/Nginx 日志
@@ -281,7 +281,7 @@ json(bool@strict):json_data
 
 #### 17. http/request - HTTP 请求行
 ```wpl
-http/request":http_req
+http/request:http_req"
 ```
 - **格式**：`"GET /api/users HTTP/1.1"`
 - **提取**：方法 + 路径 + 协议版本
@@ -294,14 +294,14 @@ http/status:http_status
 
 #### 19. http/agent - User-Agent
 ```wpl
-http/agent":user_agent
+http/agent:user_agent"
 ```
 - **格式**：`"Mozilla/5.0..."`
 - **用途**：浏览器标识
 
 #### 20. http/method - HTTP 方法
 ```wpl
-http/method":http_method
+http/method:http_method"
 ```
 - **支持**：`GET`、`POST`、`PUT`、`DELETE` 等
 

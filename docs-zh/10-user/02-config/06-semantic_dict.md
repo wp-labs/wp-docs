@@ -6,7 +6,7 @@
 - **系统内置词典**：代码内置，涵盖日志分析的常用词汇
 - **外部配置支持**：可选，支持添加或替换内置词典
 
-**配置文件位置**：`models/knowledge/semantic_dict.toml`（知识配置目录）
+**配置文件位置**：`${models.knowledge}/semantic_dict.toml`（知识配置目录，默认 `models/knowledge/semantic_dict.toml`）
 
 ## 系统内置词典
 
@@ -51,11 +51,11 @@
 
 ### 配置方式
 
-通过环境变量指定外部配置文件：
+默认读取以下路径（按顺序）：
+- `${models.knowledge}/semantic_dict.toml`
+- `knowledge/semantic_dict.toml`（兼容旧布局）
 
-```bash
-export SEMANTIC_DICT_CONFIG=/path/to/custom_semantic_dict.toml
-```
+无需设置环境变量。
 
 ### 配置模式
 
@@ -101,6 +101,9 @@ chinese = ["运行中", "等待中"]
 # 版本号（必须）
 version = 1
 
+# 外部词典开关（可选，默认 true）
+enabled = true
+
 # 模式（可选，默认 "add"）
 mode = "add"  # 或 "replace"
 
@@ -145,7 +148,7 @@ chinese = ["迁移任务", "通知"]
 
 ### 示例 1：扩展内置词典（ADD 模式）
 
-文件：`models/knowledge/semantic_dict.toml`
+文件：`${models.knowledge}/semantic_dict.toml`
 
 ```toml
 version = 1
@@ -164,7 +167,6 @@ chinese = ["计算", "聚合", "转换"]
 
 使用：
 ```bash
-export SEMANTIC_DICT_CONFIG=models/knowledge/semantic_dict.toml
 ./wp-engine
 ```
 
@@ -242,20 +244,20 @@ chinese = ["自定义状态1"]
 将配置文件纳入版本控制：
 
 ```bash
-git add models/knowledge/semantic_dict.toml
+git add ${models.knowledge}/semantic_dict.toml
 git commit -m "Add custom semantic dictionary for production"
 ```
 
 ### 3. 环境分离
 
-为不同环境使用不同配置：
+为不同环境准备不同文件，在启动前拷贝到默认路径：
 
 ```bash
 # 开发环境
-export SEMANTIC_DICT_CONFIG=models/knowledge/dev_semantic_dict.toml
+cp ${models.knowledge}/dev_semantic_dict.toml ${models.knowledge}/semantic_dict.toml
 
 # 生产环境
-export SEMANTIC_DICT_CONFIG=models/knowledge/prod_semantic_dict.toml
+cp ${models.knowledge}/prod_semantic_dict.toml ${models.knowledge}/semantic_dict.toml
 ```
 
 ### 4. 配置验证
@@ -263,9 +265,6 @@ export SEMANTIC_DICT_CONFIG=models/knowledge/prod_semantic_dict.toml
 测试配置是否正确加载：
 
 ```bash
-# 设置配置
-export SEMANTIC_DICT_CONFIG=/path/to/config.toml
-
 # 运行测试
 cargo test -p wp-oml test_extract_main_word -- --nocapture
 ```
@@ -288,23 +287,21 @@ Warning: Failed to load external semantic dict config: <error message>.
 **解决方法：**
 ```bash
 # 检查文件是否存在
-ls -l $SEMANTIC_DICT_CONFIG
+ls -l ${models.knowledge}/semantic_dict.toml
 
 # 验证 TOML 格式
-cat $SEMANTIC_DICT_CONFIG
+cat ${models.knowledge}/semantic_dict.toml
 
 # 检查版本号
-grep "version" $SEMANTIC_DICT_CONFIG
+grep "version" ${models.knowledge}/semantic_dict.toml
 ```
 
 ### 词汇未生效
 
 **检查步骤：**
 
-1. 确认环境变量已设置：
-   ```bash
-   echo $SEMANTIC_DICT_CONFIG
-   ```
+1. 确认默认路径配置存在且已启用：
+   `${models.knowledge}/semantic_dict.toml` 中 `enabled = true`
 
 2. 确认模式正确：
    - ADD 模式：新词汇应该**添加**到内置词典

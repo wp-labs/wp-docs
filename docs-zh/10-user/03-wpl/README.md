@@ -1,6 +1,6 @@
 # WPL 规则语言
 
-WPL (Warp Processing Language) 是 Warp Parse 解析子系统（warp-parse）使用的规则语言，用于描述字段抽取、协议解析与简单判定逻辑。
+WPL (Warp Processing Language) 是 `wp-lang` 使用的规则语言，用于描述字段抽取、协议解析与简单判定逻辑。
 
 ---
 
@@ -13,7 +13,7 @@ WPL (Warp Processing Language) 是 Warp Parse 解析子系统（warp-parse）使
    ↓
 01-quickstart.md ────→ 5分钟上手，复制即用
    ↓
-07-complete-types-examplemd ──→ 🌟 完整功能演示（强烈推荐）
+07-complete-types-example.md ──→ 🌟 完整功能演示（强烈推荐）
    ↓
 02-core-concepts.md ──→ 理解设计理念和核心概念
    ↓
@@ -75,8 +75,8 @@ package nginx {
     (
       ip:client_ip,
       2*_,
-      time/clf<[,]>:time,
-      http/request":request,
+      time/clf:time<[,]>,
+      http/request:request",
       digit:status,
       digit:bytes
     )
@@ -109,7 +109,6 @@ package firewall {
       time:timestamp,
       sn:serial,
       chars:type\:,
-      opt(kvarr),
       kvarr
     )
   }

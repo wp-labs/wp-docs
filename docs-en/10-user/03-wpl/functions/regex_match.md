@@ -694,8 +694,8 @@ Not supported. `regex_match` only performs match testing, doesn't extract conten
 
 - **Rust Regex Documentation**: https://docs.rs/regex/
 - **Development Guide**: `docs/guide/wpl_field_func_development_guide.md`
-- **Source Code**: `crates/wp-lang/src/ast/processor/function.rs`
-- **Test Cases**: `crates/wp-lang/src/eval/builtins/pipe_fun.rs`
+- **Source Code**: `src/ast/processor/function.rs`
+- **Test Cases**: `src/eval/builtins/pipe_fun.rs`
 
 ## Version History
 

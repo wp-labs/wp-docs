@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-37cffb89.js";
+            window.path_to_searchindex_js = "../../searchindex-9d481d7c.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-536d74fd.js"></script>
+        <script src="../../toc-bf315470.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -452,11 +452,48 @@ line2
 <p><strong>输出：</strong></p>
 <pre><code>user: admin
 code: 200
+message: &lt;missing&gt;
+data: &lt;missing&gt;
 </code></pre>
 <p><strong>要点：</strong></p>
 <ul>
-<li><code>opt(type)@key</code> 标记字段为可选</li>
-<li>不存在的字段不会导致解析失败</li>
+<li><code>opt(type)@key</code> 只用于 JSON/KV 子字段</li>
+<li>缺失字段不会导致整条 <code>json(...)</code> 规则失败</li>
+</ul>
+<hr>
+<h3 id="任务-25区分合法-json-与坏-json"><a class="header" href="#任务-25区分合法-json-与坏-json">任务 2.5：区分合法 JSON 与坏 JSON</a></h3>
+<p><strong>场景：</strong> 同一条链路里既可能出现合法 JSON，也可能出现“看起来像 JSON 但已经损坏”的数据，需要把两类输入分开处理。</p>
+<p><strong>输入 1：合法 JSON</strong></p>
+<pre><code class="language-json">{"host":"qup.f.360.cn","method":"POST"}
+</code></pre>
+<p><strong>输入 2：损坏但像 JSON</strong></p>
+<pre><code class="language-text">{ "host": "qup.f.360.cn", "method": "POST", "rsp_body": "broken..., "afver": "TS3.0" }
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package api {
+  rule good_json {
+    (json(chars@host, chars@method))
+  }
+
+  rule broken_json {
+    |json_like|
+    (bad_json:raw)
+  }
+}
+</code></pre>
+<p><strong>输出 1：</strong></p>
+<pre><code>host: qup.f.360.cn
+method: POST
+</code></pre>
+<p><strong>输出 2：</strong></p>
+<pre><code>raw: { "host": "qup.f.360.cn", "method": "POST", "rsp_body": "broken..., "afver": "TS3.0" }
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li><code>json(...)</code> 现在已经内置了 <code>json_like</code> 式快速判断，所以合法 JSON 规则前面不必再写 <code>|json_like|</code></li>
+<li><code>|json_like| (bad_json:raw)</code> 适合做坏 JSON 兜底</li>
+<li>这样普通文本不会被 <code>bad_json</code> 误吃掉</li>
+<li>只有“像 JSON 但严格解析失败”的输入，才应该落到 <code>bad_json</code></li>
 </ul>
 <hr>
 <h2 id="3-解析-kv-键值对"><a class="header" href="#3-解析-kv-键值对">3. 解析 KV 键值对</a></h2>

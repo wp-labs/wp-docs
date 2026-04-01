@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-37cffb89.js";
+            window.path_to_searchindex_js = "searchindex-9d481d7c.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-536d74fd.js"></script>
+        <script src="toc-bf315470.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -907,6 +907,7 @@ Commands:
 </thead>
 <tbody>
 <tr><td>parse_workers</td><td><code>-w</code></td><td><code>--parse-workers</code></td><td>-</td><td>解析线程数</td></tr>
+<tr><td>reload_timeout_ms</td><td>-</td><td><code>--reload-timeout-ms</code></td><td>-</td><td>reload 兜底超时（毫秒）；同时用于 graceful drain 与旧 processing 尾部清理</td></tr>
 <tr><td>stat_sec</td><td>-</td><td><code>--stat</code></td><td>-</td><td>统计输出间隔（秒）</td></tr>
 <tr><td>stat_print</td><td><code>-p</code></td><td><code>--print_stat</code></td><td>false</td><td>周期打印统计信息</td></tr>
 <tr><td>wpl_dir</td><td>-</td><td><code>--wpl</code></td><td>-</td><td>WPL 规则目录覆盖</td></tr>
@@ -922,6 +923,9 @@ wparse batch  -w 4 --parse-workers 4
 
 # 守护进程模式：常驻服务，每 5 秒输出统计
 wparse daemon --stat 5 -p
+
+# 守护进程模式：将 reload 兜底超时压到 300ms（适合自动化测试）
+wparse daemon --reload-timeout-ms 300
 
 # 自定义日志和规则目录
 wparse daemon --log-profile custom.toml --wpl /custom/rules
@@ -1162,6 +1166,7 @@ sinks   = "./topology/sinks"
 [performance]
 rate_limit_rps = 10000        # 限速（records/second）
 parse_workers  = 2            # 解析并发 worker 数
+reload_timeout_ms = 10000     # reload 兜底超时（毫秒）；覆盖 graceful drain 与旧 processing 尾部清理
 
 [rescue]
 path = "./data/rescue"        
@@ -1191,7 +1196,10 @@ target = "*"
 <ul>
 <li><code>[models].knowledge</code> 是知识配置根目录，默认值为 <code>./models/knowledge</code></li>
 <li><code>semantic_dict.toml</code> 默认读取 <code>${models.knowledge}/semantic_dict.toml</code></li>
-<li><code>knowdb.toml</code> 默认读取 <code>${models.knowledge}/knowdb.toml</code></li>
+<li><code>knowdb.toml</code> 默认读取 <code>${models.knowledge}/knowdb.toml</code>
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</li>
+<li><code>reload_timeout_ms</code> 默认 <code>10000</code>；CLI <code>--reload-timeout-ms</code> 优先于配置文件
+=======</li>
 </ul>
 <h2 id="变量化建议"><a class="header" href="#变量化建议">变量化建议</a></h2>
 <p><code>wparse.toml</code> 中的路径类字符串适合使用 <code>${VAR}</code> 变量化，例如：</p>
@@ -1205,6 +1213,21 @@ path = "${WORK_ROOT}/data/rescue"
 path = "${WORK_ROOT}/data/logs"
 </code></pre>
 <p>涉及外部变量文件、敏感值和 <code>sec_key.toml</code> 约定时，参考：<a href="#安全变量与环境变量">配置变量与安全字典（<code>${VAR}</code> / <code>sec_key.toml</code>）</a>。</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>e12a12ddfff02e2df9314d213ed044b50a41be0e</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="sources配置"><a class="header" href="#sources配置">Sources配置</a></h1>
 <h2 id="概览"><a class="header" href="#概览">概览</a></h2>
@@ -2101,7 +2124,7 @@ columns.by_header = ["name", "pinying"]
 </ul>
 <p>安全约束</p>
 <ul>
-<li>运行时（facade/query_cipher/SQL 评估）仅允许使用 <code>[[tables]].name</code> 中声明的表名</li>
+<li>运行时（facade / SQL 评估）仅允许使用 <code>[[tables]].name</code> 中声明的表名</li>
 <li>SQL 模板仅允许 <code>{table}</code> 占位符；禁止其它动态拼接</li>
 </ul>
 <p>最小可运行示例</p>
@@ -2156,7 +2179,6 @@ max = 100
 <p>与应用的关系</p>
 <ul>
 <li>wparse/wproj 等会在启动处加载 knowdb：创建权威库并设置 Query Provider</li>
-<li>曾用于隐私模块的 <code>query_cipher(table)</code>（加载单列表词表）在当前版本默认不启用；如需脱敏请在业务侧实现</li>
 </ul>
 <p>内置 SQL 函数（UDF）</p>
 <ul>
@@ -2466,6 +2488,7 @@ table = "nginx_${ENV}"
 <tr><td>💡 理解概念</td><td><a href="#wpl-核心概念">02-core-concepts.md</a></td></tr>
 <tr><td>📝 解析 Nginx 日志</td><td><a href="#1-解析-web-服务器日志">03-practical-guide.md § 1</a></td></tr>
 <tr><td>📊 解析 JSON 数据</td><td><a href="#2-解析-json-数据">03-practical-guide.md § 2</a></td></tr>
+<tr><td>🧩 区分合法 JSON 与坏 JSON</td><td><a href="#-json-like-路由">04-language-reference.md § JSON-like 路由</a></td></tr>
 <tr><td>🔑 解析 KV 键值对</td><td><a href="#3-解析-kv-键值对">03-practical-guide.md § 3</a></td></tr>
 <tr><td>🔐 处理 Base64 编码</td><td><a href="#4-处理编码数据">03-practical-guide.md § 4</a></td></tr>
 <tr><td>✅ 验证字段</td><td><a href="#5-字段验证与过滤">03-practical-guide.md § 5</a></td></tr>
@@ -2490,6 +2513,7 @@ table = "nginx_${ENV}"
 <tr><td><a href="#wpl-语言参考">04-language-reference.md</a></td><td>完整类型列表 + 语法元素 + 速查表</td><td>开发者</td></tr>
 <tr><td><a href="#wpl-函数参考">05-functions-reference.md</a></td><td>所有函数的标准化参考</td><td>开发者</td></tr>
 <tr><td><a href="#wpl-语法参考ebnf">06-grammar-reference.md</a></td><td>EBNF 形式化语法定义</td><td>编译器开发者</td></tr>
+<tr><td><a href="#checker-实现指南">09-checker-guide.md</a></td><td>checker 分层、API 设计与实现约定</td><td>工具开发者 / 集成开发者</td></tr>
 </tbody>
 </table>
 </div>
@@ -4707,11 +4731,48 @@ line2
 <p><strong>输出：</strong></p>
 <pre><code>user: admin
 code: 200
+message: &lt;missing&gt;
+data: &lt;missing&gt;
 </code></pre>
 <p><strong>要点：</strong></p>
 <ul>
-<li><code>opt(type)@key</code> 标记字段为可选</li>
-<li>不存在的字段不会导致解析失败</li>
+<li><code>opt(type)@key</code> 只用于 JSON/KV 子字段</li>
+<li>缺失字段不会导致整条 <code>json(...)</code> 规则失败</li>
+</ul>
+<hr>
+<h3 id="任务-25区分合法-json-与坏-json"><a class="header" href="#任务-25区分合法-json-与坏-json">任务 2.5：区分合法 JSON 与坏 JSON</a></h3>
+<p><strong>场景：</strong> 同一条链路里既可能出现合法 JSON，也可能出现“看起来像 JSON 但已经损坏”的数据，需要把两类输入分开处理。</p>
+<p><strong>输入 1：合法 JSON</strong></p>
+<pre><code class="language-json">{"host":"qup.f.360.cn","method":"POST"}
+</code></pre>
+<p><strong>输入 2：损坏但像 JSON</strong></p>
+<pre><code class="language-text">{ "host": "qup.f.360.cn", "method": "POST", "rsp_body": "broken..., "afver": "TS3.0" }
+</code></pre>
+<p><strong>WPL 规则：</strong></p>
+<pre><code class="language-wpl">package api {
+  rule good_json {
+    (json(chars@host, chars@method))
+  }
+
+  rule broken_json {
+    |json_like|
+    (bad_json:raw)
+  }
+}
+</code></pre>
+<p><strong>输出 1：</strong></p>
+<pre><code>host: qup.f.360.cn
+method: POST
+</code></pre>
+<p><strong>输出 2：</strong></p>
+<pre><code>raw: { "host": "qup.f.360.cn", "method": "POST", "rsp_body": "broken..., "afver": "TS3.0" }
+</code></pre>
+<p><strong>要点：</strong></p>
+<ul>
+<li><code>json(...)</code> 现在已经内置了 <code>json_like</code> 式快速判断，所以合法 JSON 规则前面不必再写 <code>|json_like|</code></li>
+<li><code>|json_like| (bad_json:raw)</code> 适合做坏 JSON 兜底</li>
+<li>这样普通文本不会被 <code>bad_json</code> 误吃掉</li>
+<li>只有“像 JSON 但严格解析失败”的输入，才应该落到 <code>bad_json</code></li>
 </ul>
 <hr>
 <h2 id="3-解析-kv-键值对"><a class="header" href="#3-解析-kv-键值对">3. 解析 KV 键值对</a></h2>
@@ -5803,6 +5864,7 @@ rule decode_with_take {
 <tr><td><a href="#-类型系统">类型系统</a></td><td>所有数据类型速查表</td></tr>
 <tr><td><a href="#-语法元素">语法元素</a></td><td>基本结构、字段定义、格式控制</td></tr>
 <tr><td><a href="#-子字段语法">子字段语法</a></td><td>JSON、KV、数组子字段</td></tr>
+<tr><td><a href="#-json-like-路由">JSON-like 路由</a></td><td><code>json_like</code>、<code>json</code>、<code>bad_json</code> 的配合方式</td></tr>
 <tr><td><a href="#-注解">注解</a></td><td>tag、copy_raw 注解</td></tr>
 <tr><td><a href="#-语法速查">语法速查</a></td><td>常用模式快速参考</td></tr>
 </tbody>
@@ -6009,6 +6071,65 @@ json(chars@user/name, digit@user/age)
 # 可选字段
 json(chars@name, opt(chars)@email)
 </code></pre>
+<h3 id="bad_json"><a class="header" href="#bad_json"><code>bad_json</code></a></h3>
+<pre><code class="language-wpl">bad_json:name
+</code></pre>
+<p><strong>说明：</strong></p>
+<ul>
+<li><code>bad_json</code> 输出的是原始文本，字段类型为 <code>chars</code></li>
+<li>适合接住“看起来像 JSON，但严格解析失败”的输入</li>
+<li>推荐与 <code>json_like</code> 预处理一起使用，避免把普通文本误判为坏 JSON</li>
+</ul>
+<p><strong>示例：</strong></p>
+<pre><code class="language-wpl">(bad_json:raw)
+</code></pre>
+<hr>
+<h2 id="-json-like-路由"><a class="header" href="#-json-like-路由">🧩 JSON-like 路由</a></h2>
+<h3 id="json_like-预处理"><a class="header" href="#json_like-预处理"><code>json_like</code> 预处理</a></h3>
+<pre><code class="language-wpl">|json_like|
+</code></pre>
+<p><strong>语义：</strong></p>
+<ul>
+<li>这是规则前置的行 pipe</li>
+<li>只做轻量 sniff，判断当前输入是否“像 JSON”</li>
+<li>它不会提取字段，也不会做完整 JSON 解析</li>
+</ul>
+<p><code>json_like</code> 适合放在兜底规则前面，为 <code>bad_json</code> 提供保护。</p>
+<h3 id="json-的内置-sniff"><a class="header" href="#json-的内置-sniff"><code>json</code> 的内置 sniff</a></h3>
+<p><code>json</code> 现在已经内置了 <code>json_like</code> 式的快速判断，所以：</p>
+<pre><code class="language-wpl">rule good_json {
+  (json(chars@host, chars@method))
+}
+</code></pre>
+<p>不需要再额外写：</p>
+<pre><code class="language-wpl">rule good_json {
+  |json_like|
+  (json(chars@host, chars@method))
+}
+</code></pre>
+<h3 id="推荐写法"><a class="header" href="#推荐写法">推荐写法</a></h3>
+<p>当你希望把“合法 JSON”和“坏 JSON”分开处理时，推荐这样写：</p>
+<pre><code class="language-wpl">rule good_json {
+  (json(chars@host, chars@method))
+}
+
+rule broken_json {
+  |json_like|
+  (bad_json:raw)
+}
+</code></pre>
+<p>这套写法的行为是：</p>
+<ul>
+<li>合法 JSON：由 <code>json(...)</code> 规则命中</li>
+<li>损坏但像 JSON：由 <code>json_like + bad_json</code> 规则兜底</li>
+<li>普通文本：不会被 <code>bad_json</code> 吃掉</li>
+</ul>
+<h3 id="性能含义"><a class="header" href="#性能含义">性能含义</a></h3>
+<ul>
+<li><code>json_like</code> 是轻量判断，适合做前置过滤</li>
+<li><code>json</code> 已经内置快速 sniff，因此对普通文本的拒绝成本明显更低</li>
+<li>对“像 JSON 但损坏”的输入，先做 <code>json_like</code> 再走 <code>bad_json</code> 才有意义</li>
+</ul>
 <h3 id="kv-子字段-1"><a class="header" href="#kv-子字段-1">KV 子字段</a></h3>
 <pre><code class="language-wpl">kvarr(type@key, type@key, ...)
 </code></pre>
@@ -7709,6 +7830,421 @@ chars\:\:
 <li>管道函数：<a href="#wpl-管道函数">03-wpl_pipe_functions.md</a> — 字段级管道</li>
 <li>语言参考：<a href="#wpl-语言参考">04-language-reference.md</a> — 完整类型列表</li>
 </ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="checker-实现指南"><a class="header" href="#checker-实现指南">Checker 实现指南</a></h1>
+<p>本文档说明如何在 <code>wp-lang</code> 中实现一个可复用的 <code>checker</code>，以及为什么当前实现采用 <code>库能力 + CLI 壳</code> 的分层方式。</p>
+<p>适用场景：</p>
+<ul>
+<li>为 <code>wp-lang</code> 增加新的检查入口</li>
+<li>给下游 crate 暴露可复用的 WPL 检查能力</li>
+<li>维护 <code>wpl-check</code> 或其他基于 WPL 的校验工具</li>
+</ul>
+<hr>
+<h2 id="1-设计目标"><a class="header" href="#1-设计目标">1. 设计目标</a></h2>
+<p><code>checker</code> 的职责不是“解析命令行”，而是“接收请求、加载输入、校验规则、执行 sample，并返回结构化结果”。</p>
+<p>当前实现分为两层：</p>
+<ul>
+<li><code>src/check/</code>
+提供可复用的检查能力，供库内和下游直接调用</li>
+<li><code>wpl-check</code>
+作为独立 companion 仓库承载 CLI、examples 和 agent skill</li>
+</ul>
+<p>这个边界的好处是：</p>
+<ul>
+<li>下游可以直接复用，不需要依赖 <code>wpl-check</code> 命令</li>
+<li>CLI 只是表现层，后续可以替换成 HTTP、WASM、IDE 插件等入口</li>
+<li>核心检查逻辑只维护一份</li>
+</ul>
+<hr>
+<h2 id="2-推荐目录结构"><a class="header" href="#2-推荐目录结构">2. 推荐目录结构</a></h2>
+<p>推荐把 checker 代码组织在如下目录中：</p>
+<pre><code class="language-text">src/check/
+  mod.rs
+  model.rs
+  source.rs
+  sample.rs
+  input.rs
+  runner.rs
+</code></pre>
+<p>其中：</p>
+<ul>
+<li><code>model.rs</code>
+定义请求与结果类型</li>
+<li><code>source.rs</code>
+负责 WPL 源码解析</li>
+<li><code>sample.rs</code>
+负责 sample 执行和错误格式化</li>
+<li><code>input.rs</code>
+负责文件输入与默认路径约定</li>
+<li><code>runner.rs</code>
+负责高层执行编排</li>
+</ul>
+<p>当前库层实现可直接参考：</p>
+<ul>
+<li><a href="src/check/mod.rs"><code>src/check/mod.rs</code></a></li>
+<li><a href="src/check/model.rs"><code>src/check/model.rs</code></a></li>
+<li><a href="src/check/source.rs"><code>src/check/source.rs</code></a></li>
+<li><a href="src/check/sample.rs"><code>src/check/sample.rs</code></a></li>
+<li><a href="src/check/input.rs"><code>src/check/input.rs</code></a></li>
+<li><a href="src/check/runner.rs"><code>src/check/runner.rs</code></a></li>
+</ul>
+<hr>
+<h2 id="3-公共-api-设计"><a class="header" href="#3-公共-api-设计">3. 公共 API 设计</a></h2>
+<p>一个可复用的 checker 至少应暴露三类 API：</p>
+<ol>
+<li>请求类型</li>
+<li>低层能力</li>
+<li>高层执行入口</li>
+</ol>
+<h3 id="31-请求类型"><a class="header" href="#31-请求类型">3.1 请求类型</a></h3>
+<p>请求类型建议放在 <code>model.rs</code> 中。</p>
+<p>当前最小集合如下：</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub enum Mode {
+    Auto,
+    Package,
+    Rule,
+    Expr,
+}
+
+pub struct SourceRequest {
+    pub mode: Mode,
+    pub input: Option&lt;PathBuf&gt;,
+}
+
+pub enum SampleInput {
+    Inline(String),
+    DefaultFile,
+    File(PathBuf),
+}
+
+pub struct SampleRequest {
+    pub source: SourceRequest,
+    pub rule_name: Option&lt;String&gt;,
+    pub sample: SampleInput,
+}
+<span class="boring">}</span></code></pre>
+<p>对应实现见：</p>
+<ul>
+<li><a href="src/check/model.rs"><code>src/check/model.rs</code></a></li>
+</ul>
+<p>这些类型解决的是“调用者想做什么”，而不是“CLI 传了哪些参数”。</p>
+<h3 id="32-低层能力"><a class="header" href="#32-低层能力">3.2 低层能力</a></h3>
+<p>低层能力建议独立暴露，方便更细粒度复用：</p>
+<ul>
+<li><code>validate_source</code></li>
+<li><code>source_summary</code></li>
+<li><code>normalized_output</code></li>
+<li><code>validate_sample_target</code></li>
+<li><code>evaluate_sample</code></li>
+</ul>
+<p>对应实现见：</p>
+<ul>
+<li><a href="src/check/source.rs"><code>src/check/source.rs</code></a></li>
+<li><a href="src/check/sample.rs"><code>src/check/sample.rs</code></a></li>
+</ul>
+<h3 id="33-高层入口"><a class="header" href="#33-高层入口">3.3 高层入口</a></h3>
+<p>高层入口应该直接接收 request，并完成一次完整检查。</p>
+<p>当前实现是：</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn run_syntax_request(request: &amp;SourceRequest) -&gt; Result&lt;ParseResult, String&gt;;
+pub fn run_sample_request(request: &amp;SampleRequest) -&gt; Result&lt;SampleCheckResult, String&gt;;
+<span class="boring">}</span></code></pre>
+<p>对应实现见：</p>
+<ul>
+<li><a href="src/check/runner.rs"><code>src/check/runner.rs</code></a></li>
+</ul>
+<p>CLI、集成测试或下游服务应优先调用这一层。</p>
+<hr>
+<h2 id="4-各模块职责"><a class="header" href="#4-各模块职责">4. 各模块职责</a></h2>
+<h3 id="41-modelrs"><a class="header" href="#41-modelrs">4.1 <code>model.rs</code></a></h3>
+<p>只定义数据结构，不放业务逻辑。</p>
+<p>建议包含：</p>
+<ul>
+<li>默认文件名常量</li>
+<li>mode 枚举</li>
+<li>request / result 类型</li>
+</ul>
+<p>不建议在这里放：</p>
+<ul>
+<li>文件读取</li>
+<li>命令行解析</li>
+<li>打印逻辑</li>
+</ul>
+<h3 id="42-sourcers"><a class="header" href="#42-sourcers">4.2 <code>source.rs</code></a></h3>
+<p>负责“把 WPL 源码变成可执行语义对象”。</p>
+<p>典型职责：</p>
+<ul>
+<li>构造 <code>WplCode</code></li>
+<li>根据 <code>Mode</code> 选择 package/rule/expr 解析</li>
+<li><code>Auto</code> 模式推断</li>
+<li>生成人类可读的 source 摘要</li>
+<li>返回 normalized WPL</li>
+</ul>
+<p>推荐接口：</p>
+<ul>
+<li><code>validate_source</code></li>
+<li><code>source_summary</code></li>
+<li><code>normalized_output</code></li>
+</ul>
+<h3 id="43-samplers"><a class="header" href="#43-samplers">4.3 <code>sample.rs</code></a></h3>
+<p>负责“把 sample 数据跑进解析计划”。</p>
+<p>典型职责：</p>
+<ul>
+<li>根据 <code>ParseResult</code> 构建 evaluator</li>
+<li>选择 package 中的 rule</li>
+<li>执行 preprocess</li>
+<li>运行 <code>parse_groups</code></li>
+<li>生成友好的错误信息</li>
+</ul>
+<p>推荐接口：</p>
+<ul>
+<li><code>validate_sample_target</code></li>
+<li><code>evaluate_sample</code></li>
+</ul>
+<p>其中 <code>validate_sample_target</code> 的目的很关键：先校验 rule 选择是否合法，再做后续 I/O 和执行。</p>
+<h3 id="44-inputrs"><a class="header" href="#44-inputrs">4.4 <code>input.rs</code></a></h3>
+<p>负责“checker 的输入约定”，不是 CLI 特有逻辑。</p>
+<p>典型职责：</p>
+<ul>
+<li><code>-</code> 表示 stdin</li>
+<li>目录输入自动补为 <code>rule.wpl</code></li>
+<li>默认 sample 路径自动补为 <code>sample.txt</code></li>
+<li>读取源代码与 sample 文件</li>
+</ul>
+<p>当前约定常量见：</p>
+<ul>
+<li><a href="src/check/model.rs"><code>DEFAULT_RULE_FILE</code></a></li>
+<li><a href="src/check/model.rs"><code>DEFAULT_SAMPLE_FILE</code></a></li>
+</ul>
+<h3 id="45-runnerrs"><a class="header" href="#45-runnerrs">4.5 <code>runner.rs</code></a></h3>
+<p>负责把各层能力串起来，形成稳定入口。</p>
+<p>建议执行顺序：</p>
+<ol>
+<li>解析 source 输入</li>
+<li>加载 source</li>
+<li>解析 WPL</li>
+<li>校验 sample 目标</li>
+<li>解析 / 加载 sample</li>
+<li>执行 sample</li>
+</ol>
+<p>这个顺序很重要，因为配置错误应该优先于无关 I/O 错误。</p>
+<hr>
+<h2 id="5-一个正确的执行顺序"><a class="header" href="#5-一个正确的执行顺序">5. 一个正确的执行顺序</a></h2>
+<p><code>run_sample_request</code> 的核心不是“能跑通”，而是“错误优先级正确”。</p>
+<p>推荐顺序如下：</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let source_input = resolve_source_path(...);
+let sample_input = resolve_sample_input(...);
+let (source, origin) = load_input(...)?;
+let parsed = validate_source(...)?;
+validate_rule_name_usage(&amp;parsed, ...)?;
+validate_sample_target(&amp;parsed, ...)?;
+let sample = load_sample_data(&amp;sample_input)?;
+let evaluation = evaluate_sample(&amp;parsed, ..., &amp;sample)?;
+<span class="boring">}</span></code></pre>
+<p>关键点：</p>
+<ul>
+<li><code>validate_rule_name_usage</code>
+检查 <code>--rule-name</code> 是否只用于 package</li>
+<li><code>validate_sample_target</code>
+检查 package 多 rule 时是否提供了 rule 名，或 rule 名是否存在</li>
+<li><code>load_sample_data</code>
+必须放在上述预检之后</li>
+</ul>
+<p>否则会出现这类错误行为：</p>
+<ul>
+<li>package 有多个 rule，但 sample 文件缺失时，先报“文件不存在”</li>
+<li>用户传了错误 rule 名，但先报 sample 读取失败</li>
+</ul>
+<p>这会掩盖真实配置问题。</p>
+<hr>
+<h2 id="6-如何判断逻辑应放在库层还是-cli-层"><a class="header" href="#6-如何判断逻辑应放在库层还是-cli-层">6. 如何判断逻辑应放在库层还是 CLI 层</a></h2>
+<p>可以用一个很直接的判断：</p>
+<p>如果一段逻辑不依赖以下内容，它大概率就应该在 <code>src/check/</code>：</p>
+<ul>
+<li><code>env::args</code></li>
+<li><code>println!</code> / <code>eprintln!</code></li>
+<li>help 文本</li>
+<li>子命令名字符串</li>
+</ul>
+<h3 id="应放在-srccheck-的逻辑"><a class="header" href="#应放在-srccheck-的逻辑">应放在 <code>src/check/</code> 的逻辑</a></h3>
+<ul>
+<li>默认 <code>rule.wpl</code> / <code>sample.txt</code> 路径规则</li>
+<li>stdin / 目录输入解析</li>
+<li>WPL 源校验</li>
+<li>sample 执行</li>
+<li>rule 选择校验</li>
+<li>结构化结果返回</li>
+</ul>
+<h3 id="应放在-companion-wpl-check-项目的逻辑"><a class="header" href="#应放在-companion-wpl-check-项目的逻辑">应放在 companion <code>wpl-check</code> 项目的逻辑</a></h3>
+<ul>
+<li><code>syntax</code> / <code>sample</code> 子命令解析</li>
+<li><code>--help</code> 文本</li>
+<li><code>--print</code> 控制是否打印 normalized source</li>
+<li>最终 stdout/stderr 展示格式</li>
+</ul>
+<p>当前 companion 项目实现可参考：</p>
+<ul>
+<li><a href="https://github.com/wp-labs/wpl-check/blob/main/src/main.rs">https://github.com/wp-labs/wpl-check/blob/main/src/main.rs</a></li>
+<li><a href="https://github.com/wp-labs/wpl-check/blob/main/src/app.rs">https://github.com/wp-labs/wpl-check/blob/main/src/app.rs</a></li>
+<li><a href="https://github.com/wp-labs/wpl-check/blob/main/src/cli.rs">https://github.com/wp-labs/wpl-check/blob/main/src/cli.rs</a></li>
+</ul>
+<hr>
+<h2 id="7-错误处理建议"><a class="header" href="#7-错误处理建议">7. 错误处理建议</a></h2>
+<h3 id="71-优先返回结构化错误"><a class="header" href="#71-优先返回结构化错误">7.1 优先返回结构化错误</a></h3>
+<p>当前实现先使用 <code>String</code>，这是可接受的最小版本，但长期建议替换为专门的错误类型，例如：</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub enum CheckError {
+    ReadSource { path: PathBuf, message: String },
+    ReadSample { path: PathBuf, message: String },
+    InvalidTarget(String),
+    ParseSource(String),
+    EvaluateSample(String),
+}
+<span class="boring">}</span></code></pre>
+<p>这样做的好处是：</p>
+<ul>
+<li>CLI 可以格式化输出</li>
+<li>下游服务可以按错误种类分类处理</li>
+<li>测试更稳，不必完全依赖字符串匹配</li>
+</ul>
+<h3 id="72-不要-panic"><a class="header" href="#72-不要-panic">7.2 不要 panic</a></h3>
+<p>所有外部输入都应视为不可信：</p>
+<ul>
+<li>WPL 源文本</li>
+<li>sample 文本</li>
+<li>文件路径</li>
+<li>rule 名</li>
+</ul>
+<p>因此优先返回 <code>Result</code>，避免 panic。</p>
+<h3 id="73-错误要尽量包含上下文"><a class="header" href="#73-错误要尽量包含上下文">7.3 错误要尽量包含上下文</a></h3>
+<p>好的错误应包含：</p>
+<ul>
+<li>失败阶段</li>
+<li>目标对象</li>
+<li>行列号或 offset</li>
+<li>附近内容</li>
+<li>可执行提示</li>
+</ul>
+<p>sample 错误格式化的实现可参考：</p>
+<ul>
+<li><a href="src/check/sample.rs"><code>src/check/sample.rs</code></a></li>
+</ul>
+<hr>
+<h2 id="8-测试策略"><a class="header" href="#8-测试策略">8. 测试策略</a></h2>
+<p>checker 的测试不要全部堆在 CLI 层。</p>
+<p>推荐分布如下：</p>
+<h3 id="81-sourcers"><a class="header" href="#81-sourcers">8.1 <code>source.rs</code></a></h3>
+<p>覆盖：</p>
+<ul>
+<li><code>Auto</code> 模式推断</li>
+<li>注解前缀跳过</li>
+<li>package / rule / expr 三种解析</li>
+<li>错误位置是否包含行列号</li>
+</ul>
+<h3 id="82-samplers"><a class="header" href="#82-samplers">8.2 <code>sample.rs</code></a></h3>
+<p>覆盖：</p>
+<ul>
+<li>rule sample 执行成功</li>
+<li>package 多 rule 选择</li>
+<li>非 package 下 <code>rule_name</code> 报错</li>
+<li>友好的 sample 错误输出</li>
+<li>Unicode 列号与长行裁剪</li>
+</ul>
+<h3 id="83-inputrs"><a class="header" href="#83-inputrs">8.3 <code>input.rs</code></a></h3>
+<p>覆盖：</p>
+<ul>
+<li>目录输入解析</li>
+<li>默认 sample 文件推导</li>
+<li>relative sample 路径不重写</li>
+<li>保留换行</li>
+</ul>
+<h3 id="84-runnerrs"><a class="header" href="#84-runnerrs">8.4 <code>runner.rs</code></a></h3>
+<p>重点覆盖错误优先级：</p>
+<ul>
+<li>非 package 使用 <code>rule_name</code> 时，应先报配置错误</li>
+<li>多 rule package 缺少 <code>rule_name</code> 时，应先报配置错误</li>
+<li>错误 <code>rule_name</code> 时，应先报目标错误</li>
+</ul>
+<h3 id="85-cli"><a class="header" href="#85-cli">8.5 CLI</a></h3>
+<p>CLI 只测试：</p>
+<ul>
+<li>参数解析</li>
+<li>默认值</li>
+<li>非法选项</li>
+<li>子命令边界</li>
+</ul>
+<p>不要在 CLI 层重复验证库里的业务逻辑。</p>
+<hr>
+<h2 id="9-feature-建议"><a class="header" href="#9-feature-建议">9. feature 建议</a></h2>
+<p>如果 checker 需要给下游复用，推荐用 feature 做显式分层。</p>
+<p>当前 <code>wp-lang</code> 只保留：</p>
+<ul>
+<li><code>check</code>
+开启库能力</li>
+</ul>
+<p>对应配置可参考 <a href="Cargo.toml"><code>Cargo.toml</code></a>。</p>
+<p>推荐模式：</p>
+<pre><code class="language-toml">[features]
+default = []
+check = []
+</code></pre>
+<p>这样下游可以只启用：</p>
+<pre><code class="language-toml">wp-lang = { version = "...", default-features = false, features = ["check"] }
+</code></pre>
+<p>然后直接使用：</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use wpl::check::{Mode, SampleInput, SampleRequest, SourceRequest, run_sample_request};
+<span class="boring">}</span></code></pre>
+<hr>
+<h2 id="10-最小实现清单"><a class="header" href="#10-最小实现清单">10. 最小实现清单</a></h2>
+<p>如果要从零实现一个 checker，建议按以下顺序推进：</p>
+<ol>
+<li>在 <code>model.rs</code> 定义 request / result 类型</li>
+<li>在 <code>source.rs</code> 实现 <code>validate_source</code></li>
+<li>在 <code>sample.rs</code> 实现 <code>evaluate_sample</code></li>
+<li>在 <code>input.rs</code> 实现默认路径与文件加载</li>
+<li>在 <code>runner.rs</code> 实现 <code>run_syntax_request</code> / <code>run_sample_request</code></li>
+<li>在 <code>mod.rs</code> 统一导出公共 API</li>
+<li>最后在 companion <code>wpl-check</code> 项目里写 CLI 壳</li>
+</ol>
+<p>不要反过来从 CLI 开始堆逻辑。</p>
+<hr>
+<h2 id="11-一个简单调用示例"><a class="header" href="#11-一个简单调用示例">11. 一个简单调用示例</a></h2>
+<p>下面是下游调用 checker 的最小示例：</p>
+<pre class="playground"><code class="language-rust">use std::path::PathBuf;
+
+use wpl::check::{Mode, SampleInput, SampleRequest, SourceRequest, run_sample_request};
+
+fn main() -&gt; Result&lt;(), String&gt; {
+    let result = run_sample_request(&amp;SampleRequest {
+        source: SourceRequest {
+            mode: Mode::Auto,
+            input: Some(PathBuf::from("examples/wpl-check/csv_demo/rule.wpl")),
+        },
+        rule_name: None,
+        sample: SampleInput::File(PathBuf::from("examples/wpl-check/csv_demo/sample.txt")),
+    })?;
+
+    println!("{}", wpl::check::source_summary(&amp;result.parsed));
+    println!("{}", result.evaluation.record);
+    Ok(())
+}</code></pre>
+<hr>
+<h2 id="12-结论"><a class="header" href="#12-结论">12. 结论</a></h2>
+<p>实现 checker 时，核心原则只有三条：</p>
+<ol>
+<li>checker 是库能力，不是命令行能力</li>
+<li>配置错误优先于无关 I/O 错误</li>
+<li>CLI 只负责参数和展示，不承载业务语义</li>
+</ol>
+<p>如果新的实现仍然需要直接操作 <code>println!</code>、<code>env::args</code>、子命令文本，那通常说明分层还不够干净。</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="strip-bom-processor-使用示例"><a class="header" href="#strip-bom-processor-使用示例">Strip BOM Processor 使用示例</a></h1>
 <h2 id="概述-1"><a class="header" href="#概述-1">概述</a></h2>
@@ -18062,7 +18598,7 @@ protocol = "tcp"
 <h1 id="file-source"><a class="header" href="#file-source">File Source</a></h1>
 <p>本文档详细介绍如何配置和使用 Warp Parse 系统的文件数据源。</p>
 <h2 id="概述-12"><a class="header" href="#概述-12">概述</a></h2>
-<p>文件源用于从本地文件系统读取数据，支持多种编码格式和灵活的路径配置。</p>
+<p>文件源用于从本地文件系统读取数据，支持多种编码格式；路径配置采用 <code>base + file</code>，其中仅 <code>file</code> 支持通配符。</p>
 <h2 id="连接器定义"><a class="header" href="#连接器定义">连接器定义</a></h2>
 <h3 id="基础文件连接器"><a class="header" href="#基础文件连接器">基础文件连接器</a></h3>
 <pre><code class="language-toml"># connectors/source.d/00-file-default.toml
@@ -18078,7 +18614,7 @@ encode = "text"
 </code></pre>
 <h2 id="支持的参数"><a class="header" href="#支持的参数">支持的参数</a></h2>
 <h3 id="路径配置"><a class="header" href="#路径配置">路径配置</a></h3>
-<h4 id="base--file-组合推荐"><a class="header" href="#base--file-组合推荐">base + file 组合（推荐）</a></h4>
+<h4 id="base--file-组合唯一支持的路径方式"><a class="header" href="#base--file-组合唯一支持的路径方式">base + file 组合（唯一支持的路径方式）</a></h4>
 <pre><code class="language-toml">[[sources]]
 key = "file_composed"
 connect = "file_src"
@@ -18087,6 +18623,11 @@ connect = "file_src"
 base = "/var/log"
 file = "access.log"
 </code></pre>
+<blockquote>
+<p><code>path</code> 参数不再支持；请统一使用 <code>base + file</code>。</p>
+<p><code>base</code> 仅表示目录前缀，不支持通配符。</p>
+<p><code>file</code> 支持通配符（如 <code>app-*.log</code>）。</p>
+</blockquote>
 <h4 id="instances多实例并行读取"><a class="header" href="#instances多实例并行读取">instances（多实例并行读取）</a></h4>
 <pre><code class="language-toml">[[sources.params]]
 instances = 4   # 1-32，默认为 1
@@ -18132,6 +18673,27 @@ connect = "file_src"
 base = "/var/log/nginx"
 file = "error.log"
 </code></pre>
+<h3 id="通配符顺序读取"><a class="header" href="#通配符顺序读取">通配符顺序读取</a></h3>
+<pre><code class="language-toml"># wpsrc.toml
+[[sources]]
+enable = true
+key = "nginx_shards"
+connect = "file_src"
+
+[[sources.params]]
+base = "/var/log/nginx"
+file = "access-*.log"
+</code></pre>
+<blockquote>
+<p>当 <code>file</code> 使用通配符时：</p>
+<ul>
+<li>启动时一次性展开匹配文件</li>
+<li>不会递增发现新文件</li>
+<li>按文件名排序后逐个文件推进</li>
+<li>若 <code>instances = 1</code>，单个文件内部保持原始行顺序</li>
+<li>若 <code>instances &gt; 1</code>，单个文件会按行边界切段并行读取，因此不保证该文件的全局行顺序</li>
+</ul>
+</blockquote>
 <h3 id="不同编码格式"><a class="header" href="#不同编码格式">不同编码格式</a></h3>
 <pre><code class="language-toml"># Base64 编码的文件
 [[sources]]
@@ -19502,17 +20064,10 @@ type = "doris"
 allow_override = ["endpoint", "user", "password", "database", "table", "create_table"]
 
 [connectors.params]
-&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
 endpoint = "mysql://localhost:9030?charset=utf8mb4&amp;connect_timeout=10"
 user = "root"
 password = ""
 database = "wp_test"
-=======
-endpoint = "http://localhost:8040"
-user = "${SEC_USERNAME}"
-password = "${SEC_PASSWORD}"
-database = "test_db"
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; 728fbffd4a42b5dc14af2c748f651badecfed1c2
 table = "events_parsed"
 </code></pre>
 <h2 id="可用参数-2"><a class="header" href="#可用参数-2">可用参数</a></h2>
@@ -19546,26 +20101,14 @@ name = "doris_stream_load"
 connect = "doris_sink"
 
 [sink_group.sinks.params]
-&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
 endpoint = "mysql://localhost:9030?charset=utf8mb4&amp;connect_timeout=10"
 database = "wp_test"
 table = "events_parsed"
 user = "root"
 password = ""
-=======
-endpoint = "http://localhost:8040"
-database = "test_db"
-table = "wp_nginx"
-user = "${SEC_USERNAME}"
-password = "${SEC_PASSWORD}"
-timeout_secs = 30
-max_retries = 1
-batch_size = 10_0000
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; 728fbffd4a42b5dc14af2c748f651badecfed1c2
 </code></pre>
 <h3 id="自动建表"><a class="header" href="#自动建表">自动建表</a></h3>
-<pre><code class="language-toml">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
-[[sink_group.sinks]]
+<pre><code class="language-toml">[[sink_group.sinks]]
 name = "doris_stream_load"
 connect = "doris_sink"
 
@@ -19601,15 +20144,8 @@ password = ""
 <ul>
 <li>确保 Doris FE 的 MySQL 端口可访问，并开启 Stream Load 能力。</li>
 <li>需要为账号授予 <code>SELECT/INSERT</code> 以及 <code>LOAD</code> 权限。</li>
-<li>完整端到端示例可参考 <code>wp-examples/extensions/doris/README.md</code>。
-=======
-[sink_group.sinks.params.headers]
-strip_outer_array = “false”
-max_filter_ratio = “0.1”
-columns = “wp_event_id,wp_src_key,sip,timestamp,<code>http/request</code>,size,referer,<code>http/agent</code>”</li>
+<li>完整端到端示例可参考 <code>wp-examples/extensions/doris/README.md</code>。</li>
 </ul>
-<pre><code>&gt;&gt;&gt;&gt;&gt;&gt;&gt; 728fbffd4a42b5dc14af2c748f651badecfed1c2
-</code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="kafka-sink"><a class="header" href="#kafka-sink">Kafka Sink</a></h1>
 <p>Kafka sink 用于将数据输出到 Apache Kafka。启动时会尝试创建目标 topic（使用 <code>num_partitions</code>/<code>replication</code> 作为分区与副本配置）。</p>
@@ -19687,16 +20223,16 @@ config = [
 <pre><code class="language-toml">[[connectors]]
 id = "mysql_sink"
 type = "mysql"
-allow_override = ["endpoint", "username", "password", "database", "table", "columns", "batch_size"]
+allow_override = ["endpoint", "username", "password", "database", "table", "columns", "batch"]
 
 [connectors.params]
 endpoint = "localhost:3306"
-username = "${SEC_USERNAME}"
-password = "${SEC_PASSWORD}"
+username = "root"
+password = "123456"
 database = "wparse"
 table = "nginx_logs"
 columns = ["sip", "timestamp", "http/request", "status", "size", "referer", "http/agent", "wp_event_id"]
-batch_size = 1024
+batch = 20
 </code></pre>
 <h2 id="可用参数-4"><a class="header" href="#可用参数-4">可用参数</a></h2>
 <div class="table-wrapper">
@@ -19709,20 +20245,19 @@ batch_size = 1024
 <tr><td><code>username</code></td><td>string</td><td>用户名（可选，默认 <code>root</code>）</td></tr>
 <tr><td><code>password</code></td><td>string</td><td>密码（可选）</td></tr>
 <tr><td><code>database</code></td><td>string</td><td>目标数据库（必填）</td></tr>
-<tr><td><code>table</code></td><td>string</td><td>目标表名（必填）</td></tr>
-<tr><td><code>columns</code></td><td>array</td><td>列名列表，决定写入字段顺序(必填)）</td></tr>
-<tr><td><code>batch_size</code></td><td>int</td><td>批量写入条数（可选）</td></tr>
+<tr><td><code>table</code></td><td>string</td><td>目标表名（可选，未设置时使用 sink 名称）</td></tr>
+<tr><td><code>columns</code></td><td>array</td><td>列名列表，决定写入字段顺序；必须包含 <code>wp_event_id</code>（缺省会自动补齐）</td></tr>
+<tr><td><code>batch</code></td><td>int</td><td>批量写入条数（可选）</td></tr>
 </tbody>
 </table>
 </div>
 <h2 id="配置示例-16"><a class="header" href="#配置示例-16">配置示例</a></h2>
-<h3 id="基础用法-3"><a class="header" href="#基础用法-3">基础用法</a></h3>
+<h3 id="基础用法参考-extensionstcp_mysql"><a class="header" href="#基础用法参考-extensionstcp_mysql">基础用法（参考 <code>extensions/tcp_mysql</code>）</a></h3>
 <pre><code class="language-toml">version = "2.0"
 
 [sink_group]
 name = "all"
-oml = ["/*"]
-batch_timeout_ms=5000   # 当数据在设置的这个时间范围类不满足批量插入的数量时自动插入
+rule = ["/*"]
 parallel = 8
 
 [[sink_group.sinks]]
@@ -19731,16 +20266,17 @@ connect = "mysql_sink"
 
 [sink_group.sinks.params]
 endpoint = "localhost:3306"
-username = "${SEC_USERNAME}"
-password = "${SEC_PASSWORD}"
+username = "root"
+password = "123456"
 database = "wparse"
 table = "nginx_logs"
 columns = ["sip", "timestamp", "http/request", "status", "size", "referer", "http/agent", "wp_event_id"]
-batch_size = 1024   
+batch = 20
 </code></pre>
 <h2 id="注意事项-11"><a class="header" href="#注意事项-11">注意事项</a></h2>
 <ul>
-<li><code>columns</code> 中的字段名需与 OML 输出字段一致；缺失的表字段会以 <code>NULL</code> 写入。</li>
+<li>表结构必须包含 <code>wp_event_id</code>（建议为 <code>BIGINT</code> 主键），否则写入会失败或产生重复。</li>
+<li><code>columns</code> 中的字段名需与 OML 输出字段一致；缺失字段会以 <code>NULL</code> 写入。</li>
 <li>可通过环境变量 <code>MYSQL_URL</code> 覆盖连接串（格式：<code>mysql://user:pass@host:port/db</code>）。</li>
 <li>端到端示例可参考 <code>wp-examples/extensions/tcp_mysql/README.md</code>。</li>
 </ul>
@@ -19983,7 +20519,7 @@ max_retries = 3
 </table>
 </div>
 <h2 id="配置示例-19"><a class="header" href="#配置示例-19">配置示例</a></h2>
-<h3 id="基础用法-4"><a class="header" href="#基础用法-4">基础用法</a></h3>
+<h3 id="基础用法-3"><a class="header" href="#基础用法-3">基础用法</a></h3>
 <pre><code class="language-toml">version = "2.0"
 
 [sink_group]
@@ -20193,7 +20729,7 @@ batch_size = 1024
 </table>
 </div>
 <h2 id="配置示例-21"><a class="header" href="#配置示例-21">配置示例</a></h2>
-<h3 id="基础用法-5"><a class="header" href="#基础用法-5">基础用法</a></h3>
+<h3 id="基础用法-4"><a class="header" href="#基础用法-4">基础用法</a></h3>
 <pre><code class="language-toml">version = "2.0"
 
 [sink_group]

@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-37cffb89.js";
+            window.path_to_searchindex_js = "../../searchindex-9d481d7c.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-536d74fd.js"></script>
+        <script src="../../toc-bf315470.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -196,6 +196,7 @@ sinks   = "./topology/sinks"
 [performance]
 rate_limit_rps = 10000        # 限速（records/second）
 parse_workers  = 2            # 解析并发 worker 数
+reload_timeout_ms = 10000     # reload 兜底超时（毫秒）；覆盖 graceful drain 与旧 processing 尾部清理
 
 [rescue]
 path = "./data/rescue"        
@@ -225,7 +226,10 @@ target = "*"
 <ul>
 <li><code>[models].knowledge</code> 是知识配置根目录，默认值为 <code>./models/knowledge</code></li>
 <li><code>semantic_dict.toml</code> 默认读取 <code>${models.knowledge}/semantic_dict.toml</code></li>
-<li><code>knowdb.toml</code> 默认读取 <code>${models.knowledge}/knowdb.toml</code></li>
+<li><code>knowdb.toml</code> 默认读取 <code>${models.knowledge}/knowdb.toml</code>
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</li>
+<li><code>reload_timeout_ms</code> 默认 <code>10000</code>；CLI <code>--reload-timeout-ms</code> 优先于配置文件
+=======</li>
 </ul>
 <h2 id="变量化建议"><a class="header" href="#变量化建议">变量化建议</a></h2>
 <p><code>wparse.toml</code> 中的路径类字符串适合使用 <code>${VAR}</code> 变量化，例如：</p>
@@ -239,6 +243,21 @@ path = "${WORK_ROOT}/data/rescue"
 path = "${WORK_ROOT}/data/logs"
 </code></pre>
 <p>涉及外部变量文件、敏感值和 <code>sec_key.toml</code> 约定时，参考：<a href="08-variables_and_sec_key.html">配置变量与安全字典（<code>${VAR}</code> / <code>sec_key.toml</code>）</a>。</p>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p>e12a12ddfff02e2df9314d213ed044b50a41be0e</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
 
                     </main>
 

@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-bab637e3.js";
+            window.path_to_searchindex_js = "../../searchindex-d560b883.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-6f276faf.js"></script>
+        <script src="../../toc-6cc1085e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -215,6 +215,48 @@ not(peek_symbol(ERROR):check)
 kvarr(chars@host, digit@port, opt(chars)@user)
 </code></pre>
 <p>This is different from group-level <code>opt(...)</code>.</p>
+<hr>
+<h2 id="json-like-routing"><a class="header" href="#json-like-routing">JSON-like Routing</a></h2>
+<h3 id="json_like"><a class="header" href="#json_like"><code>json_like</code></a></h3>
+<pre><code class="language-wpl">|json_like|
+</code></pre>
+<ul>
+<li><code>json_like</code> is a preorder line pipe</li>
+<li>It only does a lightweight sniff to check whether the input looks like JSON</li>
+<li>It does not extract fields and does not run full JSON parsing</li>
+</ul>
+<p>Use it in fallback rules before <code>bad_json</code>.</p>
+<h3 id="json"><a class="header" href="#json"><code>json</code></a></h3>
+<p><code>json(...)</code> now has built-in JSON-like sniffing, so this is enough:</p>
+<pre><code class="language-wpl">rule good_json {
+  (json(chars@host, chars@method))
+}
+</code></pre>
+<p>You do not need to add an extra <code>|json_like|</code> in front of <code>json(...)</code>.</p>
+<h3 id="bad_json"><a class="header" href="#bad_json"><code>bad_json</code></a></h3>
+<pre><code class="language-wpl">(bad_json:raw)
+</code></pre>
+<ul>
+<li><code>bad_json</code> outputs the original input as a <code>chars</code> field</li>
+<li>It is intended for inputs that look like JSON but fail strict JSON parsing</li>
+<li>It should usually be guarded by <code>|json_like|</code></li>
+</ul>
+<h3 id="recommended-pattern"><a class="header" href="#recommended-pattern">Recommended Pattern</a></h3>
+<pre><code class="language-wpl">rule good_json {
+  (json(chars@host, chars@method))
+}
+
+rule broken_json {
+  |json_like|
+  (bad_json:raw)
+}
+</code></pre>
+<p>Behavior:</p>
+<ul>
+<li>Valid JSON is handled by <code>json(...)</code></li>
+<li>Broken but JSON-like payloads fall back to <code>json_like + bad_json</code></li>
+<li>Plain text will not be accidentally consumed by <code>bad_json</code></li>
+</ul>
 <hr>
 <h2 id="valid-and-invalid-forms"><a class="header" href="#valid-and-invalid-forms">Valid and Invalid Forms</a></h2>
 <p>Valid:</p>

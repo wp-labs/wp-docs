@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-bab637e3.js";
+            window.path_to_searchindex_js = "../../searchindex-d560b883.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-6f276faf.js"></script>
+        <script src="../../toc-6cc1085e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -207,6 +207,29 @@
   opt(chars)@message
 ))
 </code></pre>
+<h3 id="valid-json-vs-broken-json-fallback"><a class="header" href="#valid-json-vs-broken-json-fallback">Valid JSON vs broken JSON fallback</a></h3>
+<pre><code class="language-wpl">package api {
+  rule good_json {
+    (json(chars@host, chars@method))
+  }
+
+  rule broken_json {
+    |json_like|
+    (bad_json:raw)
+  }
+}
+</code></pre>
+<p>Use this pattern when:</p>
+<ul>
+<li>valid JSON should be parsed into fields</li>
+<li>broken but JSON-like payloads should be preserved as raw text</li>
+<li>plain text must not be accidentally consumed by <code>bad_json</code></li>
+</ul>
+<p>Notes:</p>
+<ul>
+<li><code>json(...)</code> already has built-in JSON-like sniffing</li>
+<li><code>json_like</code> is still useful as a guard in the fallback <code>bad_json</code> rule</li>
+</ul>
 <h3 id="optional-trailing-segment"><a class="header" href="#optional-trailing-segment">Optional trailing segment</a></h3>
 <pre><code class="language-wpl">(digit:code, time:ts),
 opt(chars:tag")

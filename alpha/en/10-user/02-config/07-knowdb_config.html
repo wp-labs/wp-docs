@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-bab637e3.js";
+            window.path_to_searchindex_js = "../../searchindex-d560b883.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-6f276faf.js"></script>
+        <script src="../../toc-6cc1085e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -243,7 +243,7 @@ columns.by_header = ["name", "pinying"]
 </ul>
 <p>Security Constraints</p>
 <ul>
-<li>Runtime (facade/query_cipher/SQL evaluation) only allows table names declared in <code>[[tables]].name</code></li>
+<li>Runtime (facade / SQL evaluation) only allows table names declared in <code>[[tables]].name</code></li>
 <li>SQL templates only allow <code>{table}</code> placeholder; other dynamic concatenation is prohibited</li>
 </ul>
 <p>Minimal Runnable Example</p>
@@ -298,7 +298,6 @@ max = 100
 <p>Relationship with Applications</p>
 <ul>
 <li>wparse/wproj etc. load knowdb at startup: Create authoritative database and set up Query Provider</li>
-<li><code>query_cipher(table)</code> (loading single-column word list) formerly used by privacy module is disabled by default in current version; implement desensitization on business side if needed</li>
 </ul>
 <p>Built-in SQL Functions (UDF)</p>
 <ul>

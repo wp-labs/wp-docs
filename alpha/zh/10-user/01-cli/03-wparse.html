@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-37cffb89.js";
+            window.path_to_searchindex_js = "../../searchindex-9d481d7c.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-536d74fd.js"></script>
+        <script src="../../toc-bf315470.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -200,6 +200,7 @@ Commands:
 </thead>
 <tbody>
 <tr><td>parse_workers</td><td><code>-w</code></td><td><code>--parse-workers</code></td><td>-</td><td>解析线程数</td></tr>
+<tr><td>reload_timeout_ms</td><td>-</td><td><code>--reload-timeout-ms</code></td><td>-</td><td>reload 兜底超时（毫秒）；同时用于 graceful drain 与旧 processing 尾部清理</td></tr>
 <tr><td>stat_sec</td><td>-</td><td><code>--stat</code></td><td>-</td><td>统计输出间隔（秒）</td></tr>
 <tr><td>stat_print</td><td><code>-p</code></td><td><code>--print_stat</code></td><td>false</td><td>周期打印统计信息</td></tr>
 <tr><td>wpl_dir</td><td>-</td><td><code>--wpl</code></td><td>-</td><td>WPL 规则目录覆盖</td></tr>
@@ -215,6 +216,9 @@ wparse batch  -w 4 --parse-workers 4
 
 # 守护进程模式：常驻服务，每 5 秒输出统计
 wparse daemon --stat 5 -p
+
+# 守护进程模式：将 reload 兜底超时压到 300ms（适合自动化测试）
+wparse daemon --reload-timeout-ms 300
 
 # 自定义日志和规则目录
 wparse daemon --log-profile custom.toml --wpl /custom/rules

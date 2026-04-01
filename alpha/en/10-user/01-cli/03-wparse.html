@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-bab637e3.js";
+            window.path_to_searchindex_js = "../../searchindex-d560b883.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-6f276faf.js"></script>
+        <script src="../../toc-6cc1085e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -200,6 +200,7 @@ Commands:
 </thead>
 <tbody>
 <tr><td>parse_workers</td><td><code>-w</code></td><td><code>--parse-workers</code></td><td>-</td><td>Number of parsing threads</td></tr>
+<tr><td>reload_timeout_ms</td><td>-</td><td><code>--reload-timeout-ms</code></td><td>-</td><td>Reload fallback timeout in milliseconds; shared by graceful drain and old-processing tail cleanup</td></tr>
 <tr><td>stat_sec</td><td>-</td><td><code>--stat</code></td><td>-</td><td>Statistics output interval (seconds)</td></tr>
 <tr><td>stat_print</td><td><code>-p</code></td><td><code>--print_stat</code></td><td>false</td><td>Periodically print statistics</td></tr>
 <tr><td>wpl_dir</td><td>-</td><td><code>--wpl</code></td><td>-</td><td>WPL rules directory override</td></tr>
@@ -215,6 +216,9 @@ wparse batch -w 4 --parse-workers 4
 
 # Daemon mode: persistent service, output stats every 5 seconds
 wparse daemon --stat 5 -p
+
+# Daemon mode: shrink reload fallback timeout to 300ms (useful for automated tests)
+wparse daemon --reload-timeout-ms 300
 
 # Custom logging and rules directory
 wparse daemon --log-profile custom.toml --wpl /custom/rules

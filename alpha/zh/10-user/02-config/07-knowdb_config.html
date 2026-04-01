@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-37cffb89.js";
+            window.path_to_searchindex_js = "../../searchindex-9d481d7c.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-536d74fd.js"></script>
+        <script src="../../toc-bf315470.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -243,7 +243,7 @@ columns.by_header = ["name", "pinying"]
 </ul>
 <p>安全约束</p>
 <ul>
-<li>运行时（facade/query_cipher/SQL 评估）仅允许使用 <code>[[tables]].name</code> 中声明的表名</li>
+<li>运行时（facade / SQL 评估）仅允许使用 <code>[[tables]].name</code> 中声明的表名</li>
 <li>SQL 模板仅允许 <code>{table}</code> 占位符；禁止其它动态拼接</li>
 </ul>
 <p>最小可运行示例</p>
@@ -298,7 +298,6 @@ max = 100
 <p>与应用的关系</p>
 <ul>
 <li>wparse/wproj 等会在启动处加载 knowdb：创建权威库并设置 Query Provider</li>
-<li>曾用于隐私模块的 <code>query_cipher(table)</code>（加载单列表词表）在当前版本默认不启用；如需脱敏请在业务侧实现</li>
 </ul>
 <p>内置 SQL 函数（UDF）</p>
 <ul>

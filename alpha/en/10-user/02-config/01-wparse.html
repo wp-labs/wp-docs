@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-bab637e3.js";
+            window.path_to_searchindex_js = "../../searchindex-d560b883.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-6f276faf.js"></script>
+        <script src="../../toc-6cc1085e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -196,6 +196,7 @@ sinks   = "./topology/sinks"
 [performance]
 rate_limit_rps = 10000        # Rate limit (records/second)
 parse_workers  = 2            # Number of concurrent parsing workers
+reload_timeout_ms = 10000     # Reload fallback timeout in milliseconds; shared by graceful drain and old-processing tail cleanup
 
 [rescue]
 path = "./data/rescue"
@@ -226,6 +227,7 @@ target = "*"
 <li><code>[models].knowledge</code> is the root directory for knowledge-related config, defaulting to <code>./models/knowledge</code></li>
 <li><code>semantic_dict.toml</code> is loaded from <code>${models.knowledge}/semantic_dict.toml</code> by default</li>
 <li><code>knowdb.toml</code> is loaded from <code>${models.knowledge}/knowdb.toml</code> by default</li>
+<li><code>reload_timeout_ms</code> defaults to <code>10000</code>; CLI <code>--reload-timeout-ms</code> overrides the config value</li>
 </ul>
 
                     </main>

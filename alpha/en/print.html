@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-bab637e3.js";
+            window.path_to_searchindex_js = "searchindex-d560b883.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-6f276faf.js"></script>
+        <script src="toc-6cc1085e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -1002,6 +1002,7 @@ Commands:
 </thead>
 <tbody>
 <tr><td>parse_workers</td><td><code>-w</code></td><td><code>--parse-workers</code></td><td>-</td><td>Number of parsing threads</td></tr>
+<tr><td>reload_timeout_ms</td><td>-</td><td><code>--reload-timeout-ms</code></td><td>-</td><td>Reload fallback timeout in milliseconds; shared by graceful drain and old-processing tail cleanup</td></tr>
 <tr><td>stat_sec</td><td>-</td><td><code>--stat</code></td><td>-</td><td>Statistics output interval (seconds)</td></tr>
 <tr><td>stat_print</td><td><code>-p</code></td><td><code>--print_stat</code></td><td>false</td><td>Periodically print statistics</td></tr>
 <tr><td>wpl_dir</td><td>-</td><td><code>--wpl</code></td><td>-</td><td>WPL rules directory override</td></tr>
@@ -1017,6 +1018,9 @@ wparse batch -w 4 --parse-workers 4
 
 # Daemon mode: persistent service, output stats every 5 seconds
 wparse daemon --stat 5 -p
+
+# Daemon mode: shrink reload fallback timeout to 300ms (useful for automated tests)
+wparse daemon --reload-timeout-ms 300
 
 # Custom logging and rules directory
 wparse daemon --log-profile custom.toml --wpl /custom/rules
@@ -1257,6 +1261,7 @@ sinks   = "./topology/sinks"
 [performance]
 rate_limit_rps = 10000        # Rate limit (records/second)
 parse_workers  = 2            # Number of concurrent parsing workers
+reload_timeout_ms = 10000     # Reload fallback timeout in milliseconds; shared by graceful drain and old-processing tail cleanup
 
 [rescue]
 path = "./data/rescue"
@@ -1287,6 +1292,7 @@ target = "*"
 <li><code>[models].knowledge</code> is the root directory for knowledge-related config, defaulting to <code>./models/knowledge</code></li>
 <li><code>semantic_dict.toml</code> is loaded from <code>${models.knowledge}/semantic_dict.toml</code> by default</li>
 <li><code>knowdb.toml</code> is loaded from <code>${models.knowledge}/knowdb.toml</code> by default</li>
+<li><code>reload_timeout_ms</code> defaults to <code>10000</code>; CLI <code>--reload-timeout-ms</code> overrides the config value</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="sources-configuration"><a class="header" href="#sources-configuration">Sources Configuration</a></h1>
@@ -2125,7 +2131,7 @@ columns.by_header = ["name", "pinying"]
 </ul>
 <p>Security Constraints</p>
 <ul>
-<li>Runtime (facade/query_cipher/SQL evaluation) only allows table names declared in <code>[[tables]].name</code></li>
+<li>Runtime (facade / SQL evaluation) only allows table names declared in <code>[[tables]].name</code></li>
 <li>SQL templates only allow <code>{table}</code> placeholder; other dynamic concatenation is prohibited</li>
 </ul>
 <p>Minimal Runnable Example</p>
@@ -2180,7 +2186,6 @@ max = 100
 <p>Relationship with Applications</p>
 <ul>
 <li>wparse/wproj etc. load knowdb at startup: Create authoritative database and set up Query Provider</li>
-<li><code>query_cipher(table)</code> (loading single-column word list) formerly used by privacy module is disabled by default in current version; implement desensitization on business side if needed</li>
 </ul>
 <p>Built-in SQL Functions (UDF)</p>
 <ul>
@@ -2495,6 +2500,7 @@ table = "nginx_${ENV}"
 <tr><td>💡 Understand concepts</td><td><a href="#wpl-core-concepts">02-core-concepts.md</a></td></tr>
 <tr><td>📝 Parse Nginx logs</td><td><a href="#1-parse-web-server-logs">03-practical-guide.md § 1</a></td></tr>
 <tr><td>📊 Parse JSON data</td><td><a href="#2-parse-json-data">03-practical-guide.md § 2</a></td></tr>
+<tr><td>🧩 Distinguish valid vs broken JSON</td><td><a href="#json-like-routing">04-language-reference.md § JSON-like Routing</a></td></tr>
 <tr><td>🔑 Parse KV pairs</td><td><a href="#3-parse-kv-pairs">03-practical-guide.md § 3</a></td></tr>
 <tr><td>🔐 Handle Base64 encoding</td><td><a href="#4-handle-encoded-data">03-practical-guide.md § 4</a></td></tr>
 <tr><td>✅ Validate fields</td><td><a href="#5-field-validation--filtering">03-practical-guide.md § 5</a></td></tr>
@@ -2519,6 +2525,7 @@ table = "nginx_${ENV}"
 <tr><td><a href="#wpl-language-reference">04-language-reference.md</a></td><td>Complete type list + syntax elements + quick reference</td><td>Developers</td></tr>
 <tr><td><a href="#wpl-functions-reference">05-functions-reference.md</a></td><td>Standardized reference for all functions</td><td>Developers</td></tr>
 <tr><td><a href="#wpl-grammar-reference-ebnf">06-grammar-reference.md</a></td><td>EBNF formal grammar definition</td><td>Compiler developers</td></tr>
+<tr><td><a href="10-user/zh/09-checker-guide.html">../zh/09-checker-guide.md</a></td><td>Checker layering, API design, and implementation conventions</td><td>Tooling / integration developers</td></tr>
 </tbody>
 </table>
 </div>
@@ -2768,6 +2775,29 @@ http/request":request
   opt(chars)@message
 ))
 </code></pre>
+<h3 id="valid-json-vs-broken-json-fallback"><a class="header" href="#valid-json-vs-broken-json-fallback">Valid JSON vs broken JSON fallback</a></h3>
+<pre><code class="language-wpl">package api {
+  rule good_json {
+    (json(chars@host, chars@method))
+  }
+
+  rule broken_json {
+    |json_like|
+    (bad_json:raw)
+  }
+}
+</code></pre>
+<p>Use this pattern when:</p>
+<ul>
+<li>valid JSON should be parsed into fields</li>
+<li>broken but JSON-like payloads should be preserved as raw text</li>
+<li>plain text must not be accidentally consumed by <code>bad_json</code></li>
+</ul>
+<p>Notes:</p>
+<ul>
+<li><code>json(...)</code> already has built-in JSON-like sniffing</li>
+<li><code>json_like</code> is still useful as a guard in the fallback <code>bad_json</code> rule</li>
+</ul>
 <h3 id="optional-trailing-segment"><a class="header" href="#optional-trailing-segment">Optional trailing segment</a></h3>
 <pre><code class="language-wpl">(digit:code, time:ts),
 opt(chars:tag")
@@ -2820,6 +2850,48 @@ not(peek_symbol(ERROR):check)
 kvarr(chars@host, digit@port, opt(chars)@user)
 </code></pre>
 <p>This is different from group-level <code>opt(...)</code>.</p>
+<hr>
+<h2 id="json-like-routing"><a class="header" href="#json-like-routing">JSON-like Routing</a></h2>
+<h3 id="json_like"><a class="header" href="#json_like"><code>json_like</code></a></h3>
+<pre><code class="language-wpl">|json_like|
+</code></pre>
+<ul>
+<li><code>json_like</code> is a preorder line pipe</li>
+<li>It only does a lightweight sniff to check whether the input looks like JSON</li>
+<li>It does not extract fields and does not run full JSON parsing</li>
+</ul>
+<p>Use it in fallback rules before <code>bad_json</code>.</p>
+<h3 id="json"><a class="header" href="#json"><code>json</code></a></h3>
+<p><code>json(...)</code> now has built-in JSON-like sniffing, so this is enough:</p>
+<pre><code class="language-wpl">rule good_json {
+  (json(chars@host, chars@method))
+}
+</code></pre>
+<p>You do not need to add an extra <code>|json_like|</code> in front of <code>json(...)</code>.</p>
+<h3 id="bad_json"><a class="header" href="#bad_json"><code>bad_json</code></a></h3>
+<pre><code class="language-wpl">(bad_json:raw)
+</code></pre>
+<ul>
+<li><code>bad_json</code> outputs the original input as a <code>chars</code> field</li>
+<li>It is intended for inputs that look like JSON but fail strict JSON parsing</li>
+<li>It should usually be guarded by <code>|json_like|</code></li>
+</ul>
+<h3 id="recommended-pattern"><a class="header" href="#recommended-pattern">Recommended Pattern</a></h3>
+<pre><code class="language-wpl">rule good_json {
+  (json(chars@host, chars@method))
+}
+
+rule broken_json {
+  |json_like|
+  (bad_json:raw)
+}
+</code></pre>
+<p>Behavior:</p>
+<ul>
+<li>Valid JSON is handled by <code>json(...)</code></li>
+<li>Broken but JSON-like payloads fall back to <code>json_like + bad_json</code></li>
+<li>Plain text will not be accidentally consumed by <code>bad_json</code></li>
+</ul>
 <hr>
 <h2 id="valid-and-invalid-forms"><a class="header" href="#valid-and-invalid-forms">Valid and Invalid Forms</a></h2>
 <p>Valid:</p>
@@ -10106,7 +10178,7 @@ protocol = "tcp"
 <h1 id="file-source"><a class="header" href="#file-source">File Source</a></h1>
 <p>This document provides detailed instructions on configuring and using file data sources in the Warp Parse system.</p>
 <h2 id="overview-10"><a class="header" href="#overview-10">Overview</a></h2>
-<p>File sources are used to read data from the local file system, supporting multiple encoding formats and flexible path configuration.</p>
+<p>File sources read data from the local file system. Path configuration uses <code>base + file</code>, and only <code>file</code> supports wildcard patterns.</p>
 <h2 id="connector-definition"><a class="header" href="#connector-definition">Connector Definition</a></h2>
 <h3 id="basic-file-connector"><a class="header" href="#basic-file-connector">Basic File Connector</a></h3>
 <pre><code class="language-toml"># connectors/source.d/00-file-default.toml
@@ -10122,7 +10194,7 @@ encode = "text"
 </code></pre>
 <h2 id="supported-parameters"><a class="header" href="#supported-parameters">Supported Parameters</a></h2>
 <h3 id="path-configuration"><a class="header" href="#path-configuration">Path Configuration</a></h3>
-<h4 id="base--file-combination-recommended"><a class="header" href="#base--file-combination-recommended">base + file Combination (Recommended)</a></h4>
+<h4 id="base--file-combination-the-only-supported-path-form"><a class="header" href="#base--file-combination-the-only-supported-path-form">base + file Combination (The only supported path form)</a></h4>
 <pre><code class="language-toml">[[sources]]
 key = "file_composed"
 connect = "file_src"
@@ -10131,6 +10203,11 @@ connect = "file_src"
 base = "/var/log"
 file = "access.log"
 </code></pre>
+<blockquote>
+<p>The <code>path</code> parameter is no longer supported; use <code>base + file</code>.</p>
+<p><code>base</code> is a directory prefix and does not support wildcards.</p>
+<p><code>file</code> supports wildcard patterns such as <code>app-*.log</code>.</p>
+</blockquote>
 <h4 id="instances-multi-instance-parallel-reading"><a class="header" href="#instances-multi-instance-parallel-reading">instances (Multi-instance Parallel Reading)</a></h4>
 <pre><code class="language-toml">[[sources.params]]
 instances = 4   # 1-32, default is 1
@@ -10176,6 +10253,27 @@ connect = "file_src"
 base = "/var/log/nginx"
 file = "error.log"
 </code></pre>
+<h3 id="wildcard-sequential-reading"><a class="header" href="#wildcard-sequential-reading">Wildcard Sequential Reading</a></h3>
+<pre><code class="language-toml"># wpsrc.toml
+[[sources]]
+enable = true
+key = "nginx_shards"
+connect = "file_src"
+
+[[sources.params]]
+base = "/var/log/nginx"
+file = "access-*.log"
+</code></pre>
+<blockquote>
+<p>When <code>file</code> uses a wildcard pattern:</p>
+<ul>
+<li>files are expanded once at startup</li>
+<li>newly created files are not discovered incrementally</li>
+<li>matched files are processed one file at a time in file-name order</li>
+<li>if <code>instances = 1</code>, line order inside each file is preserved</li>
+<li>if <code>instances &gt; 1</code>, the current file is split into line-aligned ranges and read in parallel, so full in-file line order is not guaranteed</li>
+</ul>
+</blockquote>
 <h3 id="different-encoding-formats"><a class="header" href="#different-encoding-formats">Different Encoding Formats</a></h3>
 <pre><code class="language-toml"># Base64 encoded file
 [[sources]]
@@ -10715,7 +10813,6 @@ framing = "line"  # or "len"
 <tr><td><code>kafka</code></td><td>Output to Kafka</td><td>-</td></tr>
 <tr><td><code>prometheus</code></td><td>Prometheus metrics exposure</td><td><a href="#prometheus-sink">Prometheus Sink Configuration</a></td></tr>
 <tr><td><code>victorialogs</code></td><td>Output to VictoriaLogs</td><td><a href="#victorialogs">VictoriaLogs Sink Configuration</a></td></tr>
-<tr><td><code>mysql</code></td><td>Output to MySQL database</td><td><a href="10-user/05-connectors/02-sinks/19-mysql_sink.html">MySQL Sink Configuration</a></td></tr>
 </tbody>
 </table>
 </div>
@@ -11377,10 +11474,75 @@ columns = "wp_event_id,wp_src_key,sip,timestamp,`http/request`,size,referer,`htt
 <li>For an end-to-end example, see <code>wp-examples/extensions/doris/README.md</code>.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="mysql-sink"><a class="header" href="#mysql-sink">MySQL Sink</a></h1>
+<p>The MySQL sink is used to write parsed records into MySQL tables. It generates <code>INSERT IGNORE</code> statements based on <code>columns</code>, making it suitable for idempotent retry scenarios. It only accepts Record data (raw input is not supported).</p>
+<h2 id="connector-definition-9"><a class="header" href="#connector-definition-9">Connector Definition</a></h2>
+<p>It’s recommended to use the built-in template from the repository (located at <code>connectors/sink.d/50-mysql.toml</code>):</p>
+<pre><code class="language-toml">[[connectors]]
+id = "mysql_sink"
+type = "mysql"
+allow_override = ["endpoint", "username", "password", "database", "table", "columns", "batch_size"]
+
+[connectors.params]
+endpoint = "localhost:3306"
+username = "root"
+password = "123456"
+database = "wparse"
+table = "nginx_logs"
+columns = ["sip", "timestamp", "http/request", "status", "size", "referer", "http/agent", "wp_event_id"]
+batch_size = 1024
+</code></pre>
+<h2 id="available-parameters-3"><a class="header" href="#available-parameters-3">Available Parameters</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>endpoint</code></td><td>string</td><td>MySQL address (<code>host:port</code>, required)</td></tr>
+<tr><td><code>username</code></td><td>string</td><td>Username (optional, defaults to <code>root</code>)</td></tr>
+<tr><td><code>password</code></td><td>string</td><td>Password (optional)</td></tr>
+<tr><td><code>database</code></td><td>string</td><td>Target database (required)</td></tr>
+<tr><td><code>table</code></td><td>string</td><td>Target table name (required)</td></tr>
+<tr><td><code>columns</code></td><td>array</td><td>List of column names, determines field write order (required)</td></tr>
+<tr><td><code>batch_size</code></td><td>int</td><td>Batch write count (optional)</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="configuration-example-1"><a class="header" href="#configuration-example-1">Configuration Example</a></h2>
+<h3 id="basic-usage-2"><a class="header" href="#basic-usage-2">Basic Usage</a></h3>
+<pre><code class="language-toml">version = "2.0"
+
+[sink_group]
+name = "all"
+oml = ["/*"]
+batch_timeout_ms=5000   # Auto-insert when data doesn't meet batch size within this timeout
+parallel = 8
+
+[[sink_group.sinks]]
+name = "main"
+connect = "mysql_sink"
+
+[sink_group.sinks.params]
+endpoint = "localhost:3306"
+username = "root"
+password = "123456"
+database = "wparse"
+table = "nginx_logs"
+columns = ["sip", "timestamp", "http/request", "status", "size", "referer", "http/agent", "wp_event_id"]
+batch_size = 1024   
+</code></pre>
+<h2 id="notes-4"><a class="header" href="#notes-4">Notes</a></h2>
+<ul>
+<li>Field names in <code>columns</code> must match the OML output fields; missing table fields will be written as <code>NULL</code>.</li>
+<li>Connection string can be overridden via the <code>MYSQL_URL</code> environment variable (format: <code>mysql://user:pass@host:port/db</code>).</li>
+<li>For end-to-end examples, refer to <code>wp-examples/extensions/tcp_mysql/README.md</code>.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="arrow-ipc-sink"><a class="header" href="#arrow-ipc-sink">Arrow IPC Sink</a></h1>
 <p>The <code>arrow-ipc</code> sink encodes record batches as Arrow IPC payloads and sends them to a downstream consumer over TCP.</p>
 <p>Current implementation supports TCP targets only. The wire format is length-prefixed frames (<code>4-byte big-endian length + IPC payload</code>).</p>
-<h2 id="connector-definition-9"><a class="header" href="#connector-definition-9">Connector Definition</a></h2>
+<h2 id="connector-definition-10"><a class="header" href="#connector-definition-10">Connector Definition</a></h2>
 <pre><code class="language-toml">[[connectors]]
 id = "arrow_ipc_sink"
 type = "arrow-ipc"
@@ -11395,7 +11557,7 @@ fields = [
   { name = "action", type = "chars", nullable = false }
 ]
 </code></pre>
-<h2 id="available-parameters-3"><a class="header" href="#available-parameters-3">Available Parameters</a></h2>
+<h2 id="available-parameters-4"><a class="header" href="#available-parameters-4">Available Parameters</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -11409,7 +11571,7 @@ fields = [
 </table>
 </div>
 <p>Supported <code>fields[].type</code> values: <code>chars</code>, <code>digit</code>, <code>float</code>, <code>bool</code>, <code>time</code>, <code>ip</code>, <code>hex</code>, <code>array&lt;...&gt;</code> (case-insensitive).</p>
-<h2 id="configuration-example-1"><a class="header" href="#configuration-example-1">Configuration Example</a></h2>
+<h2 id="configuration-example-2"><a class="header" href="#configuration-example-2">Configuration Example</a></h2>
 <pre><code class="language-toml">version = "2.0"
 
 [sink_group]
@@ -11439,7 +11601,7 @@ fields = [
 <li>Data is dropped while disconnected (no WAL/replay in current implementation)</li>
 <li>Raw interfaces (<code>sink_str/sink_bytes</code>) are no-op; <code>arrow-ipc</code> is intended for record output</li>
 </ul>
-<h2 id="notes-4"><a class="header" href="#notes-4">Notes</a></h2>
+<h2 id="notes-5"><a class="header" href="#notes-5">Notes</a></h2>
 <ul>
 <li><code>target</code> currently rejects non-TCP schemes such as <code>unix://</code> or <code>http://</code></li>
 <li>Keep <code>fields</code> aligned with actual output records; type mismatch will fail batch conversion</li>
@@ -11447,7 +11609,7 @@ fields = [
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="elasticsearch-sink"><a class="header" href="#elasticsearch-sink">Elasticsearch Sink</a></h1>
 <p>Elasticsearch sink writes parsed records to Elasticsearch indexes in batches, which is useful for search, aggregation, and visualization workloads.</p>
-<h2 id="connector-definition-10"><a class="header" href="#connector-definition-10">Connector Definition</a></h2>
+<h2 id="connector-definition-11"><a class="header" href="#connector-definition-11">Connector Definition</a></h2>
 <p>Use the built-in template in the repository (<code>connectors/sink.d/90-elasticsearch.toml</code>):</p>
 <pre><code class="language-toml">[[connectors]]
 id = "elasticsearch_sink"
@@ -11475,7 +11637,7 @@ timeout_secs = 30
 max_retries = 3
 batch_size = 100_0000
 </code></pre>
-<h2 id="available-parameters-4"><a class="header" href="#available-parameters-4">Available Parameters</a></h2>
+<h2 id="available-parameters-5"><a class="header" href="#available-parameters-5">Available Parameters</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -11494,7 +11656,7 @@ batch_size = 100_0000
 </tbody>
 </table>
 </div>
-<h2 id="configuration-example-2"><a class="header" href="#configuration-example-2">Configuration Example</a></h2>
+<h2 id="configuration-example-3"><a class="header" href="#configuration-example-3">Configuration Example</a></h2>
 <h3 id="basic-usage-from-extensionselasticsearch"><a class="header" href="#basic-usage-from-extensionselasticsearch">Basic Usage (from <code>extensions/elasticsearch</code>)</a></h3>
 <pre><code class="language-toml">version = "2.0"
 
@@ -11519,7 +11681,7 @@ timeout_secs = 30
 max_retries = 3
 batch_size = 100_0000
 </code></pre>
-<h2 id="notes-5"><a class="header" href="#notes-5">Notes</a></h2>
+<h2 id="notes-6"><a class="header" href="#notes-6">Notes</a></h2>
 <ul>
 <li>The example environment enables authentication, so valid username/password is required.</li>
 <li>On first write, the index is usually auto-created. In production, define mapping and shard strategy in advance.</li>
@@ -11534,7 +11696,7 @@ batch_size = 100_0000
 <li>outer frame: <code>[4B BE length][payload]</code></li>
 <li>payload: the same tagged Arrow IPC frame used by <code>arrow-ipc</code></li>
 </ul>
-<h2 id="connector-definition-11"><a class="header" href="#connector-definition-11">Connector Definition</a></h2>
+<h2 id="connector-definition-12"><a class="header" href="#connector-definition-12">Connector Definition</a></h2>
 <pre><code class="language-toml">[[connectors]]
 id = "arrow_file_sink"
 type = "arrow-file"
@@ -11565,7 +11727,7 @@ fields = [
 </tbody>
 </table>
 </div>
-<h2 id="notes-6"><a class="header" href="#notes-6">Notes</a></h2>
+<h2 id="notes-7"><a class="header" href="#notes-7">Notes</a></h2>
 <ul>
 <li>The file stores a sequence of Arrow frames, not JSON/text lines</li>
 <li><code>sink_str/sink_bytes</code> are no-op; this sink is intended for record output</li>
@@ -11574,7 +11736,7 @@ fields = [
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="clickhouse-sink"><a class="header" href="#clickhouse-sink">ClickHouse Sink</a></h1>
 <p>ClickHouse sink writes parsed records to ClickHouse database in batches, which is ideal for large-scale log analysis and real-time data query scenarios.</p>
-<h2 id="connector-definition-12"><a class="header" href="#connector-definition-12">Connector Definition</a></h2>
+<h2 id="connector-definition-13"><a class="header" href="#connector-definition-13">Connector Definition</a></h2>
 <pre><code class="language-toml">[[connectors]]
 id = "clickhouse_sink"
 type = "clickhouse"
@@ -11597,7 +11759,7 @@ password = "${SEC_PASSWORD}"
 timeout_secs = 30
 max_retries = 3
 </code></pre>
-<h2 id="available-parameters-5"><a class="header" href="#available-parameters-5">Available Parameters</a></h2>
+<h2 id="available-parameters-6"><a class="header" href="#available-parameters-6">Available Parameters</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -11614,8 +11776,8 @@ max_retries = 3
 </tbody>
 </table>
 </div>
-<h2 id="configuration-example-3"><a class="header" href="#configuration-example-3">Configuration Example</a></h2>
-<h3 id="basic-usage-2"><a class="header" href="#basic-usage-2">Basic Usage</a></h3>
+<h2 id="configuration-example-4"><a class="header" href="#configuration-example-4">Configuration Example</a></h2>
+<h3 id="basic-usage-3"><a class="header" href="#basic-usage-3">Basic Usage</a></h3>
 <pre><code class="language-toml">version = "2.0"
 
 [sink_group]
@@ -11650,7 +11812,7 @@ max_retries = 5
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="http-sink"><a class="header" href="#http-sink">HTTP Sink</a></h1>
 <p>HTTP sink sends parsed records to HTTP/HTTPS endpoints in various formats, suitable for webhooks, API integration, and custom data pipeline scenarios.</p>
-<h2 id="connector-definition-13"><a class="header" href="#connector-definition-13">Connector Definition</a></h2>
+<h2 id="connector-definition-14"><a class="header" href="#connector-definition-14">Connector Definition</a></h2>
 <pre><code class="language-toml">[[connectors]]
 id = "http_sink"
 type = "http"
@@ -11678,7 +11840,7 @@ timeout_secs = 60
 max_retries = 3
 compression = "none"
 </code></pre>
-<h2 id="available-parameters-6"><a class="header" href="#available-parameters-6">Available Parameters</a></h2>
+<h2 id="available-parameters-7"><a class="header" href="#available-parameters-7">Available Parameters</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -11791,7 +11953,7 @@ compression = "none"
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="postgresql-sink"><a class="header" href="#postgresql-sink">PostgreSQL Sink</a></h1>
 <p>The PostgreSQL sink writes parsed records into PostgreSQL tables. It builds <code>INSERT IGNORE</code> statements from <code>columns</code>, which is suitable for idempotent retry scenarios. It only accepts Record data (raw input is not supported).</p>
-<h2 id="connector-definition-14"><a class="header" href="#connector-definition-14">Connector Definition</a></h2>
+<h2 id="connector-definition-15"><a class="header" href="#connector-definition-15">Connector Definition</a></h2>
 <p>Use the built-in template (located at <code>connectors/sink.d/50-mysql.toml</code>; PostgreSQL uses the same configuration set as MySQL):</p>
 <pre><code class="language-toml">[[connectors]]
 id = "postgresql_sink"
@@ -11824,8 +11986,8 @@ batch_size = 1024
 </tbody>
 </table>
 </div>
-<h2 id="configuration-example-4"><a class="header" href="#configuration-example-4">Configuration Example</a></h2>
-<h3 id="basic-usage-3"><a class="header" href="#basic-usage-3">Basic Usage</a></h3>
+<h2 id="configuration-example-5"><a class="header" href="#configuration-example-5">Configuration Example</a></h2>
+<h3 id="basic-usage-4"><a class="header" href="#basic-usage-4">Basic Usage</a></h3>
 <pre><code class="language-toml">version = "2.0"
 
 [sink_group]
@@ -11847,7 +12009,7 @@ table = "nginx_logs"
 columns = ["sip", "timestamp", "http/request", "status", "size", "referer", "http/agent", "wp_event_id"]
 batch_size = 1024
 </code></pre>
-<h2 id="notes-7"><a class="header" href="#notes-7">Notes</a></h2>
+<h2 id="notes-8"><a class="header" href="#notes-8">Notes</a></h2>
 <ul>
 <li>Field names in <code>columns</code> must match OML output fields. Missing table columns are written as <code>NULL</code>.</li>
 <li>You can override the connection string with <code>POSTGRESQL_URL</code> (format: <code>postgresql://user:pass@host:port/db</code>).</li>

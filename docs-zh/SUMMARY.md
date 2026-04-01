@@ -1,6 +1,6 @@
 # Summary
 
-- [0.20 发布说明](00-release/0.20.md)
+- [WarpParse 0.20 版本发布：数据集成能力再升级！](00-release/0.20.md)
 
 - [使用指南](10-user/README.md)
   - [WPL 学习目标与练习](10-user/07-wpl-learning-objectives.md)
@@ -34,6 +34,7 @@
     - [WPL 语法参考（EBNF）](10-user/03-wpl/06-grammar-reference.md)
     - [WPL 完整类型系统示例](10-user/03-wpl/07-complete-types-example.md)
     - [分隔符模式（Sep Pattern）](10-user/03-wpl/08-sep-pattern.md)
+    - [Checker 实现指南](10-user/03-wpl/09-checker-guide.md)
     - [Strip BOM Processor 使用示例](10-user/03-wpl/examples/bom_clear_example.md)
     - [WPL Field Function](10-user/03-wpl/functions/README.md)
       - [chars_replace 函数使用指南](10-user/03-wpl/functions/chars_replace.md)

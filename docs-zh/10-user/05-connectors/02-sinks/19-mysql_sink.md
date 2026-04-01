@@ -10,16 +10,16 @@ MySQL sink 用于将解析后的记录写入 MySQL 表。它会根据 `columns` 
 [[connectors]]
 id = "mysql_sink"
 type = "mysql"
-allow_override = ["endpoint", "username", "password", "database", "table", "columns", "batch_size"]
+allow_override = ["endpoint", "username", "password", "database", "table", "columns", "batch"]
 
 [connectors.params]
 endpoint = "localhost:3306"
-username = "${SEC_USERNAME}"
-password = "${SEC_PASSWORD}"
+username = "root"
+password = "123456"
 database = "wparse"
 table = "nginx_logs"
 columns = ["sip", "timestamp", "http/request", "status", "size", "referer", "http/agent", "wp_event_id"]
-batch_size = 1024
+batch = 20
 ```
 
 ## 可用参数
@@ -30,21 +30,20 @@ batch_size = 1024
 | `username` | string | 用户名（可选，默认 `root`） |
 | `password` | string | 密码（可选） |
 | `database` | string | 目标数据库（必填） |
-| `table` | string | 目标表名（必填） |
-| `columns` | array | 列名列表，决定写入字段顺序(必填)） |
-| `batch_size` | int | 批量写入条数（可选） |
+| `table` | string | 目标表名（可选，未设置时使用 sink 名称） |
+| `columns` | array | 列名列表，决定写入字段顺序；必须包含 `wp_event_id`（缺省会自动补齐） |
+| `batch` | int | 批量写入条数（可选） |
 
 ## 配置示例
 
-### 基础用法
+### 基础用法（参考 `extensions/tcp_mysql`）
 
 ```toml
 version = "2.0"
 
 [sink_group]
 name = "all"
-oml = ["/*"]
-batch_timeout_ms=5000   # 当数据在设置的这个时间范围类不满足批量插入的数量时自动插入
+rule = ["/*"]
 parallel = 8
 
 [[sink_group.sinks]]
@@ -53,16 +52,17 @@ connect = "mysql_sink"
 
 [sink_group.sinks.params]
 endpoint = "localhost:3306"
-username = "${SEC_USERNAME}"
-password = "${SEC_PASSWORD}"
+username = "root"
+password = "123456"
 database = "wparse"
 table = "nginx_logs"
 columns = ["sip", "timestamp", "http/request", "status", "size", "referer", "http/agent", "wp_event_id"]
-batch_size = 1024   
+batch = 20
 ```
 
 ## 注意事项
 
-- `columns` 中的字段名需与 OML 输出字段一致；缺失的表字段会以 `NULL` 写入。
+- 表结构必须包含 `wp_event_id`（建议为 `BIGINT` 主键），否则写入会失败或产生重复。
+- `columns` 中的字段名需与 OML 输出字段一致；缺失字段会以 `NULL` 写入。
 - 可通过环境变量 `MYSQL_URL` 覆盖连接串（格式：`mysql://user:pass@host:port/db`）。
 - 端到端示例可参考 `wp-examples/extensions/tcp_mysql/README.md`。

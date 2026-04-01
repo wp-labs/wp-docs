@@ -58,7 +58,7 @@ Auto-detection (when data_file is not configured)
 - Reports error if not exists
 
 Security Constraints
-- Runtime (facade/query_cipher/SQL evaluation) only allows table names declared in `[[tables]].name`
+- Runtime (facade / SQL evaluation) only allows table names declared in `[[tables]].name`
 - SQL templates only allow `{table}` placeholder; other dynamic concatenation is prohibited
 
 Minimal Runnable Example
@@ -107,7 +107,6 @@ Common Errors and Troubleshooting
 
 Relationship with Applications
 - wparse/wproj etc. load knowdb at startup: Create authoritative database and set up Query Provider
-- `query_cipher(table)` (loading single-column word list) formerly used by privacy module is disabled by default in current version; implement desensitization on business side if needed
 
 Built-in SQL Functions (UDF)
 - Runtime registration:

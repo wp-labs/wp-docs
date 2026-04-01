@@ -4,7 +4,7 @@ This document provides detailed instructions on configuring and using file data 
 
 ## Overview
 
-File sources are used to read data from the local file system, supporting multiple encoding formats and flexible path configuration.
+File sources read data from the local file system. Path configuration uses `base + file`, and only `file` supports wildcard patterns.
 
 ## Connector Definition
 
@@ -28,7 +28,7 @@ encode = "text"
 ### Path Configuration
 
 
-#### base + file Combination (Recommended)
+#### base + file Combination (The only supported path form)
 ```toml
 [[sources]]
 key = "file_composed"
@@ -38,6 +38,12 @@ connect = "file_src"
 base = "/var/log"
 file = "access.log"
 ```
+
+> The `path` parameter is no longer supported; use `base + file`.
+>
+> `base` is a directory prefix and does not support wildcards.
+>
+> `file` supports wildcard patterns such as `app-*.log`.
 
 #### instances (Multi-instance Parallel Reading)
 ```toml
@@ -92,6 +98,27 @@ connect = "file_src"
 base = "/var/log/nginx"
 file = "error.log"
 ```
+
+### Wildcard Sequential Reading
+```toml
+# wpsrc.toml
+[[sources]]
+enable = true
+key = "nginx_shards"
+connect = "file_src"
+
+[[sources.params]]
+base = "/var/log/nginx"
+file = "access-*.log"
+```
+
+> When `file` uses a wildcard pattern:
+>
+> - files are expanded once at startup
+> - newly created files are not discovered incrementally
+> - matched files are processed one file at a time in file-name order
+> - if `instances = 1`, line order inside each file is preserved
+> - if `instances > 1`, the current file is split into line-aligned ranges and read in parallel, so full in-file line order is not guaranteed
 
 ### Different Encoding Formats
 ```toml

@@ -71,6 +71,7 @@
       - [TCP Sink](10-user/05-connectors/02-sinks/15-tcp_sink.md)
       - [VictoriaLogs](10-user/05-connectors/02-sinks/16-victorialogs.md)
       - [Doris Sink](10-user/05-connectors/02-sinks/17-doris.md)
+      - [MySQL Sink](10-user/05-connectors/02-sinks/19-mysql_sink.md)
       - [Arrow IPC Sink](10-user/05-connectors/02-sinks/20-arrow_ipc_sink.md)
       - [Elasticsearch Sink](10-user/05-connectors/02-sinks/20-elasticsearch_sink.md)
       - [Arrow File Sink](10-user/05-connectors/02-sinks/21-arrow_file_sink.md)

@@ -20,6 +20,7 @@ Commands:
 | Parameter | Short | Long | Default | Description |
 |-----------|-------|------|---------|-------------|
 | parse_workers | `-w` | `--parse-workers` | - | Number of parsing threads |
+| reload_timeout_ms | - | `--reload-timeout-ms` | - | Reload fallback timeout in milliseconds; shared by graceful drain and old-processing tail cleanup |
 | stat_sec | - | `--stat` | - | Statistics output interval (seconds) |
 | stat_print | `-p` | `--print_stat` | false | Periodically print statistics |
 | wpl_dir | - | `--wpl` | - | WPL rules directory override |
@@ -35,6 +36,9 @@ wparse batch -w 4 --parse-workers 4
 
 # Daemon mode: persistent service, output stats every 5 seconds
 wparse daemon --stat 5 -p
+
+# Daemon mode: shrink reload fallback timeout to 300ms (useful for automated tests)
+wparse daemon --reload-timeout-ms 300
 
 # Custom logging and rules directory
 wparse daemon --log-profile custom.toml --wpl /custom/rules

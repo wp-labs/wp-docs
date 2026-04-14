@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-d560b883.js";
+            window.path_to_searchindex_js = "searchindex-eff835a8.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-6cc1085e.js"></script>
+        <script src="toc-da54cdca.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -10035,6 +10035,7 @@ EventTemplate = read(target) | get(tpl);
 <li><a href="#file-source">File Source Configuration</a></li>
 <li><a href="#kafka-source-configuration-1">Kafka Source Configuration</a></li>
 <li><a href="#syslog-source-configuration-1">Syslog Source Configuration</a></li>
+<li><a href="#http-source-configuration">HTTP Source Configuration</a></li>
 <li><a href="#tcp-source-configuration">TCP Source Configuration</a></li>
 <li><a href="#source-meta">DataRecord Mechanism Data Fields</a></li>
 </ul>
@@ -10054,6 +10055,7 @@ EventTemplate = read(target) | get(tpl);
 <tr><td><code>file</code></td><td>Read data from local files</td><td><a href="#file-source">File Source Configuration</a></td></tr>
 <tr><td><code>kafka</code></td><td>Consume messages from Kafka</td><td><a href="#kafka-source-configuration-1">Kafka Source Configuration</a></td></tr>
 <tr><td><code>syslog</code></td><td>Receive Syslog protocol data (UDP/TCP)</td><td><a href="#syslog-source-configuration-1">Syslog Source Configuration</a></td></tr>
+<tr><td><code>http</code></td><td>Receive data through HTTP requests</td><td><a href="#http-source-configuration">HTTP Source Configuration</a></td></tr>
 <tr><td><code>tcp</code></td><td>Receive data via TCP</td><td><a href="#tcp-source-configuration">TCP Source Configuration</a></td></tr>
 </tbody>
 </table>
@@ -10662,9 +10664,132 @@ header_mode = "parse"         # Parse and inject protocol-related metadata
 <li><a href="10-user/05-connectors/README.html">Connector Management</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="http-source-configuration"><a class="header" href="#http-source-configuration">HTTP Source Configuration</a></h1>
+<p>This document describes how to use the generic HTTP source (kind=<code>http</code>), its request protocol, and example interactions with the HTTP Sink.</p>
+<h2 id="feature-overview"><a class="header" href="#feature-overview">Feature Overview</a></h2>
+<p><code>HttpSource</code> is a receiving Source based on a web service.</p>
+<h3 id="supported-parameters-3"><a class="header" href="#supported-parameters-3">Supported Parameters</a></h3>
+<ol>
+<li><code>port</code>: the port to listen on.</li>
+<li><code>path</code>: the path to listen on.</li>
+</ol>
+<blockquote>
+<p>Different sources can share the same port as long as their paths are different.</p>
+</blockquote>
+<h3 id="supported-features"><a class="header" href="#supported-features">Supported Features</a></h3>
+<h4 id="format-selection"><a class="header" href="#format-selection">Format Selection</a></h4>
+<p>Supports both <code>json</code> and <code>ndjson</code> formats. You can specify the input format through the request parameter <code>fmt</code> or the request header <code>Content-Type</code>. The <code>fmt</code> parameter has higher priority than <code>Content-Type</code>. If neither is specified, <code>json</code> is used by default.
+Content-Type mapping rules:
+- <code>application/json</code> =&gt; <code>json</code>
+- <code>application/x-ndjson</code> =&gt; <code>ndjson</code>
+- <code>application/ndjson</code> =&gt; <code>ndjson</code></p>
+<h4 id="compression-selection"><a class="header" href="#compression-selection">Compression Selection</a></h4>
+<p>Supports requests compressed with <code>gzip</code> or <code>none</code> (no compression). You can specify the compression method through the request parameter <code>compression</code> or the request header <code>Content-Encoding</code>.</p>
+<h2 id="connector-definition-sourced"><a class="header" href="#connector-definition-sourced">Connector Definition (<code>source.d</code>)</a></h2>
+<pre><code class="language-toml"># connectors/source.d/15-http.toml
+[[connectors]]
+id = "http_src"
+type = "http"
+allow_override = ["port", "path"]
+
+[connectors.params]
+port = 18080
+path = "/ingest"
+</code></pre>
+<h2 id="source-configuration-wpsrctoml"><a class="header" href="#source-configuration-wpsrctoml">Source Configuration (<code>wpsrc.toml</code>)</a></h2>
+<h3 id="basic-configuration-2"><a class="header" href="#basic-configuration-2">Basic Configuration</a></h3>
+<pre><code class="language-toml">[[sources]]
+key = "http_ingest"
+connect = "http_src"
+enable = true
+tags = ["source:http", "env:dev"]
+
+[[sources.params]]
+port = 18080
+path = "/ingest"
+</code></pre>
+<h2 id="request-protocol"><a class="header" href="#request-protocol">Request Protocol</a></h2>
+<h3 id="1-input-format-selection"><a class="header" href="#1-input-format-selection">1. Input Format Selection</a></h3>
+<p>The following two input formats are supported:</p>
+<ul>
+<li><code>json</code></li>
+<li><code>ndjson</code></li>
+</ul>
+<h2 id="parsing-rules"><a class="header" href="#parsing-rules">Parsing Rules</a></h2>
+<h3 id="json-1"><a class="header" href="#json-1"><code>json</code></a></h3>
+<ul>
+<li>The request body is first parsed as a whole into a JSON value</li>
+<li>If the top level is an array, each element is split into a separate event</li>
+<li>If the top level is not an array, it is automatically wrapped into a single-element array</li>
+<li>Each element is ultimately serialized into a single-line JSON string as the payload of one <code>SourceEvent</code></li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-json">[{"a":1},{"b":2}]
+</code></pre>
+<p>This produces two event payloads:</p>
+<pre><code class="language-json">{"a":1}
+{"b":2}
+</code></pre>
+<h3 id="ndjson"><a class="header" href="#ndjson"><code>ndjson</code></a></h3>
+<ul>
+<li>The request body is split line by line</li>
+<li>Empty lines are ignored</li>
+<li>Each line must be valid JSON</li>
+<li>Each line is ultimately normalized into a single-line JSON string as one event</li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-text">{"a":1}
+{"b":2}
+</code></pre>
+<p>If any line is not valid JSON, the request fails.</p>
+<h2 id="sending-examples"><a class="header" href="#sending-examples">Sending Examples</a></h2>
+<h3 id="example-1-send-a-json-array"><a class="header" href="#example-1-send-a-json-array">Example 1: Send a JSON Array</a></h3>
+<pre><code class="language-bash">curl -X POST "http://127.0.0.1:18080/ingest" \
+  -H "Content-Type: application/json" \
+  --data '[{"message":"hello"},{"message":"world"}]'
+</code></pre>
+<p>You can also explicitly override the format through a request parameter:</p>
+<pre><code class="language-bash">curl -X POST "http://127.0.0.1:18080/ingest?fmt=json" \
+  -H "Content-Type: application/x-ndjson" \
+  --data '[{"message":"hello"},{"message":"world"}]'
+</code></pre>
+<h3 id="example-2-send-ndjson"><a class="header" href="#example-2-send-ndjson">Example 2: Send NDJSON</a></h3>
+<pre><code class="language-bash">curl -X POST "http://127.0.0.1:18080/ingest?fmt=ndjson" \
+  -H "Content-Type: application/x-ndjson" \
+  --data-binary $'{"message":"hello"}\n{"message":"world"}\n'
+</code></pre>
+<h3 id="example-3-send-gzip-compressed-ndjson"><a class="header" href="#example-3-send-gzip-compressed-ndjson">Example 3: Send gzip-compressed NDJSON</a></h3>
+<pre><code class="language-bash">printf '{"message":"hello"}\n{"message":"world"}\n' \
+  | gzip -c \
+  | curl -X POST "http://127.0.0.1:18080/ingest?fmt=ndjson" \
+      -H "Content-Encoding: gzip" \
+      --data-binary @-
+</code></pre>
+<h3 id="successful-response-example"><a class="header" href="#successful-response-example">Successful Response Example</a></h3>
+<pre><code class="language-text">HTTP/1.1 200 OK
+
+OK
+</code></pre>
+<h3 id="failed-response-example"><a class="header" href="#failed-response-example">Failed Response Example</a></h3>
+<p>When one line in NDJSON is not valid JSON:</p>
+<pre><code class="language-bash">curl -X POST "http://127.0.0.1:18080/ingest?fmt=ndjson" \
+  -H "Content-Type: application/x-ndjson" \
+  --data-binary $'{"ok":1}\nnot-json\n'
+</code></pre>
+<p>You will get:</p>
+<pre><code class="language-text">HTTP/1.1 400 Bad Request
+
+parse body failed: invalid ndjson line 2
+</code></pre>
+<h2 id="related-documentation-11"><a class="header" href="#related-documentation-11">Related Documentation</a></h2>
+<ul>
+<li><a href="#source-basics">Source Configuration Basics</a></li>
+<li><a href="#http-sink">HTTP Sink Configuration</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="tcp-source-configuration"><a class="header" href="#tcp-source-configuration">TCP Source Configuration</a></h1>
 <p>This document describes how to use the generic TCP source (kind=<code>tcp</code>), framing modes, and examples of integration with TCP Sink.</p>
-<h2 id="feature-overview"><a class="header" href="#feature-overview">Feature Overview</a></h2>
+<h2 id="feature-overview-1"><a class="header" href="#feature-overview-1">Feature Overview</a></h2>
 <ul>
 <li>Supports three framing modes:
 <ul>
@@ -10674,7 +10799,7 @@ header_mode = "parse"         # Parse and inject protocol-related metadata
 </ul>
 </li>
 </ul>
-<h2 id="connector-definition-sourced"><a class="header" href="#connector-definition-sourced">Connector Definition (source.d)</a></h2>
+<h2 id="connector-definition-sourced-1"><a class="header" href="#connector-definition-sourced-1">Connector Definition (source.d)</a></h2>
 <pre><code class="language-toml"># connectors/source.d/12-tcp.toml
 [[connectors]]
 id = "tcp_src"
@@ -10689,7 +10814,7 @@ framing = "auto"          # auto|line|len
 tcp_recv_bytes = 256000   # 256KB
 # instances = 1             # Optional: parallel instances, default 1, max 16
 </code></pre>
-<h2 id="source-configuration-wpsrctoml"><a class="header" href="#source-configuration-wpsrctoml">Source Configuration (wpsrc.toml)</a></h2>
+<h2 id="source-configuration-wpsrctoml-1"><a class="header" href="#source-configuration-wpsrctoml-1">Source Configuration (wpsrc.toml)</a></h2>
 <pre><code class="language-toml">[[sources]]
 key = "tcp_in"
 connect = "tcp_src"
@@ -10763,7 +10888,7 @@ framing = "line"  # or "len"
 <li>Multi-line/binary: <code>framing="len"</code> (or <code>auto</code> default)</li>
 <li>Quick debugging: <code>framing="line"</code>, paired with <code>nc -lk &lt;port&gt;</code></li>
 </ul>
-<h2 id="related-documentation-11"><a class="header" href="#related-documentation-11">Related Documentation</a></h2>
+<h2 id="related-documentation-12"><a class="header" href="#related-documentation-12">Related Documentation</a></h2>
 <ul>
 <li><a href="#source-basics">Source Configuration Basics</a></li>
 <li><a href="#tcp-sink">TCP Sink Configuration</a></li>

@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-9d481d7c.js";
+            window.path_to_searchindex_js = "searchindex-9765f1b3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-bf315470.js"></script>
+        <script src="toc-e4b081e6.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -18455,6 +18455,7 @@ protocol = "tcp"      # 可靠的协议
 <li><a href="#file-source">文件源配置</a></li>
 <li><a href="#kafka-源配置-1">Kafka 源配置</a></li>
 <li><a href="#syslog-源配置-1">Syslog 源配置</a></li>
+<li><a href="#http-源配置">HTTP 源配置</a></li>
 <li><a href="#tcp-源配置">TCP 源配置</a></li>
 <li><a href="#source-meta">DataRecord 机制数据字段</a></li>
 </ul>
@@ -18474,6 +18475,7 @@ protocol = "tcp"      # 可靠的协议
 <tr><td><code>file</code></td><td>从本地文件读取数据</td><td><a href="#file-source">文件源配置</a></td></tr>
 <tr><td><code>kafka</code></td><td>从 Kafka 消费消息</td><td><a href="#kafka-源配置-1">Kafka 源配置</a></td></tr>
 <tr><td><code>syslog</code></td><td>接收 Syslog 协议数据 (UDP/TCP)</td><td><a href="#syslog-源配置-1">Syslog 源配置</a></td></tr>
+<tr><td><code>http</code></td><td>通过 HTTP 请求接收数据</td><td><a href="#http-源配置">HTTP 源配置</a></td></tr>
 <tr><td><code>tcp</code></td><td>通过 TCP 接收数据</td><td><a href="#tcp-源配置">TCP 源配置</a></td></tr>
 </tbody>
 </table>
@@ -19082,9 +19084,132 @@ header_mode = "parse"         # 解析并注入协议相关元信息
 <li><a href="10-user/05-connectors/README.html">连接器管理</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="http-源配置"><a class="header" href="#http-源配置">HTTP 源配置</a></h1>
+<p>本文档介绍通用 HTTP 源（kind=<code>http</code>）的使用方式、请求协议，以及与 HTTP Sink 的联动示例。</p>
+<h2 id="功能概览"><a class="header" href="#功能概览">功能概览</a></h2>
+<p><code>HttpSource</code> 是一个基于 web服务 的接收型 Source。</p>
+<h3 id="支持的参数-3"><a class="header" href="#支持的参数-3">支持的参数</a></h3>
+<ol>
+<li>port监听的端口。</li>
+<li>path监听的路径。</li>
+</ol>
+<blockquote>
+<p>不同的source之间可以共用一个端口，只要保证path不同即可。</p>
+</blockquote>
+<h3 id="支持的功能"><a class="header" href="#支持的功能">支持的功能</a></h3>
+<h4 id="格式选择"><a class="header" href="#格式选择">格式选择</a></h4>
+<p>支持json格式和ndjson格式，通过请求参数 <code>fmt</code> 或者请求头<code>Content-Type</code>指定输入格式，<code>fmt</code> 参数优先级高于 Content-Type，且两者都不指定时默认使用 <code>json</code>。
+Content-Type 映射规则：
+- <code>application/json</code> =&gt; <code>json</code>
+- <code>application/x-ndjson</code> =&gt; <code>ndjson</code>
+- <code>application/ndjson</code> =&gt; <code>ndjson</code></p>
+<h4 id="压缩选择"><a class="header" href="#压缩选择">压缩选择</a></h4>
+<p>支持请求以gzip格式压缩或none(不压缩)，通过请求参数 <code>compression</code> 或者请求头<code>Content-Encoding</code>指定压缩方式。</p>
+<h2 id="连接器定义sourced"><a class="header" href="#连接器定义sourced">连接器定义（source.d）</a></h2>
+<pre><code class="language-toml"># connectors/source.d/15-http.toml
+[[connectors]]
+id = "http_src"
+type = "http"
+allow_override = ["port", "path"]
+
+[connectors.params]
+port = 18080
+path = "/ingest"
+</code></pre>
+<h2 id="源配置wpsrctoml"><a class="header" href="#源配置wpsrctoml">源配置（wpsrc.toml）</a></h2>
+<h3 id="基础配置-2"><a class="header" href="#基础配置-2">基础配置</a></h3>
+<pre><code class="language-toml">[[sources]]
+key = "http_ingest"
+connect = "http_src"
+enable = true
+tags = ["source:http", "env:dev"]
+
+[[sources.params]]
+port = 18080
+path = "/ingest"
+</code></pre>
+<h2 id="请求协议"><a class="header" href="#请求协议">请求协议</a></h2>
+<h3 id="1-输入格式选择"><a class="header" href="#1-输入格式选择">1. 输入格式选择</a></h3>
+<p>支持以下两种输入格式：</p>
+<ul>
+<li><code>json</code></li>
+<li><code>ndjson</code></li>
+</ul>
+<h2 id="解析规则"><a class="header" href="#解析规则">解析规则</a></h2>
+<h3 id="json"><a class="header" href="#json"><code>json</code></a></h3>
+<ul>
+<li>请求体先整体解析为一个 JSON 值</li>
+<li>如果顶层是数组，则逐元素拆成多条事件</li>
+<li>如果顶层不是数组，则自动包装为单元素数组</li>
+<li>每个元素最终会被序列化成一行 JSON 字符串，作为一条 <code>SourceEvent</code> 的 payload</li>
+</ul>
+<p>示例：</p>
+<pre><code class="language-json">[{"a":1},{"b":2}]
+</code></pre>
+<p>会生成两条事件 payload：</p>
+<pre><code class="language-json">{"a":1}
+{"b":2}
+</code></pre>
+<h3 id="ndjson"><a class="header" href="#ndjson"><code>ndjson</code></a></h3>
+<ul>
+<li>按行切分请求体</li>
+<li>忽略空行</li>
+<li>每一行都必须是合法 JSON</li>
+<li>每一行最终会被规范化成一行 JSON 字符串，作为一条事件</li>
+</ul>
+<p>示例：</p>
+<pre><code class="language-text">{"a":1}
+{"b":2}
+</code></pre>
+<p>如果其中一行不是合法 JSON，请求会失败。</p>
+<h2 id="发送示例"><a class="header" href="#发送示例">发送示例</a></h2>
+<h3 id="示例-1发送-json-数组"><a class="header" href="#示例-1发送-json-数组">示例 1：发送 JSON 数组</a></h3>
+<pre><code class="language-bash">curl -X POST "http://127.0.0.1:18080/ingest" \
+  -H "Content-Type: application/json" \
+  --data '[{"message":"hello"},{"message":"world"}]'
+</code></pre>
+<p>也可以显式通过请求参数覆盖格式：</p>
+<pre><code class="language-bash">curl -X POST "http://127.0.0.1:18080/ingest?fmt=json" \
+  -H "Content-Type: application/x-ndjson" \
+  --data '[{"message":"hello"},{"message":"world"}]'
+</code></pre>
+<h3 id="示例-2发送-ndjson"><a class="header" href="#示例-2发送-ndjson">示例 2：发送 NDJSON</a></h3>
+<pre><code class="language-bash">curl -X POST "http://127.0.0.1:18080/ingest?fmt=ndjson" \
+  -H "Content-Type: application/x-ndjson" \
+  --data-binary $'{"message":"hello"}\n{"message":"world"}\n'
+</code></pre>
+<h3 id="示例-3发送-gzip-压缩的-ndjson"><a class="header" href="#示例-3发送-gzip-压缩的-ndjson">示例 3：发送 gzip 压缩的 NDJSON</a></h3>
+<pre><code class="language-bash">printf '{"message":"hello"}\n{"message":"world"}\n' \
+  | gzip -c \
+  | curl -X POST "http://127.0.0.1:18080/ingest?fmt=ndjson" \
+      -H "Content-Encoding: gzip" \
+      --data-binary @-
+</code></pre>
+<h3 id="成功响应示例"><a class="header" href="#成功响应示例">成功响应示例</a></h3>
+<pre><code class="language-text">HTTP/1.1 200 OK
+
+OK
+</code></pre>
+<h3 id="失败响应示例"><a class="header" href="#失败响应示例">失败响应示例</a></h3>
+<p>当 NDJSON 中某一行不是合法 JSON 时：</p>
+<pre><code class="language-bash">curl -X POST "http://127.0.0.1:18080/ingest?fmt=ndjson" \
+  -H "Content-Type: application/x-ndjson" \
+  --data-binary $'{"ok":1}\nnot-json\n'
+</code></pre>
+<p>将得到：</p>
+<pre><code class="language-text">HTTP/1.1 400 Bad Request
+
+parse body failed: invalid ndjson line 2
+</code></pre>
+<h2 id="相关文档-16"><a class="header" href="#相关文档-16">相关文档</a></h2>
+<ul>
+<li><a href="#source-基础">源配置基础</a></li>
+<li><a href="10-user/05-connectors/02-sinks/06-http_sink.html">HTTP Sink 配置</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="tcp-源配置"><a class="header" href="#tcp-源配置">TCP 源配置</a></h1>
 <p>本文档介绍通用 TCP 源（kind=<code>tcp</code>）的使用方式、分帧模式与与 TCP Sink 的联动示例。</p>
-<h2 id="功能概览"><a class="header" href="#功能概览">功能概览</a></h2>
+<h2 id="功能概览-1"><a class="header" href="#功能概览-1">功能概览</a></h2>
 <ul>
 <li>支持三种分帧模式：
 <ul>
@@ -19094,7 +19219,7 @@ header_mode = "parse"         # 解析并注入协议相关元信息
 </ul>
 </li>
 </ul>
-<h2 id="连接器定义sourced"><a class="header" href="#连接器定义sourced">连接器定义（source.d）</a></h2>
+<h2 id="连接器定义sourced-1"><a class="header" href="#连接器定义sourced-1">连接器定义（source.d）</a></h2>
 <pre><code class="language-toml"># connectors/source.d/12-tcp.toml
 [[connectors]]
 id = "tcp_src"
@@ -19109,7 +19234,7 @@ framing = "auto"          # auto|line|len
 tcp_recv_bytes = 256000   # 256KB
 # instances = 1             # 可选：多实例并行，默认 1，最大 16
 </code></pre>
-<h2 id="源配置wpsrctoml"><a class="header" href="#源配置wpsrctoml">源配置（wpsrc.toml）</a></h2>
+<h2 id="源配置wpsrctoml-1"><a class="header" href="#源配置wpsrctoml-1">源配置（wpsrc.toml）</a></h2>
 <pre><code class="language-toml">[[sources]]
 key = "tcp_in"
 connect = "tcp_src"
@@ -19183,7 +19308,7 @@ framing = "line"  # 或 "len"
 <li>多行/二进制：<code>framing="len"</code>（或 <code>auto</code> 默认）</li>
 <li>快速联调：<code>framing="line"</code>，配合 <code>nc -lk &lt;port&gt;</code></li>
 </ul>
-<h2 id="相关文档-16"><a class="header" href="#相关文档-16">相关文档</a></h2>
+<h2 id="相关文档-17"><a class="header" href="#相关文档-17">相关文档</a></h2>
 <ul>
 <li><a href="#source-基础">源配置基础</a></li>
 <li><a href="#tcp-sink">TCP Sink 配置</a></li>

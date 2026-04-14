@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
-<html lang="en" class="ayu sidebar-visible" dir="ltr">
+<html lang="zh-CN" class="ayu sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Docs Aggregation Automation - Warp Parse Documentation [ALPHA]</title>
+        <title>Wp-Monitor - Warp Parse 文档 [ALPHA]</title>
 
 
         <!-- Custom HTML head -->
@@ -12,35 +12,35 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../favicon-de23e50b.svg">
-        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
-        <link rel="stylesheet" href="../css/variables-8adf115d.css">
-        <link rel="stylesheet" href="../css/general-2459343d.css">
-        <link rel="stylesheet" href="../css/chrome-ae938929.css">
-        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
-        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
-        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../../theme/lang-switch.css">
-        <link rel="stylesheet" href="../../theme/version-badge.css">
+        <link rel="stylesheet" href="../../../theme/lang-switch.css">
+        <link rel="stylesheet" href="../../../theme/version-badge.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "../";
+            const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-1022f77b.js";
+            window.path_to_searchindex_js = "../../searchindex-85a3c702.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-b767c1fa.js"></script>
+        <script src="../../toc-ef032d5b.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -107,7 +107,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
             </noscript>
             <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -139,10 +139,10 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">Warp Parse Documentation [ALPHA]</h1>
+                    <h1 class="menu-title">Warp Parse 文档 [ALPHA]</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
                             <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
                         </a>
                         <a href="https://github.com/wp-labs/warp-parse" title="Git repository" aria-label="Git repository">
@@ -179,118 +179,129 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="docs-aggregation-automation"><a class="header" href="#docs-aggregation-automation">Docs Aggregation Automation</a></h1>
-<h2 id="goal"><a class="header" href="#goal">Goal</a></h2>
-<p>This repository is acting as a documentation aggregation layer. The weak point is not mdBook itself, but the way upstream content is copied here: it is still driven by manual scripts and manual commits.</p>
-<p>The automation should solve four things:</p>
-<ol>
-<li>Upstream sources must be configuration-driven.</li>
-<li>Local sync and CI sync must use the same entry point.</li>
-<li><code>SUMMARY.md</code> should be regenerated automatically after sync.</li>
-<li>Aggregated changes should enter the default branch through pull requests.</li>
-</ol>
-<h2 id="proposed-structure"><a class="header" href="#proposed-structure">Proposed Structure</a></h2>
-<p>The implementation is split into three parts:</p>
-<ol>
-<li><code>docs-sources.json</code>
+                        <h1 id="wp-monitor"><a class="header" href="#wp-monitor">Wp-Monitor</a></h1>
+<p><img src="../../images/Wp-Monitor.jpg" alt="Wp-Monitor"></p>
+<h2 id="1-文档说明"><a class="header" href="#1-文档说明">1. 文档说明</a></h2>
+<p>本文档用于说明 Wp-Monitor 这个应用的用途、适用场景、使用方式，以及正式使用前需要完成的准备工作。</p>
+<h2 id="2-应用简介"><a class="header" href="#2-应用简介">2. 应用简介</a></h2>
+<p>Wp-Monitor 是一个面向 WarpParse 数据链路的统一监控应用，用来帮助使用方快速了解日志流量在整条处理链路中的运行状态。</p>
+<p>它关注的不是单个组件本身，而是整条链路的运行结果和异常表现，重点回答以下问题：</p>
 <ul>
-<li>Declares every upstream documentation source.</li>
-<li>Each source defines the repo, branch, local development path, and source-to-target mappings.</li>
+<li>当前链路是否在正常处理数据。</li>
+<li>数据流量主要分布在哪些环节。</li>
+<li>是否存在未被规则命中的 MISS 数据。</li>
+<li>下游输出是否稳定、是否存在明显损耗或异常。</li>
 </ul>
-</li>
-<li><code>scripts/sync_docs.py</code>
+<p>对于日常巡检、问题排查和故障复盘，Wp-Monitor 提供的是一个统一入口，而不是分散查看多套系统。</p>
+<h2 id="3-核心价值"><a class="header" href="#3-核心价值">3. 核心价值</a></h2>
+<p>Wp-Monitor 的核心价值主要体现在以下几个方面：</p>
 <ul>
-<li>Performs the actual sync.</li>
-<li>Supports both local paths and git-based checkouts in CI.</li>
-<li>Default strategy is additive and non-destructive: create missing files and update changed files, without deleting destination-only files.</li>
+<li>全链路可视化：将 Source、Parse、Sink、Miss 统一放在一个视图中展示。</li>
+<li>快速定位异常：支持从层级观察进入节点观察，缩短排障路径。</li>
+<li>支撑问题复盘：可以围绕时间窗口查看异常波动和 MISS 数据。</li>
+<li>统一认知口径：让业务、平台和运维对链路状态有一致的观察入口。</li>
 </ul>
-</li>
-<li><code>.github/workflows/sync-docs.yml</code>
+<h2 id="4-应用主要能力"><a class="header" href="#4-应用主要能力">4. 应用主要能力</a></h2>
+<h3 id="41-链路总览"><a class="header" href="#41-链路总览">4.1 链路总览</a></h3>
+<p>应用首页提供统一链路视图，可用于观察整个数据处理过程中的主要层级和运行状态，包括：</p>
 <ul>
-<li>Runs on schedule, manual dispatch, or <code>repository_dispatch</code> from upstream repos.</li>
-<li>Opens a pull request with the aggregated changes.</li>
+<li>来源层</li>
+<li>Parse 层</li>
+<li>输出层</li>
+<li>Miss 区域</li>
 </ul>
-</li>
-</ol>
-<h2 id="current-example"><a class="header" href="#current-example">Current Example</a></h2>
-<p>The current <code>wp-motor/docs/usage</code> flow is now represented as a source entry:</p>
-<pre><code class="language-json">{
-  "sources": [
-    {
-      "name": "wp-motor-usage",
-      "repo": "https://github.com/wp-labs/wp-motor.git",
-      "ref": "main",
-      "checkout_subdir": "docs/usage",
-      "local_path": "../wp-motor/docs/usage",
-      "mappings": [
-        { "from": "zh", "to": "docs-zh/10-user" },
-        { "from": "en", "to": "docs-en/10-user" }
-      ]
-    }
-  ]
-}
+<p>使用者可以先从整体看链路是否平稳，再逐步进入局部定位异常点。</p>
+<h3 id="42-时间窗口观察"><a class="header" href="#42-时间窗口观察">4.2 时间窗口观察</a></h3>
+<p>应用支持按时间范围查看链路状态。</p>
+<p>这意味着使用者可以：</p>
+<ul>
+<li>查看当前实时或近实时状态。</li>
+<li>查看某一段历史时间窗口内的数据表现。</li>
+<li>对照故障发生时间回看链路变化。</li>
+</ul>
+<p>时间窗口是使用本应用时最重要的观察入口之一，建议先确定排查时间范围，再查看对应链路状态。</p>
+<h3 id="43-miss-数据观察"><a class="header" href="#43-miss-数据观察">4.3 MISS 数据观察</a></h3>
+<p>应用支持对 MISS 数据进行查看。</p>
+<p>这里的 MISS，主要指未命中规则、未正常进入预期处理路径的数据。通过 MISS 视图，使用者可以：</p>
+<ul>
+<li>判断是否存在明显未命中数据。</li>
+<li>在需要时导出相关数据用于分析。</li>
+</ul>
+<h3 id="44-趋势观察"><a class="header" href="#44-趋势观察">4.4 趋势观察</a></h3>
+<p>应用支持基于时间窗口观察趋势变化。</p>
+<p>这类能力适用于：</p>
+<ul>
+<li>查看流量是否持续增长或下降。</li>
+<li>判断波动是瞬时抖动还是持续异常。</li>
+<li>辅助分析问题发生前后的变化趋势。</li>
+</ul>
+<h2 id="5-使用前提准备"><a class="header" href="#5-使用前提准备">5. 使用前提准备</a></h2>
+<p>必要组件包括：</p>
+<ul>
+<li>VictoriaMetrics: 用于存储和查询指标数据。</li>
+<li>VictoriaLogs: 用于存储和查询 MISS 数据。</li>
+<li>WarpParse: 用于处理数据,是本项目的主要监控对象。</li>
+</ul>
+<p>本项目是基于 WarpParse 数据链路的监控应用，需要先部署 WarpParse 数据链路才能使用。</p>
+<h3 id="51-安装-victoriametrics-以及-victorialogs"><a class="header" href="#51-安装-victoriametrics-以及-victorialogs">5.1 安装 VictoriaMetrics 以及 VictoriaLogs</a></h3>
+<p>仓库中提供了 VictoriaMetrics 和 VictoriaLogs 的 <code>docker-compose.yml</code> 配置文件，可用于快速部署：<a href="../docker-compose.yml">docker-compose.yml</a></p>
+<h3 id="52-warpparse-中的必要配置"><a class="header" href="#52-warpparse-中的必要配置">5.2 WarpParse 中的必要配置</a></h3>
+<p>需要在 <code>connectors</code> 中配置 VictoriaMetrics 和 VictoriaLogs 的 <code>sink</code> 连接，用于将数据发送到这两个组件中。</p>
+<ul>
+<li>VictoriaMetrics: 用于存储和查询指标数据。</li>
+</ul>
+<pre><code class="language-toml">[[connectors]]
+id = "victoriametrics_sink"
+type = "victoriametrics"
+allow_override = ["insert_url", "flush_interval_secs"]
+[connectors.params]
+insert_url = "http://127.0.0.1:8428/api/v1/import/prometheus"   # VictoriaMetrics 接口地址
+flush_interval_secs = 1                                         # 推送至 VictoriaMetrics 的时间间隔
 </code></pre>
-<p>Adding a new upstream repo now only requires another source object entry.</p>
-<h2 id="usage"><a class="header" href="#usage">Usage</a></h2>
-<p>Local sync:</p>
-<pre><code class="language-bash">make sync
-</code></pre>
-<p>Preview changes only:</p>
-<pre><code class="language-bash">make sync-dry-run
-</code></pre>
-<p>Sync one source with a temporary local override:</p>
-<pre><code class="language-bash">python3 scripts/sync_docs.py \
-  --source wp-motor-usage \
-  --local-override wp-motor-usage=../wp-motor/docs/usage \
-  --generate-summary
-</code></pre>
-<p>Legacy compatibility entry point:</p>
-<pre><code class="language-bash">bash sync-usage-docs.sh ../wp-motor/docs/usage
-</code></pre>
-<h2 id="ci-recommendation"><a class="header" href="#ci-recommendation">CI Recommendation</a></h2>
-<p>Keep three trigger modes in <code>sync-docs.yml</code>:</p>
-<ol>
-<li><code>schedule</code>
 <ul>
-<li>Serves as a fallback.</li>
+<li>VictoriaLogs: 用于存储和查询 MISS 数据。</li>
 </ul>
-</li>
-<li><code>workflow_dispatch</code>
+<pre><code class="language-toml">[[connectors]]
+id = "victorialogs_sink"
+type = "victorialogs"
+allow_override = ["endpoint", "insert_path", "flush_interval_secs", "create_time_field","batch_size", "tags"]
+[connectors.params]
+endpoint = "http://127.0.0.1:9428"   # VictoriaLogs 接口地址
+insert_path = "/insert/jsonline"     # VictoriaLogs 接口路径
+flush_interval_secs = 1              # 推送至 VictoriaLogs 的时间间隔
+</code></pre>
+<p>在 <code>infra.d/monitor.toml</code> 中配置 VictoriaMetrics：</p>
+<pre><code class="language-toml">[[sink_group.sinks]]
+name = "victoriametrics"
+connect = "victoriametrics_sink"
+</code></pre>
+<p>在 <code>infra.d/miss.toml</code> 中配置 VictoriaLogs：</p>
+<pre><code class="language-toml">[[sink_group.sinks]]
+name = "victorialogs_output"
+connect = "victorialogs_sink"
+params = { endpoint = "http://127.0.0.1:9428", insert_path = "/insert/jsonline", tags = ["wp_stage:miss"] }     # 注意这里必须配置 tags，且 tags 中必须包含 wp_stage:miss，否则查询不到数据
+</code></pre>
+<p>warp-parse启动命令：</p>
+<pre><code class="language-bash">wparse daemon --stat 1
+</code></pre>
+<h2 id="6-总结"><a class="header" href="#6-总结">6. 总结</a></h2>
+<p>Wp-Monitor 的定位是一个面向 WarpParse 数据链路的统一观察入口。</p>
+<p>它的核心作用可以概括为三点：</p>
 <ul>
-<li>Allows manual reruns.</li>
+<li>告诉使用者这个链路当前在发生什么。</li>
+<li>帮助使用者快速判断问题大致出在哪里。</li>
+<li>支持围绕时间窗口对异常和 MISS 数据进行进一步分析。</li>
 </ul>
-</li>
-<li><code>repository_dispatch</code>
-<ul>
-<li>Lets upstream repos notify this repo after docs changes land.</li>
-</ul>
-</li>
-</ol>
-<p>If the upstream repositories are private, provide <code>DOCS_SYNC_TOKEN</code> so the sync job can clone them.</p>
-<h2 id="recommended-upstream-trigger"><a class="header" href="#recommended-upstream-trigger">Recommended Upstream Trigger</a></h2>
-<p>Each upstream repo can add a lightweight workflow that emits <code>repository_dispatch</code> when its docs path changes. The resulting chain becomes:</p>
-<p><code>upstream docs change -&gt; notify wp-docs -&gt; wp-docs pulls latest docs -&gt; automated PR</code></p>
-<p>This is preferable to pushing directly into the aggregation repo because the sync logic stays centralized and every aggregated change remains reviewable.</p>
-<h2 id="next-steps"><a class="header" href="#next-steps">Next Steps</a></h2>
-<p>As the number of sources grows, the next practical improvements are:</p>
-<ol>
-<li>Add explicit <code>delete = true/false</code> behavior per source.</li>
-<li>Add destination path allowlists so sync can only write into approved directories.</li>
-<li>Run Markdown validation and mdBook build after sync.</li>
-<li>Record upstream commit SHAs in the generated PR description.</li>
-</ol>
+<p>只要前置接入和环境准备完成，使用者就可以借助这一应用完成日常巡检、问题排查等工作。</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../30-dev/connector_dev_guide.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../30-dev/docs_aggregation_automation.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../10-user/10-monitor/Wp-Monitor.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
-                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -298,13 +309,10 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../30-dev/connector_dev_guide.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../30-dev/docs_aggregation_automation.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../10-user/10-monitor/Wp-Monitor.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
-                    </a>
             </nav>
 
         </div>
@@ -322,19 +330,19 @@
         </script>
 
 
-        <script src="../elasticlunr-ef4e11c1.min.js"></script>
-        <script src="../mark-09e88c2c.min.js"></script>
-        <script src="../searcher-c2a407aa.js"></script>
+        <script src="../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../mark-09e88c2c.min.js"></script>
+        <script src="../../searcher-c2a407aa.js"></script>
 
-        <script src="../clipboard-1626706a.min.js"></script>
-        <script src="../highlight-abc7f01d.js"></script>
-        <script src="../book-a0b12cfe.js"></script>
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
-        <script src="../../theme/lang-switch.js"></script>
-        <script src="../../theme/version-badge.js"></script>
-        <script src="../mermaid-eefea253.min.js"></script>
-        <script src="../mermaid-init-ccf746f1.js"></script>
+        <script src="../../../theme/lang-switch.js"></script>
+        <script src="../../../theme/version-badge.js"></script>
+        <script src="../../mermaid-eefea253.min.js"></script>
+        <script src="../../mermaid-init-ccf746f1.js"></script>
 
 
 

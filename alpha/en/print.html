@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-73123ff1.js";
+            window.path_to_searchindex_js = "searchindex-1022f77b.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-59c6a016.js"></script>
+        <script src="toc-b767c1fa.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -12141,10 +12141,119 @@ batch_size = 1024
 <li>PostgreSQL uses the same configuration keys as MySQL. Only connector <code>type</code>, port, and connection details differ.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="wp-monitor"><a class="header" href="#wp-monitor">Wp-Monitor</a></h1>
+<h1 id="troubleshootingmd"><a class="header" href="#troubleshootingmd">troubleshooting.md</a></h1>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="wp-monitor-1"><a class="header" href="#wp-monitor-1">Wp-Monitor</a></h1>
-<p><img src="10-user/10-monitor/docs-en/images/Wp-Monitor.jpg" alt="Wp-Monitor"></p>
+<h1 id="benchmark-report"><a class="header" href="#benchmark-report">Benchmark Report</a></h1>
+<p>Performance benchmarks and testing results.</p>
+<p>Coming soon…</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="connector-development-guide"><a class="header" href="#connector-development-guide">Connector Development Guide</a></h1>
+<p>Guide for developing custom connectors.</p>
+<p>Coming soon…</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="docs-aggregation-automation"><a class="header" href="#docs-aggregation-automation">Docs Aggregation Automation</a></h1>
+<h2 id="goal"><a class="header" href="#goal">Goal</a></h2>
+<p>This repository is acting as a documentation aggregation layer. The weak point is not mdBook itself, but the way upstream content is copied here: it is still driven by manual scripts and manual commits.</p>
+<p>The automation should solve four things:</p>
+<ol>
+<li>Upstream sources must be configuration-driven.</li>
+<li>Local sync and CI sync must use the same entry point.</li>
+<li><code>SUMMARY.md</code> should be regenerated automatically after sync.</li>
+<li>Aggregated changes should enter the default branch through pull requests.</li>
+</ol>
+<h2 id="proposed-structure"><a class="header" href="#proposed-structure">Proposed Structure</a></h2>
+<p>The implementation is split into three parts:</p>
+<ol>
+<li><code>docs-sources.json</code>
+<ul>
+<li>Declares every upstream documentation source.</li>
+<li>Each source defines the repo, branch, local development path, and source-to-target mappings.</li>
+</ul>
+</li>
+<li><code>scripts/sync_docs.py</code>
+<ul>
+<li>Performs the actual sync.</li>
+<li>Supports both local paths and git-based checkouts in CI.</li>
+<li>Default strategy is additive and non-destructive: create missing files and update changed files, without deleting destination-only files.</li>
+</ul>
+</li>
+<li><code>.github/workflows/sync-docs.yml</code>
+<ul>
+<li>Runs on schedule, manual dispatch, or <code>repository_dispatch</code> from upstream repos.</li>
+<li>Opens a pull request with the aggregated changes.</li>
+</ul>
+</li>
+</ol>
+<h2 id="current-example"><a class="header" href="#current-example">Current Example</a></h2>
+<p>The current <code>wp-motor/docs/usage</code> flow is now represented as a source entry:</p>
+<pre><code class="language-json">{
+  "sources": [
+    {
+      "name": "wp-motor-usage",
+      "repo": "https://github.com/wp-labs/wp-motor.git",
+      "ref": "main",
+      "checkout_subdir": "docs/usage",
+      "local_path": "../wp-motor/docs/usage",
+      "mappings": [
+        { "from": "zh", "to": "docs-zh/10-user" },
+        { "from": "en", "to": "docs-en/10-user" }
+      ]
+    }
+  ]
+}
+</code></pre>
+<p>Adding a new upstream repo now only requires another source object entry.</p>
+<h2 id="usage-1"><a class="header" href="#usage-1">Usage</a></h2>
+<p>Local sync:</p>
+<pre><code class="language-bash">make sync
+</code></pre>
+<p>Preview changes only:</p>
+<pre><code class="language-bash">make sync-dry-run
+</code></pre>
+<p>Sync one source with a temporary local override:</p>
+<pre><code class="language-bash">python3 scripts/sync_docs.py \
+  --source wp-motor-usage \
+  --local-override wp-motor-usage=../wp-motor/docs/usage \
+  --generate-summary
+</code></pre>
+<p>Legacy compatibility entry point:</p>
+<pre><code class="language-bash">bash sync-usage-docs.sh ../wp-motor/docs/usage
+</code></pre>
+<h2 id="ci-recommendation"><a class="header" href="#ci-recommendation">CI Recommendation</a></h2>
+<p>Keep three trigger modes in <code>sync-docs.yml</code>:</p>
+<ol>
+<li><code>schedule</code>
+<ul>
+<li>Serves as a fallback.</li>
+</ul>
+</li>
+<li><code>workflow_dispatch</code>
+<ul>
+<li>Allows manual reruns.</li>
+</ul>
+</li>
+<li><code>repository_dispatch</code>
+<ul>
+<li>Lets upstream repos notify this repo after docs changes land.</li>
+</ul>
+</li>
+</ol>
+<p>If the upstream repositories are private, provide <code>DOCS_SYNC_TOKEN</code> so the sync job can clone them.</p>
+<h2 id="recommended-upstream-trigger"><a class="header" href="#recommended-upstream-trigger">Recommended Upstream Trigger</a></h2>
+<p>Each upstream repo can add a lightweight workflow that emits <code>repository_dispatch</code> when its docs path changes. The resulting chain becomes:</p>
+<p><code>upstream docs change -&gt; notify wp-docs -&gt; wp-docs pulls latest docs -&gt; automated PR</code></p>
+<p>This is preferable to pushing directly into the aggregation repo because the sync logic stays centralized and every aggregated change remains reviewable.</p>
+<h2 id="next-steps-2"><a class="header" href="#next-steps-2">Next Steps</a></h2>
+<p>As the number of sources grows, the next practical improvements are:</p>
+<ol>
+<li>Add explicit <code>delete = true/false</code> behavior per source.</li>
+<li>Add destination path allowlists so sync can only write into approved directories.</li>
+<li>Run Markdown validation and mdBook build after sync.</li>
+<li>Record upstream commit SHAs in the generated PR description.</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="wp-monitor"><a class="header" href="#wp-monitor">Wp-Monitor</a></h1>
+<p><img src="images/Wp-Monitor.jpg" alt="Wp-Monitor"></p>
 <h2 id="1-document-overview"><a class="header" href="#1-document-overview">1. Document Overview</a></h2>
 <p>This document explains what the Wp-Monitor application is used for, its applicable scenarios, how to use it, and the preparations required before production use.</p>
 <h2 id="2-application-introduction"><a class="header" href="#2-application-introduction">2. Application Introduction</a></h2>
@@ -12257,117 +12366,6 @@ params = { endpoint = "http://127.0.0.1:9428", insert_path = "/insert/jsonline",
 <li>Support further analysis of anomalies and MISS data around a time window.</li>
 </ul>
 <p>After prerequisite integration and environment preparation are complete, users can use this application for routine inspections, troubleshooting, and other related work.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="troubleshootingmd"><a class="header" href="#troubleshootingmd">troubleshooting.md</a></h1>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="benchmark-report"><a class="header" href="#benchmark-report">Benchmark Report</a></h1>
-<p>Performance benchmarks and testing results.</p>
-<p>Coming soon…</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="connector-development-guide"><a class="header" href="#connector-development-guide">Connector Development Guide</a></h1>
-<p>Guide for developing custom connectors.</p>
-<p>Coming soon…</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="docs-aggregation-automation"><a class="header" href="#docs-aggregation-automation">Docs Aggregation Automation</a></h1>
-<h2 id="goal"><a class="header" href="#goal">Goal</a></h2>
-<p>This repository is acting as a documentation aggregation layer. The weak point is not mdBook itself, but the way upstream content is copied here: it is still driven by manual scripts and manual commits.</p>
-<p>The automation should solve four things:</p>
-<ol>
-<li>Upstream sources must be configuration-driven.</li>
-<li>Local sync and CI sync must use the same entry point.</li>
-<li><code>SUMMARY.md</code> should be regenerated automatically after sync.</li>
-<li>Aggregated changes should enter the default branch through pull requests.</li>
-</ol>
-<h2 id="proposed-structure"><a class="header" href="#proposed-structure">Proposed Structure</a></h2>
-<p>The implementation is split into three parts:</p>
-<ol>
-<li><code>docs-sources.json</code>
-<ul>
-<li>Declares every upstream documentation source.</li>
-<li>Each source defines the repo, branch, local development path, and source-to-target mappings.</li>
-</ul>
-</li>
-<li><code>scripts/sync_docs.py</code>
-<ul>
-<li>Performs the actual sync.</li>
-<li>Supports both local paths and git-based checkouts in CI.</li>
-<li>Default strategy is additive and non-destructive: create missing files and update changed files, without deleting destination-only files.</li>
-</ul>
-</li>
-<li><code>.github/workflows/sync-docs.yml</code>
-<ul>
-<li>Runs on schedule, manual dispatch, or <code>repository_dispatch</code> from upstream repos.</li>
-<li>Opens a pull request with the aggregated changes.</li>
-</ul>
-</li>
-</ol>
-<h2 id="current-example"><a class="header" href="#current-example">Current Example</a></h2>
-<p>The current <code>wp-motor/docs/usage</code> flow is now represented as a source entry:</p>
-<pre><code class="language-json">{
-  "sources": [
-    {
-      "name": "wp-motor-usage",
-      "repo": "https://github.com/wp-labs/wp-motor.git",
-      "ref": "main",
-      "checkout_subdir": "docs/usage",
-      "local_path": "../wp-motor/docs/usage",
-      "mappings": [
-        { "from": "zh", "to": "docs-zh/10-user" },
-        { "from": "en", "to": "docs-en/10-user" }
-      ]
-    }
-  ]
-}
-</code></pre>
-<p>Adding a new upstream repo now only requires another source object entry.</p>
-<h2 id="usage-1"><a class="header" href="#usage-1">Usage</a></h2>
-<p>Local sync:</p>
-<pre><code class="language-bash">make sync
-</code></pre>
-<p>Preview changes only:</p>
-<pre><code class="language-bash">make sync-dry-run
-</code></pre>
-<p>Sync one source with a temporary local override:</p>
-<pre><code class="language-bash">python3 scripts/sync_docs.py \
-  --source wp-motor-usage \
-  --local-override wp-motor-usage=../wp-motor/docs/usage \
-  --generate-summary
-</code></pre>
-<p>Legacy compatibility entry point:</p>
-<pre><code class="language-bash">bash sync-usage-docs.sh ../wp-motor/docs/usage
-</code></pre>
-<h2 id="ci-recommendation"><a class="header" href="#ci-recommendation">CI Recommendation</a></h2>
-<p>Keep three trigger modes in <code>sync-docs.yml</code>:</p>
-<ol>
-<li><code>schedule</code>
-<ul>
-<li>Serves as a fallback.</li>
-</ul>
-</li>
-<li><code>workflow_dispatch</code>
-<ul>
-<li>Allows manual reruns.</li>
-</ul>
-</li>
-<li><code>repository_dispatch</code>
-<ul>
-<li>Lets upstream repos notify this repo after docs changes land.</li>
-</ul>
-</li>
-</ol>
-<p>If the upstream repositories are private, provide <code>DOCS_SYNC_TOKEN</code> so the sync job can clone them.</p>
-<h2 id="recommended-upstream-trigger"><a class="header" href="#recommended-upstream-trigger">Recommended Upstream Trigger</a></h2>
-<p>Each upstream repo can add a lightweight workflow that emits <code>repository_dispatch</code> when its docs path changes. The resulting chain becomes:</p>
-<p><code>upstream docs change -&gt; notify wp-docs -&gt; wp-docs pulls latest docs -&gt; automated PR</code></p>
-<p>This is preferable to pushing directly into the aggregation repo because the sync logic stays centralized and every aggregated change remains reviewable.</p>
-<h2 id="next-steps-2"><a class="header" href="#next-steps-2">Next Steps</a></h2>
-<p>As the number of sources grows, the next practical improvements are:</p>
-<ol>
-<li>Add explicit <code>delete = true/false</code> behavior per source.</li>
-<li>Add destination path allowlists so sync can only write into approved directories.</li>
-<li>Run Markdown validation and mdBook build after sync.</li>
-<li>Record upstream commit SHAs in the generated PR description.</li>
-</ol>
 
                     </main>
 

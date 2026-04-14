@@ -70,6 +70,7 @@
       - [File Source](10-user/05-connectors/01-sources/02-file_source.md)
       - [Kafka 源配置](10-user/05-connectors/01-sources/03-kafka_source.md)
       - [Syslog 源配置](10-user/05-connectors/01-sources/04-syslog_source.md)
+      - [HTTP 源配置](10-user/05-connectors/01-sources/05-http_source.md)
       - [TCP 源配置](10-user/05-connectors/01-sources/08-tcp_source.md)
       - [Source Meta](10-user/05-connectors/01-sources/09-metadata.md)
     - [Sinks 配置指南](10-user/05-connectors/02-sinks/README.md)

@@ -8,6 +8,7 @@ This guide describes how to configure and use the various data sources in the Wa
 - [File Source Configuration](./02-file_source.md)
 - [Kafka Source Configuration](./03-kafka_source.md)
 - [Syslog Source Configuration](./04-syslog_source.md)
+- [HTTP Source Configuration](./05-http_source.md)
 - [TCP Source Configuration](./08-tcp_source.md)
 - [DataRecord Mechanism Data Fields](./09-metadata.md)
 
@@ -24,6 +25,7 @@ This guide describes how to configure and use the various data sources in the Wa
 | `file` | Read data from local files | [File Source Configuration](./02-file_source.md) |
 | `kafka` | Consume messages from Kafka | [Kafka Source Configuration](./03-kafka_source.md) |
 | `syslog` | Receive Syslog protocol data (UDP/TCP) | [Syslog Source Configuration](./04-syslog_source.md) |
+| `http` | Receive data through HTTP requests | [HTTP Source Configuration](./05-http_source.md) |
 | `tcp` | Receive data via TCP | [TCP Source Configuration](./08-tcp_source.md) |
 
 ## Related Documentation

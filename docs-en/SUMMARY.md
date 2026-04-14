@@ -59,6 +59,7 @@
       - [File Source](10-user/05-connectors/01-sources/02-file_source.md)
       - [Kafka Source Configuration](10-user/05-connectors/01-sources/03-kafka_source.md)
       - [Syslog Source Configuration](10-user/05-connectors/01-sources/04-syslog_source.md)
+      - [HTTP Source Configuration](10-user/05-connectors/01-sources/05-http_source.md)
       - [TCP Source Configuration](10-user/05-connectors/01-sources/08-tcp_source.md)
       - [Source Meta](10-user/05-connectors/01-sources/09-metadata.md)
     - [Sinks Configuration Guide](10-user/05-connectors/02-sinks/README.md)

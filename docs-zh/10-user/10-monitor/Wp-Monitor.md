@@ -1,6 +1,6 @@
 # Wp-Monitor
 
-![Wp-Monitor](docs-zh/images/Wp-Monitor.jpg)
+![Wp-Monitor](../../images/Wp-Monitor.jpg)
 
 ## 1. 文档说明
 

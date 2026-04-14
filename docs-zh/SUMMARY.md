@@ -91,8 +91,6 @@
       - [ClickHouse Sink](10-user/05-connectors/02-sinks/21-clickhouse.md)
       - [HTTP Sink](10-user/05-connectors/02-sinks/22-http.md)
       - [PostgreSQL Sink](10-user/05-connectors/02-sinks/23-postgresql_sink.md)
-  - [Wp-Monitor](10-user/10-monitor/README.md)
-    - [Wp-Monitor 发布说明](10-user/10-monitor/WP-MONITOR%E布说明.md)
   - [排障指南（Troubleshooting）](10-user/09-FQA/troubleshooting.md)
   - [用户建议 Q&A（产品能力与配置体验）](10-user/09-FQA/user_suggestions_qa.md)
 
@@ -101,3 +99,4 @@
 
 - [Connector 实现指南](30-dev/connector_dev_guide.md)
 - [文档聚合自动化方案](30-dev/docs_aggregation_automation.md)
+- [Wp-Monitor](10-user/10-monitor/Wp-Monitor.md)

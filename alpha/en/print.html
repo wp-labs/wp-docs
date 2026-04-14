@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-eff835a8.js";
+            window.path_to_searchindex_js = "searchindex-73123ff1.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-da54cdca.js"></script>
+        <script src="toc-59c6a016.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -12140,6 +12140,123 @@ batch_size = 1024
 <li>You can override the connection string with <code>POSTGRESQL_URL</code> (format: <code>postgresql://user:pass@host:port/db</code>).</li>
 <li>PostgreSQL uses the same configuration keys as MySQL. Only connector <code>type</code>, port, and connection details differ.</li>
 </ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="wp-monitor"><a class="header" href="#wp-monitor">Wp-Monitor</a></h1>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="wp-monitor-1"><a class="header" href="#wp-monitor-1">Wp-Monitor</a></h1>
+<p><img src="10-user/10-monitor/docs-en/images/Wp-Monitor.jpg" alt="Wp-Monitor"></p>
+<h2 id="1-document-overview"><a class="header" href="#1-document-overview">1. Document Overview</a></h2>
+<p>This document explains what the Wp-Monitor application is used for, its applicable scenarios, how to use it, and the preparations required before production use.</p>
+<h2 id="2-application-introduction"><a class="header" href="#2-application-introduction">2. Application Introduction</a></h2>
+<p>Wp-Monitor is a unified monitoring application for the WarpParse data pipeline. It helps users quickly understand the runtime status of log traffic across the full processing chain.</p>
+<p>It focuses on the operating results and abnormal behavior of the whole pipeline, rather than a single component. It mainly answers the following questions:</p>
+<ul>
+<li>Whether the current pipeline is processing data normally.</li>
+<li>Where data traffic is mainly distributed across the pipeline.</li>
+<li>Whether MISS data that is not matched by rules exists.</li>
+<li>Whether downstream output is stable, and whether there is obvious loss or abnormal behavior.</li>
+</ul>
+<p>For routine inspections, troubleshooting, and incident reviews, Wp-Monitor provides a unified entry point instead of requiring users to check multiple scattered systems.</p>
+<h2 id="3-core-value"><a class="header" href="#3-core-value">3. Core Value</a></h2>
+<p>The core value of Wp-Monitor is mainly reflected in the following aspects:</p>
+<ul>
+<li>Full-pipeline visualization: displays Source, Parse, Sink, and Miss in a unified view.</li>
+<li>Fast anomaly location: supports drilling down from hierarchy-level observation to node-level observation, shortening the troubleshooting path.</li>
+<li>Incident review support: allows users to inspect abnormal fluctuations and MISS data within a time window.</li>
+<li>Unified understanding: provides a consistent observation entry point for business, platform, and operations teams.</li>
+</ul>
+<h2 id="4-main-capabilities"><a class="header" href="#4-main-capabilities">4. Main Capabilities</a></h2>
+<h3 id="41-pipeline-overview"><a class="header" href="#41-pipeline-overview">4.1 Pipeline Overview</a></h3>
+<p>The application home page provides a unified pipeline view for observing the main levels and runtime status of the entire data processing flow, including:</p>
+<ul>
+<li>Source layer</li>
+<li>Parse layer</li>
+<li>Output layer</li>
+<li>Miss area</li>
+</ul>
+<p>Users can first check whether the overall pipeline is stable, then gradually drill down into local areas to locate abnormal points.</p>
+<h3 id="42-time-window-observation"><a class="header" href="#42-time-window-observation">4.2 Time Window Observation</a></h3>
+<p>The application supports viewing pipeline status by time range.</p>
+<p>This means users can:</p>
+<ul>
+<li>View the current real-time or near-real-time status.</li>
+<li>View data behavior within a specific historical time window.</li>
+<li>Compare pipeline changes against the time when an incident occurred.</li>
+</ul>
+<p>The time window is one of the most important observation entry points when using this application. It is recommended to determine the troubleshooting time range first, then view the corresponding pipeline status.</p>
+<h3 id="43-miss-data-observation"><a class="header" href="#43-miss-data-observation">4.3 MISS Data Observation</a></h3>
+<p>The application supports viewing MISS data.</p>
+<p>Here, MISS mainly refers to data that does not match rules and does not enter the expected processing path normally. Through the MISS view, users can:</p>
+<ul>
+<li>Determine whether there is obvious unmatched data.</li>
+<li>Export related data for analysis when needed.</li>
+</ul>
+<h3 id="44-trend-observation"><a class="header" href="#44-trend-observation">4.4 Trend Observation</a></h3>
+<p>The application supports observing trend changes based on time windows.</p>
+<p>This capability is suitable for:</p>
+<ul>
+<li>Checking whether traffic continues to increase or decrease.</li>
+<li>Determining whether a fluctuation is a transient jitter or a persistent anomaly.</li>
+<li>Assisting analysis of trend changes before and after an issue occurs.</li>
+</ul>
+<h2 id="5-prerequisites"><a class="header" href="#5-prerequisites">5. Prerequisites</a></h2>
+<p>Required components include:</p>
+<ul>
+<li>VictoriaMetrics: used to store and query metric data.</li>
+<li>VictoriaLogs: used to store and query MISS data.</li>
+<li>WarpParse: used to process data and is the main monitoring target of this project.</li>
+</ul>
+<p>This project is a monitoring application based on the WarpParse data pipeline. The WarpParse data pipeline must be deployed before using it.</p>
+<h3 id="51-install-victoriametrics-and-victorialogs"><a class="header" href="#51-install-victoriametrics-and-victorialogs">5.1 Install VictoriaMetrics and VictoriaLogs</a></h3>
+<p>The repository provides a <code>docker-compose.yml</code> configuration file for VictoriaMetrics and VictoriaLogs, which can be used for quick deployment: <a href="10-user/docker-compose.yml">docker-compose.yml</a></p>
+<h3 id="52-required-configuration-in-warpparse"><a class="header" href="#52-required-configuration-in-warpparse">5.2 Required Configuration in WarpParse</a></h3>
+<p>Configure the VictoriaMetrics and VictoriaLogs <code>sink</code> connections in <code>connectors</code> to send data to these two components.</p>
+<ul>
+<li>VictoriaMetrics: used to store and query metric data.</li>
+</ul>
+<pre><code class="language-toml">[[connectors]]
+id = "victoriametrics_sink"
+type = "victoriametrics"
+allow_override = ["insert_url", "flush_interval_secs"]
+[connectors.params]
+insert_url = "http://127.0.0.1:8428/api/v1/import/prometheus"   # VictoriaMetrics API address
+flush_interval_secs = 1                                         # Interval for pushing data to VictoriaMetrics
+</code></pre>
+<ul>
+<li>VictoriaLogs: used to store and query MISS data.</li>
+</ul>
+<pre><code class="language-toml">[[connectors]]
+id = "victorialogs_sink"
+type = "victorialogs"
+allow_override = ["endpoint", "insert_path", "flush_interval_secs", "create_time_field","batch_size", "tags"]
+[connectors.params]
+endpoint = "http://127.0.0.1:9428"   # VictoriaLogs API address
+insert_path = "/insert/jsonline"     # VictoriaLogs API path
+flush_interval_secs = 1              # Interval for pushing data to VictoriaLogs
+</code></pre>
+<p>Configure VictoriaMetrics in <code>infra.d/monitor.toml</code>:</p>
+<pre><code class="language-toml">[[sink_group.sinks]]
+name = "victoriametrics"
+connect = "victoriametrics_sink"
+</code></pre>
+<p>Configure VictoriaLogs in <code>infra.d/miss.toml</code>:</p>
+<pre><code class="language-toml">[[sink_group.sinks]]
+name = "victorialogs_output"
+connect = "victorialogs_sink"
+params = { endpoint = "http://127.0.0.1:9428", insert_path = "/insert/jsonline", tags = ["wp_stage:miss"] }     # tags must be configured here and must include wp_stage:miss; otherwise, data cannot be queried
+</code></pre>
+<p>WarpParse startup command:</p>
+<pre><code class="language-bash">wparse daemon --stat 1
+</code></pre>
+<h2 id="6-summary"><a class="header" href="#6-summary">6. Summary</a></h2>
+<p>Wp-Monitor is positioned as a unified observation entry point for the WarpParse data pipeline.</p>
+<p>Its core role can be summarized in three points:</p>
+<ul>
+<li>Tell users what is currently happening in the pipeline.</li>
+<li>Help users quickly determine the approximate location of an issue.</li>
+<li>Support further analysis of anomalies and MISS data around a time window.</li>
+</ul>
+<p>After prerequisite integration and environment preparation are complete, users can use this application for routine inspections, troubleshooting, and other related work.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="troubleshootingmd"><a class="header" href="#troubleshootingmd">troubleshooting.md</a></h1>
 <div style="break-before: page; page-break-before: always;"></div>

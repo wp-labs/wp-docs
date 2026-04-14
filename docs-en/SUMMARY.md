@@ -79,11 +79,10 @@
       - [ClickHouse Sink](10-user/05-connectors/02-sinks/21-clickhouse.md)
       - [HTTP Sink](10-user/05-connectors/02-sinks/22-http.md)
       - [PostgreSQL Sink](10-user/05-connectors/02-sinks/23-postgresql_sink.md)
-  - [Wp-Monitor](10-user/10-monitor/README.md)
-    - [Wp-Monitor Release Note](10-user/10-monitor/Wp-Monitor.md)
   - [troubleshooting.md](10-user/09-FQA/troubleshooting.md)
 
 - [Benchmark Report](20-report/benchmark.md)
 
 - [Connector Development Guide](30-dev/connector_dev_guide.md)
 - [Docs Aggregation Automation](30-dev/docs_aggregation_automation.md)
+- [Wp-Monitor](10-user/10-monitor/Wp-Monitor.md)

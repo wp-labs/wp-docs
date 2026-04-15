@@ -1,4 +1,19 @@
 (function() {
+    function normalizeTheme() {
+        try {
+            const stored = localStorage.getItem('mdbook-theme');
+            if (!stored) {
+                return;
+            }
+            if (stored === 'ayu' || stored === 'navy' || stored === 'coal' || stored === 'rust') {
+                localStorage.setItem('mdbook-theme', 'light');
+                const html = document.documentElement;
+                html.classList.remove('ayu', 'navy', 'coal', 'rust');
+                html.classList.add('light');
+            }
+        } catch (e) { }
+    }
+
     function buildTopbar() {
         const menuBar = document.getElementById('mdbook-menu-bar');
         if (!menuBar || menuBar.querySelector('.wp-topbar')) {
@@ -26,10 +41,17 @@
     }
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', buildTopbar);
+        document.addEventListener('DOMContentLoaded', function() {
+            normalizeTheme();
+            buildTopbar();
+        });
     } else {
+        normalizeTheme();
         buildTopbar();
     }
 
-    window.addEventListener('load', buildTopbar);
+    window.addEventListener('load', function() {
+        normalizeTheme();
+        buildTopbar();
+    });
 })();

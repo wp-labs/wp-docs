@@ -15,7 +15,10 @@
 }
 
 html.light,
-html.rust {
+html.rust,
+html.ayu,
+html.navy,
+html.coal {
     --bg: var(--wp-bg);
     --fg: var(--wp-text);
     --sidebar-bg: #efe7dc;
@@ -48,7 +51,10 @@ html.rust {
 }
 
 html.light body,
-html.rust body {
+html.rust body,
+html.ayu body,
+html.navy body,
+html.coal body {
     background:
         radial-gradient(circle at top left, rgba(223, 183, 141, 0.2), transparent 32%),
         linear-gradient(180deg, #fbf7f2 0%, #f4efe8 100%);
@@ -56,7 +62,10 @@ html.rust body {
 }
 
 html.light .menu-bar,
-html.rust .menu-bar {
+html.rust .menu-bar,
+html.ayu .menu-bar,
+html.navy .menu-bar,
+html.coal .menu-bar {
     background: rgba(246, 243, 238, 0.86);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--wp-border);
@@ -64,7 +73,10 @@ html.rust .menu-bar {
 }
 
 html.light .menu-title,
-html.rust .menu-title {
+html.rust .menu-title,
+html.ayu .menu-title,
+html.navy .menu-title,
+html.coal .menu-title {
     font-weight: 700;
     letter-spacing: 0.02em;
     color: var(--wp-text);
@@ -72,33 +84,54 @@ html.rust .menu-title {
 
 html.light .icon-button,
 html.rust .icon-button,
+html.ayu .icon-button,
+html.navy .icon-button,
+html.coal .icon-button,
 html.light .right-buttons a,
-html.rust .right-buttons a {
+html.rust .right-buttons a,
+html.ayu .right-buttons a,
+html.navy .right-buttons a,
+html.coal .right-buttons a {
     color: var(--wp-text-muted);
 }
 
 html.light .icon-button:hover,
 html.rust .icon-button:hover,
+html.ayu .icon-button:hover,
+html.navy .icon-button:hover,
+html.coal .icon-button:hover,
 html.light .right-buttons a:hover,
-html.rust .right-buttons a:hover {
+html.rust .right-buttons a:hover,
+html.ayu .right-buttons a:hover,
+html.navy .right-buttons a:hover,
+html.coal .right-buttons a:hover {
     color: var(--wp-accent);
 }
 
 html.light .sidebar,
-html.rust .sidebar {
+html.rust .sidebar,
+html.ayu .sidebar,
+html.navy .sidebar,
+html.coal .sidebar {
     border-right: 1px solid var(--wp-border);
     background:
         linear-gradient(180deg, rgba(250, 245, 237, 0.98), rgba(239, 231, 220, 0.98));
 }
 
 html.light .sidebar-scrollbox,
-html.rust .sidebar-scrollbox {
+html.rust .sidebar-scrollbox,
+html.ayu .sidebar-scrollbox,
+html.navy .sidebar-scrollbox,
+html.coal .sidebar-scrollbox {
     padding-top: 18px;
     padding-bottom: 24px;
 }
 
 html.light .sidebar .chapter li.part-title,
-html.rust .sidebar .chapter li.part-title {
+html.rust .sidebar .chapter li.part-title,
+html.ayu .sidebar .chapter li.part-title,
+html.navy .sidebar .chapter li.part-title,
+html.coal .sidebar .chapter li.part-title {
     margin: 1.2rem 1rem 0.45rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -107,7 +140,10 @@ html.rust .sidebar .chapter li.part-title {
 }
 
 html.light .sidebar .chapter li a,
-html.rust .sidebar .chapter li a {
+html.rust .sidebar .chapter li a,
+html.ayu .sidebar .chapter li a,
+html.navy .sidebar .chapter li a,
+html.coal .sidebar .chapter li a {
     margin: 0.08rem 0.7rem;
     padding: 0.42rem 0.8rem;
     border-radius: 10px;
@@ -116,7 +152,10 @@ html.rust .sidebar .chapter li a {
 }
 
 html.light .sidebar .chapter li a:hover,
-html.rust .sidebar .chapter li a:hover {
+html.rust .sidebar .chapter li a:hover,
+html.ayu .sidebar .chapter li a:hover,
+html.navy .sidebar .chapter li a:hover,
+html.coal .sidebar .chapter li a:hover {
     background: rgba(255, 255, 255, 0.55);
     color: var(--wp-text);
     text-decoration: none;
@@ -124,24 +163,36 @@ html.rust .sidebar .chapter li a:hover {
 }
 
 html.light .sidebar .chapter li a.active,
-html.rust .sidebar .chapter li a.active {
+html.rust .sidebar .chapter li a.active,
+html.ayu .sidebar .chapter li a.active,
+html.navy .sidebar .chapter li a.active,
+html.coal .sidebar .chapter li a.active {
     background: linear-gradient(90deg, rgba(177, 77, 22, 0.16), rgba(177, 77, 22, 0.04));
     color: var(--wp-accent-strong);
     font-weight: 700;
 }
 
 html.light .sidebar .chapter ul,
-html.rust .sidebar .chapter ul {
+html.rust .sidebar .chapter ul,
+html.ayu .sidebar .chapter ul,
+html.navy .sidebar .chapter ul,
+html.coal .sidebar .chapter ul {
     margin-left: 0.7rem;
 }
 
 html.light #mdbook-content,
-html.rust #mdbook-content {
+html.rust #mdbook-content,
+html.ayu #mdbook-content,
+html.navy #mdbook-content,
+html.coal #mdbook-content {
     max-width: 980px;
 }
 
 html.light .content main,
-html.rust .content main {
+html.rust .content main,
+html.ayu .content main,
+html.navy .content main,
+html.coal .content main {
     margin-top: 2rem;
     background: var(--wp-panel);
     border: 1px solid var(--wp-border);
@@ -152,22 +203,37 @@ html.rust .content main {
 
 html.light .content h1,
 html.rust .content h1,
+html.ayu .content h1,
+html.navy .content h1,
+html.coal .content h1,
 html.light .content h2,
 html.rust .content h2,
+html.ayu .content h2,
+html.navy .content h2,
+html.coal .content h2,
 html.light .content h3,
-html.rust .content h3 {
+html.rust .content h3,
+html.ayu .content h3,
+html.navy .content h3,
+html.coal .content h3 {
     color: var(--wp-text);
     letter-spacing: -0.02em;
 }
 
 html.light .content h1,
-html.rust .content h1 {
+html.rust .content h1,
+html.ayu .content h1,
+html.navy .content h1,
+html.coal .content h1 {
     font-size: 2.2rem;
     margin-bottom: 1.2rem;
 }
 
 html.light .content h2,
-html.rust .content h2 {
+html.rust .content h2,
+html.ayu .content h2,
+html.navy .content h2,
+html.coal .content h2 {
     margin-top: 2.4rem;
     padding-top: 0.8rem;
     border-top: 1px solid rgba(79, 61, 46, 0.08);
@@ -175,30 +241,48 @@ html.rust .content h2 {
 
 html.light .content p,
 html.rust .content p,
+html.ayu .content p,
+html.navy .content p,
+html.coal .content p,
 html.light .content li,
-html.rust .content li {
+html.rust .content li,
+html.ayu .content li,
+html.navy .content li,
+html.coal .content li {
     line-height: 1.75;
 }
 
 html.light .content a,
-html.rust .content a {
+html.rust .content a,
+html.ayu .content a,
+html.navy .content a,
+html.coal .content a {
     color: var(--wp-accent);
 }
 
 html.light .content a:hover,
-html.rust .content a:hover {
+html.rust .content a:hover,
+html.ayu .content a:hover,
+html.navy .content a:hover,
+html.coal .content a:hover {
     color: var(--wp-accent-strong);
 }
 
 html.light code,
-html.rust code {
+html.rust code,
+html.ayu code,
+html.navy code,
+html.coal code {
     background: var(--wp-accent-soft);
     border-radius: 6px;
     padding: 0.12em 0.36em;
 }
 
 html.light pre,
-html.rust pre {
+html.rust pre,
+html.ayu pre,
+html.navy pre,
+html.coal pre {
     background: var(--wp-code-bg);
     border: 1px solid rgba(177, 77, 22, 0.12);
     border-radius: 14px;
@@ -206,7 +290,10 @@ html.rust pre {
 }
 
 html.light blockquote,
-html.rust blockquote {
+html.rust blockquote,
+html.ayu blockquote,
+html.navy blockquote,
+html.coal blockquote {
     background: var(--quote-bg);
     border-inline-start: 4px solid var(--wp-accent);
     border-radius: 0 12px 12px 0;
@@ -214,22 +301,37 @@ html.rust blockquote {
 }
 
 html.light table,
-html.rust table {
+html.rust table,
+html.ayu table,
+html.navy table,
+html.coal table {
     border-radius: 12px;
     overflow: hidden;
 }
 
 html.light .nav-wrapper,
 html.rust .nav-wrapper,
+html.ayu .nav-wrapper,
+html.navy .nav-wrapper,
+html.coal .nav-wrapper,
 html.light .nav-wide-wrapper,
-html.rust .nav-wide-wrapper {
+html.rust .nav-wide-wrapper,
+html.ayu .nav-wide-wrapper,
+html.navy .nav-wide-wrapper,
+html.coal .nav-wide-wrapper {
     margin-top: 1rem;
 }
 
 html.light .nav-chapters,
 html.rust .nav-chapters,
+html.ayu .nav-chapters,
+html.navy .nav-chapters,
+html.coal .nav-chapters,
 html.light .mobile-nav-chapters,
-html.rust .mobile-nav-chapters {
+html.rust .mobile-nav-chapters,
+html.ayu .mobile-nav-chapters,
+html.navy .mobile-nav-chapters,
+html.coal .mobile-nav-chapters {
     background: rgba(255, 250, 243, 0.9);
     border: 1px solid var(--wp-border);
     border-radius: 14px;
@@ -238,14 +340,23 @@ html.rust .mobile-nav-chapters {
 
 html.light .nav-chapters:hover,
 html.rust .nav-chapters:hover,
+html.ayu .nav-chapters:hover,
+html.navy .nav-chapters:hover,
+html.coal .nav-chapters:hover,
 html.light .mobile-nav-chapters:hover,
-html.rust .mobile-nav-chapters:hover {
+html.rust .mobile-nav-chapters:hover,
+html.ayu .mobile-nav-chapters:hover,
+html.navy .mobile-nav-chapters:hover,
+html.coal .mobile-nav-chapters:hover {
     background: #fffdf8;
     color: var(--wp-accent);
 }
 
 html.light .theme-popup,
-html.rust .theme-popup {
+html.rust .theme-popup,
+html.ayu .theme-popup,
+html.navy .theme-popup,
+html.coal .theme-popup {
     border-radius: 14px;
     box-shadow: 0 16px 30px rgba(78, 60, 44, 0.12);
 }
@@ -423,7 +534,10 @@ body.has-version-banner .page-wrapper {
     }
 
     html.light .content main,
-    html.rust .content main {
+    html.rust .content main,
+    html.ayu .content main,
+    html.navy .content main,
+    html.coal .content main {
         padding: 1.5rem 1.2rem 2rem;
         border-radius: 0;
         border-left: 0;

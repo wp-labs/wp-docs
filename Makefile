@@ -42,18 +42,18 @@ build: build-zh build-en copy-assets
 # Build Chinese version
 build-zh:
 	@echo "Building Chinese documentation..."
+	@mkdir -p docs-zh/theme
+	@cp theme/*.css docs-zh/theme/
+	@cp theme/*.js docs-zh/theme/
 	cd docs-zh && mdbook build
-	@mkdir -p book/zh/theme
-	@cp theme/lang-switch.css book/zh/theme/
-	@cp theme/lang-switch.js book/zh/theme/
 
 # Build English version
 build-en:
 	@echo "Building English documentation..."
+	@mkdir -p docs-en/theme
+	@cp theme/*.css docs-en/theme/
+	@cp theme/*.js docs-en/theme/
 	cd docs-en && mdbook build
-	@mkdir -p book/en/theme
-	@cp theme/lang-switch.css book/en/theme/
-	@cp theme/lang-switch.js book/en/theme/
 
 # Copy index.html and assets
 copy-assets:

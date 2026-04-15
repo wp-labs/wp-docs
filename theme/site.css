@@ -16,6 +16,8 @@
     --wp-code-bg: #f3f7fb;
     --wp-shadow: 0 18px 45px rgba(29, 44, 63, 0.08);
     --wp-radius: 18px;
+    --sidebar-target-width: 285px;
+    --sidebar-width: min(var(--sidebar-target-width), 80vw);
 }
 
 html.light,
@@ -75,6 +77,12 @@ html.coal .menu-bar {
     backdrop-filter: blur(14px);
     border-bottom: 1px solid rgba(29, 44, 63, 0.1);
     box-shadow: none;
+    height: 64px;
+}
+
+#mdbook-theme-toggle,
+#mdbook-theme-list {
+    display: none !important;
 }
 
 html.light .menu-title,
@@ -191,7 +199,43 @@ html.rust #mdbook-content,
 html.ayu #mdbook-content,
 html.navy #mdbook-content,
 html.coal #mdbook-content {
-    max-width: 980px;
+    max-width: 1180px;
+    margin-inline: auto;
+}
+
+html.light .page,
+html.rust .page,
+html.ayu .page,
+html.navy .page,
+html.coal .page {
+    padding-inline: 0;
+}
+
+html.light .page-wrapper,
+html.rust .page-wrapper,
+html.ayu .page-wrapper,
+html.navy .page-wrapper,
+html.coal .page-wrapper {
+    background: transparent;
+}
+
+html.sidebar-visible .page-wrapper {
+    margin-left: var(--sidebar-width);
+}
+
+[dir=rtl].sidebar-visible .page-wrapper {
+    margin-right: var(--sidebar-width);
+    margin-left: 0;
+}
+
+html.light .content,
+html.rust .content,
+html.ayu .content,
+html.navy .content,
+html.coal .content {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1220px;
 }
 
 html.light .content main,
@@ -199,12 +243,12 @@ html.rust .content main,
 html.ayu .content main,
 html.navy .content main,
 html.coal .content main {
-    margin-top: 2.4rem;
+    margin: 2rem auto 3rem;
     background: var(--wp-panel);
     border: 1px solid rgba(29, 44, 63, 0.1);
     border-radius: var(--wp-radius);
     box-shadow: var(--wp-shadow);
-    padding: 2.8rem 3.2rem 3.3rem;
+    padding: 2.8rem 3.6rem 3.4rem;
 }
 
 html.light .content h1,
@@ -370,8 +414,9 @@ html.coal .theme-popup {
 .wp-topbar {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-left: 14px;
+    gap: 8px;
+    margin-left: auto;
+    margin-right: 12px;
 }
 
 .wp-topbar .wp-chip,
@@ -390,6 +435,10 @@ html.coal .theme-popup {
     font-weight: 600;
     letter-spacing: 0.02em;
     white-space: nowrap;
+}
+
+.wp-topbar > .wp-chip {
+    display: none;
 }
 
 .wp-topbar .wp-chip:hover,
@@ -438,6 +487,10 @@ html.coal .theme-popup {
     border: 1px solid rgba(29, 44, 63, 0.1);
     background: rgba(255, 255, 255, 0.86);
     color: var(--wp-text-muted);
+}
+
+.version-banner .badge {
+    display: none;
 }
 
 .version-banner .badge {
@@ -504,6 +557,10 @@ body.has-version-banner .page-wrapper {
     width: 1px;
     height: 20px;
     background: var(--wp-border);
+}
+
+.right-buttons {
+    gap: 8px;
 }
 
 .lang-switcher a,

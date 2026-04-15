@@ -24,8 +24,7 @@
         const topbar = document.createElement('div');
         topbar.className = 'wp-topbar';
 
-        const title = document.documentElement.lang === 'zh-CN' ? '文档站' : 'Docs';
-        topbar.innerHTML = `<span class="wp-chip">${title}</span>`;
+        topbar.innerHTML = '<span class="wp-chip">Warp Parse</span>';
 
         if (rightButtons) {
             menuBar.insertBefore(topbar, rightButtons);

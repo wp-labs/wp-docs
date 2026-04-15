@@ -93,6 +93,10 @@
   - [Wp-Monitor](10-user/10-monitor/Wp-Monitor.md)
 
 - [Benchmark Report](20-report/benchmark.md)
+- [Async Provider Performance](20-report/knowledge/async-provider.md)
 
 - [Connector Dev Guide](30-dev/connector_dev_guide.md)
 - [Docs Sync Automation](30-dev/docs_aggregation_automation.md)
+- [wp-knowledge Provider and Cache Plan](30-dev/knowledge/architecture/provider-cache.md)
+- [PostgreSQL Provider Tasks](30-dev/knowledge/tasks/postgres-provider.md)
+- [Provider / Cache Refactor Tasks](30-dev/knowledge/tasks/provider-cache.md)

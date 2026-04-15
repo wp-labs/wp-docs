@@ -30,6 +30,53 @@
       ]
     },
     {
+      "name": "wp-knowledge-docs",
+      "local_path": "../../dev/wparse/wp-knowledge/docs",
+      "strip_language_switch_headers": true,
+      "files": [
+        {
+          "from": "zh/guides/config.md",
+          "to": "docs-zh/10-user/02-config/07-knowdb_config.md"
+        },
+        {
+          "from": "en/guides/config.md",
+          "to": "docs-en/10-user/02-config/07-knowdb_config.md"
+        }
+      ],
+      "mappings": [
+        {
+          "from": "zh/architecture",
+          "to": "docs-zh/30-dev/knowledge/architecture",
+          "clean": true
+        },
+        {
+          "from": "en/architecture",
+          "to": "docs-en/30-dev/knowledge/architecture",
+          "clean": true
+        },
+        {
+          "from": "zh/performance",
+          "to": "docs-zh/20-report/knowledge",
+          "clean": true
+        },
+        {
+          "from": "en/performance",
+          "to": "docs-en/20-report/knowledge",
+          "clean": true
+        },
+        {
+          "from": "zh/tasks",
+          "to": "docs-zh/30-dev/knowledge/tasks",
+          "clean": true
+        },
+        {
+          "from": "en/tasks",
+          "to": "docs-en/30-dev/knowledge/tasks",
+          "clean": true
+        }
+      ]
+    },
+    {
       "name": "wp-lang-docs",
       "repo": "https://github.com/wp-labs/wp-lang.git",
       "ref": "main",

@@ -33,13 +33,12 @@
     function buildVersionPath(targetVersion, parsed) {
         const prefix = parsed.baseParts.length ? '/' + parsed.baseParts.join('/') : '';
         const versionPrefix = targetVersion === 'stable' ? '' : '/' + targetVersion;
-        const page = parsed.pageParts.length ? '/' + parsed.pageParts.join('/') : '/';
 
         if (!parsed.langInPath) {
-            return targetVersion === parsed.version ? page : '#';
+            return targetVersion === parsed.version ? '/' : '#';
         }
 
-        return prefix + versionPrefix + '/' + parsed.currentLang + page;
+        return prefix + versionPrefix + '/' + parsed.currentLang + '/';
     }
 
     function buildVersionFilePath(parsed) {

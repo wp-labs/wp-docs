@@ -1,87 +1,24 @@
-# Wparse 
+# Wparse
 
-## 运行模式
+`wparse` 是真正执行解析引擎的主运行时入口，主要提供两种模式：
 
-- 两种运行模式：`wparse daemon`（常驻服务）和 `wparse batch`（批处理）
-- 批处理模式读完文件后自动退出，daemon 模式需信号触发退出
+- `daemon`：常驻模式，适合在线接入
+- `batch`：批处理模式，适合离线回放和联调验证
 
-## 命令行参数
+## 建议阅读
 
-```
-wparse <COMMAND>
+- 权威页：[`wparse` 运行时使用指南](../06-usage/cli/runtime.md)
+- 如果涉及管理面和 reload：看 [运行时管理面使用说明](../06-usage/operations/admin.md)
+- 如果涉及远端同步和热更新：看 [远程工程拉取与规则热更新 SOP](../06-usage/operations/project-sync.md)
 
-Commands:
-  daemon  守护进程模式（常驻服务）
-  batch   批处理模式（读完即退）
-```
-
-### 通用参数
-
-| 参数 | 短选项 | 长选项 | 默认值 | 说明 |
-|------|--------|--------|--------|------|
-| parse_workers | `-w` | `--parse-workers` | - | 解析线程数 |
-| reload_timeout_ms | - | `--reload-timeout-ms` | - | reload 兜底超时（毫秒）；同时用于 graceful drain 与旧 processing 尾部清理 |
-| stat_sec | - | `--stat` | - | 统计输出间隔（秒） |
-| stat_print | `-p` | `--print_stat` | false | 周期打印统计信息 |
-| wpl_dir | - | `--wpl` | - | WPL 规则目录覆盖 |
-
-## 使用示例
+## 常见入口
 
 ```bash
-# 批处理模式：处理 3000 条后退出，每 2 秒输出统计
-wparse batch -n 3000 --stat 2 -p
-
-# 批处理模式：指定工作目录和多线程
-wparse batch  -w 4 --parse-workers 4
-
-# 守护进程模式：常驻服务，每 5 秒输出统计
-wparse daemon --stat 5 -p
-
-# 守护进程模式：将 reload 兜底超时压到 300ms（适合自动化测试）
-wparse daemon --reload-timeout-ms 300
-
-# 自定义日志和规则目录
-wparse daemon --log-profile custom.toml --wpl /custom/rules
+wparse --help
+wparse daemon --work-root .
+wparse batch --work-root .
 ```
 
-## 退出策略
+## 说明
 
-### 批处理模式（batch）
-
-单源（picker）结束条件（任一满足）：
-- 上游 EOF（文件读取完毕）
-- 收到 Stop 指令
-- 致命错误（触发全局停机）
-
-进程退出流程：
-1. 所有数据源的 picker 结束
-2. 主组完成
-3. sink/infra 组依序下线
-4. 进程退出
-
-关键日志：
-- 每个源结束：`数据源 '...' picker 正常结束`
-- 全局收尾：`all routine group await end!`
-
-### 守护进程模式（daemon）
-
-- 启动 acceptor（网络监听等）
-- 进程保持常驻运行
-- 退出触发方式：
-  - SIGTERM/SIGINT/SIGQUIT 信号
-  - 控制总线 Stop 指令（企业版）
-
-## 错误与重试策略
-
-| 错误类型 | 策略 | 说明 |
-|----------|------|------|
-| EOF | Terminate | 优雅结束当前源 |
-| 断线/可重试 | FixRetry | 指数退避后继续 |
-| 数据/业务可容忍 | Tolerant | 记录后继续 |
-| 致命错误 | Throw | 触发全局停机 |
-
-## 常见问题
-
-**Q：为什么 batch 下不启动 acceptor？**
-
-A：acceptor 是常驻组件（监听网络），会阻塞主组完成。batch 目标是"源结束 → 主组完成 → 进程退出"。
+本页保留为聚合站内的摘要入口。`wparse` 的详细运行语义、参数说明和运维路径，以 `06-usage` 中同步自 `warp-parse/docs/use` 的内容为准。

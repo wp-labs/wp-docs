@@ -1,130 +1,25 @@
-# Wpgen 
+# Wpgen
 
-wpgen 是 WarpParse 数据生成器，用于基于WPL规则或样本文件生成测试数据。
+`wpgen` 是 Warp Parse 的测试数据生成工具，主要用于：
 
-## 命令概览
+- 初始化和检查生成器配置
+- 基于规则生成测试数据
+- 基于样本回放生成联调数据
 
-```
-wpgen <COMMAND>
+## 建议阅读
 
-Commands:
-  rule    Generate data by rule/基于规则生成数据
-  sample  Generate data from sample files/基于样本文件生成数据
-  conf    Configuration commands/配置相关命令
-  data    Data management commands/数据管理相关命令
-```
+- 权威页：[`wpgen` 生成器使用指南](../06-usage/cli/generator.md)
+- 如果你还没有工程目录：先看 [快速开始](../01-getting-started.md)
+- 如果你想了解 CLI 整体分工：看 [功能与 CLI 使用指南](../06-usage/cli/index.md)
 
-## 子命令详解
-
-### rule - 基于规则生成
-
-基于 WPL 规则生成测试数据，支持规则验证和性能分析。
+## 常见入口
 
 ```bash
-wpgen rule [OPTIONS]
+wpgen --help
+wpgen conf init --work-root .
+wpgen conf check --work-root .
 ```
 
-| 参数 | 短选项 | 长选项 | 默认值 | 说明 |
-|------|--------|--------|--------|------|
-| wpl_dir | - | `--wpl` | - | WPL 规则目录覆盖 |
-| conf_name | `-c` | `--conf` | `wpgen.toml` | 配置文件名 |
-| stat_print | `-p` | `--print_stat` | false | 周期打印统计信息 |
-| line_cnt | `-n` | - | - | 总行数覆盖 |
-| speed | `-s` | - | - | 生成速度（行/秒）覆盖 |
-| stat_sec | - | `--stat` | 1 | 统计输出间隔（秒） |
+## 说明
 
-### sample - 基于样本生成
-
-基于样本文件（sample.dat）生成测试数据。
-
-```bash
-wpgen sample [OPTIONS]
-```
-
-
-### conf - 配置管理
-
-```bash
-wpgen conf <SUBCOMMAND>
-
-Subcommands:
-  init   初始化生成器配置（conf/wpgen.toml）
-  clean  清理生成器配置
-  check  检查配置有效性
-```
-
-### data - 数据管理
-
-```bash
-wpgen data <SUBCOMMAND>
-
-Subcommands:
-  clean  Clean generated output data according to wpgen config/根据 wpgen 配置清理已生成输出数据
-  check  Not supported; reserved for future/暂不支持；保留供未来使用
-```
-
-| 参数 | 短选项 | 长选项 | 默认值 | 说明 |
-|------|--------|--------|--------|------|
-| conf_name | `-c` | `--conf` | `wpgen.toml` | 配置文件名 |
-
-## 运行语义
-
-### count（总产出条数）
-
-启动时按 `parallel` 精确均分到每个 worker，余数前置分配。各 worker 跑完本地任务量即退出，总量严格等于 `count`。
-
-### speed（全局速率）
-
-- `speed = 0`：无限制（不等待）
-- `speed > 0`：每 worker 速率为 `floor(speed / parallel)`
-
-### parallel（并行数）
-
-生成 worker 的并行数。对 `blackhole_sink` 消费端也会并行，其它 sink 默认单消费者。
-
-## 使用示例
-
-```bash
-# 配置初始化
-wpgen conf init -w .
-wpgen conf check -w .
-
-# 基于规则生成 10000 条数据
-wpgen sample -n 10000 -p
-
-# 自定义规则目录和生成速度
-wpgen rule 
-    --wpl nginx \
-    -c custom.toml \
-    -s 1000 \
-    --stat 2 \
-    -p
-
-# 基于样本文件生成
-wpgen sample  -n 50000 -s 5000 --stat 5 -p
-
-# 清理生成的数据
-wpgen data clean -c wpgen.toml --local
-```
-
-## 常见问题
-**Q：产出不足预期？**
-
-A：`count` 被精确分配给每个 worker。检查日志中 `limit : …` 是否符合预期。
-
-## 配置文件
-
-默认配置文件路径：`conf/wpgen.toml`
-
-主要配置项：
-
-```toml
-[generator]
-count = 10000      # 总生成条数
-speed = 1000       # 生成速度（行/秒），0 表示无限制
-parallel = 4       # 并行 worker 数
-
-[output]
-# 输出配置...
-```
-生成文件通常位于 `./data/in_dat/`，可在配置中调整目标路径。
+本页保留为聚合站内的摘要入口。`wpgen` 的详细配置、子命令和运行语义，以 `06-usage` 中同步自 `warp-parse/docs/use` 的内容为准。

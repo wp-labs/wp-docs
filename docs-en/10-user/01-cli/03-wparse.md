@@ -1,87 +1,24 @@
 # Wparse
 
-## Running Modes
+`wparse` is the main runtime entry that actually executes the parsing engine. It mainly provides two modes:
 
-- Two running modes: `wparse daemon` (persistent service) and `wparse batch` (batch processing)
-- Batch mode exits automatically after reading files; daemon mode requires a signal to trigger exit
+- `daemon`: persistent mode for online ingestion
+- `batch`: batch mode for offline replay and validation
 
-## Command Line Arguments
+## Recommended Reading
 
-```
-wparse <COMMAND>
+- Authoritative page: [`wparse` Runtime Usage](../06-usage/cli/runtime.md)
+- For admin API and reload: read [Runtime Admin Usage](../06-usage/operations/admin.md)
+- For remote sync and hot reload workflows: read [Remote Project Sync and Rule Reload SOP](../06-usage/operations/project-sync.md)
 
-Commands:
-  daemon  Daemon mode (persistent service)
-  batch   Batch processing mode (exits after completion)
-```
-
-### Common Parameters
-
-| Parameter | Short | Long | Default | Description |
-|-----------|-------|------|---------|-------------|
-| parse_workers | `-w` | `--parse-workers` | - | Number of parsing threads |
-| reload_timeout_ms | - | `--reload-timeout-ms` | - | Reload fallback timeout in milliseconds; shared by graceful drain and old-processing tail cleanup |
-| stat_sec | - | `--stat` | - | Statistics output interval (seconds) |
-| stat_print | `-p` | `--print_stat` | false | Periodically print statistics |
-| wpl_dir | - | `--wpl` | - | WPL rules directory override |
-
-## Usage Examples
+## Common Entry Points
 
 ```bash
-# Batch mode: exit after processing 3000 records, output stats every 2 seconds
-wparse batch -n 3000 --stat 2 -p
-
-# Batch mode: specify working directory and multi-threading
-wparse batch -w 4 --parse-workers 4
-
-# Daemon mode: persistent service, output stats every 5 seconds
-wparse daemon --stat 5 -p
-
-# Daemon mode: shrink reload fallback timeout to 300ms (useful for automated tests)
-wparse daemon --reload-timeout-ms 300
-
-# Custom logging and rules directory
-wparse daemon --log-profile custom.toml --wpl /custom/rules
+wparse --help
+wparse daemon --work-root .
+wparse batch --work-root .
 ```
 
-## Exit Strategy
+## Note
 
-### Batch Mode
-
-Single source (picker) termination conditions (any one satisfied):
-- Upstream EOF (file reading completed)
-- Received Stop instruction
-- Fatal error (triggers global shutdown)
-
-Process exit flow:
-1. All data source pickers terminated
-2. Main group completed
-3. Sink/infra groups go offline in sequence
-4. Process exits
-
-Key logs:
-- Each source ends: `Data source '...' picker ended normally`
-- Global cleanup: `all routine group await end!`
-
-### Daemon Mode
-
-- Starts acceptor (network listening, etc.)
-- Process remains running persistently
-- Exit triggers:
-  - SIGTERM/SIGINT/SIGQUIT signals
-  - Control bus Stop instruction (Enterprise Edition)
-
-## Error and Retry Strategy
-
-| Error Type | Strategy | Description |
-|------------|----------|-------------|
-| EOF | Terminate | Gracefully end current source |
-| Disconnect/Retryable | FixRetry | Exponential backoff then continue |
-| Data/Business Tolerable | Tolerant | Log and continue |
-| Fatal Error | Throw | Trigger global shutdown |
-
-## FAQ
-
-**Q: Why doesn't batch mode start the acceptor?**
-
-A: The acceptor is a persistent component (network listening) that would block main group completion. Batch mode's goal is "source ends → main group completes → process exits".
+This page is kept as a short navigation summary inside the aggregated docs site. For detailed runtime semantics, parameters, and operations guidance, prefer the synced content in `06-usage`.

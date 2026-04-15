@@ -7,6 +7,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ARGS=(
     "--config" "$SCRIPT_DIR/docs-sources.json"
     "--source" "wp-motor-usage"
+    "--source" "warp-parse-use"
     "--prefer-local"
     "--generate-summary"
 )

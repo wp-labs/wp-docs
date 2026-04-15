@@ -39,6 +39,20 @@
           "to": "docs-en/10-user/03-wpl"
         }
       ]
+    },
+    {
+      "name": "warp-parse-use",
+      "local_path": "../../dev/wparse/warp-parse/docs/use",
+      "mappings": [
+        {
+          "from": "zh",
+          "to": "docs-zh/10-user/06-usage"
+        },
+        {
+          "from": "en",
+          "to": "docs-en/10-user/06-usage"
+        }
+      ]
     }
   ]
 }

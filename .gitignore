@@ -3,3 +3,5 @@ target
 .cache
 .DS_Store
 .idea
+docs-en/theme/
+docs-zh/theme/

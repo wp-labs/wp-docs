@@ -35,19 +35,7 @@
         const banner = document.createElement('div');
         banner.className = `version-banner ${currentVersion}`;
 
-        let badgeText, descText;
         const isZh = document.documentElement.lang === 'zh-CN';
-
-        if (currentVersion === 'alpha') {
-            badgeText = 'ALPHA';
-            descText = isZh ? '最新开发版 - 包含最新特性' : 'Latest Development Version - Contains newest features';
-        } else if (currentVersion === 'beta') {
-            badgeText = 'BETA';
-            descText = isZh ? '预发布版 - 即将正式发布' : 'Pre-release Version - Coming soon to stable';
-        } else {
-            badgeText = isZh ? '稳定版' : 'STABLE';
-            descText = isZh ? '生产环境推荐使用' : 'Recommended for production';
-        }
 
         // Add version info if available
         const versionInfo = wpVersion
@@ -68,9 +56,7 @@
 
         banner.innerHTML = `
             <div class="banner-content">
-                <span class="badge">${badgeText}</span>
                 ${versionInfo}
-                <span class="desc-text">${descText}</span>
                 <div class="version-switcher">
                     ${versionLinks}
                 </div>

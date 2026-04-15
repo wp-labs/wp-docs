@@ -16,7 +16,12 @@
 
     function buildTopbar() {
         const menuBar = document.getElementById('mdbook-menu-bar');
-        if (!menuBar || menuBar.querySelector('.wp-topbar')) {
+        if (!menuBar) {
+            return;
+        }
+
+        if (menuBar.querySelector('.wp-topbar')) {
+            moveTopbarItems(menuBar.querySelector('.wp-topbar'));
             return;
         }
 
@@ -28,25 +33,51 @@
 
         if (rightButtons) {
             menuBar.insertBefore(topbar, rightButtons);
-            const langSwitcher = document.querySelector('.lang-switcher');
-            if (langSwitcher) {
-                topbar.appendChild(langSwitcher);
-            }
-            const banner = document.querySelector('.version-banner');
-            if (banner) {
-                topbar.insertBefore(banner, topbar.firstChild);
-            }
+            moveTopbarItems(topbar);
         }
+    }
+
+    function moveTopbarItems(topbar) {
+        if (!topbar) {
+            return;
+        }
+
+        const banner = document.querySelector('.version-banner');
+        if (banner && banner.parentElement !== topbar) {
+            topbar.insertBefore(banner, topbar.firstChild);
+        }
+
+        const langSwitcher = document.querySelector('.lang-switcher');
+        if (langSwitcher && langSwitcher.parentElement !== topbar) {
+            topbar.appendChild(langSwitcher);
+        }
+    }
+
+    function watchTopbarItems() {
+        if (!window.MutationObserver) {
+            return;
+        }
+
+        const observer = new MutationObserver(function() {
+            buildTopbar();
+        });
+
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
     }
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             normalizeTheme();
             buildTopbar();
+            watchTopbarItems();
         });
     } else {
         normalizeTheme();
         buildTopbar();
+        watchTopbarItems();
     }
 
     window.addEventListener('load', function() {

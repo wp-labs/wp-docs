@@ -38,10 +38,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "light";
-            window.path_to_searchindex_js = "../searchindex-b6c32c8b.js";
+            window.path_to_searchindex_js = "../searchindex-46a783fc.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-83a7073e.js"></script>
+        <script src="../toc-6c095515.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -193,47 +193,30 @@
 <h3 id="运行时管理面"><a class="header" href="#运行时管理面">运行时管理面</a></h3>
 <p>新增围绕在线实例的标准化运维入口：</p>
 <ul>
-<li><code>GET /admin/v1/runtime/status</code></li>
 <li><code>POST /admin/v1/reloads/model</code></li>
-<li><code>wproj engine status</code></li>
 <li><code>wproj engine reload</code></li>
 </ul>
-<p>相关文档：</p>
-<ul>
-<li><a href="../10-user/01-cli/operations/admin.html">运行时管理面使用说明</a></li>
-<li><a href="../10-user/01-cli/cli/runtime.html"><code>wparse</code> 运行时使用指南</a></li>
-</ul>
+<p><a href="../10-user/01-cli/operations/admin.html">运行时管理面使用说明</a></p>
 <h3 id="远端工程同步与热更新-sop"><a class="header" href="#远端工程同步与热更新-sop">远端工程同步与热更新 SOP</a></h3>
 <p>围绕远端规则仓库，当前已经形成较完整的运维路径：</p>
 <ol>
 <li><code>wproj init --repo &lt;REPO&gt; [--version &lt;VERSION&gt;]</code></li>
 <li><code>wproj conf update</code></li>
-<li><code>wproj check --what wpl --fail-fast</code></li>
 <li><code>wproj engine reload</code></li>
-<li><code>wproj engine status</code></li>
 </ol>
-<p>相关文档：</p>
-<ul>
-<li><a href="../10-user/01-cli/operations/project-sync.html">远程工程拉取与规则热更新 SOP</a></li>
-<li><a href="../10-user/01-cli/cli/project.html"><code>wproj</code> 项目工具使用指南</a></li>
-</ul>
+<p><a href="../10-user/01-cli/operations/project-sync.html">远程工程拉取与规则热更新 SOP</a></p>
 <h3 id="自更新能力"><a class="header" href="#自更新能力">自更新能力</a></h3>
 <p>新增 CLI 自更新使用路径：</p>
 <pre><code class="language-bash">wproj self check
 wproj self update --yes
 </code></pre>
-<p>相关文档：</p>
-<ul>
-<li><a href="../10-user/01-cli/cli/project.html"><code>wproj</code> 项目工具使用指南</a></li>
-</ul>
+<p><a href="../10-user/01-cli/cli/project.html"><code>wproj</code> 项目工具使用指南</a></p>
 <h3 id="知识库配置与-sqludf-使用路径"><a class="header" href="#知识库配置与-sqludf-使用路径">知识库配置与 SQL/UDF 使用路径</a></h3>
 <p>知识库（KnowDB）相关用户文档补齐，当前已经覆盖：</p>
 <ul>
 <li>目录式配置</li>
 <li><code>create.sql</code> / <code>insert.sql</code></li>
 <li>CSV 装载 SQLite</li>
-<li>运行期受控表访问</li>
-<li><code>ip4_int</code>、<code>cidr4_contains</code> 等 UDF</li>
 </ul>
 <p>相关文档：</p>
 <ul>
@@ -258,25 +241,15 @@ wproj self update --yes
 <li><a href="../10-user/03-wpl/04-language-reference.html">WPL 语言参考</a></li>
 </ul>
 <h2 id="changed"><a class="header" href="#changed">Changed</a></h2>
-<h3 id="远端初始化与更新入口统一"><a class="header" href="#远端初始化与更新入口统一">远端初始化与更新入口统一</a></h3>
-<p>当前推荐方式统一为：</p>
-<pre><code class="language-bash">wproj init --repo &lt;REPO&gt; [--version &lt;VERSION&gt;]
-wproj conf update
-</code></pre>
-<p>未显式指定 <code>--version</code> 时，优先选择最新 release tag；若远端没有 release tag，则回退到默认分支 <code>HEAD</code>。</p>
-<p>相关文档：</p>
-<ul>
-<li><a href="../10-user/01-cli/operations/project-sync.html">远程工程拉取与规则热更新 SOP</a></li>
-</ul>
 <h3 id="cli-手册结构收敛"><a class="header" href="#cli-手册结构收敛">CLI 手册结构收敛</a></h3>
-<p>产品概览、CLI 使用、运行时管理面、远端同步 SOP 已收拢到统一入口。</p>
-<p>相关文档：</p>
+<p>产品概览、CLI 使用、运行时管理面、远端同步 SOP 已收拢到统一入口。
+相关文档：</p>
 <ul>
 <li><a href="../10-user/01-cli/README.html">CLI 使用手册</a></li>
 </ul>
 <h3 id="统计与排查路径更清晰"><a class="header" href="#统计与排查路径更清晰">统计与排查路径更清晰</a></h3>
-<p>围绕 <code>wproj data stat</code>、<code>wproj data validate</code>、<code>wproj rescue stat</code> 的使用路径已经更完整，便于日常排查。</p>
-<p>相关文档：</p>
+<p>围绕 <code>wproj data stat</code>、<code>wproj data validate</code>、<code>wproj rescue stat</code> 的使用路径已经更完整，便于日常排查。
+相关文档：</p>
 <ul>
 <li><a href="../10-user/01-cli/cli/project.html"><code>wproj</code> 项目工具使用指南</a></li>
 <li><a href="../10-user/01-cli/cli/rescue.html"><code>wprescue</code> 与 rescue 数据使用指南</a></li>

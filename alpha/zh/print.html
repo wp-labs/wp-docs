@@ -39,7 +39,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "light";
-            window.path_to_searchindex_js = "searchindex-46a783fc.js";
+            window.path_to_searchindex_js = "searchindex-ef991da1.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-6c095515.js"></script>
@@ -216,18 +216,14 @@
 wproj self update --yes
 </code></pre>
 <p><a href="#wproj-项目工具使用指南"><code>wproj</code> 项目工具使用指南</a></p>
-<h3 id="知识库配置与-sqludf-使用路径"><a class="header" href="#知识库配置与-sqludf-使用路径">知识库配置与 SQL/UDF 使用路径</a></h3>
-<p>知识库（KnowDB）相关用户文档补齐，当前已经覆盖：</p>
+<h3 id="知识库支持远程数据库"><a class="header" href="#知识库支持远程数据库">知识库支持远程数据库</a></h3>
+<p>知识库当前已支持通过 <code>[provider]</code> 接入远程 PostgreSQL / MySQL：</p>
 <ul>
-<li>目录式配置</li>
-<li><code>create.sql</code> / <code>insert.sql</code></li>
-<li>CSV 装载 SQLite</li>
+<li>支持目录式 SQLite authority 与远程数据库二选一</li>
+<li>支持通过 <code>connection_uri</code> 接入 PostgreSQL / MySQL</li>
+<li><code>[cache]</code> 统一用于结果缓存配置</li>
 </ul>
-<p>相关文档：</p>
-<ul>
-<li><a href="#knowdb-配置说明">KnowDB 配置</a></li>
-<li><a href="#oml-集成指南">OML 集成指南</a></li>
-</ul>
+<p><a href="#knowdb-配置说明">KnowDB 配置说明</a></p>
 <h3 id="监控与链路观察方式"><a class="header" href="#监控与链路观察方式">监控与链路观察方式</a></h3>
 <p>配合 VictoriaMetrics、VictoriaLogs 与 Wp-Monitor，当前已经形成更完整的链路观察入口，可用于查看：</p>
 <ul>

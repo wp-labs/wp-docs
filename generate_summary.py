@@ -42,6 +42,26 @@ def shorten_summary_title(file_path, title):
         ("与 rescue 数据使用指南", "Rescue 使用"),
         ("And Rescue Data Usage", "Rescue Usage"),
         ("项目工具使用指南", "项目工具"),
+        ("Sources Configuration Guide", "Sources Guide"),
+        ("Sinks Configuration Guide", "Sinks Guide"),
+        ("Configuration Guide", "配置指南"),
+        ("Quick Reference", "速查"),
+        ("排障指南（Troubleshooting）", "排障指南"),
+        ("用户建议 Q&A（产品能力与配置体验）", "用户建议 Q&A"),
+        ("Function and Topic Index", "函数索引"),
+        ("函数与专题索引", "函数索引"),
+        ("Field Functions 函数索引", "函数索引"),
+        ("Case-Insensitive Static Dictionary Lookup", "Static Dict Lookup"),
+        ("忽略大小写静态字典查表", "静态字典查表"),
+        ("Prefix Filtering for Strings", "Prefix Filter"),
+        ("结果反转包装函数", "结果反转"),
+        ("表达式函数匹配", "函数匹配"),
+        ("Processor 使用示例", "示例"),
+        ("Complete Type System Example", "Type System Example"),
+        ("Complete Feature Example", "Feature Example"),
+        ("Semantic Dictionary Configuration", "Semantic Dictionary"),
+        ("Connector Development Guide", "Connector Dev Guide"),
+        ("Docs Aggregation Automation", "Docs Sync Automation"),
         ("Generator Usage", "Generator"),
         ("Runtime Usage", "Runtime"),
         ("CLI Usage Guide", "CLI"),
@@ -58,9 +78,11 @@ def shorten_summary_title(file_path, title):
     if "/functions/" in path_str or "/examples/" in path_str:
         shortened = re.sub(r"\s*使用指南$", "", shortened)
         shortened = re.sub(r"\s*函数使用指南$", "", shortened)
+        shortened = re.sub(r"\s*使用示例$", "", shortened)
         shortened = re.sub(r"\s*Function Usage Guide$", "", shortened, flags=re.IGNORECASE)
         shortened = re.sub(r"\s*Function Guide$", "", shortened, flags=re.IGNORECASE)
         shortened = re.sub(r"\s*Usage Guide$", "", shortened, flags=re.IGNORECASE)
+        shortened = re.sub(r"\s*Example$", "", shortened, flags=re.IGNORECASE)
 
     # Release notes in sidebar can use shorter names.
     if "/00-release/" in path_str:

@@ -39,7 +39,7 @@ param3 = "default_value3"
 #### type (必需)
 - 连接器类型，决定使用哪种数据源/输出实现
 - Sources 支持的类型：`file`, `syslog`, `tcp`（`kafka` 暂未实现）
-- Sinks 支持的类型：`file`, `syslog`, `tcp`, `blackhole`（`kafka`、`prometheus` 暂未实现）
+- Sinks 支持的类型：`file`, `syslog`, `tcp`, `arrow-ipc`, `blackhole`（其余类型以当前版本实现为准）
 
 #### allow_override (可选)
 - 允许源/sink 配置覆盖的参数列表
@@ -66,6 +66,7 @@ connectors/
     ├── 10-syslog-udp.toml     # UDP Syslog 输出
     ├── 11-syslog-tcp.toml     # TCP Syslog 输出
     ├── 12-tcp.toml            # TCP 输出
+    ├── 20-arrow-ipc.toml      # Arrow IPC/TCP 输出
     ├── 30-kafka.toml          # Kafka 输出
     └── 30-prometheus.toml     # Prometheus 输出
 ```
@@ -178,6 +179,23 @@ port = 9000
 framing = "line"
 ```
 
+#### Arrow IPC 连接器
+```toml
+# connectors/sink.d/20-arrow-ipc.toml
+[[connectors]]
+id = "arrow_ipc_sink"
+type = "arrow-ipc"
+allow_override = ["target", "tag", "fields"]
+
+[connectors.params]
+target = "tcp://127.0.0.1:9800"
+tag = "default"
+fields = [
+  { name = "sip", type = "ip" },
+  { name = "dport", type = "digit" }
+]
+```
+
 ## 连接器最佳实践
 
 ### 1. 参数覆盖设计
@@ -217,3 +235,4 @@ protocol = "tcp"      # 可靠的协议
 - [Syslog 源配置](./01-sources/04-syslog_source.md)
 - [TCP 源配置](./01-sources/08-tcp_source.md)
 - [Sink 配置基础](./02-sinks/00-sinks_basics.md)
+- [Arrow IPC Sink 配置](./02-sinks/20-arrow_ipc_sink.md)

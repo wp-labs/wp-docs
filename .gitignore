@@ -1,2 +1,5 @@
 book
 target
+.cache
+.DS_Store
+.idea

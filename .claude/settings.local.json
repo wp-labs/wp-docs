@@ -11,7 +11,11 @@
       "Bash(git mv:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(xargs:*)",
+      "Bash(chmod:*)",
+      "Bash(bash:*)",
+      "Bash(python3:*)"
     ]
   }
 }

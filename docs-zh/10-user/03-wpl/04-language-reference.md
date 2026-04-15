@@ -137,7 +137,7 @@ package 包名 {
 |--------|------|------|---------|
 | `seq` | 顺序匹配（默认） | `seq(ip, digit, time)` | 按顺序依次匹配 |
 | `alt` | 择一匹配 | `alt(ip, digit)` | 匹配其中一个 |
-| `opt` | 可选匹配 | `opt(chars)` | 失败不报错 |
+| `opt` | 可选匹配 | `opt(chars:tag)` | 分组失败不报错 |
 | `some_of` | 尽可能多 | `some_of(ip, digit)` | 循环匹配 |
 
 ### 分隔符优先级
@@ -251,9 +251,9 @@ N*_                    # 忽略 N 个
 kvarr                  # 自动解析KV
 N*ip                   # 固定 N 次
 
-# 可选字段
-opt(chars)             # 单个可选
-opt(kvarr)             # 可选 KV
+# 可选分组
+opt(chars:tag)         # 单个可选分组
+opt(kvarr)             # 可选 KV 分组
 
 # 格式控制
 <[,]>                  # 方括号包裹

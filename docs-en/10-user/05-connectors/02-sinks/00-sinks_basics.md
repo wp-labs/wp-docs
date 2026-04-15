@@ -4,7 +4,7 @@ This document introduces the fundamental concepts and configuration structure of
 
 ## Overview
 
-Sinks are the data output endpoints of the warpparse system, responsible for sending processed data to various target systems. The system supports multiple output types, including file, Syslog, Prometheus, and more.
+Sinks are the data output endpoints of the warpparse system, responsible for sending processed data to various target systems. The system supports multiple output types, including file, Syslog, Arrow IPC, Prometheus, and more.
 
 ## Core Concepts
 

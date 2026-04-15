@@ -10,6 +10,8 @@
 | `file` | 输出到本地文件 | [文件 Sink 配置](./12-file_sink.md) |
 | `syslog` | 输出到 Syslog 服务器 (UDP/TCP) | [Syslog Sink 配置](./13-syslog_sink.md) |
 | `tcp` | 输出到 TCP 服务端 | [TCP Sink 配置](./15-tcp_sink.md) |
+| `arrow-ipc` | 输出为 Arrow IPC 帧（TCP） | [Arrow IPC Sink 配置](./20-arrow_ipc_sink.md) |
+| `arrow-file` | 输出 Arrow IPC 帧到本地文件 | [Arrow File Sink](./21-arrow_file_sink.md) |
 | `kafka` | 输出到 Kafka | [Kafka Sink 配置](./18-kafka_sink.md) |
 | `mysql` | 输出到 MySQL | [MySQL Sink 配置](./19-mysql_sink.md) |
 | `doris` | 输出到 Doris | [Doris Sink 配置](./17-doris.md) |

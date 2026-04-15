@@ -76,8 +76,8 @@ package nginx {
     (
       ip:client_ip,
       2*_,
-      time/clf<[,]>:time,
-      http/request":request,
+      time/clf:time<[,]>,
+      http/request:request",
       digit:status,
       digit:bytes
     )
@@ -282,11 +282,11 @@ http/agent":ua         # "Mozilla/5.0..."
 digit\,, ip\;, chars\s
 ```
 
-### 可选字段
+### 可选分组
 
 ```wpl
-opt(chars)             # 可选字段
-(digit, opt(chars), time)
+opt(chars:tag)         # 单字段可选分组
+(digit, time), opt(chars:tag)
 ```
 
 ### Base64 解码
@@ -319,9 +319,9 @@ opt(chars)             # 可选字段
 ### 2. 使用 opt() 定位问题
 
 ```wpl
-# 如果某个字段导致失败，用 opt 包裹
-(digit, opt(ip), time, chars)
-# 如果 ip 解析失败，其他字段仍然可以解析
+# 如果某个部分导致失败，把它拆成独立分组再用 opt 包裹
+(digit), opt(ip), (time, chars)
+# 如果 ip 解析失败，其他分组仍然可以继续定位问题
 ```
 
 ### 3. 检查分隔符
@@ -389,7 +389,7 @@ opt(chars)             # 可选字段
 package practice {
   rule custom_log {
     (
-      time<[,]>:timestamp,
+      time:timestamp<[,]>,
       _,
       ip:client,
       kvarr

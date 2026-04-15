@@ -24,14 +24,14 @@
 
 | 模式 | 语法 | 说明 |
 |------|------|------|
-| **可选字段** | `opt(type:name)` | 字段可能不存在 |
-| **重复字段** | `some_of(type:name)` | 匹配 1 到多个 |
+| **可选分组** | `opt(chars:tag)` | 某个分组可能不存在 |
+| **重复候选分组** | `some_of(kvarr, ip, digit)` | 尽可能多匹配 |
 | **跳过字段** | `_` 或 `n*_` | 跳过 1 个或 n 个字段 |
 | **JSON 提取** | `json(type@path:name)` | 提取 JSON 字段 |
 | **KV 提取** | `kvarr` | 解析键值对 |
 | **Base64 解码** | `\|decode/base64\|` | 预处理管道 |
-| **字段验证** | `type/check` | 验证字段值 |
-| **择一匹配** | `one_of(...)` | 多个模式选一个 |
+| **字段验证** | `\|take(status)\| digit_has(200)\|` | 通过字段管道验证 |
+| **择一匹配** | `alt(ip:addr, chars:addr)` | 多个候选匹配一个 |
 
 ### 常用类型速查
 
@@ -71,12 +71,12 @@ package nginx {
     (
       ip:client_ip,
       2*_,
-      time/clf<[,]>:time,
-      http/request":request,
+      time/clf:time<[,]>,
+      http/request:request",
       http/status:status,
       digit:bytes,
-      chars":referer,
-      http/agent":user_agent
+      chars:referer",
+      http/agent:user_agent"
     )
   }
 }
@@ -146,9 +146,9 @@ response_time: 0.123
 
 ---
 
-### 任务 1.3：解析带 referer 为空的日志
+### 任务 1.3：解析 referer 为 `-` 的日志
 
-**场景：** referer 可能为 `-` 或空
+**场景：** referer 字段存在，但值可能为 `-`
 
 **输入：**
 ```
@@ -161,11 +161,11 @@ package nginx {
   rule access_log_optional {
     (
       ip:client_ip,
-      time/clf<[,]>:time,
-      http/request":request,
+      time/clf:time<[,]>,
+      http/request:request",
       http/status:status,
       digit:bytes,
-      opt(chars"):referer
+      chars:referer"
     )
   }
 }
@@ -182,8 +182,8 @@ referer: -
 ```
 
 **要点：**
-- `opt(chars")` 将 referer 标记为可选字段
-- 即使 referer 解析失败，其他字段仍能正常提取
+- `chars:referer"` 可以正常读取 `"-"` 这种占位值
+- 如果某一整段真的可能缺失，应把它拆成独立分组再使用 `opt(...)`
 
 ---
 
@@ -946,9 +946,9 @@ json(
 # 原规则（失败）
 (digit, time, chars, json)
 
-# 调试规则
-(digit, opt(time), opt(chars), opt(json))
-# 逐步确定哪个字段导致失败
+# 调试规则：把字段拆成多个分组，再单独套 opt(...)
+(digit), opt(time), opt(chars), opt(json)
+# 逐步确定哪个分组导致失败
 ```
 
 ---

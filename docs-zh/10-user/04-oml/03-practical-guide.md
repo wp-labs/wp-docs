@@ -11,6 +11,9 @@
 | [WPL 与 OML 关联](#wpl-与-oml-关联) | 理解关联机制、一对一/一对多关联 |
 | [数据提取](#数据提取) | 字段提取的各种方式 |
 | [数据转换](#数据转换) | 类型转换、时间、URL、Base64 等 |
+| [数值计算](#数值计算) | 比例、差值、取整、分桶 |
+| [忽略大小写匹配](#忽略大小写匹配) | `iequals` / `iequals_any(...)` |
+| [静态字典查表](#静态字典查表) | `lookup_nocase(...)` |
 | [数据聚合](#数据聚合) | 创建对象、数组 |
 | [条件处理](#条件处理) | 状态码分类、端口识别、IP 范围等 |
 | [数据富化](#数据富化-sql-查询) | SQL 查询、多表关联 |
@@ -208,6 +211,99 @@ encoded = read(message) | base64_encode ;
 ip_int = read(src_ip) | ip4_to_int ;
 ```
 
+## 数值计算
+
+### 任务：计算风险分数
+
+```oml
+name : risk_score
+rule : /system/metrics
+---
+risk_score : float = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;
+```
+
+### 任务：计算差值和比例
+
+```oml
+name : calc_delta_ratio
+rule : /app/stats
+---
+delta : digit = calc(read(cur) - read(prev)) ;
+ratio : float = calc(read(ok_cnt) / read(total_cnt)) ;
+```
+
+### 任务：分桶和百分比取整
+
+```oml
+name : calc_bucket_pct
+rule : /user/metrics
+---
+bucket : digit = calc(read(uid) % 16) ;
+error_pct : digit = calc(round((read(err_cnt) * 100) / read(total_cnt))) ;
+```
+
+### 任务：处理算术失败
+
+```oml
+name : calc_safe
+rule : /app/stats
+---
+raw_ratio : float = calc(read(ok_cnt) / read(total_cnt)) ;
+safe_ratio : float = read(raw_ratio) { _ : float(0.0) } ;
+```
+
+**说明**：
+- `calc(...)` 失败时不会抛错，也不会返回 `0`
+- 除零、字段缺失、非数值输入、整数溢出、`NaN/inf` 都会得到 `ignore`
+- 如果业务上需要兜底值，请再配合 `read(...) { _ : ... }`
+
+---
+
+## 忽略大小写匹配
+
+### 任务：状态归类时忽略大小写
+
+```oml
+name : status_class
+rule : /app/status
+---
+status_class = match read(status) {
+    iequals_any('success', 'ok', 'done') => chars(good) ;
+    iequals_any('error', 'failed', 'timeout') => chars(bad) ;
+    _ => chars(other) ;
+} ;
+```
+
+**说明**：
+- 适合处理 `SUCCESS` / `Success` / `success` 这类不稳定大小写输入
+- 如果只有一个候选值，用 `iequals('value')`
+
+---
+
+## 静态字典查表
+
+### 任务：把状态映射成分值
+
+```oml
+name : status_score
+rule : /app/status
+---
+static {
+    score_map = object {
+        error = float(90.0);
+        warning = float(70.0);
+        success = float(20.0);
+    };
+}
+
+risk_score : float = lookup_nocase(score_map, read(status), 40.0) ;
+```
+
+**说明**：
+- `lookup_nocase(...)` 只查 `static` 中定义的 object
+- key 会先做忽略大小写归一化
+- 未命中时返回第三个参数
+
 ---
 
 ## 数据聚合
@@ -327,6 +423,60 @@ traffic_type = match (read(protocol), read(port)) {
     (chars(tcp), digit(443)) => chars(HTTPS) ;
     (chars(udp), digit(53)) => chars(DNS) ;
     _ => chars(Other) ;
+} ;
+```
+
+---
+
+### 任务：OR 条件匹配
+
+**场景**：在 match 分支中使用 `|` 表示多个备选条件
+
+```oml
+name : or_match
+rule : /network/traffic
+---
+# 单源 OR：城市归类
+tier = match read(city) {
+    chars(bj) | chars(sh) | chars(gz) => chars(tier1) ;
+    chars(cd) | chars(wh) => chars(tier2) ;
+    _ => chars(other) ;
+} ;
+```
+
+---
+
+### 任务：多源 + OR 条件组合
+
+**场景**：同时匹配多个字段，每个条件位置支持 OR 备选
+
+```oml
+name : multi_or_match
+rule : /network/traffic
+---
+# 多源 + OR
+priority = match (read(city), read(level)) {
+    (chars(bj) | chars(sh), chars(high)) => chars(priority) ;
+    (chars(gz), chars(low) | chars(mid)) => chars(normal) ;
+    _ => chars(default) ;
+} ;
+```
+
+---
+
+### 任务：多源匹配（三源及以上）
+
+**场景**：需要同时匹配三个或更多字段
+
+```oml
+name : triple_match
+rule : /firewall/rule
+---
+# 三源 match
+action = match (read(protocol), read(port), read(zone)) {
+    (chars(tcp), digit(22), chars(internal)) => chars(allow) ;
+    (chars(tcp), digit(443), chars(external)) => chars(inspect) ;
+    _ => chars(deny) ;
 } ;
 ```
 

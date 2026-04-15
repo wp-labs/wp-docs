@@ -1,28 +1,89 @@
 # WPL Core Concepts
 
-> **Translation in Progress**
-> 
-> This document is currently being translated from Chinese to English.
-> 
-> Please refer to the Chinese version: `docs/10-user/03-wpl-new/02-core-concepts.md`
+This page keeps the core writing rules in sync with the Chinese reference.
+
+For the fuller Chinese document, see [../zh/02-core-concepts.md](../zh/02-core-concepts.md).
 
 ---
 
-This document helps you understand WPL's design philosophy and core concepts, building the right mental model.
+## Mental Model
 
-## Quick Navigation
+WPL is a typed pattern language:
 
-| Topic | Content |
-|-------|---------|
-| **Design Philosophy** | Why WPL is needed, core ideas, declarative design |
-| **Type System** | Role of types, type hierarchy, type composition |
-| **Matching Semantics** | seq, alt, opt, some_of |
-| **Pipeline System** | Preprocessing pipeline, field-level pipeline |
-| **Subfields & Nesting** | JSON subfields, KV subfields, arrays |
-| **Separator Priority** | Priority rules, separator types |
-| **Design Principles** | Declarative, type-safe, composable |
-| **Common Misconceptions** | WPL vs regex, field continuity |
+- A rule describes the expected field sequence.
+- Each type both parses and validates data.
+- Names are attached after the type or subfield path.
+
+Example:
+
+```wpl
+(ip:client, digit:status, time:ts)
+```
 
 ---
 
-**For the complete English documentation, please check back later or refer to the Chinese version.**
+## Group Semantics
+
+WPL groups control matching behavior:
+
+```wpl
+(ip, digit, time)              # seq, default
+alt(ip:addr, chars:addr)       # choose one
+opt(chars:tag")                # optional group
+some_of(kvarr, ip, digit)      # keep matching candidates
+not(peek_symbol(ERROR):check)  # negative assertion
+```
+
+Notes:
+
+- `opt(...)`, `alt(...)`, `some_of(...)`, `not(...)`, and `seq(...)` are groups.
+- They are not field types.
+- Nested groups such as `opt(alt(...))` are not supported by the current grammar.
+
+---
+
+## Field Syntax Order
+
+The order matters:
+
+```text
+type [subfields] [:name] [format] [separator] {| pipe}
+```
+
+Valid:
+
+```wpl
+time/clf:access_time<[,]>
+http/request:request"
+json(chars@user, opt(chars)@email)
+```
+
+Invalid:
+
+```wpl
+time/clf<[,]>:access_time
+http/request":request
+```
+
+---
+
+## Optional Data
+
+There are two different patterns:
+
+- Optional group: `opt(chars:tag")`
+- Optional subfield: `opt(chars)@email`
+
+Use the first for line-level segments and the second for JSON/KV members.
+
+---
+
+## Separators
+
+Separator priority is:
+
+```text
+field-level > group-level > upstream/default
+```
+
+See [06-grammar-reference.md](./06-grammar-reference.md) and [../zh/08-sep-pattern.md](../zh/08-sep-pattern.md) for the exact grammar.

@@ -646,7 +646,7 @@ rule nested {
 - **WPL 语法参考**: `docs/guide/wpl_syntax.md`
 - **解析器开发指南**: `docs/guide/wpl_field_func_development_guide.md`
 - **chars_replace 使用指南**: `docs/usage/wpl/chars_replace.md`
-- **源代码**: `crates/wp-lang/src/ast/syntax/wpl_sep.rs`
+- **源代码**: `src/ast/syntax/wpl_sep.rs`
 
 ## 版本历史
 

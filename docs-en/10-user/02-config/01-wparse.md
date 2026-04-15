@@ -8,6 +8,7 @@ robust  = "normal"           # debug|normal|strict
 [models]
 wpl     = "./models/wpl"
 oml     = "./models/oml"
+knowledge = "./models/knowledge"
 
 [topology]
 sources = "./topology/sources"
@@ -41,3 +42,8 @@ target = "*"
 key    = "sink_stat"
 target = "*"
 ```
+
+Notes:
+- `[models].knowledge` is the root directory for knowledge-related config, defaulting to `./models/knowledge`
+- `semantic_dict.toml` is loaded from `${models.knowledge}/semantic_dict.toml` by default
+- `knowdb.toml` is loaded from `${models.knowledge}/knowdb.toml` by default

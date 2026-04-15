@@ -10,9 +10,9 @@
 - 安全：运行期只允许访问配置里声明过的表名；SQL 仅支持 {table} 占位符
 - 默认可用：多数字段可省略，内置默认值与自动探测能满足常见场景
 
-目录布局（推荐）
+目录布局（推荐，默认位于 `${models.knowledge}`）
 ```
-models/knowledge/
+${models.knowledge}/
   knowdb.toml                     # 本配置
   example/
     create.sql
@@ -24,13 +24,13 @@ models/knowledge/
     data.csv
 ```
 
-顶层配置（models/knowledge/knowdb.toml）
+顶层配置（`${models.knowledge}/knowdb.toml`）
 ```toml
 version = 2
 
 [[tables]]
 name = "example"
-# dir 省略时等于 name；此示例即使用目录 models/knowledge/example
+# dir 省略时等于 name；此示例即使用目录 ${models.knowledge}/example
 # data_file 省略时使用表目录下的 data.csv
 columns.by_header = ["name", "pinying"]
 
@@ -64,7 +64,7 @@ SQL 文件规范
 最小可运行示例
 1) 目录
 ```
-models/knowledge/knowdb.toml
+${models.knowledge}/knowdb.toml
 models/knowledge/example/{create.sql, insert.sql, data.csv}
 ```
 2) create.sql

@@ -186,17 +186,17 @@ alt(ip, digit)
 **示例场景：**
 ```wpl
 # 日志中 user_id 可能是数字或字符串
-(time, alt(digit, chars):user_id, chars:action)
+(time), alt(digit:user_id, chars:user_id), (chars:action)
 ```
 
 ---
 
 ### opt（可选匹配）
 
-**语义**：字段可选，失败不报错
+**语义**：分组可选，失败不报错
 
 ```wpl
-opt(chars)
+opt(chars:tag)
 ```
 
 **匹配过程：**
@@ -205,12 +205,12 @@ opt(chars)
 输入：无内容 → 跳过，继续下一个字段
 ```
 
-**何时使用：** 某些字段可能不存在
+**何时使用：** 某个分组可能不存在
 
 **示例场景：**
 ```wpl
-# HTTP 日志中 referer 可能为空
-(ip, time, http/request, digit, opt(chars):referer)
+# HTTP 日志中 referer 分组可能不存在
+(ip, time, http/request, digit), opt(chars:referer")
 ```
 
 ---
@@ -245,7 +245,7 @@ some_of(kvarr, ip, digit)
 |------|------|------|---------|
 | `seq` | 顺序固定 | `(ip, digit, time)` | 每个字段 1 次 |
 | `alt` | 类型不定 | `alt(ip, digit)` | 其中 1 个 |
-| `opt` | 可选字段 | `opt(chars)` | 0 或 1 次 |
+| `opt` | 可选分组 | `opt(chars:tag)` | 0 或 1 次 |
 | `some_of` | 混合重复 | `some_of(kvarr, ip)` | 尽可能多 |
 
 ---
@@ -548,7 +548,7 @@ rule log2 { (ip, time, json) }       # 重复 ip, time
 
 ```wpl
 # 明确指定
-time/clf<[,]>:access_time
+time/clf:access_time<[,]>
 
 # 隐含（可能失败）
 time:access_time
@@ -585,9 +585,9 @@ time:access_time
 
 **正确理解：** 支持可选、重复、择一等灵活模式
 ```wpl
-opt(chars)                # 可选
-kvarr                     # 自动解析KV
-alt(ip, digit)            # 择一
+opt(chars:tag)            # 单字段可选分组
+kvarr                     # 自动解析 KV
+alt(ip:addr, digit:id)    # 择一分组
 ```
 
 ---

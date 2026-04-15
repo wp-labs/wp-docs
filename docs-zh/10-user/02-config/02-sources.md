@@ -43,6 +43,24 @@ params = {                 # 参数覆写（可选）
 }
 ```
 
+### 变量化示例
+```toml
+[[sources]]
+key = "access_${ENV}"
+connect = "file_src_${ENV}"
+tags = ["env:${ENV}", "team:${TEAM}"]
+params = {
+    base = "${WORK_ROOT}/logs",
+    file = "${ACCESS_FILE}",
+    encode = "text"
+}
+```
+
+说明：
+- `key`、`connect`、`tags` 以及 `params` 中的字符串字段，都适合做 `${VAR}` 变量化
+- 若值属于密码、Token、连接串等敏感信息，建议放入 `SEC_` 变量，而不是直接写明文
+- 变量来源与 `sec_key.toml` 约定见：[配置变量与安全字典（`${VAR}` / `sec_key.toml`）](08-variables_and_sec_key.md)
+
 ## 配置示例
 
 ### 最小示例

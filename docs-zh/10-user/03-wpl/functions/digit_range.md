@@ -582,8 +582,8 @@ digit_in([200, 404, 500])  # 只匹配这三个值
 ## 更多资源
 
 - **开发指南**: `docs/guide/wpl_field_func_development_guide.md`
-- **源代码**: `crates/wp-lang/src/ast/processor/function.rs`
-- **测试用例**: `crates/wp-lang/src/eval/builtins/pipe_fun.rs`
+- **源代码**: `src/ast/processor/function.rs`
+- **测试用例**: `src/eval/builtins/pipe_fun.rs`
 
 ## 版本历史
 

@@ -694,8 +694,8 @@ regex_match('(?s)start.*end')  # 跨行匹配
 
 - **Rust Regex 文档**: https://docs.rs/regex/
 - **开发指南**: `docs/guide/wpl_field_func_development_guide.md`
-- **源代码**: `crates/wp-lang/src/ast/processor/function.rs`
-- **测试用例**: `crates/wp-lang/src/eval/builtins/pipe_fun.rs`
+- **源代码**: `src/ast/processor/function.rs`
+- **测试用例**: `src/eval/builtins/pipe_fun.rs`
 
 ## 版本历史
 

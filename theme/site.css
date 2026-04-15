@@ -554,6 +554,12 @@ html.coal .theme-popup {
     box-shadow: 0 4px 12px rgba(15, 143, 131, 0.08);
 }
 
+.version-banner .version-link.disabled:not(.current),
+.lang-switcher a[href="#"] {
+    opacity: 0.45;
+    pointer-events: none;
+}
+
 body.has-version-banner {
     padding-top: 0;
 }

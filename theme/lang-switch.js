@@ -1,47 +1,85 @@
 // Language Switcher Script
 (function() {
-    const path = window.location.pathname;
+    function isZhPage() {
+        const lang = (document.documentElement.lang || '').toLowerCase();
+        return lang.startsWith('zh');
+    }
 
-    // Parse path: /basepath/lang/page.html
-    // Example: /wp-docs/en/index.html -> basePath=/wp-docs, lang=en, page=/index.html
-    let basePath = '';
-    let currentLang = 'en';
-    let currentPage = '/index.html';
+    function normalizePagePath(pathname) {
+        if (!pathname || pathname === '/') {
+            return '/';
+        }
+        return pathname.endsWith('/') ? pathname : pathname.replace(/\/?$/, '');
+    }
 
-    // Remove trailing slash for consistent matching
-    const cleanPath = path.endsWith('/') ? path.slice(0, -1) : path;
+    function parseDocPath() {
+        const parts = window.location.pathname.split('/').filter(Boolean);
+        const versionIndex = parts.findIndex(part => part === 'alpha' || part === 'beta');
+        const version = versionIndex >= 0 ? parts[versionIndex] : 'stable';
+        const langIndex = parts.findIndex(part => part === 'zh' || part === 'en');
+        const currentLang = isZhPage() ? 'zh' : 'en';
 
-    // Find where /zh/ or /en/ starts
-    const zhIndex = cleanPath.indexOf('/zh/');
-    const enIndex = cleanPath.indexOf('/en/');
+        if (langIndex >= 0) {
+            return {
+                baseParts: parts.slice(0, versionIndex >= 0 ? versionIndex : langIndex),
+                version,
+                langInPath: true,
+                currentLang,
+                pageParts: parts.slice(langIndex + 1)
+            };
+        }
 
-    if (zhIndex !== -1 || enIndex !== -1) {
-        const langIndex = zhIndex !== -1 ? zhIndex : enIndex;
-        basePath = cleanPath.substring(0, langIndex);  // '/wp-docs' or ''
-        currentLang = zhIndex !== -1 ? 'zh' : 'en';
-        currentPage = cleanPath.substring(langIndex + 3);  // After '/zh' or '/en'
-        if (!currentPage) {
-            currentPage = '/index.html';
+        // Local `mdbook serve` for docs-zh/docs-en has no /zh or /en segment.
+        return {
+            baseParts: parts.slice(0, versionIndex >= 0 ? versionIndex : 0),
+            version,
+            langInPath: false,
+            currentLang,
+            pageParts: parts.slice(versionIndex >= 0 ? versionIndex + 1 : 0)
+        };
+    }
+
+    function buildPath(targetLang) {
+        const parsed = parseDocPath();
+        const prefix = parsed.baseParts.length ? '/' + parsed.baseParts.join('/') : '';
+        const versionPrefix = parsed.version === 'stable' ? '' : '/' + parsed.version;
+        const page = parsed.pageParts.length ? '/' + parsed.pageParts.join('/') : '/';
+
+        if (!parsed.langInPath) {
+            if (targetLang === parsed.currentLang) {
+                return normalizePagePath(page);
+            }
+
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                const port = targetLang === 'zh' ? '3000' : '3001';
+                return window.location.protocol + '//' + window.location.hostname + ':' + port + normalizePagePath(page);
+            }
+
+            return '#';
+        }
+
+        return prefix + versionPrefix + '/' + targetLang + page;
+    }
+
+    function renderSwitcher() {
+        const currentLang = isZhPage() ? 'zh' : 'en';
+        const zhUrl = buildPath('zh');
+        const enUrl = buildPath('en');
+
+        const switcherHtml = `
+            <div class="lang-switcher">
+                ${currentLang === 'zh'
+                    ? '<span class="current">中文</span> | <a href="' + enUrl + '">English</a>'
+                    : '<a href="' + zhUrl + '">中文</a> | <span class="current">English</span>'
+                }
+            </div>
+        `;
+
+        const menuTitle = document.querySelector('.menu-title');
+        if (menuTitle && menuTitle.parentNode && !document.querySelector('.lang-switcher')) {
+            menuTitle.parentNode.insertAdjacentHTML('afterend', switcherHtml);
         }
     }
 
-    // Build URLs
-    const zhUrl = basePath + '/zh' + currentPage;
-    const enUrl = basePath + '/en' + currentPage;
-
-    // Create switcher HTML
-    const switcherHtml = `
-        <div class="lang-switcher">
-            ${currentLang === 'zh'
-                ? '<span class="current">中文</span> | <a href="' + enUrl + '">English</a>'
-                : '<a href="' + zhUrl + '">中文</a> | <span class="current">English</span>'
-            }
-        </div>
-    `;
-
-    // Insert switcher after the menu title
-    const menuTitle = document.querySelector('.menu-title');
-    if (menuTitle && menuTitle.parentNode) {
-        menuTitle.parentNode.insertAdjacentHTML('afterend', switcherHtml);
-    }
+    renderSwitcher();
 })();

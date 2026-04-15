@@ -55,4 +55,4 @@ wprescue --help
 ## Related Docs
 
 - Runtime admin usage: [../operations/admin.md](../operations/admin.md)
-- Chinese counterpart: [../zh/overview/product.md](../zh/overview/product.md)
+- Chinese counterpart: [../zh/overview/product.md](../../../../docs-zh/10-user/01-cli/overview/product.md)

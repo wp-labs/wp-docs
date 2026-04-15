@@ -57,4 +57,4 @@ wprescue --help
 - 运行时管理面使用说明: [../operations/admin.md](../operations/admin.md)
 - 远程工程拉取与规则热更新 SOP: [../operations/project-sync.md](../operations/project-sync.md)
 - 使用文档索引: [../README.md](../README.md)
-- 对应英文版: [../../en/overview/product.md](../../en/overview/product.md)
+- 对应英文版: [../../en/overview/product.md](../../../../docs-en/10-user/01-cli/overview/product.md)

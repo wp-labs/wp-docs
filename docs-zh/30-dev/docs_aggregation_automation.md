@@ -19,7 +19,7 @@
 2. `scripts/sync_docs.py`
    - 统一执行同步逻辑。
    - 优先支持本地目录调试，也支持在 CI 中直接 `git clone` 上游仓库。
-   - 同步策略默认只做“新增 + 更新”，不主动删除目标目录中的文件，降低误删风险。
+   - 同步策略默认只做“新增 + 更新”；但可以按 source/mapping 显式开启 `clean`，先清理目标目录，再同步权威内容。
 3. `.github/workflows/sync-docs.yml`
    - 定时触发、手工触发，或由上游仓库发起 `repository_dispatch`。
    - 同步完成后自动创建 PR。
@@ -105,10 +105,9 @@ bash sync-usage-docs.sh ../wp-motor/docs/usage
 
 后续如果来源继续增多，建议按下面的优先级扩展：
 
-1. 增加 `delete = true/false` 的显式配置，逐个来源决定是否允许删除目标中的陈旧文件。
-2. 增加“路径白名单校验”，限制目标目录只能写入 `docs-zh/`、`docs-en/` 下的受控区域。
-3. 在同步后增加 Markdown lint、链接检查和 mdBook build，确保 PR 在合并前可直接发布。
-4. 为每个来源记录最后同步的 commit SHA，并在 PR 描述中输出“从哪个上游版本同步到了哪个版本”。
+1. 增加“路径白名单校验”，限制目标目录只能写入 `docs-zh/`、`docs-en/` 下的受控区域。
+2. 在同步后增加 Markdown lint、链接检查和 mdBook build，确保 PR 在合并前可直接发布。
+3. 为每个来源记录最后同步的 commit SHA，并在 PR 描述中输出“从哪个上游版本同步到了哪个版本”。
 
 ## 为什么这套方案比现状更合适
 

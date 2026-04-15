@@ -11,7 +11,13 @@
       "repo": "https://github.com/wp-labs/wp-motor.git",
       "ref": "main",
       "checkout_subdir": "docs/usage",
-      "local_path": "../wp-motor/docs/usage",
+      "local_path": "../../dev/wparse/wp-motor/docs/usage",
+      "ignore": [
+        "README.md",
+        "01-cli",
+        "01-cli/*",
+        "01-cli/**"
+      ],
       "mappings": [
         {
           "from": "zh",
@@ -43,14 +49,36 @@
     {
       "name": "warp-parse-use",
       "local_path": "../../dev/wparse/warp-parse/docs/use",
+      "rewrite_cross_language_links": true,
+      "ignore": [
+        "tools",
+        "tools/*",
+        "tools/**"
+      ],
+      "replace_text": {
+        "zh": [
+          {
+            "from": "# 使用文档",
+            "to": "# CLI 使用手册"
+          }
+        ],
+        "en": [
+          {
+            "from": "# Usage Docs",
+            "to": "# CLI Usage Guide"
+          }
+        ]
+      },
       "mappings": [
         {
           "from": "zh",
-          "to": "docs-zh/10-user/06-usage"
+          "to": "docs-zh/10-user/01-cli",
+          "clean": true
         },
         {
           "from": "en",
-          "to": "docs-en/10-user/06-usage"
+          "to": "docs-en/10-user/01-cli",
+          "clean": true
         }
       ]
     }

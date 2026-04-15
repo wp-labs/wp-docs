@@ -119,4 +119,4 @@ wproj engine status \
 ## 相关文档
 
 - 运行时管理面使用说明: [admin.md](admin.md)
-- 对应英文版: [../../en/operations/project-sync.md](../../en/operations/project-sync.md)
+- 对应英文版: [../../en/operations/project-sync.md](../../../../docs-en/10-user/01-cli/operations/project-sync.md)

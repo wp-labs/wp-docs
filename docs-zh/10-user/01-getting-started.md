@@ -64,5 +64,5 @@ wproj data stat
 ## 下一步
 
 - 想先建立产品与术语认知：看 [WarpParse 核心概念速查](00-core-concepts.md)
-- 想看完整 CLI、运行时和运维手册：看 [权威使用手册](06-usage/README.md)
+- 想看完整 CLI、运行时和运维手册：看 [CLI 使用手册](01-cli/README.md)
 - 想深入语言与规则：看 [WPL 规则语言](03-wpl/README.md) 和 [OML 对象模型语言](04-oml/README.md)

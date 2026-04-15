@@ -62,5 +62,5 @@ wproj data stat
 ## Next Steps
 
 - For core concepts and terminology: read [WarpParse Core Concepts Quick Reference](00-core-concepts.md)
-- For the full product, CLI, and operations manual: read [Authoritative Usage Docs](06-usage/README.md)
+- For the full product, CLI, and operations manual: read [CLI Usage Guide](01-cli/README.md)
 - For language details: read [WPL Rule Language](03-wpl/README.md) and [OML Object Model Language](04-oml/README.md)

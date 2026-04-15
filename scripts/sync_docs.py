@@ -8,6 +8,7 @@ import fnmatch
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -178,6 +179,17 @@ def file_hash(path: Path) -> str:
     return digest.hexdigest()
 
 
+def clear_tree(dest_root: Path, dry_run: bool) -> None:
+    if not dest_root.exists():
+        return
+
+    print(f"X  {dest_root}")
+    if dry_run:
+        return
+
+    shutil.rmtree(dest_root)
+
+
 def sync_tree(
     src_root: Path,
     dest_root: Path,
@@ -225,6 +237,68 @@ def sync_tree(
     return created, updated, skipped
 
 
+def rewrite_cross_language_links(
+    dest_root: Path,
+    counterpart_root: Path,
+    expected_lang: str,
+    dry_run: bool,
+) -> int:
+    updated = 0
+    pattern = re.compile(r"\]\(((?:\.\./)+)(zh|en)/([^)#]+?)(#[^)]+)?\)")
+
+    for md_path in sorted(dest_root.rglob("*.md")):
+        original = md_path.read_text(encoding="utf-8")
+
+        def replace(match: re.Match[str]) -> str:
+            lang = match.group(2)
+            if lang != expected_lang:
+                return match.group(0)
+
+            rel_target = Path(match.group(3))
+            anchor = match.group(4) or ""
+            target = counterpart_root / rel_target
+            if not target.exists():
+                return match.group(0)
+
+            rewritten = os.path.relpath(target, md_path.parent).replace(os.sep, "/")
+            return f"]({rewritten}{anchor})"
+
+        rewritten = pattern.sub(replace, original)
+        if rewritten == original:
+            continue
+
+        print(f"R  {md_path}")
+        updated += 1
+        if not dry_run:
+            md_path.write_text(rewritten, encoding="utf-8")
+
+    return updated
+
+
+def rewrite_file_contents(
+    dest_root: Path,
+    replacements: list[tuple[str, str]],
+    dry_run: bool,
+) -> int:
+    updated = 0
+
+    for md_path in sorted(dest_root.rglob("*.md")):
+        original = md_path.read_text(encoding="utf-8")
+        rewritten = original
+        for old, new in replacements:
+            rewritten = rewritten.replace(old, new)
+
+        if rewritten == original:
+            continue
+
+        print(f"T  {md_path}")
+        updated += 1
+        if not dry_run:
+            md_path.write_text(rewritten, encoding="utf-8")
+
+    return updated
+
+
 def sync_source(
     source: dict,
     repo_root: Path,
@@ -246,16 +320,42 @@ def sync_source(
         token_env_name,
     )
     ignore_patterns = list(default_ignore) + list(source.get("ignore", []))
+    mappings = source.get("mappings", [])
+    mapping_by_from = {mapping["from"]: mapping for mapping in mappings}
 
     print(f"=== Syncing {source_name} ===")
-    for mapping in source.get("mappings", []):
+    for mapping in mappings:
         src_dir = source_root / mapping["from"]
         dest_dir = (repo_root / mapping["to"]).resolve()
         print(f"  {src_dir} -> {dest_dir}")
+        if mapping.get("clean", False):
+            clear_tree(dest_dir, dry_run)
         created, updated, skipped = sync_tree(src_dir, dest_dir, ignore_patterns, dry_run)
         print(
             f"  summary: created={created} updated={updated} skipped={skipped}"
         )
+        if source.get("rewrite_cross_language_links", False):
+            counterpart_lang = "en" if mapping["from"] == "zh" else "zh"
+            counterpart_mapping = mapping_by_from.get(counterpart_lang)
+            if counterpart_mapping:
+                counterpart_root = (repo_root / counterpart_mapping["to"]).resolve()
+                rewritten = rewrite_cross_language_links(
+                    dest_dir,
+                    counterpart_root,
+                    counterpart_lang,
+                    dry_run,
+                )
+                if rewritten:
+                    print(f"  relinked cross-language refs: {rewritten}")
+        replacements_by_lang = source.get("replace_text", {})
+        replacements = [
+            (item["from"], item["to"])
+            for item in replacements_by_lang.get(mapping["from"], [])
+        ]
+        if replacements:
+            rewritten = rewrite_file_contents(dest_dir, replacements, dry_run)
+            if rewritten:
+                print(f"  normalized text replacements: {rewritten}")
     print()
 
 

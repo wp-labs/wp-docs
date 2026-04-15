@@ -6,15 +6,14 @@
 
 1. [快速开始](01-getting-started.md)
 2. [WarpParse 核心概念速查](00-core-concepts.md)
-3. [权威使用手册](06-usage/README.md)
+3. [CLI 使用手册](01-cli/README.md)
 4. 再按需进入 WPL、OML、配置和连接器文档
 
 ## 阅读入口
 
 - [快速开始](01-getting-started.md)
 - [WarpParse 核心概念速查](00-core-concepts.md)
-- [权威使用手册](06-usage/README.md)
-- [CLI 导览](01-cli/README.md)
+- [CLI 使用手册](01-cli/README.md)
 - [配置指南](02-config/README.md)
 - [WPL 规则语言](03-wpl/README.md)
 - [OML 对象模型语言](04-oml/README.md)

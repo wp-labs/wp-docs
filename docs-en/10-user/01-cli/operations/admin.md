@@ -271,4 +271,4 @@ Current automated coverage verifies:
 
 ## Chinese Counterpart
 
-- [../../zh/operations/admin.md](../../zh/operations/admin.md)
+- [../../zh/operations/admin.md](../../../../docs-zh/10-user/01-cli/operations/admin.md)

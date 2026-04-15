@@ -1,25 +1,21 @@
-# CLI Guide
+# CLI Usage Guide
 
-This directory is no longer the primary maintenance location for Warp Parse CLI and operations details.
+This directory contains operator-facing and integration-facing documentation.
 
-`warp-parse/docs/use` is now treated as the more authoritative usage source. As a result, this section is being reduced to a lightweight navigation layer:
+## Documents
 
-- For first-run setup: read [Getting Started](../01-getting-started.md)
-- For concepts and terminology: read [WarpParse Core Concepts Quick Reference](../00-core-concepts.md)
-- For the latest product, CLI, and operations manual: read [Authoritative Usage Docs](../06-usage/README.md)
+- `overview/`
+- Product overview: [overview/product.md](overview/product.md)
+- `cli/`
+- CLI usage guide: [cli/index.md](cli/index.md)
+- `wparse` runtime usage: [cli/runtime.md](cli/runtime.md)
+- `wpgen` generator usage: [cli/generator.md](cli/generator.md)
+- `wproj` project tool usage: [cli/project.md](cli/project.md)
+- `wprescue` and rescue-data usage: [cli/rescue.md](cli/rescue.md)
+- `operations/`
+- Runtime admin usage: [operations/admin.md](operations/admin.md)
+- Remote project sync and rule reload SOP: [operations/project-sync.md](operations/project-sync.md)
 
-## Quick Links
+## Chinese Counterpart
 
-- [Authoritative Usage Docs Home](../06-usage/README.md)
-- [Product Overview](../06-usage/overview/product.md)
-- [CLI Usage Guide](../06-usage/cli/index.md)
-- [`wparse` Runtime Usage](../06-usage/cli/runtime.md)
-- [`wpgen` Generator Usage](../06-usage/cli/generator.md)
-- [`wproj` Project Tool Usage](../06-usage/cli/project.md)
-- [`wprescue` and Rescue Data Usage](../06-usage/cli/rescue.md)
-- [Runtime Admin Usage](../06-usage/operations/admin.md)
-- [Remote Project Sync and Rule Reload SOP](../06-usage/operations/project-sync.md)
-
-## Directory Note
-
-Pages under `01-cli` are currently kept mainly for historical navigation and old links. Going forward, detailed CLI content should prefer `06-usage` instead of adding another parallel manual here.
+- [../zh/README.md](../../../docs-zh/10-user/01-cli/README.md)

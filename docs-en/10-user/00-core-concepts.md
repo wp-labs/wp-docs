@@ -171,7 +171,7 @@ workspace/
 After reading this document, we recommend continuing in this order:
 
 1. **[Getting Started](01-getting-started.md)**: Run your first example in 10 minutes
-2. **[Authoritative Usage Docs](06-usage/README.md)**: Read the full product, CLI, and operations manual synced from `warp-parse/docs/use`
+2. **[CLI Usage Guide](01-cli/README.md)**: Read the full product, CLI, and operations manual synced from `warp-parse/docs/use`
 3. **[WPL Language Basics](03-wpl/01-quickstart.md)**: Learn data extraction rules
 4. **[OML Language Basics](04-oml/README.md)**: Learn data assembly rules
 
@@ -180,7 +180,6 @@ After reading this document, we recommend continuing in this order:
 ## Related Documentation
 
 - [Getting Started](01-getting-started.md)
-- [Authoritative Usage Docs](06-usage/README.md)
-- [CLI Guide](01-cli/README.md)
+- [CLI Usage Guide](01-cli/README.md)
 - [WPL Language](03-wpl/README.md)
 - [OML Language](04-oml/README.md)

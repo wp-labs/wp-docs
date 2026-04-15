@@ -139,4 +139,4 @@ wproj engine status \
 ## 相关文档
 
 - 远程工程拉取与规则热更新 SOP: [project-sync.md](project-sync.md)
-- 对应英文版: [../../en/operations/admin.md](../../en/operations/admin.md)
+- 对应英文版: [../../en/operations/admin.md](../../../../docs-en/10-user/01-cli/operations/admin.md)

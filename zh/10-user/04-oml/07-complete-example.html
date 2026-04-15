@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>🌟 完整功能示例 - Warp Parse 文档</title>
+        <title>OML 完整功能示例 - Warp Parse 文档</title>
 
 
         <!-- Custom HTML head -->
@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-24666759.js";
+            window.path_to_searchindex_js = "../../searchindex-ed04a91f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-ca145d02.js"></script>
+        <script src="../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -293,22 +293,45 @@ current_time = Now::time();  // 获取当前完整时间
 current_date = Now::date();  // 获取当前日期（YYYYMMDD）
 current_hour = Now::hour();  // 获取当前小时（YYYYMMDDHH）
 
-// ==================== 3. 模式匹配 ====================
+// ==================== 3. 数值表达式 ====================
 
-// 3.1 单源 match（简单匹配）
+// 3.1 风险分数
+risk_score : float = calc(read(simple_port) * 0.1 + digit(5));
+
+// 3.2 取整百分比
+status_pct : digit = calc(round((read(num_range) * 100) / digit(1000)));
+
+// 3.3 分桶
+bucket : digit = calc(read(simple_port) % 16);
+
+// ==================== 4. 静态字典与查表 ====================
+
+static {
+    status_score = object {
+        success = float(20.0);
+        warning = float(70.0);
+        error = float(90.0);
+    };
+}
+
+status_score_v2 : float = lookup_nocase(status_score, read(status), 40.0);
+
+// ==================== 5. 模式匹配 ====================
+
+// 5.1 单源 match（简单匹配）
 match_chars = match read(option:[match_chars]) {
     chars(left) =&gt; chars(1);
     chars(middle) =&gt; chars(2);
     chars(right) =&gt; chars(3);
 };
 
-// 3.2 范围判断（in 操作符）
+// 5.2 范围判断（in 操作符）
 num_range = match read(option:[num_range]) {
     in (digit(0), digit(1000)) =&gt; read(num_range);
     _ =&gt; digit(0);
 };
 
-// 3.3 双源 match（匹配两个字段的组合）
+// 5.3 多源 match（匹配多个字段的组合）
 location : chars = match (read(city1), read(city2)) {
     (chars(beijing), chars(shanghai)) =&gt; chars(east_region);
     (chars(chengdu), chars(chongqing)) =&gt; chars(west_region);
@@ -320,50 +343,71 @@ region_by_ip : chars = match (read(src_ip), read(dst_ip)) {
     _ =&gt; chars(external);
 };
 
-// 3.4 match 否定条件（! 操作符）
+// 5.4 match 否定条件（! 操作符）
 valid_status = match read(status) {
     !chars(error) =&gt; chars(ok);
     !chars(failed) =&gt; chars(success);
     _ =&gt; chars(unknown);
 };
 
-// 3.5 布尔类型 match
+// 5.5 布尔类型 match
 is_enabled : digit = match read(enabled) {
     bool(true) =&gt; digit(1);
     bool(false) =&gt; digit(0);
     _ =&gt; digit(-1);
 };
 
-// ==================== 4. 管道函数 ====================
+// 5.6 OR 条件匹配（使用 | 表示备选条件）
+city_tier : chars = match read(city1) {
+    chars(beijing) | chars(shanghai) | chars(guangzhou) =&gt; chars(tier1);
+    chars(chengdu) | chars(wuhan) =&gt; chars(tier2);
+    _ =&gt; chars(other);
+};
 
-// 4.1 时间转换
+// 5.7 多源 + OR 组合匹配
+priority : chars = match (read(city1), read(status)) {
+    (chars(beijing) | chars(shanghai), chars(success)) =&gt; chars(high);
+    (chars(chengdu), chars(success) | chars(pending)) =&gt; chars(medium);
+    _ =&gt; chars(low);
+};
+
+// 5.8 忽略大小写多值匹配
+status_class = match read(status) {
+    iequals_any('success', 'ok', 'done') =&gt; chars(good);
+    iequals_any('error', 'failed', 'timeout') =&gt; chars(bad);
+    _ =&gt; chars(other);
+};
+
+// ==================== 6. 管道函数 ====================
+
+// 6.1 时间转换
 timestamp_zone = pipe read(timestamp_zone) | Time::to_ts_zone(0, ms);  // 修改时区
 timestamp_s = pipe read(timestamp_zone) | Time::to_ts;                 // 转秒级时间戳
 timestamp_ms = pipe @current_time | Time::to_ts_ms;                    // 转毫秒级时间戳
 timestamp_us = pipe @current_time | Time::to_ts_us;                    // 转微秒级时间戳
 timestamp_zone_8 = pipe @current_time | Time::to_ts_zone(8, s);        // UTC+8 时区
 
-// 4.2 编码/解码
+// 6.2 编码/解码
 base64_decoded = pipe read(base64) | base64_decode(Utf8);  // Base64 解码
 base64_encoded = pipe read(base64) | base64_encode;        // Base64 编码
 
-// 4.3 转义/反转义
+// 6.3 转义/反转义
 html_escaped = pipe read(html) | html_escape;              // HTML 转义
 html_unescaped = pipe read(html) | html_unescape;          // HTML 反转义
 json_escaped = pipe read(json_escape) | json_escape;       // JSON 转义
 json_unescaped = pipe @json_escaped | json_unescape;       // JSON 反转义
 str_escaped = pipe read(str) | str_escape;                 // 字符串转义
 
-// 4.4 数据转换
+// 6.4 数据转换
 to_str_result = pipe read(str) | to_str;                   // 转为字符串
 array_json = pipe read(array_str) | to_json;               // 数组转 JSON
 ip_to_int = pipe read(simple_ip) | ip4_to_int;             // IPv4 转整数
 
-// 4.5 集合操作
+// 6.5 集合操作
 array_first = pipe read(array_str) | nth(0);               // 获取数组第 0 个元素
 obj_nested = pipe read(obj) | nth(0) | get(one/two);       // 对象嵌套取值
 
-// 4.6 数据提取
+// 6.6 数据提取
 file_name = pipe read(path) | path(name);                  // 提取文件名
 file_path = pipe read(path) | path(path);                  // 提取文件路径
 url_domain = pipe read(url) | url(domain);                 // 提取 URL domain
@@ -372,31 +416,31 @@ url_uri = pipe read(url) | url(uri);                       // 提取 URL uri
 url_path = pipe read(url) | url(path);                     // 提取 URL path
 url_params = pipe read(url) | url(params);                 // 提取 URL params
 
-// 4.7 其他管道函数
+// 6.7 其他管道函数
 skip_empty_result = pipe read(empty_chars) | skip_empty;   // 跳过空值
 
-// 4.8 省略 pipe 关键字（新语法）
+// 6.8 省略 pipe 关键字（新语法）
 simple_transform = read(data) | to_json;                   // 直接省略 pipe
 chained_ops = read(array_data) | nth(0) | to_str;          // 链式调用
 url_extract = read(url_field) | url(domain);               // 简化写法
 
-// 4.9 链式管道操作
+// 6.9 链式管道操作
 nested_extract = pipe read(complex_obj) | nth(0) | get(level1/level2/level3);
 multi_transform = pipe read(raw_data) | base64_decode(Utf8) | to_json;
 
-// ==================== 5. 字符串操作 ====================
+// ==================== 7. 字符串操作 ====================
 
-// 5.1 字符串格式化（fmt 函数）
+// 7.1 字符串格式化（fmt 函数）
 splice = fmt("{one}:{two}|{three}:{four}", read(one), read(two), read(three), read(four));
 
-// ==================== 6. 对象与数组 ====================
+// ==================== 8. 对象与数组 ====================
 
-// 6.1 对象创建（聚合多个字段）
+// 8.1 对象创建（聚合多个字段）
 extends = object {
     extend1, extend2 = read();
 };
 
-// 6.2 数组收集（collect）
+// 8.2 数组收集（collect）
 collected_ports : array = collect read(keys:[sport, dport, extra_port]);
 wildcard_items : array = collect take(keys:[details[*]/process_name]);  // 支持通配符收集
 </code></pre>
@@ -459,8 +503,35 @@ current_date = Now::date();  // 20251229
 current_hour = Now::hour();  // 2025122912
 </code></pre>
 <hr>
-<h3 id="3-模式匹配"><a class="header" href="#3-模式匹配">3. 模式匹配</a></h3>
-<h4 id="31-单源-match"><a class="header" href="#31-单源-match">3.1 单源 match</a></h4>
+<h3 id="3-数值表达式"><a class="header" href="#3-数值表达式">3. 数值表达式</a></h3>
+<p>使用 <code>calc(...)</code> 直接做算术：</p>
+<pre><code class="language-oml">risk_score : float = calc(read(simple_port) * 0.1 + digit(5));
+status_pct : digit = calc(round((read(num_range) * 100) / digit(1000)));
+bucket : digit = calc(read(simple_port) % 16);
+</code></pre>
+<p><strong>说明</strong>：</p>
+<ul>
+<li>支持 <code>+ - * / %</code> 与 <code>abs/round/floor/ceil</code></li>
+<li>可以混合字段和常量</li>
+<li><code>/</code> 返回 <code>float</code>，<code>%</code> 仅支持整数</li>
+<li>除零、字段缺失、非数值输入、整数溢出、<code>NaN/inf</code> 都会得到 <code>ignore</code></li>
+</ul>
+<hr>
+<h3 id="4-静态字典与查表"><a class="header" href="#4-静态字典与查表">4. 静态字典与查表</a></h3>
+<pre><code class="language-oml">static {
+    status_score = object {
+        success = float(20.0);
+        warning = float(70.0);
+        error = float(90.0);
+    };
+}
+
+status_score_v2 : float = lookup_nocase(status_score, read(status), 40.0);
+</code></pre>
+<p>这适合把状态、等级等字符串映射到固定分值，且不区分大小写。</p>
+<hr>
+<h3 id="5-模式匹配"><a class="header" href="#5-模式匹配">5. 模式匹配</a></h3>
+<h4 id="51-单源-match"><a class="header" href="#51-单源-match">5.1 单源 match</a></h4>
 <p>基于单个字段的值进行匹配：</p>
 <pre><code class="language-oml">match_chars = match read(option:[match_chars]) {
     chars(left) =&gt; chars(1);
@@ -468,22 +539,22 @@ current_hour = Now::hour();  // 2025122912
     chars(right) =&gt; chars(3);
 };
 </code></pre>
-<h4 id="32-范围判断"><a class="header" href="#32-范围判断">3.2 范围判断</a></h4>
+<h4 id="52-范围判断"><a class="header" href="#52-范围判断">5.2 范围判断</a></h4>
 <p>使用 <code>in</code> 操作符判断范围：</p>
 <pre><code class="language-oml">num_range = match read(option:[num_range]) {
     in (digit(0), digit(1000)) =&gt; read(num_range);
     _ =&gt; digit(0);
 };
 </code></pre>
-<h4 id="33-双源-match"><a class="header" href="#33-双源-match">3.3 双源 match</a></h4>
-<p>匹配两个字段的组合：</p>
+<h4 id="53-多源-match"><a class="header" href="#53-多源-match">5.3 多源 match</a></h4>
+<p>匹配多个字段的组合（支持 2 个及以上源字段）：</p>
 <pre><code class="language-oml">location : chars = match (read(city1), read(city2)) {
     (chars(beijing), chars(shanghai)) =&gt; chars(east_region);
     (chars(chengdu), chars(chongqing)) =&gt; chars(west_region);
     _ =&gt; chars(unknown_region);
 };
 </code></pre>
-<h4 id="34-否定条件"><a class="header" href="#34-否定条件">3.4 否定条件</a></h4>
+<h4 id="54-否定条件"><a class="header" href="#54-否定条件">5.4 否定条件</a></h4>
 <p>使用 <code>!</code> 操作符进行否定匹配：</p>
 <pre><code class="language-oml">valid_status = match read(status) {
     !chars(error) =&gt; chars(ok);
@@ -491,7 +562,7 @@ current_hour = Now::hour();  // 2025122912
     _ =&gt; chars(unknown);
 };
 </code></pre>
-<h4 id="35-布尔类型-match"><a class="header" href="#35-布尔类型-match">3.5 布尔类型 match</a></h4>
+<h4 id="55-布尔类型-match"><a class="header" href="#55-布尔类型-match">5.5 布尔类型 match</a></h4>
 <p>匹配布尔值：</p>
 <pre><code class="language-oml">is_enabled : digit = match read(enabled) {
     bool(true) =&gt; digit(1);
@@ -499,36 +570,59 @@ current_hour = Now::hour();  // 2025122912
     _ =&gt; digit(-1);
 };
 </code></pre>
+<h4 id="56-or-条件匹配"><a class="header" href="#56-or-条件匹配">5.6 OR 条件匹配</a></h4>
+<p>使用 <code>|</code> 分隔多个备选条件，任一匹配即成功：</p>
+<pre><code class="language-oml">city_tier : chars = match read(city1) {
+    chars(beijing) | chars(shanghai) | chars(guangzhou) =&gt; chars(tier1);
+    chars(chengdu) | chars(wuhan) =&gt; chars(tier2);
+    _ =&gt; chars(other);
+};
+</code></pre>
+<h4 id="57-多源--or-组合匹配"><a class="header" href="#57-多源--or-组合匹配">5.7 多源 + OR 组合匹配</a></h4>
+<p>多源 match 的每个条件位置都支持 OR：</p>
+<pre><code class="language-oml">priority : chars = match (read(city1), read(status)) {
+    (chars(beijing) | chars(shanghai), chars(success)) =&gt; chars(high);
+    (chars(chengdu), chars(success) | chars(pending)) =&gt; chars(medium);
+    _ =&gt; chars(low);
+};
+</code></pre>
+<h4 id="58-忽略大小写多值匹配"><a class="header" href="#58-忽略大小写多值匹配">5.8 忽略大小写多值匹配</a></h4>
+<pre><code class="language-oml">status_class = match read(status) {
+    iequals_any('success', 'ok', 'done') =&gt; chars(good);
+    iequals_any('error', 'failed', 'timeout') =&gt; chars(bad);
+    _ =&gt; chars(other);
+};
+</code></pre>
 <hr>
-<h3 id="4-管道函数"><a class="header" href="#4-管道函数">4. 管道函数</a></h3>
-<h4 id="41-时间转换"><a class="header" href="#41-时间转换">4.1 时间转换</a></h4>
+<h3 id="6-管道函数"><a class="header" href="#6-管道函数">6. 管道函数</a></h3>
+<h4 id="61-时间转换"><a class="header" href="#61-时间转换">6.1 时间转换</a></h4>
 <pre><code class="language-oml">timestamp_zone = pipe read(timestamp_zone) | Time::to_ts_zone(0, ms);  // UTC 毫秒
 timestamp_s = pipe read(timestamp_zone) | Time::to_ts;                 // 秒级
 timestamp_ms = pipe @current_time | Time::to_ts_ms;                    // 毫秒级
 timestamp_us = pipe @current_time | Time::to_ts_us;                    // 微秒级
 timestamp_zone_8 = pipe @current_time | Time::to_ts_zone(8, s);        // UTC+8
 </code></pre>
-<h4 id="42-编码解码"><a class="header" href="#42-编码解码">4.2 编码/解码</a></h4>
+<h4 id="62-编码解码"><a class="header" href="#62-编码解码">6.2 编码/解码</a></h4>
 <pre><code class="language-oml">base64_decoded = pipe read(base64) | base64_decode(Utf8);
 base64_encoded = pipe read(base64) | base64_encode;
 </code></pre>
-<h4 id="43-转义反转义"><a class="header" href="#43-转义反转义">4.3 转义/反转义</a></h4>
+<h4 id="63-转义反转义"><a class="header" href="#63-转义反转义">6.3 转义/反转义</a></h4>
 <pre><code class="language-oml">html_escaped = pipe read(html) | html_escape;
 html_unescaped = pipe read(html) | html_unescape;
 json_escaped = pipe read(json_escape) | json_escape;
 json_unescaped = pipe @json_escaped | json_unescape;
 str_escaped = pipe read(str) | str_escape;
 </code></pre>
-<h4 id="44-数据转换"><a class="header" href="#44-数据转换">4.4 数据转换</a></h4>
+<h4 id="64-数据转换"><a class="header" href="#64-数据转换">6.4 数据转换</a></h4>
 <pre><code class="language-oml">to_str_result = pipe read(str) | to_str;
 array_json = pipe read(array_str) | to_json;
 ip_to_int = pipe read(simple_ip) | ip4_to_int;
 </code></pre>
-<h4 id="45-集合操作"><a class="header" href="#45-集合操作">4.5 集合操作</a></h4>
+<h4 id="65-集合操作"><a class="header" href="#65-集合操作">6.5 集合操作</a></h4>
 <pre><code class="language-oml">array_first = pipe read(array_str) | nth(0);           // 获取第 0 个元素
 obj_nested = pipe read(obj) | nth(0) | get(one/two);   // 嵌套取值
 </code></pre>
-<h4 id="46-数据提取"><a class="header" href="#46-数据提取">4.6 数据提取</a></h4>
+<h4 id="66-数据提取"><a class="header" href="#66-数据提取">6.6 数据提取</a></h4>
 <pre><code class="language-oml">file_name = pipe read(path) | path(name);      // file.txt
 file_path = pipe read(path) | path(path);      // /home/user
 url_domain = pipe read(url) | url(domain);     // example.com
@@ -537,34 +631,34 @@ url_uri = pipe read(url) | url(uri);           // /path/to/resource?foo=1&amp;ba
 url_path = pipe read(url) | url(path);         // /path/to/resource
 url_params = pipe read(url) | url(params);     // foo=1&amp;bar=2
 </code></pre>
-<h4 id="47-控制函数"><a class="header" href="#47-控制函数">4.7 控制函数</a></h4>
+<h4 id="67-控制函数"><a class="header" href="#67-控制函数">6.7 控制函数</a></h4>
 <pre><code class="language-oml">skip_empty_result = pipe read(empty_chars) | skip_empty;  // 跳过空值
 </code></pre>
-<h4 id="48-简化语法"><a class="header" href="#48-简化语法">4.8 简化语法</a></h4>
+<h4 id="68-简化语法"><a class="header" href="#68-简化语法">6.8 简化语法</a></h4>
 <p>省略 <code>pipe</code> 关键字：</p>
 <pre><code class="language-oml">simple_transform = read(data) | to_json;
 chained_ops = read(array_data) | nth(0) | to_str;
 url_extract = read(url_field) | url(domain);
 </code></pre>
-<h4 id="49-链式操作"><a class="header" href="#49-链式操作">4.9 链式操作</a></h4>
+<h4 id="69-链式操作"><a class="header" href="#69-链式操作">6.9 链式操作</a></h4>
 <pre><code class="language-oml">nested_extract = pipe read(complex_obj) | nth(0) | get(level1/level2/level3);
 multi_transform = pipe read(raw_data) | base64_decode(Utf8) | to_json;
 </code></pre>
 <hr>
-<h3 id="5-字符串操作"><a class="header" href="#5-字符串操作">5. 字符串操作</a></h3>
+<h3 id="7-字符串操作"><a class="header" href="#7-字符串操作">7. 字符串操作</a></h3>
 <p>格式化字符串：</p>
 <pre><code class="language-oml">splice = fmt("{one}:{two}|{three}:{four}", read(one), read(two), read(three), read(four));
 // 输出：foo:bar|baz:qux
 </code></pre>
 <hr>
-<h3 id="6-对象与数组"><a class="header" href="#6-对象与数组">6. 对象与数组</a></h3>
-<h4 id="61-对象创建"><a class="header" href="#61-对象创建">6.1 对象创建</a></h4>
+<h3 id="8-对象与数组"><a class="header" href="#8-对象与数组">8. 对象与数组</a></h3>
+<h4 id="81-对象创建"><a class="header" href="#81-对象创建">8.1 对象创建</a></h4>
 <p>聚合多个字段为对象：</p>
 <pre><code class="language-oml">extends = object {
     extend1, extend2 = read();
 };
 </code></pre>
-<h4 id="62-数组收集"><a class="header" href="#62-数组收集">6.2 数组收集</a></h4>
+<h4 id="82-数组收集"><a class="header" href="#82-数组收集">8.2 数组收集</a></h4>
 <p>收集多个字段为数组：</p>
 <pre><code class="language-oml">collected_ports : array = collect read(keys:[sport, dport, extra_port]);
 // 输出：[8080, 9090, ...]
@@ -592,7 +686,9 @@ wildcard_items : array = collect take(keys:[details[*]/process_name]);
 <ul>
 <li>✅ 基础操作：字面量、取值、默认值、通配符</li>
 <li>✅ 内置函数：时间函数</li>
-<li>✅ 模式匹配：单源、双源、范围、否定、布尔</li>
+<li>✅ 数值表达式：<code>calc(...)</code>、取整、分桶、比例计算</li>
+<li>✅ 静态字典查表：<code>lookup_nocase(...)</code></li>
+<li>✅ 模式匹配：单源、多源（任意数量）、范围、否定、布尔、OR 条件、<code>iequals_any(...)</code></li>
 <li>✅ 管道函数：时间、编解码、转义、转换、集合、提取</li>
 <li>✅ 字符串操作：格式化</li>
 <li>✅ 对象与数组：聚合、收集</li>
@@ -613,11 +709,11 @@ wildcard_items : array = collect take(keys:[details[*]/process_name]);
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../10-user/04-oml/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../10-user/04-oml/06-grammar-reference.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../10-user/04-oml/01-quickstart.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../10-user/04-oml/functions/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -627,11 +723,11 @@ wildcard_items : array = collect take(keys:[details[*]/process_name]);
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../10-user/04-oml/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../10-user/04-oml/06-grammar-reference.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../10-user/04-oml/01-quickstart.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../10-user/04-oml/functions/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

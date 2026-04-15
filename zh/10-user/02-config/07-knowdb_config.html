@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-24666759.js";
+            window.path_to_searchindex_js = "../../searchindex-ed04a91f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-ca145d02.js"></script>
+        <script src="../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -191,8 +191,8 @@
 <li>安全：运行期只允许访问配置里声明过的表名；SQL 仅支持 {table} 占位符</li>
 <li>默认可用：多数字段可省略，内置默认值与自动探测能满足常见场景</li>
 </ul>
-<p>目录布局（推荐）</p>
-<pre><code>models/knowledge/
+<p>目录布局（推荐，默认位于 <code>${models.knowledge}</code>）</p>
+<pre><code>${models.knowledge}/
   knowdb.toml                     # 本配置
   example/
     create.sql
@@ -203,12 +203,12 @@
     insert.sql
     data.csv
 </code></pre>
-<p>顶层配置（models/knowledge/knowdb.toml）</p>
+<p>顶层配置（<code>${models.knowledge}/knowdb.toml</code>）</p>
 <pre><code class="language-toml">version = 2
 
 [[tables]]
 name = "example"
-# dir 省略时等于 name；此示例即使用目录 models/knowledge/example
+# dir 省略时等于 name；此示例即使用目录 ${models.knowledge}/example
 # data_file 省略时使用表目录下的 data.csv
 columns.by_header = ["name", "pinying"]
 
@@ -250,7 +250,7 @@ columns.by_header = ["name", "pinying"]
 <ol>
 <li>目录</li>
 </ol>
-<pre><code>models/knowledge/knowdb.toml
+<pre><code>${models.knowledge}/knowdb.toml
 models/knowledge/example/{create.sql, insert.sql, data.csv}
 </code></pre>
 <ol start="2">
@@ -366,7 +366,7 @@ LIMIT 5;
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../10-user/02-config/06-wpgen.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../10-user/02-config/06-semantic_dict.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
@@ -380,7 +380,7 @@ LIMIT 5;
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../10-user/02-config/06-wpgen.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../10-user/02-config/06-semantic_dict.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 

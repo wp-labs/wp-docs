@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>快速入门 - Warp Parse 文档</title>
+        <title>OML 快速入门 - Warp Parse 文档</title>
 
 
         <!-- Custom HTML head -->
@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-24666759.js";
+            window.path_to_searchindex_js = "../../searchindex-ed04a91f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-ca145d02.js"></script>
+        <script src="../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -196,6 +196,7 @@
 <tr><td><a href="#最小示例">最小示例</a></td><td>5 行代码上手</td></tr>
 <tr><td><a href="#基本语法">基本语法</a></td><td>配置结构、WPL 关联、语法规则</td></tr>
 <tr><td><a href="#三个最常用操作">三个最常用操作</a></td><td>读取字段、类型转换、数据聚合</td></tr>
+<tr><td><a href="#常见数值计算">常见数值计算</a></td><td><code>calc(...)</code> 算术表达式</td></tr>
 <tr><td><a href="#常用数据类型">常用数据类型</a></td><td>8 种数据类型速查</td></tr>
 <tr><td><a href="#常用内置函数">常用内置函数</a></td><td>时间函数</td></tr>
 <tr><td><a href="#read-vs-take两种读取模式">read vs take</a></td><td>两种读取模式对比</td></tr>
@@ -343,6 +344,23 @@ dport = "443"
 <p><strong>输出</strong>：</p>
 <pre><code>ports = [8080, 443]
 </code></pre>
+<h2 id="常见数值计算"><a class="header" href="#常见数值计算">常见数值计算</a></h2>
+<p><strong>场景</strong>：计算比例、差值、分桶、取整百分比</p>
+<pre><code class="language-oml">name : calc_example
+---
+risk_score : float = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;
+delta : digit = calc(read(cur) - read(prev)) ;
+error_pct : digit = calc(round((read(err_cnt) * 100) / read(total_cnt))) ;
+bucket : digit = calc(read(uid) % 16) ;
+</code></pre>
+<p><strong>规则</strong>：</p>
+<ul>
+<li>支持 <code>+ - * / %</code></li>
+<li>支持 <code>abs(...)</code>、<code>round(...)</code>、<code>floor(...)</code>、<code>ceil(...)</code></li>
+<li><code>/</code> 始终返回 <code>float</code></li>
+<li><code>%</code> 仅支持整数取模</li>
+<li>除零、字段缺失、非数值输入、整数溢出、<code>NaN/inf</code> 都会返回 <code>ignore</code></li>
+</ul>
 <h2 id="常用数据类型"><a class="header" href="#常用数据类型">常用数据类型</a></h2>
 <div class="table-wrapper">
 <table>
@@ -373,6 +391,7 @@ today : digit = Now::date() ;
 # 获取当前小时（YYYYMMDDHH 格式）
 current_hour : digit = Now::hour() ;
 </code></pre>
+<p>除了 <code>Now::*</code>，也可以使用 <code>calc(...)</code> 执行显式算术表达式；详见 <a href="./04-functions-reference.html#calc">04-functions-reference.md</a>。</p>
 <h2 id="read-vs-take两种读取模式"><a class="header" href="#read-vs-take两种读取模式">read vs take：两种读取模式</a></h2>
 <h3 id="read非破坏性"><a class="header" href="#read非破坏性">read（非破坏性）</a></h3>
 <ul>
@@ -471,7 +490,7 @@ log_entry : obj = object {
 <li><strong>基础操作</strong>：字面量赋值、取值、默认值、通配符批量操作</li>
 <li><strong>内置函数</strong>：<code>Now::time()</code>、<code>Now::date()</code>、<code>Now::hour()</code></li>
 <li><strong>管道函数</strong>：Base64 编解码、HTML 转义、时间转换、URL 解析</li>
-<li><strong>模式匹配</strong>：单源/双源 match、范围判断、否定条件</li>
+<li><strong>模式匹配</strong>：单源/多源 match、范围判断、否定条件、OR 条件</li>
 <li><strong>数据聚合</strong>：对象创建、数组收集</li>
 <li><strong>SQL 集成</strong>：数据库查询和富化</li>
 </ul>
@@ -524,7 +543,7 @@ log_entry : obj = object {
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../10-user/04-oml/07-complete-example.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../10-user/04-oml/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
@@ -538,7 +557,7 @@ log_entry : obj = object {
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../10-user/04-oml/07-complete-example.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../10-user/04-oml/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 

@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-cee6790d.js";
+            window.path_to_searchindex_js = "../../searchindex-bab637e3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-ec81ad47.js"></script>
+        <script src="../../toc-6f276faf.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -186,7 +186,12 @@
 <ul>
 <li>Wparse Runtime Configuration (Main Configuration): wparse.toml (this directory)
 <ul>
-<li><a href="01-wparse_config.html">Wparse Configuration Specification (wparse.toml)</a></li>
+<li><a href="01-wparse.html">Wparse Configuration</a></li>
+</ul>
+</li>
+<li>Secure Variables and Environment Variables
+<ul>
+<li><a href="08-variables_and_sec_key.html">Secure Variables and Environment Variables</a></li>
 </ul>
 </li>
 <li>Sources and Connectors
@@ -197,9 +202,13 @@
 </li>
 <li>Sinks and Connectors
 <ul>
-<li><a href="04-sinks_config.html">Sinks Design and Configuration (Directory-based V2)</a></li>
-<li><a href="03-sinks_minimal.html">Sinks Minimal Runnable Skeleton</a></li>
+<li><a href="03-sinks.html">Sink Configuration</a></li>
 <li>Connectors (sink.d) and route details - see “Design and Configuration”</li>
+</ul>
+</li>
+<li>Wpgen Generator Configuration
+<ul>
+<li><a href="04-wpgen.html">Wpgen Configuration</a></li>
 </ul>
 </li>
 </ul>
@@ -212,6 +221,7 @@
 <ul>
 <li>Use <code>wproj conf init --work-root .</code> to initialize standard directories and templates (conf/, connectors/, and some models directories). If you need a KnowDB template, run <code>wproj knowdb init</code> separately.</li>
 <li>After modifying scenario workflows, it is recommended to run <code>usecase/core/getting_started/case_verify.sh</code> to verify end-to-end output.</li>
+<li>For passwords, tokens, DSNs, and other sensitive values, prefer secure variables instead of writing plaintext directly into routes or connector files.</li>
 </ul>
 
                     </main>

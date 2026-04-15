@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>核心概念 - Warp Parse 文档</title>
+        <title>OML 核心概念 - Warp Parse 文档</title>
 
 
         <!-- Custom HTML head -->
@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-24666759.js";
+            window.path_to_searchindex_js = "../../searchindex-ed04a91f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-ca145d02.js"></script>
+        <script src="../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -194,6 +194,7 @@
 <tr><td><a href="#类型系统"><strong>类型系统</strong></a></td><td>8 种基本类型、自动推断、类型转换</td></tr>
 <tr><td><a href="#读取语义read-vs-take"><strong>读取语义</strong></a></td><td>read vs take、破坏性与非破坏性、读取优先级</td></tr>
 <tr><td><a href="#表达式类型"><strong>表达式类型</strong></a></td><td>值表达式、函数调用、管道、条件、聚合</td></tr>
+<tr><td><a href="#数值表达式calc"><strong>数值表达式</strong></a></td><td>算术语法、类型规则、失败行为</td></tr>
 <tr><td><a href="#默认值机制"><strong>默认值机制</strong></a></td><td>默认值语法、函数默认值、限制说明</td></tr>
 <tr><td><a href="#通配符与批量处理"><strong>通配符</strong></a></td><td>通配符语法、批量目标、使用限制</td></tr>
 <tr><td><a href="#参数化读取"><strong>参数化读取</strong></a></td><td>option 优先级、keys 收集、JSON 路径</td></tr>
@@ -399,6 +400,35 @@ encoded = pipe read(data) | to_json | base64_encode ;
 # 也可以省略 pipe 关键字
 encoded2 = read(data) | to_json | base64_encode ;
 </code></pre>
+<h3 id="数值表达式"><a class="header" href="#数值表达式">数值表达式</a></h3>
+<p>使用 <code>calc(...)</code> 显式执行算术表达式：</p>
+<pre><code class="language-oml">name : calc_expr
+---
+risk_score : float = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;
+bucket     : digit = calc(read(uid) % 16) ;
+distance   : float = calc(abs(read(actual) - read(expect))) ;
+</code></pre>
+<h3 id="数值表达式calc"><a class="header" href="#数值表达式calc">数值表达式：<code>calc(...)</code></a></h3>
+<p><strong>支持范围</strong>：</p>
+<ul>
+<li>运算符：<code>+ - * / %</code></li>
+<li>函数：<code>abs(...)</code>、<code>round(...)</code>、<code>floor(...)</code>、<code>ceil(...)</code></li>
+<li>操作数：数值字面量、<code>read(...)</code>、<code>take(...)</code>、<code>@field</code></li>
+</ul>
+<p><strong>类型规则</strong>：</p>
+<ul>
+<li><code>digit op digit</code> 在 <code>+ - *</code> 下返回 <code>digit</code></li>
+<li>只要任一操作数是浮点，<code>+ - *</code> 返回 <code>float</code></li>
+<li><code>/</code> 始终返回 <code>float</code></li>
+<li><code>%</code> 仅支持 <code>digit % digit</code></li>
+</ul>
+<p><strong>失败行为</strong>：</p>
+<ul>
+<li>除零、缺失字段、非数值输入返回 <code>ignore</code></li>
+<li>整数溢出返回 <code>ignore</code></li>
+<li><code>NaN</code> / <code>inf</code> 输入或结果返回 <code>ignore</code></li>
+</ul>
+<p>这意味着 <code>calc(...)</code> 不会隐式兜底为 <code>0</code>，也不会把非法结果继续传给后续步骤。</p>
 <h3 id="条件表达式"><a class="header" href="#条件表达式">条件表达式</a></h3>
 <p>基于条件选择值：</p>
 <pre><code class="language-oml">name : match_expr
@@ -406,6 +436,22 @@ encoded2 = read(data) | to_json | base64_encode ;
 level = match read(status) {
     in (digit(200), digit(299)) =&gt; chars(success) ;
     in (digit(400), digit(499)) =&gt; chars(error) ;
+    _ =&gt; chars(other) ;
+} ;
+</code></pre>
+<p><code>match</code> 分支值仍然使用既有子表达式集合，不直接写 <code>calc(...)</code>。如果需要先算再匹配，建议先绑定到临时字段：</p>
+<pre><code class="language-oml">__risk_score : float = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;
+level = match read(__risk_score) {
+    gt(80) =&gt; chars(high) ;
+    _ =&gt; chars(normal) ;
+} ;
+</code></pre>
+<p>支持 OR 语法（<code>|</code> 分隔多个备选条件）：</p>
+<pre><code class="language-oml">name : match_or_expr
+---
+tier = match read(city) {
+    chars(bj) | chars(sh) | chars(gz) =&gt; chars(tier1) ;
+    chars(cd) | chars(wh) =&gt; chars(tier2) ;
     _ =&gt; chars(other) ;
 } ;
 </code></pre>
@@ -536,9 +582,23 @@ first_user = read(users) | nth(0) | get(name) ;
 <h3 id="match-中的复杂表达式"><a class="header" href="#match-中的复杂表达式">match 中的复杂表达式</a></h3>
 <pre><code class="language-oml">name : complex_match
 ---
+# 单源 match + collect
 status = match read(code) {
     in (digit(200), digit(299)) =&gt; collect read(keys:[a, b]) ;
     _ =&gt; read(default_value) ;
+} ;
+
+# 多源 match（支持任意数量源字段）
+zone = match (read(city), read(region), read(country)) {
+    (chars(bj), chars(north), chars(cn)) =&gt; chars(zone1) ;
+    _ =&gt; chars(unknown) ;
+} ;
+
+# OR + 多源 match
+priority = match (read(city), read(level)) {
+    (chars(bj) | chars(sh), chars(high)) =&gt; chars(priority) ;
+    (chars(gz), chars(low) | chars(mid)) =&gt; chars(normal) ;
+    _ =&gt; chars(default) ;
 } ;
 </code></pre>
 <h2 id="作用域规则"><a class="header" href="#作用域规则">作用域规则</a></h2>

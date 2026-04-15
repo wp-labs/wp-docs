@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>快速入门 - Warp Parse 文档</title>
+        <title>WPL 快速入门 - Warp Parse 文档</title>
 
 
         <!-- Custom HTML head -->
@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-24666759.js";
+            window.path_to_searchindex_js = "../../searchindex-ed04a91f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-ca145d02.js"></script>
+        <script src="../../toc-536d74fd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -249,8 +249,8 @@
     (
       ip:client_ip,
       2*_,
-      time/clf&lt;[,]&gt;:time,
-      http/request":request,
+      time/clf:time&lt;[,]&gt;,
+      http/request:request",
       digit:status,
       digit:bytes
     )
@@ -405,9 +405,9 @@ http/agent":ua         # "Mozilla/5.0..."
 # 字段级分隔符（优先级更高）
 digit\,, ip\;, chars\s
 </code></pre>
-<h3 id="可选字段"><a class="header" href="#可选字段">可选字段</a></h3>
-<pre><code class="language-wpl">opt(chars)             # 可选字段
-(digit, opt(chars), time)
+<h3 id="可选分组"><a class="header" href="#可选分组">可选分组</a></h3>
+<pre><code class="language-wpl">opt(chars:tag)         # 单字段可选分组
+(digit, time), opt(chars:tag)
 </code></pre>
 <h3 id="base64-解码"><a class="header" href="#base64-解码">Base64 解码</a></h3>
 <pre><code class="language-wpl">|decode/base64|
@@ -429,9 +429,9 @@ digit\,, ip\;, chars\s
 (digit:status, ip:client, json(chars@name))
 </code></pre>
 <h3 id="2-使用-opt-定位问题"><a class="header" href="#2-使用-opt-定位问题">2. 使用 opt() 定位问题</a></h3>
-<pre><code class="language-wpl"># 如果某个字段导致失败，用 opt 包裹
-(digit, opt(ip), time, chars)
-# 如果 ip 解析失败，其他字段仍然可以解析
+<pre><code class="language-wpl"># 如果某个部分导致失败，把它拆成独立分组再用 opt 包裹
+(digit), opt(ip), (time, chars)
+# 如果 ip 解析失败，其他分组仍然可以继续定位问题
 </code></pre>
 <h3 id="3-检查分隔符"><a class="header" href="#3-检查分隔符">3. 检查分隔符</a></h3>
 <p>打印原始数据，确认字段间的分隔符：</p>
@@ -484,7 +484,7 @@ digit\,, ip\;, chars\s
 <pre><code class="language-wpl">package practice {
   rule custom_log {
     (
-      time&lt;[,]&gt;:timestamp,
+      time:timestamp&lt;[,]&gt;,
       _,
       ip:client,
       kvarr
@@ -554,11 +554,11 @@ digit\,, ip\;, chars\s
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../10-user/03-wpl/07-complete-types-example.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../10-user/03-wpl/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../10-user/03-wpl/02-core-concepts.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../10-user/03-wpl/01-wpl_basics.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -568,11 +568,11 @@ digit\,, ip\;, chars\s
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../10-user/03-wpl/07-complete-types-example.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../10-user/03-wpl/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../10-user/03-wpl/02-core-concepts.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../10-user/03-wpl/01-wpl_basics.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

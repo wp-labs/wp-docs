@@ -1,76 +1,89 @@
 (function() {
-    // Detect version from URL path
-    const path = window.location.pathname;
-    let currentVersion = 'stable';
-
-    if (path.includes('/alpha/')) {
-        currentVersion = 'alpha';
-    } else if (path.includes('/beta/')) {
-        currentVersion = 'beta';
+    function isZhPage() {
+        const lang = (document.documentElement.lang || '').toLowerCase();
+        return lang.startsWith('zh');
     }
 
-    // Detect language (zh or en)
-    let currentLang = 'zh';
-    if (path.includes('/en/')) {
-        currentLang = 'en';
-    }
+    function parseDocPath() {
+        const parts = window.location.pathname.split('/').filter(Boolean);
+        const versionIndex = parts.findIndex(part => part === 'alpha' || part === 'beta');
+        const langIndex = parts.findIndex(part => part === 'zh' || part === 'en');
+        const version = versionIndex >= 0 ? parts[versionIndex] : 'stable';
+        const currentLang = isZhPage() ? 'zh' : 'en';
 
-    // Fetch WarpParse version from wp-version.txt
-    const versionPath = currentVersion === 'stable'
-        ? '/wp-version.txt'
-        : `/${currentVersion}/wp-version.txt`;
-
-    fetch(versionPath)
-        .then(response => response.ok ? response.text() : Promise.reject())
-        .then(wpVersion => {
-            wpVersion = wpVersion.trim();
-            renderBanner(wpVersion);
-        })
-        .catch(() => {
-            // Fallback if version file not found
-            renderBanner(null);
-        });
-
-    function renderBanner(wpVersion) {
-        const banner = document.createElement('div');
-        banner.className = `version-banner ${currentVersion}`;
-
-        let badgeText, descText;
-        const isZh = document.documentElement.lang === 'zh-CN';
-
-        if (currentVersion === 'alpha') {
-            badgeText = 'ALPHA';
-            descText = isZh ? '最新开发版 - 包含最新特性' : 'Latest Development Version - Contains newest features';
-        } else if (currentVersion === 'beta') {
-            badgeText = 'BETA';
-            descText = isZh ? '预发布版 - 即将正式发布' : 'Pre-release Version - Coming soon to stable';
-        } else {
-            badgeText = isZh ? '稳定版' : 'STABLE';
-            descText = isZh ? '生产环境推荐使用' : 'Recommended for production';
+        if (langIndex >= 0) {
+            return {
+                baseParts: parts.slice(0, versionIndex >= 0 ? versionIndex : langIndex),
+                version,
+                langInPath: true,
+                currentLang,
+                pageParts: parts.slice(langIndex + 1)
+            };
         }
 
-        // Add version info if available
+        return {
+            baseParts: parts.slice(0, versionIndex >= 0 ? versionIndex : 0),
+            version,
+            langInPath: false,
+            currentLang,
+            pageParts: parts.slice(versionIndex >= 0 ? versionIndex + 1 : 0)
+        };
+    }
+
+    function buildVersionPath(targetVersion, parsed) {
+        const prefix = parsed.baseParts.length ? '/' + parsed.baseParts.join('/') : '';
+        const versionPrefix = targetVersion === 'stable' ? '' : '/' + targetVersion;
+        const page = parsed.pageParts.length ? '/' + parsed.pageParts.join('/') : '/';
+
+        if (!parsed.langInPath) {
+            return targetVersion === parsed.version ? page : '#';
+        }
+
+        return prefix + versionPrefix + '/' + parsed.currentLang + page;
+    }
+
+    function buildVersionFilePath(parsed) {
+        const prefix = parsed.baseParts.length ? '/' + parsed.baseParts.join('/') : '';
+        const versionPrefix = parsed.version === 'stable' ? '' : '/' + parsed.version;
+        return prefix + versionPrefix + '/wp-version.txt';
+    }
+
+    const parsedPath = parseDocPath();
+
+    fetch(buildVersionFilePath(parsedPath))
+        .then(response => response.ok ? response.text() : Promise.reject())
+        .then(wpVersion => {
+            renderBanner(wpVersion.trim(), parsedPath);
+        })
+        .catch(() => {
+            renderBanner(null, parsedPath);
+        });
+
+    function renderBanner(wpVersion, parsed) {
+        const banner = document.createElement('div');
+        banner.className = `version-banner ${parsed.version}`;
+
+        const isZh = isZhPage();
         const versionInfo = wpVersion
             ? `<span class="version-info">WarpParse ${wpVersion}</span>`
             : '';
 
-        // Build version switcher links
         const versions = [
-            { key: 'stable', label: isZh ? '稳定版' : 'Stable', path: `/${currentLang}/` },
-            { key: 'beta', label: 'Beta', path: `/beta/${currentLang}/` },
-            { key: 'alpha', label: 'Alpha', path: `/alpha/${currentLang}/` }
+            { key: 'stable', label: isZh ? '稳定版' : 'Stable' },
+            { key: 'beta', label: 'Beta' },
+            { key: 'alpha', label: 'Alpha' }
         ];
 
-        const versionLinks = versions.map(v => {
-            const currentClass = v.key === currentVersion ? ' current' : '';
-            return `<a href="${v.path}" class="version-link${currentClass}">${v.label}</a>`;
+        const versionLinks = versions.map(version => {
+            const currentClass = version.key === parsed.version ? ' current' : '';
+            const disabledClass = parsed.langInPath ? '' : ' disabled';
+            const href = buildVersionPath(version.key, parsed);
+            return `<a href="${href}" class="version-link${currentClass}${disabledClass}">${version.label}</a>`;
         }).join('');
 
         banner.innerHTML = `
             <div class="banner-content">
-                <span class="badge">${badgeText}</span>
                 ${versionInfo}
-                <span class="desc-text">${descText}</span>
                 <div class="version-switcher">
                     ${versionLinks}
                 </div>

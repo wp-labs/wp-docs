@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-85a3c702.js";
+            window.path_to_searchindex_js = "../searchindex-b6c32c8b.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-ef032d5b.js"></script>
+        <script src="../toc-83a7073e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -201,7 +201,7 @@
 <ul>
 <li>统一执行同步逻辑。</li>
 <li>优先支持本地目录调试，也支持在 CI 中直接 <code>git clone</code> 上游仓库。</li>
-<li>同步策略默认只做“新增 + 更新”，不主动删除目标目录中的文件，降低误删风险。</li>
+<li>同步策略默认只做“新增 + 更新”；但可以按 source/mapping 显式开启 <code>clean</code>，先清理目标目录，再同步权威内容。</li>
 </ul>
 </li>
 <li><code>.github/workflows/sync-docs.yml</code>
@@ -277,7 +277,6 @@
 <h2 id="后续扩展建议"><a class="header" href="#后续扩展建议">后续扩展建议</a></h2>
 <p>后续如果来源继续增多，建议按下面的优先级扩展：</p>
 <ol>
-<li>增加 <code>delete = true/false</code> 的显式配置，逐个来源决定是否允许删除目标中的陈旧文件。</li>
 <li>增加“路径白名单校验”，限制目标目录只能写入 <code>docs-zh/</code>、<code>docs-en/</code> 下的受控区域。</li>
 <li>在同步后增加 Markdown lint、链接检查和 mdBook build，确保 PR 在合并前可直接发布。</li>
 <li>为每个来源记录最后同步的 commit SHA，并在 PR 描述中输出“从哪个上游版本同步到了哪个版本”。</li>
@@ -293,9 +292,6 @@
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../10-user/10-monitor/Wp-Monitor.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
-                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -307,9 +303,6 @@
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../10-user/10-monitor/Wp-Monitor.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
-                    </a>
             </nav>
 
         </div>

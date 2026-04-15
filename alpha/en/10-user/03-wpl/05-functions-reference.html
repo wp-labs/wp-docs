@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-1022f77b.js";
+            window.path_to_searchindex_js = "../../searchindex-e2db798c.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-b767c1fa.js"></script>
+        <script src="../../toc-b42c54c5.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -179,14 +179,390 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="wpl-functions-reference"><a class="header" href="#wpl-functions-reference">WPL Functions Reference</a></h1>
-<p>The detailed English translation is not complete yet.</p>
-<p>For the full reference, see:</p>
+                        <h1 id="wpl-functions-reference-aligned-with-srcparserwpl_funrs-and-srcevalbuiltins"><a class="header" href="#wpl-functions-reference-aligned-with-srcparserwpl_funrs-and-srcevalbuiltins">WPL Functions Reference (aligned with <code>src/parser/wpl_fun.rs</code> and <code>src/eval/builtins</code>)</a></h1>
+<p>This document describes only functions that are implemented in the current codebase. Outdated signatures have been removed.</p>
+<p>Authoritative implementation:</p>
 <ul>
-<li>Chinese index: <a href="../zh/05-functions-reference.html">../zh/05-functions-reference.md</a></li>
-<li>English function pages: <a href="./functions/">functions/</a></li>
+<li><code>src/parser/wpl_fun.rs</code></li>
+<li><code>src/ast/processor/function.rs</code></li>
+<li><code>src/eval/builtins/pipe_fun.rs</code></li>
+<li><code>src/eval/builtins/mod.rs</code></li>
 </ul>
-<p>When the function behavior affects syntax, treat <a href="./06-grammar-reference.html">06-grammar-reference.md</a> as the authoritative source.</p>
+<hr>
+<h2 id="quick-reference"><a class="header" href="#quick-reference">Quick Reference</a></h2>
+<h3 id="preprocess-pipeline"><a class="header" href="#preprocess-pipeline">Preprocess pipeline</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Name</th><th>Behavior</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td><code>decode/base64</code></td><td>Base64-decodes the whole input line</td><td>Built-in</td></tr>
+<tr><td><code>decode/hex</code></td><td>Hex-decodes the whole input line</td><td>Built-in</td></tr>
+<tr><td><code>unquote/unescape</code></td><td>Applies quote / escape processing to the whole input line</td><td>Built-in</td></tr>
+<tr><td><code>strip/bom</code></td><td>Removes UTF BOM from the beginning of the input</td><td>Built-in</td></tr>
+<tr><td><code>json_like</code></td><td>Passes through only inputs that look like JSON</td><td>Built-in</td></tr>
+<tr><td><code>plg_pipe/&lt;name&gt;</code></td><td>Calls a registered custom preprocess stage</td><td><code>plg_pipe(name)</code> also works</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="selectors"><a class="header" href="#selectors">Selectors</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Function</th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td><code>take(field)</code></td><td>Selects a specific field as the active field</td></tr>
+<tr><td><code>last()</code></td><td>Selects the last field as the active field</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="target-field-functions-f_-prefix"><a class="header" href="#target-field-functions-f_-prefix">Target-field functions (<code>f_</code> prefix)</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Function</th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td><code>f_has(name)</code></td><td>Succeeds if the target field exists</td></tr>
+<tr><td><code>f_chars_has(name, value)</code></td><td>Succeeds if the target field equals a string</td></tr>
+<tr><td><code>f_chars_not_has(name, value)</code></td><td>Succeeds if the target field does not equal a string</td></tr>
+<tr><td><code>f_chars_in(name, [...])</code></td><td>Succeeds if the target field is in a string set</td></tr>
+<tr><td><code>f_digit_has(name, number)</code></td><td>Succeeds if the target field equals a number</td></tr>
+<tr><td><code>f_digit_in(name, [...])</code></td><td>Succeeds if the target field is in a numeric set</td></tr>
+<tr><td><code>f_ip_in(name, [...])</code></td><td>Succeeds if the target field is in an IP set</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="active-field-functions"><a class="header" href="#active-field-functions">Active-field functions</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Function</th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td><code>has()</code></td><td>Succeeds if the active field exists</td></tr>
+<tr><td><code>chars_has(value)</code></td><td>Succeeds if the active field equals a string</td></tr>
+<tr><td><code>chars_not_has(value)</code></td><td>Succeeds if the active field does not equal a string</td></tr>
+<tr><td><code>chars_in([...])</code></td><td>Succeeds if the active field is in a string set</td></tr>
+<tr><td><code>digit_has(number)</code></td><td>Succeeds if the active field equals a number</td></tr>
+<tr><td><code>digit_in([...])</code></td><td>Succeeds if the active field is in a numeric set</td></tr>
+<tr><td><code>digit_range(begin, end)</code></td><td>Succeeds if the active field is within the closed range <code>[begin, end]</code></td></tr>
+<tr><td><code>ip_in([...])</code></td><td>Succeeds if the active field is in an IP set</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="transform-and-match-functions"><a class="header" href="#transform-and-match-functions">Transform and match functions</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Function</th><th>Behavior</th></tr>
+</thead>
+<tbody>
+<tr><td><code>json_unescape()</code></td><td>JSON-unescapes the active string field</td></tr>
+<tr><td><code>base64_decode()</code></td><td>Base64-decodes the active string field</td></tr>
+<tr><td><code>chars_replace(from, to)</code></td><td>Replaces all occurrences in the active string field</td></tr>
+<tr><td><code>regex_match(pattern)</code></td><td>Applies a regex match to the active string field</td></tr>
+<tr><td><code>starts_with(prefix)</code></td><td>Checks a prefix; on mismatch, converts the field to <code>ignore</code></td></tr>
+<tr><td><code>not(inner_fun)</code></td><td>Inverts success / failure of the inner field function</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="preprocess-pipeline-1"><a class="header" href="#preprocess-pipeline-1">Preprocess Pipeline</a></h2>
+<h3 id="decodebase64"><a class="header" href="#decodebase64"><code>decode/base64</code></a></h3>
+<p>Applies Base64 decoding to the whole input line.</p>
+<pre><code class="language-wpl">rule demo {
+  |decode/base64|
+  (chars:payload)
+}
+</code></pre>
+<p>Notes:</p>
+<ul>
+<li>It operates on the raw input line, not on an individual field</li>
+<li>If decoding fails, the current rule fails</li>
+</ul>
+<h3 id="decodehex"><a class="header" href="#decodehex"><code>decode/hex</code></a></h3>
+<p>Applies hexadecimal decoding to the whole input line.</p>
+<pre><code class="language-wpl">rule demo {
+  |decode/hex|
+  (chars:payload)
+}
+</code></pre>
+<h3 id="unquoteunescape"><a class="header" href="#unquoteunescape"><code>unquote/unescape</code></a></h3>
+<p>Applies quote / escape processing to the whole input line.</p>
+<pre><code class="language-wpl">rule demo {
+  |unquote/unescape|
+  (chars:message)
+}
+</code></pre>
+<h3 id="stripbom"><a class="header" href="#stripbom"><code>strip/bom</code></a></h3>
+<p>Removes BOM from the beginning of the input.</p>
+<pre><code class="language-wpl">rule demo {
+  |strip/bom|
+  (json(chars@msg))
+}
+</code></pre>
+<h3 id="json_like"><a class="header" href="#json_like"><code>json_like</code></a></h3>
+<p>Allows only text that looks like JSON to continue.</p>
+<pre><code class="language-wpl">rule maybe_bad_json {
+  |json_like|
+  (bad_json:raw)
+}
+</code></pre>
+<p>Notes:</p>
+<ul>
+<li>This is a lightweight filter, not a full JSON parse</li>
+<li>The current implementation treats input as JSON-like only if:
+<ul>
+<li>after trimming leading whitespace/BOM it starts with <code>{</code> and contains both <code>:</code> and <code>"</code></li>
+<li>after trimming leading whitespace/BOM it starts with <code>[</code> and contains <code>,</code>, <code>]</code>, or <code>{</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="plg_pipename--plg_pipename"><a class="header" href="#plg_pipename--plg_pipename"><code>plg_pipe/&lt;name&gt;</code> / <code>plg_pipe(name)</code></a></h3>
+<p>Calls a custom preprocess stage registered in the pipeline registry.</p>
+<pre><code class="language-wpl">rule demo {
+  |plg_pipe/dayu|
+  (chars:data)
+}
+</code></pre>
+<p>Notes:</p>
+<ul>
+<li><code>plg_pipe(name)</code> is normalized to <code>plg_pipe/name</code> after parsing</li>
+<li>Availability depends on whether that stage is registered at runtime</li>
+</ul>
+<hr>
+<h2 id="selectors-1"><a class="header" href="#selectors-1">Selectors</a></h2>
+<h3 id="takefield"><a class="header" href="#takefield"><code>take(field)</code></a></h3>
+<p>Sets the specified field as the active field.</p>
+<pre><code class="language-wpl">rule demo {
+  (
+    json(chars@name, digit@age)
+    |take(name)
+    |chars_has(admin)
+  )
+}
+</code></pre>
+<p>Supported argument forms:</p>
+<ul>
+<li>bare field names: <code>take(name)</code></li>
+<li>double-quoted strings: <code>take("@special")</code></li>
+<li>single-quoted strings: <code>take('@special')</code></li>
+</ul>
+<p>Failure condition:</p>
+<ul>
+<li>the target field does not exist</li>
+</ul>
+<h3 id="last"><a class="header" href="#last"><code>last()</code></a></h3>
+<p>Sets the last field as the active field.</p>
+<pre><code class="language-wpl">rule demo {
+  (
+    json(chars@a, chars@b, chars@c)
+    |last()
+    |chars_has(done)
+  )
+}
+</code></pre>
+<p>Failure condition:</p>
+<ul>
+<li>the current field list is empty</li>
+</ul>
+<hr>
+<h2 id="target-field-functions-f_-prefix-1"><a class="header" href="#target-field-functions-f_-prefix-1">Target-field Functions (<code>f_</code> Prefix)</a></h2>
+<p>These functions auto-select the target field by name, so you do not need <code>take(...)</code> first.</p>
+<h3 id="f_hasname"><a class="header" href="#f_hasname"><code>f_has(name)</code></a></h3>
+<p>Succeeds if the target field exists.</p>
+<pre><code class="language-wpl">|f_has(status)|
+</code></pre>
+<h3 id="f_chars_hasname-value"><a class="header" href="#f_chars_hasname-value"><code>f_chars_has(name, value)</code></a></h3>
+<p>Succeeds if the target field is <code>Chars</code> and equals <code>value</code>.</p>
+<pre><code class="language-wpl">|f_chars_has(status, success)|
+</code></pre>
+<p>Notes:</p>
+<ul>
+<li>The first argument supports <code>_</code>, meaning the current active field</li>
+<li>The second argument is currently parsed as a bare string and is best used with simple values like <code>success</code> or <code>GET</code></li>
+</ul>
+<h3 id="f_chars_not_hasname-value"><a class="header" href="#f_chars_not_hasname-value"><code>f_chars_not_has(name, value)</code></a></h3>
+<p>Also succeeds when the field does not exist; it fails only when the field exists and exactly equals <code>value</code>.</p>
+<pre><code class="language-wpl">|f_chars_not_has(level, error)|
+</code></pre>
+<p>This is intentionally more permissive than a strict “missing means failure” predicate.</p>
+<h3 id="f_chars_inname-"><a class="header" href="#f_chars_inname-"><code>f_chars_in(name, [...])</code></a></h3>
+<p>Succeeds if the target field is <code>Chars</code> and belongs to the provided string array.</p>
+<pre><code class="language-wpl">|f_chars_in(method, [GET, POST, PUT])|
+</code></pre>
+<h3 id="f_digit_hasname-number"><a class="header" href="#f_digit_hasname-number"><code>f_digit_has(name, number)</code></a></h3>
+<p>Succeeds if the target field is <code>Digit</code> and equals the provided number.</p>
+<pre><code class="language-wpl">|f_digit_has(code, 200)|
+</code></pre>
+<h3 id="f_digit_inname-"><a class="header" href="#f_digit_inname-"><code>f_digit_in(name, [...])</code></a></h3>
+<p>Succeeds if the target field is <code>Digit</code> and belongs to the provided number array.</p>
+<pre><code class="language-wpl">|f_digit_in(code, [200, 201, 204])|
+</code></pre>
+<h3 id="f_ip_inname-"><a class="header" href="#f_ip_inname-"><code>f_ip_in(name, [...])</code></a></h3>
+<p>Succeeds if the target field is <code>IpAddr</code> and belongs to the provided IP array.</p>
+<pre><code class="language-wpl">|f_ip_in(client_ip, [127.0.0.1, ::1])|
+</code></pre>
+<p>Notes:</p>
+<ul>
+<li>Both IPv4 and IPv6 are supported</li>
+</ul>
+<hr>
+<h2 id="active-field-functions-1"><a class="header" href="#active-field-functions-1">Active-field Functions</a></h2>
+<p>These functions operate directly on the current active field. They are usually used after <code>take(...)</code> or <code>last()</code>.</p>
+<h3 id="has"><a class="header" href="#has"><code>has()</code></a></h3>
+<p>Succeeds if the active field exists.</p>
+<pre><code class="language-wpl">|take(name)|has()|
+</code></pre>
+<h3 id="chars_hasvalue"><a class="header" href="#chars_hasvalue"><code>chars_has(value)</code></a></h3>
+<p>Succeeds if the active field is <code>Chars</code> and equals <code>value</code>.</p>
+<pre><code class="language-wpl">|take(status)|chars_has(success)|
+</code></pre>
+<h3 id="chars_not_hasvalue"><a class="header" href="#chars_not_hasvalue"><code>chars_not_has(value)</code></a></h3>
+<p>Also succeeds when the active field does not exist; it fails only when the field exists and equals <code>value</code>.</p>
+<pre><code class="language-wpl">|take(level)|chars_not_has(error)|
+</code></pre>
+<h3 id="chars_in"><a class="header" href="#chars_in"><code>chars_in([...])</code></a></h3>
+<p>Succeeds if the active field is <code>Chars</code> and belongs to the provided string array.</p>
+<pre><code class="language-wpl">|take(method)|chars_in([GET, POST])|
+</code></pre>
+<h3 id="digit_hasnumber"><a class="header" href="#digit_hasnumber"><code>digit_has(number)</code></a></h3>
+<p>Succeeds if the active field is <code>Digit</code> and equals the provided number.</p>
+<pre><code class="language-wpl">|take(code)|digit_has(200)|
+</code></pre>
+<h3 id="digit_in"><a class="header" href="#digit_in"><code>digit_in([...])</code></a></h3>
+<p>Succeeds if the active field is <code>Digit</code> and belongs to the provided number array.</p>
+<pre><code class="language-wpl">|take(code)|digit_in([200, 201, 204])|
+</code></pre>
+<h3 id="digit_rangebegin-end"><a class="header" href="#digit_rangebegin-end"><code>digit_range(begin, end)</code></a></h3>
+<p>Succeeds if the active field is <code>Digit</code> and falls within the closed range <code>[begin, end]</code>.</p>
+<pre><code class="language-wpl">|take(code)|digit_range(200, 299)|
+</code></pre>
+<p>Notes:</p>
+<ul>
+<li>There is currently only the active-field version; there is no <code>f_digit_range(...)</code></li>
+</ul>
+<h3 id="ip_in"><a class="header" href="#ip_in"><code>ip_in([...])</code></a></h3>
+<p>Succeeds if the active field is an IP value and belongs to the provided list.</p>
+<pre><code class="language-wpl">|take(client_ip)|ip_in([127.0.0.1, ::1])|
+</code></pre>
+<hr>
+<h2 id="transform-and-match-functions-1"><a class="header" href="#transform-and-match-functions-1">Transform and Match Functions</a></h2>
+<h3 id="json_unescape"><a class="header" href="#json_unescape"><code>json_unescape()</code></a></h3>
+<p>Applies JSON unescaping to the active string field.</p>
+<pre><code class="language-wpl">|take(message)|json_unescape()|
+</code></pre>
+<p>Behavior:</p>
+<ul>
+<li>Only works on <code>Chars</code></li>
+<li>If the field contains no backslash, it succeeds immediately</li>
+<li>It fails on invalid JSON escape sequences</li>
+</ul>
+<h3 id="base64_decode"><a class="header" href="#base64_decode"><code>base64_decode()</code></a></h3>
+<p>Applies Base64 decoding to the active string field.</p>
+<pre><code class="language-wpl">|take(payload)|base64_decode()|
+</code></pre>
+<p>Behavior:</p>
+<ul>
+<li>Only works on <code>Chars</code></li>
+<li>It fails if decoding fails or if the decoded bytes are not valid UTF-8</li>
+</ul>
+<h3 id="chars_replacefrom-to"><a class="header" href="#chars_replacefrom-to"><code>chars_replace(from, to)</code></a></h3>
+<p>Executes <code>String::replace(from, to)</code> on the active string field.</p>
+<pre><code class="language-wpl">|take(message)|chars_replace(old, new)|
+|take(message)|chars_replace("hello world", "hi")|
+</code></pre>
+<p>Supported argument forms:</p>
+<ul>
+<li>bare strings</li>
+<li>single-quoted or double-quoted strings</li>
+</ul>
+<p>Notes:</p>
+<ul>
+<li>This replaces all occurrences, not just the first one</li>
+<li>If <code>from</code> is an empty string, <code>to</code> is inserted at every character boundary</li>
+</ul>
+<h3 id="regex_matchpattern"><a class="header" href="#regex_matchpattern"><code>regex_match(pattern)</code></a></h3>
+<p>Applies a regex match to the active string field.</p>
+<pre><code class="language-wpl">|take(email)|regex_match('^\\w+@\\w+\\.\\w+$')|
+</code></pre>
+<p>Supported argument forms:</p>
+<ul>
+<li>bare strings</li>
+<li>single-quoted or double-quoted strings</li>
+<li>regex syntax is compiled by Rust’s <code>regex</code> crate</li>
+</ul>
+<p>Failure conditions:</p>
+<ul>
+<li>there is no active field</li>
+<li>the active field is not a string</li>
+<li>the regex is invalid</li>
+<li>the regex does not match</li>
+</ul>
+<h3 id="starts_withprefix"><a class="header" href="#starts_withprefix"><code>starts_with(prefix)</code></a></h3>
+<p>Checks whether the active string field starts with the given prefix.</p>
+<pre><code class="language-wpl">|take(path)|starts_with('/api/')|
+</code></pre>
+<p>Supported argument forms:</p>
+<ul>
+<li>bare strings</li>
+<li>single-quoted or double-quoted strings</li>
+</ul>
+<p>Important current behavior:</p>
+<ul>
+<li>If the field is a string and starts with the prefix, it succeeds and keeps the field unchanged</li>
+<li>If the field is not a string, or the prefix does not match, it does not fail; instead it converts the field to <code>ignore</code> and returns success</li>
+</ul>
+<p>So <code>starts_with(...)</code> currently behaves more like “filter out the field” than “strictly assert failure”.</p>
+<h3 id="notinner_fun"><a class="header" href="#notinner_fun"><code>not(inner_fun)</code></a></h3>
+<p>Inverts success / failure of the wrapped inner field function.</p>
+<pre><code class="language-wpl">|not(chars_has(error))|
+|not(f_chars_has(level, error))|
+</code></pre>
+<p>Notes:</p>
+<ul>
+<li>It can wrap only field functions</li>
+<li>It cannot wrap selector functions such as <code>not(take(name))</code></li>
+<li>It reuses the inner function’s auto-selection logic</li>
+</ul>
+<hr>
+<h2 id="usage-guidance"><a class="header" href="#usage-guidance">Usage Guidance</a></h2>
+<h3 id="target-field-vs-active-field-functions"><a class="header" href="#target-field-vs-active-field-functions">Target-field vs active-field functions</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Scenario</th><th>Recommended form</th></tr>
+</thead>
+<tbody>
+<tr><td>Check whether a field exists</td><td><code>f_has(name)</code></td></tr>
+<tr><td>Select a field and then perform multiple steps</td><td><code>take(name)</code> + active-field functions</td></tr>
+<tr><td>Transform a field value</td><td><code>take(name)</code> + <code>json_unescape()</code> / <code>base64_decode()</code> / <code>chars_replace()</code></td></tr>
+<tr><td>Negate a condition</td><td><code>not(...)</code></td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="current-gotchas"><a class="header" href="#current-gotchas">Current gotchas</a></h3>
+<ul>
+<li><code>chars_not_has(...)</code> and <code>f_chars_not_has(...)</code> succeed when the field is missing</li>
+<li><code>starts_with(...)</code> turns the field into <code>ignore</code> on mismatch instead of failing directly</li>
+<li>Not every string-taking function supports quoted input
+<ul>
+<li>clearly supports quoted strings: <code>take</code>, <code>chars_replace</code>, <code>regex_match</code>, <code>starts_with</code></li>
+<li>for others such as <code>chars_has</code> and <code>f_chars_has</code>, prefer bare values today</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="related-sources"><a class="header" href="#related-sources">Related Sources</a></h2>
+<ul>
+<li>Function parser: <a href="/Users/zuowenjian/devspace/wp-labs/dev/wparse/wp-lang/src/parser/wpl_fun.rs">src/parser/wpl_fun.rs</a></li>
+<li>Function AST: <a href="/Users/zuowenjian/devspace/wp-labs/dev/wparse/wp-lang/src/ast/processor/function.rs">src/ast/processor/function.rs</a></li>
+<li>Field-pipe execution: <a href="/Users/zuowenjian/devspace/wp-labs/dev/wparse/wp-lang/src/eval/builtins/pipe_fun.rs">src/eval/builtins/pipe_fun.rs</a></li>
+<li>Built-in preprocess registration: <a href="/Users/zuowenjian/devspace/wp-labs/dev/wparse/wp-lang/src/eval/builtins/mod.rs">src/eval/builtins/mod.rs</a></li>
+</ul>
 
                     </main>
 

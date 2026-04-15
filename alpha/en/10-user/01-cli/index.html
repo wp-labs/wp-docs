@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>CLI Tools - Warp Parse Documentation [ALPHA]</title>
+        <title>CLI Usage Guide - Warp Parse Documentation [ALPHA]</title>
 
 
         <!-- Custom HTML head -->
@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "ayu";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-1022f77b.js";
+            window.path_to_searchindex_js = "../../searchindex-e2db798c.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-b767c1fa.js"></script>
+        <script src="../../toc-b42c54c5.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -179,290 +179,36 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="cli-tools"><a class="header" href="#cli-tools">CLI Tools</a></h1>
-<p>This documentation collection introduces the complete command-line toolset provided by WarpParse, including data parsing, generation, and project management functions.</p>
-<h2 id="tool-overview"><a class="header" href="#tool-overview">Tool Overview</a></h2>
-<h3 id="core-tools"><a class="header" href="#core-tools">Core Tools</a></h3>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Tool</th><th>Description</th><th>Main Purpose</th></tr>
-</thead>
-<tbody>
-<tr><td><strong>wparse</strong></td><td>Data parsing engine</td><td>Real-time data stream processing, batch analysis</td></tr>
-<tr><td><strong>wpgen</strong></td><td>Data generator</td><td>Generate test data based on rules or samples</td></tr>
-<tr><td><strong>wproj</strong></td><td>Project management tool</td><td>Project initialization, configuration management, data statistics</td></tr>
-<tr><td><strong>wprescue</strong></td><td>Data recovery tool</td><td>Recover failed data from rescue directory</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="quick-reference"><a class="header" href="#quick-reference">Quick Reference</a></h2>
-<h3 id="wparse---data-parsing-engine"><a class="header" href="#wparse---data-parsing-engine">wparse - Data Parsing Engine</a></h3>
-<pre><code class="language-bash"># Daemon mode (persistent service)
-wparse daemon --work-root ./myproject --stat-print
-
-# Batch processing mode
-wparse batch --work-root ./myproject --max-line 10000 --stat 5
-</code></pre>
-<h3 id="wpgen---data-generator"><a class="header" href="#wpgen---data-generator">wpgen - Data Generator</a></h3>
-<pre><code class="language-bash"># Generate data based on rules
-wpgen rule --work-root ./myproject --print-stat --line-cnt 10000
-
-# Generate data from samples
-wpgen sample --work-root ./myproject --line-cnt 5000
-
-# Configuration management
-wpgen conf init
-wpgen conf check
-wpgen conf clean
-
-# Data management
-wpgen data clean
-wpgen data check
-</code></pre>
-<h3 id="wproj---project-management-tool"><a class="header" href="#wproj---project-management-tool">wproj - Project Management Tool</a></h3>
-<pre><code class="language-bash"># Project initialization
-wproj init --mode full
-
-# Project check
-wproj check
-
-# Data cleanup
-wproj data clean
-
-# Statistics
-wproj stat file
-wproj stat file --output json
-
-# Model management
-wproj model list
-wproj model validate
-
-# Rule tools
-wproj rule parse --rule-id myrule
-wproj rule test --input sample.log
-
-# Configuration management
-wproj sinks list
-wproj sinks validate
-wproj sinks route
-</code></pre>
-<h3 id="wprescue---data-recovery-tool"><a class="header" href="#wprescue---data-recovery-tool">wprescue - Data Recovery Tool</a></h3>
-<pre><code class="language-bash"># Batch mode data recovery
-wprescue batch --work-root ./myproject
-</code></pre>
-<h2 id="tool-relationship-diagram"><a class="header" href="#tool-relationship-diagram">Tool Relationship Diagram</a></h2>
-<pre class="mermaid">graph TD
-    A[wproj] --&gt; B[Initialize Project]
-    A --&gt; C[Check Configuration]
-    A --&gt; D[Statistics]
-
-    B --&gt; E[Generate Config Files]
-    B --&gt; F[Create Directory Structure]
-
-    C --&gt; G[Validate Config]
-
-    D --&gt; H[Source Data Stats]
-    D --&gt; I[Output Data Stats]
-
-    J[wpgen] --&gt; K[Generate Test Data]
-    J --&gt; L[Manage Generator Config]
-    J --&gt; M[Manage Output Data]
-
-    N[wparse] --&gt; O[Real-time Stream Processing]
-    N --&gt; P[Batch Analysis]
-    N --&gt; Q[Performance Tuning]
-
-    R[wprescue] --&gt; S[Data Recovery]
-    R --&gt; T[Failure Recovery]
-</pre>
-
-<h2 id="quick-start"><a class="header" href="#quick-start">Quick Start</a></h2>
-<h3 id="1-initialize-project"><a class="header" href="#1-initialize-project">1. Initialize Project</a></h3>
-<pre><code class="language-bash"># Full initialization with configuration and templates
-wproj init --mode full
-wproj check
-</code></pre>
-<h3 id="2-generate-test-data"><a class="header" href="#2-generate-test-data">2. Generate Test Data</a></h3>
-<pre><code class="language-bash"># Generate test data (10000 lines, 3-second stats interval)
-wpgen rule -n 10000 --stat 3
-</code></pre>
-<h3 id="3-run-parsing"><a class="header" href="#3-run-parsing">3. Run Parsing</a></h3>
-<pre><code class="language-bash"># Batch processing mode
-wparse batch --stat 5 -p
-
-# Or use daemon mode (persistent service)
-wparse daemon --stat-print
-</code></pre>
-<h3 id="4-view-statistics"><a class="header" href="#4-view-statistics">4. View Statistics</a></h3>
-<pre><code class="language-bash"># Statistics for sources and file-type sinks
-wproj stat file
-
-# Output in JSON format
-wproj stat file --output json
-</code></pre>
-<h2 id="learning-path"><a class="header" href="#learning-path">Learning Path</a></h2>
-<ol>
-<li><strong>Beginners</strong>: Start with <a href="./01-getting_started.html">Getting Started Guide</a> to understand the complete configuration and usage flow</li>
-<li><strong>Advanced Users</strong>: Study <a href="./03-wparse.html">wparse</a> in depth to understand the two running modes and their use cases</li>
-<li><strong>Data Engineers</strong>: Master <a href="./04-wpgen.html">wpgen Usage Guide</a> to generate various test data</li>
-<li><strong>Operations</strong>: Use <a href="./02-wproj.html">wproj Project Management</a> for daily project management and monitoring</li>
-<li><strong>Troubleshooting</strong>: Refer to <a href="./05-wprescue.html">wprescue Data Recovery</a> for handling exceptions</li>
-</ol>
-<h2 id="common-use-cases"><a class="header" href="#common-use-cases">Common Use Cases</a></h2>
-<h3 id="real-time-stream-processing"><a class="header" href="#real-time-stream-processing">Real-time Stream Processing</a></h3>
-<pre><code class="language-bash"># Start daemon for continuous data stream processing
-wparse daemon \
-  --work-root ./myproject \
-  --stat-print \
-  --robust online
-</code></pre>
-<h3 id="batch-data-analysis"><a class="header" href="#batch-data-analysis">Batch Data Analysis</a></h3>
-<pre><code class="language-bash"># Batch analysis of historical data
-wparse batch \
-  --work-root ./myproject \
-  --max-line 100000 \
-  --check-continue 1000 \
-  --stat 10
-</code></pre>
-<h3 id="development-testing"><a class="header" href="#development-testing">Development Testing</a></h3>
-<pre><code class="language-bash"># Development mode with detailed logging
-wparse batch \
-  --work-root ./myproject \
-  --log-profile dev \
-  --max-line 100 \
-  --stat 1
-</code></pre>
-<h3 id="test-data-generation"><a class="header" href="#test-data-generation">Test Data Generation</a></h3>
-<pre><code class="language-bash"># Generate test data for specific scenarios
-wpgen rule \
-  --work-root ./myproject \
-  --conf-name test.toml \
-  --line-cnt 10000 \
-  --gen-speed 1000
-</code></pre>
-<h2 id="troubleshooting"><a class="header" href="#troubleshooting">Troubleshooting</a></h2>
-<h3 id="common-issues"><a class="header" href="#common-issues">Common Issues</a></h3>
-<ol>
-<li>
-<p><strong>Configuration file not found</strong></p>
+                        <h1 id="cli-usage-guide"><a class="header" href="#cli-usage-guide">CLI Usage Guide</a></h1>
+<p>This directory contains operator-facing and integration-facing documentation.</p>
+<h2 id="documents"><a class="header" href="#documents">Documents</a></h2>
 <ul>
-<li>Ensure you’re running commands in the correct working directory</li>
-<li>Use <code>--work-root</code> parameter to specify the working directory</li>
+<li><code>overview/</code></li>
+<li>Product overview: <a href="overview/product.html">overview/product.md</a></li>
+<li><code>cli/</code></li>
+<li>CLI usage guide: <a href="cli/index.html">cli/index.md</a></li>
+<li><code>wparse</code> runtime usage: <a href="cli/runtime.html">cli/runtime.md</a></li>
+<li><code>wpgen</code> generator usage: <a href="cli/generator.html">cli/generator.md</a></li>
+<li><code>wproj</code> project tool usage: <a href="cli/project.html">cli/project.md</a></li>
+<li><code>wprescue</code> and rescue-data usage: <a href="cli/rescue.html">cli/rescue.md</a></li>
+<li><code>operations/</code></li>
+<li>Runtime admin usage: <a href="operations/admin.html">operations/admin.md</a></li>
+<li>Remote project sync and rule reload SOP: <a href="operations/project-sync.html">operations/project-sync.md</a></li>
 </ul>
-</li>
-<li>
-<p><strong>Permission errors</strong></p>
+<h2 id="chinese-counterpart"><a class="header" href="#chinese-counterpart">Chinese Counterpart</a></h2>
 <ul>
-<li>Check write permissions for working and log directories</li>
-<li>Ensure sufficient disk space</li>
-</ul>
-</li>
-<li>
-<p><strong>Out of memory</strong></p>
-<ul>
-<li>Reduce <code>--max-line</code> or <code>--parse-workers</code> parameter values</li>
-<li>Use <code>--robust</code> parameter to set appropriate robustness mode</li>
-</ul>
-</li>
-<li>
-<p><strong>Data source connection failed</strong></p>
-<ul>
-<li>Check connector configuration in <code>connectors/source.d/</code> directory</li>
-<li>Verify network connectivity and authentication information</li>
-</ul>
-</li>
-</ol>
-<h3 id="log-analysis"><a class="header" href="#log-analysis">Log Analysis</a></h3>
-<pre><code class="language-bash"># View real-time logs
-tail -f logs/wparse.log
-
-# Search error logs
-grep -i error logs/*.log
-
-# Use wproj for project check
-wproj check --work-root ./myproject
-</code></pre>
-<h2 id="version-information"><a class="header" href="#version-information">Version Information</a></h2>
-<p>Check tool versions:</p>
-<pre><code class="language-bash">wparse --version
-wpgen --version
-wproj --version
-wprescue --version
-</code></pre>
-<h2 id="environment-variables"><a class="header" href="#environment-variables">Environment Variables</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Variable</th><th>Description</th></tr>
-</thead>
-<tbody>
-<tr><td><code>WP_PARSE_ROBUST</code></td><td>Set global robustness mode</td></tr>
-<tr><td><code>WP_PARSE_LOG_LEVEL</code></td><td>Override log level</td></tr>
-<tr><td><code>RUST_LOG</code></td><td>Rust log level (for debugging)</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="exit-codes"><a class="header" href="#exit-codes">Exit Codes</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Exit Code</th><th>Meaning</th></tr>
-</thead>
-<tbody>
-<tr><td>0</td><td>Success</td></tr>
-<tr><td>1</td><td>General error</td></tr>
-<tr><td>2</td><td>Configuration error</td></tr>
-<tr><td>3</td><td>Data error</td></tr>
-<tr><td>4</td><td>Network error</td></tr>
-<tr><td>5</td><td>Permission error</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="technical-architecture"><a class="header" href="#technical-architecture">Technical Architecture</a></h2>
-<p>The CLI tools are written in Rust, using the clap framework for command-line argument handling and tokio async runtime. Core functionality is exposed through the <code>wp-engine</code> library’s facade pattern, ensuring API stability and backward compatibility.</p>
-<h3 id="project-structure"><a class="header" href="#project-structure">Project Structure</a></h3>
-<pre><code>warp-parse/
-├── src/
-│   ├── wparse/          # Data parsing engine
-│   │   └── main.rs
-│   ├── wpgen/           # Data generator
-│   │   ├── main.rs
-│   │   ├── cli.rs       # CLI definition
-│   │   ├── rule.rs      # Rule generation logic
-│   │   ├── sample.rs    # Sample generation logic
-│   │   ├── conf.rs      # Configuration management
-│   │   └── data.rs      # Data management
-│   ├── wproj/           # Project management
-│   │   └── main.rs
-│   └── wprescue/        # Data recovery
-│       └── main.rs
-└── wp-engine/           # Core engine library
-    └── facade/args.rs   # Parameter definitions
-</code></pre>
-<p>This design ensures:</p>
-<ol>
-<li><strong>Modularity</strong>: Each tool has a single responsibility, easy to maintain</li>
-<li><strong>Reusability</strong>: Core functionality is shared through libraries</li>
-<li><strong>Extensibility</strong>: Easy to add new CLI tools</li>
-</ol>
-<h2 id="related-links"><a class="header" href="#related-links">Related Links</a></h2>
-<ul>
-<li><a href="https://github.com/wp-labs/warp-parse">Project Homepage</a></li>
-<li><a href="https://github.com/wp-labs/warp-parse/releases">Downloads</a></li>
-<li><a href="../02-config/">Configuration Reference</a></li>
-<li><a href="../">User Documentation</a></li>
+<li><a href="../../../docs-zh/10-user/01-cli/README.html">../zh/README.md</a></li>
 </ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../10-user/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../10-user/01-getting-started.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../10-user/01-cli/00-concepts-guide.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../10-user/01-cli/cli/generator.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -472,11 +218,11 @@ wprescue --version
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../10-user/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../10-user/01-getting-started.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../10-user/01-cli/00-concepts-guide.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../10-user/01-cli/cli/generator.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

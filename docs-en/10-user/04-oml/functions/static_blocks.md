@@ -1,72 +1,72 @@
 # `static` Blocks: Model-Scoped Constants
 
-`static { ... }` blocks let you pre-compute objects or constant values once when an OML model loads, instead of rebuilding them for every record. Values defined inside the block are stored in the model’s constant pool and can be referenced later simply by name.
+`static { ... }` is used to declare constants that are built once and reused later by the OML model. It appears after the header separator `---` and before normal aggregate statements.
 
-## Why Use `static`
-
-- Avoid per-record cost for `object { ... }` or other literal expressions
-- Share templates across multiple match branches or assignments
-- Replace legacy `__temp` helpers that were only used to cache literal data
-- Improve readability by giving templates explicit names
-
-## Syntax
+## Basic Example
 
 ```oml
-name : example
+name : apache_error_template
+rule : /apache/error/e1
 ---
 static {
-    error_tpl = object {
+    e1_template = object {
         id = chars(E1);
-        tpl = chars('jk2_init() Found child <*>')
+        tpl = chars("jk2_init() Found child <*> in scoreboard slot <*>");
     };
+    score_map = object {
+        error = float(90.0);
+        warning = float(70.0);
+        info = float(20.0);
+    };
+    default_score = float(40.0);
 }
 
-target = match read(Content) {
-    starts_with('jk2_init()') => error_tpl;
-    _ => error_tpl;
-};
-EventId = read(target) | get(id);
-EventTemplate = read(target) | get(tpl);
+message = read(Content) ;
+
+target_template = match read(message) {
+    starts_with('jk2_init() Found child') => e1_template ;
+    _ => e1_template ;
+} ;
+
+event_id = read(target_template) | get(id) ;
+event_tpl = read(target_template) | get(tpl) ;
+risk_score : float = lookup_nocase(score_map, read(level), default_score) ;
 ```
 
-Rules:
-- Only single-target assignments are allowed inside the `static` block.
-- Expressions must be pure literals or safe functions (no `read()`/`take()` or input-dependent logic).
-- Access the constant later simply by writing its name (`error_tpl` in the example). Do **not** wrap it with `read()`.
+## What the Current Implementation Allows
 
-## Execution Model
+Inside `static`, only pure expressions are supported:
 
-1. **Parsing** – the parser records each `static` assignment plus the symbol name, but does not execute it.
-2. **Model Load** – `finalize_static_blocks` evaluates all static expressions once, storing `Arc<DataField>` values in the constant pool.
-3. **Runtime** – whenever a static symbol is referenced, OML clones the cached `DataField` instead of re-running the expression.
+- literal values such as `chars(...)`, `digit(...)`, `float(...)`, `bool(...)`, `time(...)`
+- `object { ... }`
+- `calc(...)`, but all operands inside the calculation must also be constant
 
-This keeps parsing lightweight while ensuring per-record transforms stay fast.
+## What the Current Implementation Rejects
 
-## Referencing Static Symbols
+The following expressions are rejected inside `static` during parsing:
 
-Static symbols can be used in several places:
+- `read(...)`, `take(...)`, `collect ...`
+- `pipe ...`
+- `fmt(...)`
+- `match ... { ... }`
+- `lookup_nocase(...)`
+- `select ... where ... ;`
+- `Now::time()`, `Now::date()`, `Now::hour()`
+- references to other `static` symbols
 
-- Direct assignment (`target = tpl;`)
-- `match` results (`=> tpl;`)
-- `object { field = tpl; }` map bindings
-- Default clauses (`take(Value) { _ : tpl }`)
+That means `static` is not "any expression except input reads". It is much stricter: it only allows pure constant objects and pure constant calculations.
 
-If a static symbol is referenced somewhere the parser doesn’t yet understand, the model will fail to load with `static reference symbol not found`, so issues are caught early.
+## Usage Rules
 
-## Performance Notes
+- `static` blocks may appear zero or more times, and all of them are processed before normal aggregate statements
+- every `static` binding must be a single-target assignment ending with `;`
+- static symbol names must be unique inside the same model
+- in normal aggregate code, you can reference a static symbol directly, for example `score = default_score ;`
+- if a static symbol contains an object, later code should continue reading from it through expressions such as `read(symbol) | get(key)`
 
-A Criterion benchmark (`cargo bench -p wp-oml --bench oml_static_block`) shows a typical template assignment dropping from ~1.07µs/record to ~0.72µs when using `static`, because the literal object is no longer rebuilt per record. The larger the template, the bigger the win.
+## Good Candidates for `static`
 
-## Troubleshooting
-
-- **“need '='” parse errors** – remember to keep `static` block syntax identical to normal assignments; each statement still requires `=` and `;`.
-- **`static reference symbol not found`** – you referenced a name outside the `static` block or misspelled it. Check for typos and ensure the symbol is declared before use.
-- **Strings with spaces** – use quotes (`chars('foo bar')`) inside the block; unquoted tokens are split on whitespace.
-
-## Best Practices
-
-- Prefer descriptive names (`error_tpl`, `ldap_template`) instead of `__E1`-style placeholders.
-- Remove redundant `__temp` fields once you switch to `static`, so you avoid unnecessary `read()` calls.
-- Keep static expressions pure; if you need dynamic data, keep it in the runtime section.
-
-For Chinese documentation, see [`zh/static_blocks.md`](./zh/static_blocks.md).
+- status-to-score mapping tables
+- event template objects
+- fixed defaults that do not depend on input records
+- constant objects reused by multiple `match` branches

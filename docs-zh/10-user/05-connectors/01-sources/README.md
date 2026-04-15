@@ -8,7 +8,6 @@
 - [文件源配置](./02-file_source.md)
 - [Kafka 源配置](./03-kafka_source.md)
 - [Syslog 源配置](./04-syslog_source.md)
-- [HTTP 源配置](./05-http_source.md)
 - [TCP 源配置](./08-tcp_source.md)
 - [DataRecord 机制数据字段](./09-metadata.md)
 
@@ -25,7 +24,6 @@
 | `file` | 从本地文件读取数据 | [文件源配置](./02-file_source.md) |
 | `kafka` | 从 Kafka 消费消息 | [Kafka 源配置](./03-kafka_source.md) |
 | `syslog` | 接收 Syslog 协议数据 (UDP/TCP) | [Syslog 源配置](./04-syslog_source.md) |
-| `http` | 通过 HTTP 请求接收数据 | [HTTP 源配置](./05-http_source.md) |
 | `tcp` | 通过 TCP 接收数据 | [TCP 源配置](./08-tcp_source.md) |
 
 ## 相关文档

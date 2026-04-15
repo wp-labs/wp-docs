@@ -1,112 +1,71 @@
-# OML Object Model Language (New Version)
+# OML Object Model Language
 
-> **Note**: This is the new comprehensive OML documentation. English translation is in progress.
-> 
-> For now, please refer to the Chinese version at `docs/10-user/04-oml-new/`
+OML (Object Modeling Language) is used to transform, aggregate, match, calculate, and enrich structured records produced by WPL.
 
-OML (Object Model Language) is a declarative transformation language that converts parsed data from WPL into the desired output format.
+> This directory is aligned with the current implementation in `wp-motor/crates/wp-oml/src`. Older docs sometimes mentioned features that are not parsed by the current implementation, such as privacy sections, `query ...`, or `sxf_get(...)`. They should not be treated as official syntax.
 
-## Documentation Structure
+---
 
-- **🌟 [Complete Feature Example](./07-complete-example.md)** - Comprehensive example showcasing all OML features
-- **[Quick Start](./01-quickstart.md)** - Get started with OML in 5 minutes
-- **[Core Concepts](./02-core-concepts.md)** - Understand OML's design philosophy
-- **[Practical Guide](./03-practical-guide.md)** - Task-oriented solutions
-- **[Functions Reference](./04-functions-reference.md)** - All function documentation
-- **[Integration Guide](./05-integration.md)** - Integrate OML into data pipelines
-- **[Grammar Reference](./06-grammar-reference.md)** - Formal grammar definition
+## Reading Order
 
-## Key Features
+| Scenario | Recommended Document |
+|----------|----------------------|
+| Start quickly | [01-quickstart.md](./01-quickstart.md) |
+| Understand read/take semantics, types, and batch mode | [02-core-concepts.md](./02-core-concepts.md) |
+| Find task-oriented examples | [03-practical-guide.md](./03-practical-guide.md) |
+| Check functions supported by the current implementation | [04-functions-reference.md](./04-functions-reference.md) |
+| Check grammar boundaries | [06-grammar-reference.md](./06-grammar-reference.md) |
+| Browse topic pages | [functions/function_index.md](./functions/function_index.md) |
+| Learn integration details | [05-integration.md](./05-integration.md) |
 
-- **Declarative**: Describe "what you want" rather than "how to implement"
-- **Type System**: 8 data types with automatic inference and conversion
-- **Powerful Functions**: Built-in functions, pipeline functions, pattern matching
-- **Flexible Operations**: Field extraction, data aggregation, conditional processing
-- **Pattern Matching**: match expressions support range, negation, multi-source (any count), OR conditions
-- **SQL Integration**: Enrich data with database queries
+---
 
-## Quick Example
+## Minimal Example
 
-**WPL Parsed Data:**
-```
-client_ip: 192.168.1.100
-status: 200
-timestamp: 2024-01-15 14:30:00
-```
-
-**OML Configuration:**
 ```oml
-name : web_log_processor
+name : nginx_access
 rule : /nginx/access_log
 ---
-# Extract fields
-ip : ip = read(client_ip) ;
-code : digit = read(status) ;
-
-# Transform timestamp
-ts_ms = read(timestamp) | Time::to_ts_zone(0, ms) ;
-
-# Conditional processing
-level = match read(code) {
-    in (digit(200), digit(299)) => chars(success) ;
-    in (digit(400), digit(499)) => chars(error) ;
-    _ => chars(other) ;
-} ;
-
-# Create structured output
-log : obj = object {
-    client : ip = read(ip) ;
-    status : digit = read(code) ;
-    timestamp : digit = read(ts_ms) ;
-    level : chars = read(level) ;
-} ;
+client_ip : ip = read(client_ip) ;
+status : digit = read(status) ;
+uri = read(request_uri) ;
+event_time : time = Now::time() ;
 ```
 
-**Output:**
-```json
-{
-    "log": {
-        "client": "192.168.1.100",
-        "status": 200,
-        "timestamp": 1705318200000,
-        "level": "success"
-    }
-}
-```
+This shows the core shape of the current implementation:
 
-## Translation Status
-
-| Document | Status |
-|----------|--------|
-| README.md | ✅ Completed |
-| 01-quickstart.md | 🔄 In Progress |
-| 02-core-concepts.md | 🔄 In Progress |
-| 03-practical-guide.md | 🔄 In Progress |
-| 04-functions-reference.md | 🔄 In Progress |
-| 05-integration.md | 🔄 In Progress |
-| 06-grammar-reference.md | 🔄 In Progress |
-| 07-complete-example.md | 🔄 In Progress |
-
-## How OML Works with WPL
-
-```
-1. WPL parses raw data
-   ↓
-2. Generates structured data + rule identifier (e.g., /nginx/access_log)
-   ↓
-3. System finds matching OML configuration (via rule field)
-   ↓
-4. Executes OML transformation
-   ↓
-5. Outputs to Sink
-```
-
-## Related Documentation
-
-- [Legacy OML Documentation](../04-oml/README.md) - Previous version
-- [WPL Rule Language](../03-wpl-new/README.md) - Data parsing language
-- [Sinks Configuration](../05-connectors/02-sinks/README.md) - Output configuration
+- `name` is required and must come first
+- `rule` and `enable` are optional, and may appear in either order
+- a `---` line is required between the header and the body
+- the body must contain at least one aggregate statement, and every statement ends with `;`
 
 ---
 
-**For the latest Chinese documentation, please visit:** `docs/10-user/04-oml-new/`
+## What the Current Implementation Supports
+
+- top-level expressions: `read(...)`, `take(...)`, `fmt(...)`, `calc(...)`, `match ... { ... }`
+- aggregation expressions: `object { ... }`, `collect ...`
+- pipe expressions: `pipe read(...) | ...`, and also `read(...) | ...` without the `pipe` keyword
+- lookup: `lookup_nocase(...)`
+- built-in functions: `Now::time()`, `Now::date()`, `Now::hour()`
+- SQL: `select ... from ... where ... ;`
+- `static { ... }`: only for pure constant objects and constant calculations
+
+## What You Should Not Assume
+
+- do not treat privacy sections as official OML syntax
+- do not use `query ...` as the SQL entry point; the current parser starts SQL with `select`
+- do not rely on functions that are not listed in [04-functions-reference.md](./04-functions-reference.md)
+- do not assume `static` can execute `read/take/match/pipe/sql`
+
+---
+
+## Useful Entry Points
+
+| Goal | Document |
+|------|----------|
+| Learn `read`, `take`, `option`, and `keys` | [02-core-concepts.md](./02-core-concepts.md) |
+| Check `calc(...)`, `lookup_nocase(...)`, and `Now::*` | [04-functions-reference.md](./04-functions-reference.md) |
+| Check `match` condition functions | [functions/match_functions.md](./functions/match_functions.md) |
+| Check `static` limitations | [functions/static_blocks.md](./functions/static_blocks.md) |
+| Check EBNF-style grammar summary | [06-grammar-reference.md](./06-grammar-reference.md) |

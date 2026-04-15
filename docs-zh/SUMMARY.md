@@ -1,7 +1,8 @@
 # Summary
 
-- [WarpParse 0.20 数据集成能力升级](00-release/0.20.md)
-- [WarpParse 0.22](00-release/0.22.md)
+- [更新说明](00-release/README.md)
+  - [WarpParse 0.22](00-release/0.22.md)
+  - [WarpParse 0.20 数据集成能力升级](00-release/0.20.md)
 
 - [使用指南](10-user/README.md)
   - [WarpParse 核心概念速查](10-user/00-core-concepts.md)

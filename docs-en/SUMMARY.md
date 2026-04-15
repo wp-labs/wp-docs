@@ -1,6 +1,7 @@
 # Summary
 
-- [0.20 Release Notes](00-release/0.20.md)
+- [Release Notes](00-release/README.md)
+  - [0.20 Release Notes](00-release/0.20.md)
 
 - [User Guide](10-user/README.md)
   - [WarpParse Core Concepts Quick Reference](10-user/00-core-concepts.md)

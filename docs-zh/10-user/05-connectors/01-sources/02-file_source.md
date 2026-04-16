@@ -4,7 +4,7 @@
 
 ## 概述
 
-文件源用于从本地文件系统读取数据，支持多种编码格式和灵活的路径配置。
+文件源用于从本地文件系统读取数据，支持多种编码格式；路径配置采用 `base + file`，其中仅 `file` 支持通配符。
 
 ## 连接器定义
 
@@ -28,7 +28,7 @@ encode = "text"
 ### 路径配置
 
 
-#### base + file 组合（推荐）
+#### base + file 组合（唯一支持的路径方式）
 ```toml
 [[sources]]
 key = "file_composed"
@@ -38,6 +38,12 @@ connect = "file_src"
 base = "/var/log"
 file = "access.log"
 ```
+
+> `path` 参数不再支持；请统一使用 `base + file`。
+>
+> `base` 仅表示目录前缀，不支持通配符。
+>
+> `file` 支持通配符（如 `app-*.log`）。
 
 #### instances（多实例并行读取）
 ```toml
@@ -92,6 +98,27 @@ connect = "file_src"
 base = "/var/log/nginx"
 file = "error.log"
 ```
+
+### 通配符顺序读取
+```toml
+# wpsrc.toml
+[[sources]]
+enable = true
+key = "nginx_shards"
+connect = "file_src"
+
+[[sources.params]]
+base = "/var/log/nginx"
+file = "access-*.log"
+```
+
+> 当 `file` 使用通配符时：
+>
+> - 启动时一次性展开匹配文件
+> - 不会递增发现新文件
+> - 按文件名排序后逐个文件推进
+> - 若 `instances = 1`，单个文件内部保持原始行顺序
+> - 若 `instances > 1`，单个文件会按行边界切段并行读取，因此不保证该文件的全局行顺序
 
 ### 不同编码格式
 ```toml

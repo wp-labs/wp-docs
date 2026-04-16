@@ -37,6 +37,32 @@ package nginx {
 ))
 ```
 
+### Valid JSON vs broken JSON fallback
+
+```wpl
+package api {
+  rule good_json {
+    (json(chars@host, chars@method))
+  }
+
+  rule broken_json {
+    |json_like|
+    (bad_json:raw)
+  }
+}
+```
+
+Use this pattern when:
+
+- valid JSON should be parsed into fields
+- broken but JSON-like payloads should be preserved as raw text
+- plain text must not be accidentally consumed by `bad_json`
+
+Notes:
+
+- `json(...)` already has built-in JSON-like sniffing
+- `json_like` is still useful as a guard in the fallback `bad_json` rule
+
 ### Optional trailing segment
 
 ```wpl

@@ -11,6 +11,7 @@
 | [类型系统](#-类型系统) | 所有数据类型速查表 |
 | [语法元素](#-语法元素) | 基本结构、字段定义、格式控制 |
 | [子字段语法](#-子字段语法) | JSON、KV、数组子字段 |
+| [JSON-like 路由](#-json-like-路由) | `json_like`、`json`、`bad_json` 的配合方式 |
 | [注解](#-注解) | tag、copy_raw 注解 |
 | [语法速查](#-语法速查) | 常用模式快速参考 |
 
@@ -177,6 +178,84 @@ json(chars@user/name, digit@user/age)
 # 可选字段
 json(chars@name, opt(chars)@email)
 ```
+
+### `bad_json`
+
+```wpl
+bad_json:name
+```
+
+**说明：**
+- `bad_json` 输出的是原始文本，字段类型为 `chars`
+- 适合接住“看起来像 JSON，但严格解析失败”的输入
+- 推荐与 `json_like` 预处理一起使用，避免把普通文本误判为坏 JSON
+
+**示例：**
+```wpl
+(bad_json:raw)
+```
+
+---
+
+## 🧩 JSON-like 路由
+
+### `json_like` 预处理
+
+```wpl
+|json_like|
+```
+
+**语义：**
+- 这是规则前置的行 pipe
+- 只做轻量 sniff，判断当前输入是否“像 JSON”
+- 它不会提取字段，也不会做完整 JSON 解析
+
+`json_like` 适合放在兜底规则前面，为 `bad_json` 提供保护。
+
+### `json` 的内置 sniff
+
+`json` 现在已经内置了 `json_like` 式的快速判断，所以：
+
+```wpl
+rule good_json {
+  (json(chars@host, chars@method))
+}
+```
+
+不需要再额外写：
+
+```wpl
+rule good_json {
+  |json_like|
+  (json(chars@host, chars@method))
+}
+```
+
+### 推荐写法
+
+当你希望把“合法 JSON”和“坏 JSON”分开处理时，推荐这样写：
+
+```wpl
+rule good_json {
+  (json(chars@host, chars@method))
+}
+
+rule broken_json {
+  |json_like|
+  (bad_json:raw)
+}
+```
+
+这套写法的行为是：
+- 合法 JSON：由 `json(...)` 规则命中
+- 损坏但像 JSON：由 `json_like + bad_json` 规则兜底
+- 普通文本：不会被 `bad_json` 吃掉
+
+### 性能含义
+
+- `json_like` 是轻量判断，适合做前置过滤
+- `json` 已经内置快速 sniff，因此对普通文本的拒绝成本明显更低
+- 对“像 JSON 但损坏”的输入，先做 `json_like` 再走 `bad_json` 才有意义
 
 ### KV 子字段
 

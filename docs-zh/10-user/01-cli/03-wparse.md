@@ -20,6 +20,7 @@ Commands:
 | 参数 | 短选项 | 长选项 | 默认值 | 说明 |
 |------|--------|--------|--------|------|
 | parse_workers | `-w` | `--parse-workers` | - | 解析线程数 |
+| reload_timeout_ms | - | `--reload-timeout-ms` | - | reload 兜底超时（毫秒）；同时用于 graceful drain 与旧 processing 尾部清理 |
 | stat_sec | - | `--stat` | - | 统计输出间隔（秒） |
 | stat_print | `-p` | `--print_stat` | false | 周期打印统计信息 |
 | wpl_dir | - | `--wpl` | - | WPL 规则目录覆盖 |
@@ -35,6 +36,9 @@ wparse batch  -w 4 --parse-workers 4
 
 # 守护进程模式：常驻服务，每 5 秒输出统计
 wparse daemon --stat 5 -p
+
+# 守护进程模式：将 reload 兜底超时压到 300ms（适合自动化测试）
+wparse daemon --reload-timeout-ms 300
 
 # 自定义日志和规则目录
 wparse daemon --log-profile custom.toml --wpl /custom/rules

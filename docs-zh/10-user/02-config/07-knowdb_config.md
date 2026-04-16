@@ -58,7 +58,7 @@ SQL 文件规范
 - 不存在则报错
 
 安全约束
-- 运行时（facade/query_cipher/SQL 评估）仅允许使用 `[[tables]].name` 中声明的表名
+- 运行时（facade / SQL 评估）仅允许使用 `[[tables]].name` 中声明的表名
 - SQL 模板仅允许 `{table}` 占位符；禁止其它动态拼接
 
 最小可运行示例
@@ -107,7 +107,6 @@ max = 100
 
 与应用的关系
 - wparse/wproj 等会在启动处加载 knowdb：创建权威库并设置 Query Provider
-- 曾用于隐私模块的 `query_cipher(table)`（加载单列表词表）在当前版本默认不启用；如需脱敏请在业务侧实现
 
 内置 SQL 函数（UDF）
 - 运行时注册：

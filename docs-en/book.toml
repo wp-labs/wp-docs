@@ -14,5 +14,5 @@ command = "mdbook-mermaid"
 default-theme = "light"
 git-repository-url = "https://github.com/wp-labs/warp-parse"
 preferred-dark-theme = "navy"
-additional-css = ["theme/site.css", "theme/lang-switch.css", "theme/version-badge.css"]
-additional-js = ["theme/lang-switch.js", "theme/version-badge.js", "theme/site.js", "mermaid.min.js", "mermaid-init.js"]
+additional-css = ["theme/site.css"]
+additional-js = ["theme/site.js"]

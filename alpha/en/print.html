@@ -37,10 +37,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-d2896214.js";
+            window.path_to_searchindex_js = "searchindex-74a73dc3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-4d9becf5.js"></script>
+        <script src="toc-d7a13aa9.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,8 +183,79 @@
 <p>This directory contains WarpParse release notes.</p>
 <p>Entries are listed in reverse version order, with the newest release first.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="020-release-notes"><a class="header" href="#020-release-notes">0.20 Release Notes</a></h1>
+<h1 id="warpparse-022"><a class="header" href="#warpparse-022">WarpParse 0.22</a></h1>
+<p>Dear users,</p>
+<p>We are pleased to announce the release of WarpParse 0.22. This update focuses on <strong>runtime operability, remote project synchronization, KnowDB capability enhancements, and better observability and rule authoring workflows</strong>.</p>
+<h2 id="highlights"><a class="header" href="#highlights">Highlights</a></h2>
+<ul>
+<li>Completed the runtime admin surface with standardized status query and reload entry points.</li>
+<li>Further unified the remote project bootstrap, update, and hot-reload workflow.</li>
+<li>Expanded KnowDB, WPL, and monitoring documentation to make the recommended usage path clearer.</li>
+</ul>
 <h2 id="added"><a class="header" href="#added">Added</a></h2>
+<h3 id="runtime-admin-surface"><a class="header" href="#runtime-admin-surface">Runtime Admin Surface</a></h3>
+<p>Added standardized operational entry points for online instances:</p>
+<ul>
+<li><code>POST /admin/v1/reloads/model</code></li>
+<li><code>wproj engine reload</code></li>
+</ul>
+<p><a href="#warp-parse-runtime-admin-usage">Runtime admin usage guide</a></p>
+<h3 id="remote-sync-and-hot-reload"><a class="header" href="#remote-sync-and-hot-reload">Remote Sync and Hot Reload</a></h3>
+<p>The remote rule repository workflow is now documented as a more complete operational path:</p>
+<ol>
+<li><code>wproj init --repo &lt;REPO&gt; [--version &lt;VERSION&gt;]</code></li>
+<li><code>wproj conf update</code></li>
+<li><code>wproj engine reload</code></li>
+</ol>
+<p><a href="#remote-project-sync-and-rule-reload-sop">Remote project bootstrap and rule hot-reload SOP</a></p>
+<h3 id="self-update"><a class="header" href="#self-update">Self Update</a></h3>
+<p>Added the CLI self-update workflow:</p>
+<pre><code class="language-bash">wproj self check
+wproj self update --yes
+</code></pre>
+<p><a href="#wproj-project-tool-usage"><code>wproj</code> project tool guide</a></p>
+<h3 id="remote-database-support"><a class="header" href="#remote-database-support">Remote Database Support</a></h3>
+<p>KnowDB now supports remote PostgreSQL / MySQL through <code>[provider]</code>:</p>
+<ul>
+<li>Supports either directory-based SQLite authority or a remote database</li>
+<li>Supports PostgreSQL / MySQL through <code>connection_uri</code></li>
+<li>Uses <code>[cache]</code> as the unified result-cache configuration section</li>
+</ul>
+<p><a href="#knowdb-configuration">KnowDB configuration guide</a></p>
+<h3 id="observability-and-pipeline-inspection"><a class="header" href="#observability-and-pipeline-inspection">Observability and Pipeline Inspection</a></h3>
+<p>With VictoriaMetrics, VictoriaLogs, and Wp-Monitor, WarpParse now has a more complete inspection path for checking:</p>
+<ul>
+<li>Whether the pipeline is processing data correctly</li>
+<li>Whether MISS data is abnormal</li>
+<li>Whether downstream output is fluctuating</li>
+</ul>
+<p>Related docs:</p>
+<ul>
+<li><a href="#wp-monitor">Wp-Monitor</a></li>
+</ul>
+<h3 id="wpl-updates"><a class="header" href="#wpl-updates">WPL Updates</a></h3>
+<p>Added guidance for combining <code>json_like</code>, <code>json</code>, and <code>bad_json</code>, making class-of-JSON input handling clearer.</p>
+<p>Related docs:</p>
+<ul>
+<li><a href="#wpl-language-reference">WPL language reference</a></li>
+</ul>
+<h2 id="changed"><a class="header" href="#changed">Changed</a></h2>
+<h3 id="cli-manual-structure"><a class="header" href="#cli-manual-structure">CLI Manual Structure</a></h3>
+<p>The product overview, CLI usage, runtime admin surface, and remote sync SOP have been consolidated into a more unified entry point.</p>
+<p>Related docs:</p>
+<ul>
+<li><a href="10-user/01-cli/README.html">CLI guide</a></li>
+</ul>
+<h3 id="clearer-stats-and-troubleshooting-paths"><a class="header" href="#clearer-stats-and-troubleshooting-paths">Clearer Stats and Troubleshooting Paths</a></h3>
+<p>The workflow around <code>wproj data stat</code>, <code>wproj data validate</code>, and <code>wproj rescue stat</code> is now more complete for day-to-day troubleshooting.</p>
+<p>Related docs:</p>
+<ul>
+<li><a href="#wproj-project-tool-usage"><code>wproj</code> project tool guide</a></li>
+<li><a href="#wprescue-and-rescue-data-usage"><code>wprescue</code> and rescue data guide</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="020-release-notes"><a class="header" href="#020-release-notes">0.20 Release Notes</a></h1>
+<h2 id="added-1"><a class="header" href="#added-1">Added</a></h2>
 <h3 id="added-elasticsearch-sink"><a class="header" href="#added-elasticsearch-sink">Added Elasticsearch Sink.</a></h3>
 <p>Supports batch writing parsed records to the Elasticsearch <code>/_bulk</code> API over HTTP/HTTPS, with timeout, retry, and password authentication support.
 Example:</p>
@@ -262,7 +333,7 @@ compression = "none"                       # Whether to enable gzip compression
 <li>Usage doc: <a href="#http-sink">HTTP Sink</a></li>
 <li>Example index: <a href="https://github.com/wp-labs/wp-examples/blob/main/extensions/http/README.md">wp-examples/extensions/http/README.md</a></li>
 </ul>
-<h2 id="changed"><a class="header" href="#changed">Changed</a></h2>
+<h2 id="changed-1"><a class="header" href="#changed-1">Changed</a></h2>
 <ul>
 <li>Upgraded <code>wp-connector-api</code> to <code>0.8</code> to reduce unnecessary dependencies.</li>
 </ul>
@@ -725,7 +796,7 @@ wproj conf update --work-root . --version 1.4.3
 <pre><code class="language-bash">wproj rescue stat --work-root .
 wproj rescue stat --work-root . --detail
 </code></pre>
-<h2 id="self-update"><a class="header" href="#self-update">Self Update</a></h2>
+<h2 id="self-update-1"><a class="header" href="#self-update-1">Self Update</a></h2>
 <pre><code class="language-bash">wproj self check
 wproj self update --yes
 </code></pre>

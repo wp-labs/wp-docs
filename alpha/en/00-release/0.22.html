@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>PostgreSQL Provider Tasks - Warp Parse Documentation [ALPHA]</title>
+        <title>0.22 Release Notes - Warp Parse Documentation [ALPHA]</title>
 
 
         <!-- Custom HTML head -->
@@ -12,34 +12,34 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../../../favicon-de23e50b.svg">
-        <link rel="shortcut icon" href="../../../favicon-8114d1fc.png">
-        <link rel="stylesheet" href="../../../css/variables-8adf115d.css">
-        <link rel="stylesheet" href="../../../css/general-2459343d.css">
-        <link rel="stylesheet" href="../../../css/chrome-ae938929.css">
-        <link rel="stylesheet" href="../../../css/print-9e4910d8.css" media="print">
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="../../../fonts/fonts-9644e21d.css">
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="mdbook-highlight-css" href="../../../highlight-493f70e1.css">
-        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../../tomorrow-night-4c0ae647.css">
-        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../../ayu-highlight-3fdfc3ac.css">
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../../../theme/site-ebe709e1.css">
+        <link rel="stylesheet" href="../theme/site-ebe709e1.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "../../../";
+            const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-74a73dc3.js";
+            window.path_to_searchindex_js = "../searchindex-74a73dc3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../../toc-d7a13aa9.js"></script>
+        <script src="../toc-d7a13aa9.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -106,7 +106,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="../../../toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
             </noscript>
             <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -141,7 +141,7 @@
                     <h1 class="menu-title">Warp Parse Documentation [ALPHA]</h1>
 
                     <div class="right-buttons">
-                        <a href="../../../print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
                         </a>
                         <a href="https://github.com/wp-labs/warp-parse" title="Git repository" aria-label="Git repository">
@@ -178,110 +178,86 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="postgresql-provider-tasks"><a class="header" href="#postgresql-provider-tasks">PostgreSQL Provider Tasks</a></h1>
-<h2 id="current-baseline"><a class="header" href="#current-baseline">Current baseline</a></h2>
-<p>Already available:</p>
+                        <h1 id="warpparse-022"><a class="header" href="#warpparse-022">WarpParse 0.22</a></h1>
+<p>Dear users,</p>
+<p>We are pleased to announce the release of WarpParse 0.22. This update focuses on <strong>runtime operability, remote project synchronization, KnowDB capability enhancements, and better observability and rule authoring workflows</strong>.</p>
+<h2 id="highlights"><a class="header" href="#highlights">Highlights</a></h2>
 <ul>
-<li><code>[provider] kind = "postgres"</code> support</li>
-<li><code>query_fields(...)</code> / <code>cache_query_fields(...)</code> as the recommended path</li>
-<li>baseline queries, named-parameter rewriting, and manual verification scripts</li>
+<li>Completed the runtime admin surface with standardized status query and reload entry points.</li>
+<li>Further unified the remote project bootstrap, update, and hot-reload workflow.</li>
+<li>Expanded KnowDB, WPL, and monitoring documentation to make the recommended usage path clearer.</li>
 </ul>
-<p>This is enough to validate the main flow, but not yet enough for long-term production-grade PostgreSQL support.</p>
-<h2 id="remaining-work"><a class="header" href="#remaining-work">Remaining work</a></h2>
-<h3 id="1-connection-pool"><a class="header" href="#1-connection-pool">1. Connection pool</a></h3>
+<h2 id="added"><a class="header" href="#added">Added</a></h2>
+<h3 id="runtime-admin-surface"><a class="header" href="#runtime-admin-surface">Runtime Admin Surface</a></h3>
+<p>Added standardized operational entry points for online instances:</p>
 <ul>
-<li>Current: <code>src/postgres.rs</code> still behaves like a serialized single-client path</li>
-<li>Goal:
-<ul>
-<li>integrate a connection pool</li>
-<li>define connect/disconnect/retry behavior</li>
-<li>remove dependence on one serialized client</li>
+<li><code>POST /admin/v1/reloads/model</code></li>
+<li><code>wproj engine reload</code></li>
 </ul>
-</li>
-</ul>
-<h3 id="2-startup-validation"><a class="header" href="#2-startup-validation">2. Startup validation</a></h3>
-<ul>
-<li>Current: startup mostly checks only basic connectivity</li>
-<li>Goal:
-<ul>
-<li>validate database, schema, permissions, and key objects at startup</li>
-<li>fail early on wrong DB, wrong schema, or wrong permissions</li>
-</ul>
-</li>
-</ul>
-<h3 id="3-sql--udf-boundary"><a class="header" href="#3-sql--udf-boundary">3. SQL / UDF boundary</a></h3>
-<ul>
-<li>Current: baseline SQL works, but SQLite UDF assumptions are still incomplete</li>
-<li>Goal:
-<ul>
-<li>list SQL that can move directly</li>
-<li>list SQL that must be rewritten</li>
-<li>list functions users must provide in PostgreSQL themselves</li>
-</ul>
-</li>
-</ul>
-<h3 id="4-type-coverage"><a class="header" href="#4-type-coverage">4. Type coverage</a></h3>
-<ul>
-<li>Current: result-type support and bind behavior are still incomplete</li>
-<li>Goal:
-<ul>
-<li>cover common numeric, temporal, JSON, and network types</li>
-<li>return clearer errors for unsupported types</li>
-</ul>
-</li>
-</ul>
-<h3 id="5-automated-verification"><a class="header" href="#5-automated-verification">5. Automated verification</a></h3>
-<ul>
-<li>Current: verification is still too manual</li>
-<li>Goal:
-<ul>
-<li>add a stable CI path</li>
-<li>choose one main path between Compose and <code>testcontainers</code></li>
-<li>emit enough diagnostics on failure</li>
-</ul>
-</li>
-</ul>
-<h3 id="6-end-to-end-example-in-a-consuming-repo"><a class="header" href="#6-end-to-end-example-in-a-consuming-repo">6. End-to-end example in a consuming repo</a></h3>
-<ul>
-<li>Current: <code>wp-knowledge</code> can validate itself, but the consuming-repo chain is incomplete</li>
-<li>Goal:
-<ul>
-<li>add a PostgreSQL example in a consumer repo</li>
-<li>validate <code>wp-oml</code> with a real schema</li>
-<li>provide reusable run instructions</li>
-</ul>
-</li>
-</ul>
-<h3 id="7-compatibility-cleanup"><a class="header" href="#7-compatibility-cleanup">7. Compatibility cleanup</a></h3>
-<ul>
-<li>Current: <code>query_named(...)</code> / <code>cache_query(...)</code> still preserve older SQLite-shaped behavior</li>
-<li>Goal:
-<ul>
-<li>make provider-neutral APIs the default for new code</li>
-<li>define the retention and deprecation strategy for compatibility APIs</li>
-</ul>
-</li>
-</ul>
-<h2 id="suggested-order"><a class="header" href="#suggested-order">Suggested order</a></h2>
+<p><a href="../10-user/01-cli/operations/admin.html">Runtime admin usage guide</a></p>
+<h3 id="remote-sync-and-hot-reload"><a class="header" href="#remote-sync-and-hot-reload">Remote Sync and Hot Reload</a></h3>
+<p>The remote rule repository workflow is now documented as a more complete operational path:</p>
 <ol>
-<li>connection pool</li>
-<li>startup validation</li>
-<li>SQL / UDF boundary</li>
-<li>type coverage</li>
-<li>automated verification</li>
-<li>end-to-end example</li>
-<li>compatibility cleanup</li>
+<li><code>wproj init --repo &lt;REPO&gt; [--version &lt;VERSION&gt;]</code></li>
+<li><code>wproj conf update</code></li>
+<li><code>wproj engine reload</code></li>
 </ol>
+<p><a href="../10-user/01-cli/operations/project-sync.html">Remote project bootstrap and rule hot-reload SOP</a></p>
+<h3 id="self-update"><a class="header" href="#self-update">Self Update</a></h3>
+<p>Added the CLI self-update workflow:</p>
+<pre><code class="language-bash">wproj self check
+wproj self update --yes
+</code></pre>
+<p><a href="../10-user/01-cli/cli/project.html"><code>wproj</code> project tool guide</a></p>
+<h3 id="remote-database-support"><a class="header" href="#remote-database-support">Remote Database Support</a></h3>
+<p>KnowDB now supports remote PostgreSQL / MySQL through <code>[provider]</code>:</p>
+<ul>
+<li>Supports either directory-based SQLite authority or a remote database</li>
+<li>Supports PostgreSQL / MySQL through <code>connection_uri</code></li>
+<li>Uses <code>[cache]</code> as the unified result-cache configuration section</li>
+</ul>
+<p><a href="../10-user/02-config/07-knowdb_config.html">KnowDB configuration guide</a></p>
+<h3 id="observability-and-pipeline-inspection"><a class="header" href="#observability-and-pipeline-inspection">Observability and Pipeline Inspection</a></h3>
+<p>With VictoriaMetrics, VictoriaLogs, and Wp-Monitor, WarpParse now has a more complete inspection path for checking:</p>
+<ul>
+<li>Whether the pipeline is processing data correctly</li>
+<li>Whether MISS data is abnormal</li>
+<li>Whether downstream output is fluctuating</li>
+</ul>
+<p>Related docs:</p>
+<ul>
+<li><a href="../10-user/10-monitor/Wp-Monitor.html">Wp-Monitor</a></li>
+</ul>
+<h3 id="wpl-updates"><a class="header" href="#wpl-updates">WPL Updates</a></h3>
+<p>Added guidance for combining <code>json_like</code>, <code>json</code>, and <code>bad_json</code>, making class-of-JSON input handling clearer.</p>
+<p>Related docs:</p>
+<ul>
+<li><a href="../10-user/03-wpl/04-language-reference.html">WPL language reference</a></li>
+</ul>
+<h2 id="changed"><a class="header" href="#changed">Changed</a></h2>
+<h3 id="cli-manual-structure"><a class="header" href="#cli-manual-structure">CLI Manual Structure</a></h3>
+<p>The product overview, CLI usage, runtime admin surface, and remote sync SOP have been consolidated into a more unified entry point.</p>
+<p>Related docs:</p>
+<ul>
+<li><a href="../10-user/01-cli/README.html">CLI guide</a></li>
+</ul>
+<h3 id="clearer-stats-and-troubleshooting-paths"><a class="header" href="#clearer-stats-and-troubleshooting-paths">Clearer Stats and Troubleshooting Paths</a></h3>
+<p>The workflow around <code>wproj data stat</code>, <code>wproj data validate</code>, and <code>wproj rescue stat</code> is now more complete for day-to-day troubleshooting.</p>
+<p>Related docs:</p>
+<ul>
+<li><a href="../10-user/01-cli/cli/project.html"><code>wproj</code> project tool guide</a></li>
+<li><a href="../10-user/01-cli/cli/rescue.html"><code>wprescue</code> and rescue data guide</a></li>
+</ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../../30-dev/knowledge/architecture/provider-cache.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../00-release/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../../30-dev/knowledge/tasks/provider-cache.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../00-release/0.20.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -291,11 +267,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../../30-dev/knowledge/architecture/provider-cache.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../00-release/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../../30-dev/knowledge/tasks/provider-cache.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../00-release/0.20.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
@@ -315,18 +291,18 @@
         </script>
 
 
-        <script src="../../../elasticlunr-ef4e11c1.min.js"></script>
-        <script src="../../../mark-09e88c2c.min.js"></script>
-        <script src="../../../searcher-c2a407aa.js"></script>
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
 
-        <script src="../../../clipboard-1626706a.min.js"></script>
-        <script src="../../../highlight-abc7f01d.js"></script>
-        <script src="../../../book-a0b12cfe.js"></script>
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
-        <script src="../../../theme/site-fb88a44a.js"></script>
-        <script src="../../../mermaid-eefea253.min.js"></script>
-        <script src="../../../mermaid-init-ccf746f1.js"></script>
+        <script src="../theme/site-fb88a44a.js"></script>
+        <script src="../mermaid-eefea253.min.js"></script>
+        <script src="../mermaid-init-ccf746f1.js"></script>
 
 
 

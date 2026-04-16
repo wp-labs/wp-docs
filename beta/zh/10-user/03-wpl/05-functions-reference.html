@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="zh-CN" class="ayu sidebar-visible" dir="ltr">
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -28,19 +28,18 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../../../theme/lang-switch.css">
-        <link rel="stylesheet" href="../../../theme/version-badge.css">
+        <link rel="stylesheet" href="../../theme/site-ebe709e1.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
             const path_to_root = "../../";
-            const default_light_theme = "ayu";
+            const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-37cffb89.js";
+            window.path_to_searchindex_js = "../../searchindex-257b32ae.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-536d74fd.js"></script>
+        <script src="../../toc-6c095515.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -78,7 +77,7 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
-            html.classList.remove('ayu')
+            html.classList.remove('light')
             html.classList.add(theme);
             html.classList.add("js");
         </script>
@@ -179,605 +178,389 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="wpl-函数参考"><a class="header" href="#wpl-函数参考">WPL 函数参考</a></h1>
-<p>本文档提供所有 WPL 函数的标准化参考。</p>
-<hr>
-<h2 id="-wpl-所有函数速查"><a class="header" href="#-wpl-所有函数速查">📋 WPL 所有函数速查</a></h2>
-<h3 id="预处理管道函数"><a class="header" href="#预处理管道函数">预处理管道函数</a></h3>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>函数</th><th>说明</th><th>示例</th></tr>
-</thead>
-<tbody>
-<tr><td><a href="#decodebase64"><code>decode/base64</code></a></td><td>对整行 Base64 解码</td><td><code>|decode/base64|</code></td></tr>
-<tr><td><a href="#decodehex"><code>decode/hex</code></a></td><td>对整行十六进制解码</td><td><code>|decode/hex|</code></td></tr>
-<tr><td><a href="#unquoteunescape"><code>unquote/unescape</code></a></td><td>移除引号并还原转义</td><td><code>|unquote/unescape|</code></td></tr>
-<tr><td><a href="#plg_pipename"><code>plg_pipe/&lt;name&gt;</code></a></td><td>自定义预处理扩展</td><td><code>|plg_pipe/dayu|</code></td></tr>
-</tbody>
-</table>
-</div>
-<h3 id="选择器函数"><a class="header" href="#选择器函数">选择器函数</a></h3>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>函数</th><th>说明</th><th>示例</th></tr>
-</thead>
-<tbody>
-<tr><td><a href="#take"><code>take(name)</code></a></td><td>选择指定字段为活跃字段</td><td><code>|take(name)|</code></td></tr>
-<tr><td><a href="#last"><code>last()</code></a></td><td>选择最后一个字段为活跃字段</td><td><code>|last()|</code></td></tr>
-</tbody>
-</table>
-</div>
-<h3 id="字段集操作函数f_-前缀"><a class="header" href="#字段集操作函数f_-前缀">字段集操作函数（f_ 前缀）</a></h3>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>函数</th><th>说明</th><th>示例</th></tr>
-</thead>
-<tbody>
-<tr><td><a href="#f_has"><code>f_has(name)</code></a></td><td>检查字段是否存在</td><td><code>|f_has(status)|</code></td></tr>
-<tr><td><a href="#f_chars_has"><code>f_chars_has(name, val)</code></a></td><td>检查字段值等于字符串</td><td><code>|f_chars_has(status, success)|</code></td></tr>
-<tr><td><a href="#f_chars_not_has"><code>f_chars_not_has(name, val)</code></a></td><td>检查字段值不等于字符串</td><td><code>|f_chars_not_has(level, error)|</code></td></tr>
-<tr><td><a href="#f_chars_in"><code>f_chars_in(name, [...])</code></a></td><td>检查字段值在字符串列表</td><td><code>|f_chars_in(method, [GET, POST])|</code></td></tr>
-<tr><td><a href="#f_digit_has"><code>f_digit_has(name, num)</code></a></td><td>检查字段值等于数字</td><td><code>|f_digit_has(code, 200)|</code></td></tr>
-<tr><td><a href="#f_digit_in"><code>f_digit_in(name, [...])</code></a></td><td>检查字段值在数字列表</td><td><code>|f_digit_in(status, [200, 201])|</code></td></tr>
-<tr><td><a href="#f_ip_in"><code>f_ip_in(name, [...])</code></a></td><td>检查 IP 在列表</td><td><code>|f_ip_in(client_ip, [127.0.0.1])|</code></td></tr>
-</tbody>
-</table>
-</div>
-<h3 id="活跃字段操作函数"><a class="header" href="#活跃字段操作函数">活跃字段操作函数</a></h3>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>函数</th><th>说明</th><th>示例</th></tr>
-</thead>
-<tbody>
-<tr><td><a href="#has"><code>has()</code></a></td><td>检查活跃字段存在</td><td><code>|take(name)| has()|</code></td></tr>
-<tr><td><a href="#chars_has"><code>chars_has(val)</code></a></td><td>检查活跃字段等于字符串</td><td><code>|take(status)| chars_has(success)|</code></td></tr>
-<tr><td><a href="#chars_not_has"><code>chars_not_has(val)</code></a></td><td>检查活跃字段不等于字符串</td><td><code>|take(level)| chars_not_has(error)|</code></td></tr>
-<tr><td><a href="#chars_in"><code>chars_in([...])</code></a></td><td>检查活跃字段在字符串列表</td><td><code>|take(method)| chars_in([GET, POST])|</code></td></tr>
-<tr><td><a href="#digit_has"><code>digit_has(num)</code></a></td><td>检查活跃字段等于数字</td><td><code>|take(code)| digit_has(200)|</code></td></tr>
-<tr><td><a href="#digit_in"><code>digit_in([...])</code></a></td><td>检查活跃字段在数字列表</td><td><code>|take(status)| digit_in([200, 201])|</code></td></tr>
-<tr><td><a href="#ip_in"><code>ip_in([...])</code></a></td><td>检查活跃 IP 在列表</td><td><code>|take(client_ip)| ip_in([127.0.0.1])|</code></td></tr>
-</tbody>
-</table>
-</div>
-<h3 id="转换函数"><a class="header" href="#转换函数">转换函数</a></h3>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>函数</th><th>说明</th><th>示例</th></tr>
-</thead>
-<tbody>
-<tr><td><a href="#json_unescape"><code>json_unescape()</code></a></td><td>JSON 反转义</td><td><code>|take(message)| json_unescape()|</code></td></tr>
-<tr><td><a href="#base64_decode"><code>base64_decode()</code></a></td><td>Base64 解码</td><td><code>|take(payload)| base64_decode()|</code></td></tr>
-</tbody>
-</table>
-</div>
-<h3 id="常用场景速查"><a class="header" href="#常用场景速查">常用场景速查</a></h3>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>我想做什么</th><th>使用方法</th></tr>
-</thead>
-<tbody>
-<tr><td><strong>对整行 Base64 解码</strong></td><td><code>|decode/base64|</code></td></tr>
-<tr><td><strong>对整行十六进制解码</strong></td><td><code>|decode/hex|</code></td></tr>
-<tr><td><strong>移除引号和转义</strong></td><td><code>|unquote/unescape|</code></td></tr>
-<tr><td><strong>检查字段是否存在</strong></td><td><code>|f_has(field_name)|</code></td></tr>
-<tr><td><strong>检查字段值等于某字符串</strong></td><td><code>|f_chars_has(status, success)|</code></td></tr>
-<tr><td><strong>检查字段值在列表中</strong></td><td><code>|f_chars_in(method, [GET, POST])|</code></td></tr>
-<tr><td><strong>检查状态码是否为 200</strong></td><td><code>|f_digit_has(code, 200)|</code></td></tr>
-<tr><td><strong>检查 IP 是否在白名单</strong></td><td><code>|f_ip_in(client_ip, [127.0.0.1, 192.168.1.1])|</code></td></tr>
-<tr><td><strong>选择特定字段验证</strong></td><td><code>|take(status)| chars_has(ok)|</code></td></tr>
-<tr><td><strong>对字段 JSON 反转义</strong></td><td><code>|take(message)| json_unescape()|</code></td></tr>
-<tr><td><strong>对字段 Base64 解码</strong></td><td><code>|take(payload)| base64_decode()|</code></td></tr>
-<tr><td><strong>链式验证多个条件</strong></td><td><code>|f_has(method)| f_chars_in(method, [GET, POST])|</code></td></tr>
-</tbody>
-</table>
-</div>
-<hr>
-<h2 id="预处理管道函数-1"><a class="header" href="#预处理管道函数-1">预处理管道函数</a></h2>
-<h3 id="decodebase64"><a class="header" href="#decodebase64">decode/base64</a></h3>
-<p><strong>说明：</strong> 对整行输入进行 Base64 解码</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|decode/base64|
-</code></pre>
-<p><strong>参数：</strong> 无</p>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule base64_log {
-  |decode/base64|
-  (json(chars@user, digit@code))
-}
-</code></pre>
-<p><strong>输入（Base64）：</strong></p>
-<pre><code>eyJ1c2VyIjoiYWRtaW4iLCJjb2RlIjoyMDB9
-</code></pre>
-<p><strong>解码后：</strong></p>
-<pre><code class="language-json">{"user":"admin","code":200}
-</code></pre>
-<p><strong>注意：</strong></p>
+                        <h1 id="wpl-函数参考对齐-srcparserwpl_funrs-与-srcevalbuiltins"><a class="header" href="#wpl-函数参考对齐-srcparserwpl_funrs-与-srcevalbuiltins">WPL 函数参考（对齐 <code>src/parser/wpl_fun.rs</code> 与 <code>src/eval/builtins</code>）</a></h1>
+<p>本文档只描述当前代码里已经实现的函数和行为，不再保留过时签名。</p>
+<p>权威实现位置：</p>
 <ul>
-<li>作用于整行原始输入</li>
-<li>必须在字段解析前执行</li>
-<li>解码失败会报错</li>
+<li><code>src/parser/wpl_fun.rs</code></li>
+<li><code>src/ast/processor/function.rs</code></li>
+<li><code>src/eval/builtins/pipe_fun.rs</code></li>
+<li><code>src/eval/builtins/mod.rs</code></li>
 </ul>
 <hr>
-<h3 id="decodehex"><a class="header" href="#decodehex">decode/hex</a></h3>
-<p><strong>说明：</strong> 对整行输入进行十六进制解码</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|decode/hex|
-</code></pre>
-<p><strong>参数：</strong> 无</p>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule hex_log {
-  |decode/hex|
-  (chars:data)
+<h2 id="速查"><a class="header" href="#速查">速查</a></h2>
+<h3 id="预处理管道"><a class="header" href="#预处理管道">预处理管道</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>名称</th><th>作用</th><th>备注</th></tr>
+</thead>
+<tbody>
+<tr><td><code>decode/base64</code></td><td>对整行输入做 Base64 解码</td><td>内置</td></tr>
+<tr><td><code>decode/hex</code></td><td>对整行输入做十六进制解码</td><td>内置</td></tr>
+<tr><td><code>unquote/unescape</code></td><td>对整行输入做引号/转义处理</td><td>内置</td></tr>
+<tr><td><code>strip/bom</code></td><td>去掉 UTF BOM</td><td>内置</td></tr>
+<tr><td><code>json_like</code></td><td>只放行“看起来像 JSON”的输入</td><td>内置</td></tr>
+<tr><td><code>plg_pipe/&lt;name&gt;</code></td><td>调用注册的自定义预处理器</td><td><code>plg_pipe(name)</code> 也可</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="选择器"><a class="header" href="#选择器">选择器</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>函数</th><th>作用</th></tr>
+</thead>
+<tbody>
+<tr><td><code>take(field)</code></td><td>选中指定字段作为活跃字段</td></tr>
+<tr><td><code>last()</code></td><td>选中最后一个字段作为活跃字段</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="目标字段函数f_-前缀"><a class="header" href="#目标字段函数f_-前缀">目标字段函数（<code>f_</code> 前缀）</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>函数</th><th>作用</th></tr>
+</thead>
+<tbody>
+<tr><td><code>f_has(name)</code></td><td>指定字段存在</td></tr>
+<tr><td><code>f_chars_has(name, value)</code></td><td>指定字段等于某字符串</td></tr>
+<tr><td><code>f_chars_not_has(name, value)</code></td><td>指定字段不等于某字符串</td></tr>
+<tr><td><code>f_chars_in(name, [...])</code></td><td>指定字段属于字符串集合</td></tr>
+<tr><td><code>f_digit_has(name, number)</code></td><td>指定字段等于某数字</td></tr>
+<tr><td><code>f_digit_in(name, [...])</code></td><td>指定字段属于数字集合</td></tr>
+<tr><td><code>f_ip_in(name, [...])</code></td><td>指定字段属于 IP 集合</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="活跃字段函数"><a class="header" href="#活跃字段函数">活跃字段函数</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>函数</th><th>作用</th></tr>
+</thead>
+<tbody>
+<tr><td><code>has()</code></td><td>活跃字段存在</td></tr>
+<tr><td><code>chars_has(value)</code></td><td>活跃字段等于某字符串</td></tr>
+<tr><td><code>chars_not_has(value)</code></td><td>活跃字段不等于某字符串</td></tr>
+<tr><td><code>chars_in([...])</code></td><td>活跃字段属于字符串集合</td></tr>
+<tr><td><code>digit_has(number)</code></td><td>活跃字段等于某数字</td></tr>
+<tr><td><code>digit_in([...])</code></td><td>活跃字段属于数字集合</td></tr>
+<tr><td><code>digit_range(begin, end)</code></td><td>活跃字段落在闭区间 <code>[begin, end]</code></td></tr>
+<tr><td><code>ip_in([...])</code></td><td>活跃字段属于 IP 集合</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="转换与匹配"><a class="header" href="#转换与匹配">转换与匹配</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>函数</th><th>作用</th></tr>
+</thead>
+<tbody>
+<tr><td><code>json_unescape()</code></td><td>对活跃字符串字段做 JSON 反转义</td></tr>
+<tr><td><code>base64_decode()</code></td><td>对活跃字符串字段做 Base64 解码</td></tr>
+<tr><td><code>chars_replace(from, to)</code></td><td>对活跃字符串字段做全量替换</td></tr>
+<tr><td><code>regex_match(pattern)</code></td><td>对活跃字符串字段做正则匹配</td></tr>
+<tr><td><code>starts_with(prefix)</code></td><td>检查前缀；不匹配时把字段改成 <code>ignore</code></td></tr>
+<tr><td><code>not(inner_fun)</code></td><td>反转内层字段函数的成功/失败</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="预处理管道-1"><a class="header" href="#预处理管道-1">预处理管道</a></h2>
+<h3 id="decodebase64"><a class="header" href="#decodebase64"><code>decode/base64</code></a></h3>
+<p>整行输入做 Base64 解码。</p>
+<pre><code class="language-wpl">rule demo {
+  |decode/base64|
+  (chars:payload)
 }
 </code></pre>
-<p><strong>输入：</strong></p>
-<pre><code>48656c6c6f20576f726c64
+<p>说明：</p>
+<ul>
+<li>作用对象是原始整行，不是单个字段</li>
+<li>解码失败时当前规则失败</li>
+</ul>
+<h3 id="decodehex"><a class="header" href="#decodehex"><code>decode/hex</code></a></h3>
+<p>整行输入做十六进制解码。</p>
+<pre><code class="language-wpl">rule demo {
+  |decode/hex|
+  (chars:payload)
+}
 </code></pre>
-<p><strong>输出：</strong></p>
-<pre><code>data: Hello World
-</code></pre>
-<hr>
-<h3 id="unquoteunescape"><a class="header" href="#unquoteunescape">unquote/unescape</a></h3>
-<p><strong>说明：</strong> 移除外层引号并还原反斜杠转义</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|unquote/unescape|
-</code></pre>
-<p><strong>参数：</strong> 无</p>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule unescape_log {
+<h3 id="unquoteunescape"><a class="header" href="#unquoteunescape"><code>unquote/unescape</code></a></h3>
+<p>整行输入执行引号/转义处理。</p>
+<pre><code class="language-wpl">rule demo {
   |unquote/unescape|
   (chars:message)
 }
 </code></pre>
-<p><strong>转换效果：</strong></p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>输入</th><th>输出</th></tr>
-</thead>
-<tbody>
-<tr><td><code>\"hello\"</code></td><td><code>hello</code></td></tr>
-<tr><td><code>path\\to\\file</code></td><td><code>path\to\file</code></td></tr>
-</tbody>
-</table>
-</div>
-<hr>
-<h3 id="plg_pipe"><a class="header" href="#plg_pipe">plg_pipe/<name></name></a></h3>
-<p><strong>说明：</strong> 自定义预处理扩展</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|plg_pipe/&lt;name&gt;|
-</code></pre>
-<p><strong>参数：</strong> <code>&lt;name&gt;</code> - 注册的扩展名称</p>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule custom_preproc {
-  |plg_pipe/dayu|
-  (json(_@_origin, _@payload/packet_data))
+<h3 id="stripbom"><a class="header" href="#stripbom"><code>strip/bom</code></a></h3>
+<p>去掉输入开头的 BOM。</p>
+<pre><code class="language-wpl">rule demo {
+  |strip/bom|
+  (json(chars@msg))
 }
 </code></pre>
-<p><strong>注意：</strong></p>
+<h3 id="json_like"><a class="header" href="#json_like"><code>json_like</code></a></h3>
+<p>只允许看起来像 JSON 的文本继续往下走。</p>
+<pre><code class="language-wpl">rule maybe_bad_json {
+  |json_like|
+  (bad_json:raw)
+}
+</code></pre>
+<p>说明：</p>
 <ul>
-<li>需要通过代码注册扩展</li>
-<li>注册接口：<code>wpl::register_wpl_pipe!</code></li>
+<li>这是轻量过滤，不会真正解析 JSON</li>
+<li>当前实现认为下面两类输入才算“像 JSON”：
+<ul>
+<li>去掉前导空白/BOM 后以 <code>{</code> 开头，且同时包含 <code>:</code> 和 <code>"</code></li>
+<li>去掉前导空白/BOM 后以 <code>[</code> 开头，且包含 <code>,</code>、<code>]</code> 或 <code>{</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="plg_pipename--plg_pipename"><a class="header" href="#plg_pipename--plg_pipename"><code>plg_pipe/&lt;name&gt;</code> / <code>plg_pipe(name)</code></a></h3>
+<p>调用注册到预处理器注册表里的自定义处理器。</p>
+<pre><code class="language-wpl">rule demo {
+  |plg_pipe/dayu|
+  (chars:data)
+}
+</code></pre>
+<p>说明：</p>
+<ul>
+<li><code>plg_pipe(name)</code> 在解析后会归一化为 <code>plg_pipe/name</code></li>
+<li>是否可用取决于运行时是否注册了对应处理器</li>
 </ul>
 <hr>
-<h2 id="选择器函数-1"><a class="header" href="#选择器函数-1">选择器函数</a></h2>
-<h3 id="take"><a class="header" href="#take">take</a></h3>
-<p><strong>说明：</strong> 选择指定字段为活跃字段</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|take(&lt;field_name&gt;)|
-</code></pre>
-<p><strong>参数：</strong></p>
-<ul>
-<li><code>field_name</code> - 要选择的字段名</li>
-</ul>
-<p><strong>返回：</strong> 无（改变活跃字段状态）</p>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule take_example {
+<h2 id="选择器-1"><a class="header" href="#选择器-1">选择器</a></h2>
+<h3 id="takefield"><a class="header" href="#takefield"><code>take(field)</code></a></h3>
+<p>把指定字段设为活跃字段。</p>
+<pre><code class="language-wpl">rule demo {
   (
     json(chars@name, digit@age)
-    |take(name)              # 选择 name 为活跃字段
-    |chars_has(admin)        # 验证 name 的值
-  )
-}
-</code></pre>
-<p><strong>使用场景：</strong></p>
-<ul>
-<li>需要对特定字段进行验证</li>
-<li>链式验证多个字段</li>
-</ul>
-<hr>
-<h3 id="last"><a class="header" href="#last">last</a></h3>
-<p><strong>说明：</strong> 选择最后一个字段为活跃字段</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|last()|
-</code></pre>
-<p><strong>参数：</strong> 无</p>
-<p><strong>返回：</strong> 无（改变活跃字段状态）</p>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule last_example {
-  (
-    json(chars@a, chars@b, chars@c)
-    |last()                  # 选择 c 为活跃字段
-    |chars_has(value)        # 验证 c 的值
-  )
-}
-</code></pre>
-<hr>
-<h2 id="字段集操作函数"><a class="header" href="#字段集操作函数">字段集操作函数</a></h2>
-<h3 id="f_has"><a class="header" href="#f_has">f_has</a></h3>
-<p><strong>说明：</strong> 检查指定字段是否存在</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|f_has(&lt;field_name&gt;)|
-</code></pre>
-<p><strong>参数：</strong></p>
-<ul>
-<li><code>field_name</code> - 要检查的字段名</li>
-</ul>
-<p><strong>返回：</strong> 布尔值（字段存在返回 true，否则失败）</p>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule check_field {
-  (json |f_has(status) |f_has(message))
-}
-</code></pre>
-<hr>
-<h3 id="f_chars_has"><a class="header" href="#f_chars_has">f_chars_has</a></h3>
-<p><strong>说明：</strong> 检查指定字段值是否等于字符串</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|f_chars_has(&lt;field_name&gt;, &lt;value&gt;)|
-</code></pre>
-<p><strong>参数：</strong></p>
-<ul>
-<li><code>field_name</code> - 字段名（或 <code>_</code> 表示活跃字段）</li>
-<li><code>value</code> - 要匹配的字符串值</li>
-</ul>
-<p><strong>返回：</strong> 布尔值</p>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule check_string {
-  (json |f_chars_has(status, success))
-}
-</code></pre>
-<hr>
-<h3 id="f_chars_not_has"><a class="header" href="#f_chars_not_has">f_chars_not_has</a></h3>
-<p><strong>说明：</strong> 检查指定字段值是否不等于字符串</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|f_chars_not_has(&lt;field_name&gt;, &lt;value&gt;)|
-</code></pre>
-<p><strong>参数：</strong></p>
-<ul>
-<li><code>field_name</code> - 字段名</li>
-<li><code>value</code> - 不应匹配的字符串值</li>
-</ul>
-<p><strong>返回：</strong> 布尔值</p>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule exclude_error {
-  (json |f_chars_not_has(level, error))
-}
-</code></pre>
-<hr>
-<h3 id="f_chars_in"><a class="header" href="#f_chars_in">f_chars_in</a></h3>
-<p><strong>说明：</strong> 检查指定字段值是否在字符串列表中</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|f_chars_in(&lt;field_name&gt;, [&lt;value1&gt;, &lt;value2&gt;, ...])|
-</code></pre>
-<p><strong>参数：</strong></p>
-<ul>
-<li><code>field_name</code> - 字段名</li>
-<li><code>[...]</code> - 允许的字符串值列表</li>
-</ul>
-<p><strong>返回：</strong> 布尔值</p>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule check_method {
-  (json |f_chars_in(method, [GET, POST, PUT]))
-}
-</code></pre>
-<hr>
-<h3 id="f_digit_has"><a class="header" href="#f_digit_has">f_digit_has</a></h3>
-<p><strong>说明：</strong> 检查指定字段数值是否等于指定数字</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|f_digit_has(&lt;field_name&gt;, &lt;number&gt;)|
-</code></pre>
-<p><strong>参数：</strong></p>
-<ul>
-<li><code>field_name</code> - 字段名</li>
-<li><code>number</code> - 要匹配的数字</li>
-</ul>
-<p><strong>返回：</strong> 布尔值</p>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule check_status {
-  (json |f_digit_has(code, 200))
-}
-</code></pre>
-<hr>
-<h3 id="f_digit_in"><a class="header" href="#f_digit_in">f_digit_in</a></h3>
-<p><strong>说明：</strong> 检查指定字段数值是否在数字列表中</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|f_digit_in(&lt;field_name&gt;, [&lt;num1&gt;, &lt;num2&gt;, ...])|
-</code></pre>
-<p><strong>参数：</strong></p>
-<ul>
-<li><code>field_name</code> - 字段名</li>
-<li><code>[...]</code> - 允许的数字值列表</li>
-</ul>
-<p><strong>返回：</strong> 布尔值</p>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule check_success {
-  (json |f_digit_in(status, [200, 201, 204]))
-}
-</code></pre>
-<hr>
-<h3 id="f_ip_in"><a class="header" href="#f_ip_in">f_ip_in</a></h3>
-<p><strong>说明：</strong> 检查指定 IP 字段是否在 IP 列表中</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|f_ip_in(&lt;field_name&gt;, [&lt;ip1&gt;, &lt;ip2&gt;, ...])|
-</code></pre>
-<p><strong>参数：</strong></p>
-<ul>
-<li><code>field_name</code> - 字段名</li>
-<li><code>[...]</code> - 允许的 IP 地址列表（支持 IPv4/IPv6）</li>
-</ul>
-<p><strong>返回：</strong> 布尔值</p>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule check_trusted {
-  (json |f_ip_in(client_ip, [127.0.0.1, 192.168.1.1]))
-}
-</code></pre>
-<hr>
-<h2 id="活跃字段操作函数-1"><a class="header" href="#活跃字段操作函数-1">活跃字段操作函数</a></h2>
-<h3 id="has"><a class="header" href="#has">has</a></h3>
-<p><strong>说明：</strong> 检查活跃字段是否存在</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|has()|
-</code></pre>
-<p><strong>参数：</strong> 无</p>
-<p><strong>返回：</strong> 布尔值</p>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule check_active {
-  (
-    json(chars@name)
-    |take(name)
-    |has()                   # 检查 name 是否存在
-  )
-}
-</code></pre>
-<hr>
-<h3 id="chars_has"><a class="header" href="#chars_has">chars_has</a></h3>
-<p><strong>说明：</strong> 检查活跃字段值是否等于指定字符串</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|chars_has(&lt;value&gt;)|
-</code></pre>
-<p><strong>参数：</strong></p>
-<ul>
-<li><code>value</code> - 要匹配的字符串值</li>
-</ul>
-<p><strong>返回：</strong> 布尔值</p>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule check_value {
-  (
-    json(chars@status)
-    |take(status)
-    |chars_has(success)
-  )
-}
-</code></pre>
-<hr>
-<h3 id="chars_not_has"><a class="header" href="#chars_not_has">chars_not_has</a></h3>
-<p><strong>说明：</strong> 检查活跃字段值是否不等于指定字符串</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|chars_not_has(&lt;value&gt;)|
-</code></pre>
-<p><strong>参数：</strong></p>
-<ul>
-<li><code>value</code> - 不应匹配的字符串值</li>
-</ul>
-<p><strong>返回：</strong> 布尔值</p>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule exclude_value {
-  (
-    json(chars@level)
-    |take(level)
-    |chars_not_has(error)
-  )
-}
-</code></pre>
-<hr>
-<h3 id="chars_in"><a class="header" href="#chars_in">chars_in</a></h3>
-<p><strong>说明：</strong> 检查活跃字段值是否在字符串列表中</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|chars_in([&lt;value1&gt;, &lt;value2&gt;, ...])|
-</code></pre>
-<p><strong>参数：</strong></p>
-<ul>
-<li><code>[...]</code> - 允许的字符串值列表</li>
-</ul>
-<p><strong>返回：</strong> 布尔值</p>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule check_method {
-  (
-    json(chars@method)
-    |take(method)
-    |chars_in([GET, POST, PUT])
-  )
-}
-</code></pre>
-<hr>
-<h3 id="digit_has"><a class="header" href="#digit_has">digit_has</a></h3>
-<p><strong>说明：</strong> 检查活跃字段数值是否等于指定数字</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|digit_has(&lt;number&gt;)|
-</code></pre>
-<p><strong>参数：</strong></p>
-<ul>
-<li><code>number</code> - 要匹配的数字</li>
-</ul>
-<p><strong>返回：</strong> 布尔值</p>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule check_code {
-  (
-    json(digit@code)
-    |take(code)
-    |digit_has(200)
-  )
-}
-</code></pre>
-<hr>
-<h3 id="digit_in"><a class="header" href="#digit_in">digit_in</a></h3>
-<p><strong>说明：</strong> 检查活跃字段数值是否在数字列表中</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|digit_in([&lt;num1&gt;, &lt;num2&gt;, ...])|
-</code></pre>
-<p><strong>参数：</strong></p>
-<ul>
-<li><code>[...]</code> - 允许的数字值列表</li>
-</ul>
-<p><strong>返回：</strong> 布尔值</p>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule check_success {
-  (
-    json(digit@status)
-    |take(status)
-    |digit_in([200, 201, 204])
-  )
-}
-</code></pre>
-<hr>
-<h3 id="ip_in"><a class="header" href="#ip_in">ip_in</a></h3>
-<p><strong>说明：</strong> 检查活跃 IP 字段是否在 IP 列表中</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|ip_in([&lt;ip1&gt;, &lt;ip2&gt;, ...])|
-</code></pre>
-<p><strong>参数：</strong></p>
-<ul>
-<li><code>[...]</code> - 允许的 IP 地址列表（支持 IPv4/IPv6）</li>
-</ul>
-<p><strong>返回：</strong> 布尔值</p>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule check_client {
-  (
-    json(ip@client_ip)
-    |take(client_ip)
-    |ip_in([127.0.0.1, 192.168.1.1])
-  )
-}
-</code></pre>
-<hr>
-<h2 id="转换函数-1"><a class="header" href="#转换函数-1">转换函数</a></h2>
-<h3 id="json_unescape"><a class="header" href="#json_unescape">json_unescape</a></h3>
-<p><strong>说明：</strong> 对活跃字段进行 JSON 反转义</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|json_unescape()|
-</code></pre>
-<p><strong>参数：</strong> 无</p>
-<p><strong>转换效果：</strong></p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>输入</th><th>输出</th></tr>
-</thead>
-<tbody>
-<tr><td><code>hello\\nworld</code></td><td><code>hello</code> + 换行 + <code>world</code></td></tr>
-<tr><td><code>path\\\\to</code></td><td><code>path\to</code></td></tr>
-<tr><td><code>say\\\"hi\\\"</code></td><td><code>say"hi"</code></td></tr>
-</tbody>
-</table>
-</div>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule parse_json_log {
-  (
-    json(chars@message)
-    |take(message)
-    |json_unescape()
-  )
-}
-</code></pre>
-<hr>
-<h3 id="base64_decode"><a class="header" href="#base64_decode">base64_decode</a></h3>
-<p><strong>说明：</strong> 对活跃字段进行 Base64 解码</p>
-<p><strong>语法：</strong></p>
-<pre><code class="language-wpl">|base64_decode()|
-</code></pre>
-<p><strong>参数：</strong> 无</p>
-<p><strong>转换效果：</strong></p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>输入</th><th>输出</th></tr>
-</thead>
-<tbody>
-<tr><td><code>aGVsbG8=</code></td><td><code>hello</code></td></tr>
-<tr><td><code>Zm9vYmFy</code></td><td><code>foobar</code></td></tr>
-</tbody>
-</table>
-</div>
-<p><strong>示例：</strong></p>
-<pre><code class="language-wpl">rule decode_payload {
-  (
-    json(chars@payload)
-    |take(payload)
-    |base64_decode()
-  )
-}
-</code></pre>
-<hr>
-<h2 id="-函数对照表"><a class="header" href="#-函数对照表">📊 函数对照表</a></h2>
-<h3 id="字段集-vs-活跃字段"><a class="header" href="#字段集-vs-活跃字段">字段集 vs 活跃字段</a></h3>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>功能</th><th>字段集操作（f_ 前缀）</th><th>活跃字段操作（无前缀）</th></tr>
-</thead>
-<tbody>
-<tr><td>检查存在</td><td><code>f_has(name)</code></td><td><code>take(name) | has()</code></td></tr>
-<tr><td>字符串相等</td><td><code>f_chars_has(name, val)</code></td><td><code>take(name) | chars_has(val)</code></td></tr>
-<tr><td>字符串不等</td><td><code>f_chars_not_has(name, val)</code></td><td><code>take(name) | chars_not_has(val)</code></td></tr>
-<tr><td>字符串在列表</td><td><code>f_chars_in(name, [a, b])</code></td><td><code>take(name) | chars_in([a, b])</code></td></tr>
-<tr><td>数字相等</td><td><code>f_digit_has(name, 200)</code></td><td><code>take(name) | digit_has(200)</code></td></tr>
-<tr><td>数字在列表</td><td><code>f_digit_in(name, [200, 201])</code></td><td><code>take(name) | digit_in([200, 201])</code></td></tr>
-<tr><td>IP 在列表</td><td><code>f_ip_in(name, [1.1.1.1])</code></td><td><code>take(name) | ip_in([1.1.1.1])</code></td></tr>
-</tbody>
-</table>
-</div>
-<hr>
-<h2 id="-使用模式"><a class="header" href="#-使用模式">💡 使用模式</a></h2>
-<h3 id="链式调用"><a class="header" href="#链式调用">链式调用</a></h3>
-<pre><code class="language-wpl">rule chain {
-  (json
-    |f_has(method)
-    |f_chars_in(method, [GET, POST])
-    |f_digit_in(status, [200, 201])
-    |f_ip_in(client_ip, [10.0.0.1])
-  )
-}
-</code></pre>
-<h3 id="选择器--验证"><a class="header" href="#选择器--验证">选择器 + 验证</a></h3>
-<pre><code class="language-wpl">rule selector {
-  (json(chars@name, digit@age)
     |take(name)
     |chars_has(admin)
-    |take(age)
-    |digit_in([18, 19, 20])
   )
 }
 </code></pre>
-<h3 id="预处理--字段级管道"><a class="header" href="#预处理--字段级管道">预处理 + 字段级管道</a></h3>
-<pre><code class="language-wpl">rule full {
-  |decode/base64|                      # 预处理：整行解码
-  (json |f_has(name) |f_digit_in(age, [18, 25]))  # 字段级：验证
+<p>参数格式：</p>
+<ul>
+<li>支持裸字段名：<code>take(name)</code></li>
+<li>支持双引号：<code>take("@special")</code></li>
+<li>支持单引号：<code>take('@special')</code></li>
+</ul>
+<p>失败条件：</p>
+<ul>
+<li>找不到目标字段</li>
+</ul>
+<h3 id="last"><a class="header" href="#last"><code>last()</code></a></h3>
+<p>把最后一个字段设为活跃字段。</p>
+<pre><code class="language-wpl">rule demo {
+  (
+    json(chars@a, chars@b, chars@c)
+    |last()
+    |chars_has(done)
+  )
 }
 </code></pre>
-<hr>
-<h2 id="相关文档"><a class="header" href="#相关文档">相关文档</a></h2>
+<p>失败条件：</p>
 <ul>
-<li>快速入门：<a href="./01-quickstart.html">01-quickstart.md</a></li>
-<li>核心概念：<a href="./02-core-concepts.html">02-core-concepts.md</a></li>
-<li>实战指南：<a href="./03-practical-guide.html">03-practical-guide.md</a></li>
-<li>语言参考：<a href="./04-language-reference.html">04-language-reference.md</a></li>
-<li>语法规范：<a href="./06-grammar-reference.html">06-grammar-reference.md</a></li>
+<li>当前字段列表为空</li>
+</ul>
+<hr>
+<h2 id="目标字段函数f_-前缀-1"><a class="header" href="#目标字段函数f_-前缀-1">目标字段函数（<code>f_</code> 前缀）</a></h2>
+<p>这类函数会自动按字段名选择目标字段，不需要先 <code>take(...)</code>。</p>
+<h3 id="f_hasname"><a class="header" href="#f_hasname"><code>f_has(name)</code></a></h3>
+<p>指定字段存在时成功。</p>
+<pre><code class="language-wpl">|f_has(status)|
+</code></pre>
+<h3 id="f_chars_hasname-value"><a class="header" href="#f_chars_hasname-value"><code>f_chars_has(name, value)</code></a></h3>
+<p>指定字段是 <code>Chars</code>，且值等于 <code>value</code> 时成功。</p>
+<pre><code class="language-wpl">|f_chars_has(status, success)|
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>第一个参数支持 <code>_</code>，表示“当前活跃字段”</li>
+<li>第二个参数当前按裸字符串解析，适合 <code>success</code>、<code>GET</code> 这类简单值</li>
+</ul>
+<h3 id="f_chars_not_hasname-value"><a class="header" href="#f_chars_not_hasname-value"><code>f_chars_not_has(name, value)</code></a></h3>
+<p>指定字段不存在时也会成功；只有“字段存在且值刚好等于 <code>value</code>”才失败。</p>
+<pre><code class="language-wpl">|f_chars_not_has(level, error)|
+</code></pre>
+<p>这和很多“严格不存在即失败”的谓词不同，当前实现是宽松语义。</p>
+<h3 id="f_chars_inname-"><a class="header" href="#f_chars_inname-"><code>f_chars_in(name, [...])</code></a></h3>
+<p>指定字段是 <code>Chars</code>，且值属于给定字符串数组时成功。</p>
+<pre><code class="language-wpl">|f_chars_in(method, [GET, POST, PUT])|
+</code></pre>
+<h3 id="f_digit_hasname-number"><a class="header" href="#f_digit_hasname-number"><code>f_digit_has(name, number)</code></a></h3>
+<p>指定字段是 <code>Digit</code>，且值等于目标数字时成功。</p>
+<pre><code class="language-wpl">|f_digit_has(code, 200)|
+</code></pre>
+<h3 id="f_digit_inname-"><a class="header" href="#f_digit_inname-"><code>f_digit_in(name, [...])</code></a></h3>
+<p>指定字段是 <code>Digit</code>，且值属于数字数组时成功。</p>
+<pre><code class="language-wpl">|f_digit_in(code, [200, 201, 204])|
+</code></pre>
+<h3 id="f_ip_inname-"><a class="header" href="#f_ip_inname-"><code>f_ip_in(name, [...])</code></a></h3>
+<p>指定字段是 <code>IpAddr</code>，且值属于 IP 数组时成功。</p>
+<pre><code class="language-wpl">|f_ip_in(client_ip, [127.0.0.1, ::1])|
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>支持 IPv4 和 IPv6</li>
+</ul>
+<hr>
+<h2 id="活跃字段函数-1"><a class="header" href="#活跃字段函数-1">活跃字段函数</a></h2>
+<p>这类函数直接作用于当前活跃字段。通常搭配 <code>take(...)</code> 或 <code>last()</code> 使用。</p>
+<h3 id="has"><a class="header" href="#has"><code>has()</code></a></h3>
+<p>活跃字段存在即成功。</p>
+<pre><code class="language-wpl">|take(name)|has()|
+</code></pre>
+<h3 id="chars_hasvalue"><a class="header" href="#chars_hasvalue"><code>chars_has(value)</code></a></h3>
+<p>活跃字段必须是 <code>Chars</code>，且值等于 <code>value</code>。</p>
+<pre><code class="language-wpl">|take(status)|chars_has(success)|
+</code></pre>
+<h3 id="chars_not_hasvalue"><a class="header" href="#chars_not_hasvalue"><code>chars_not_has(value)</code></a></h3>
+<p>活跃字段不存在时也成功；只有“字段存在且值等于 <code>value</code>”才失败。</p>
+<pre><code class="language-wpl">|take(level)|chars_not_has(error)|
+</code></pre>
+<h3 id="chars_in"><a class="header" href="#chars_in"><code>chars_in([...])</code></a></h3>
+<p>活跃字段必须是 <code>Chars</code>，且值落在给定字符串数组中。</p>
+<pre><code class="language-wpl">|take(method)|chars_in([GET, POST])|
+</code></pre>
+<h3 id="digit_hasnumber"><a class="header" href="#digit_hasnumber"><code>digit_has(number)</code></a></h3>
+<p>活跃字段必须是 <code>Digit</code>，且值等于目标数字。</p>
+<pre><code class="language-wpl">|take(code)|digit_has(200)|
+</code></pre>
+<h3 id="digit_in"><a class="header" href="#digit_in"><code>digit_in([...])</code></a></h3>
+<p>活跃字段必须是 <code>Digit</code>，且值属于数字数组。</p>
+<pre><code class="language-wpl">|take(code)|digit_in([200, 201, 204])|
+</code></pre>
+<h3 id="digit_rangebegin-end"><a class="header" href="#digit_rangebegin-end"><code>digit_range(begin, end)</code></a></h3>
+<p>活跃字段必须是 <code>Digit</code>，且值满足闭区间 <code>[begin, end]</code>。</p>
+<pre><code class="language-wpl">|take(code)|digit_range(200, 299)|
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>当前只有活跃字段版本，没有 <code>f_digit_range(...)</code></li>
+</ul>
+<h3 id="ip_in"><a class="header" href="#ip_in"><code>ip_in([...])</code></a></h3>
+<p>活跃字段必须是 IP，且值属于目标列表。</p>
+<pre><code class="language-wpl">|take(client_ip)|ip_in([127.0.0.1, ::1])|
+</code></pre>
+<hr>
+<h2 id="转换与匹配函数"><a class="header" href="#转换与匹配函数">转换与匹配函数</a></h2>
+<h3 id="json_unescape"><a class="header" href="#json_unescape"><code>json_unescape()</code></a></h3>
+<p>对活跃字符串字段做 JSON 反转义。</p>
+<pre><code class="language-wpl">|take(message)|json_unescape()|
+</code></pre>
+<p>行为：</p>
+<ul>
+<li>只处理 <code>Chars</code></li>
+<li>字段里没有反斜杠时直接成功</li>
+<li>遇到非法 JSON 转义时失败</li>
+</ul>
+<h3 id="base64_decode"><a class="header" href="#base64_decode"><code>base64_decode()</code></a></h3>
+<p>对活跃字符串字段做 Base64 解码。</p>
+<pre><code class="language-wpl">|take(payload)|base64_decode()|
+</code></pre>
+<p>行为：</p>
+<ul>
+<li>只处理 <code>Chars</code></li>
+<li>解码失败或结果不是 UTF-8 时失败</li>
+</ul>
+<h3 id="chars_replacefrom-to"><a class="header" href="#chars_replacefrom-to"><code>chars_replace(from, to)</code></a></h3>
+<p>对活跃字符串字段执行 <code>String::replace(from, to)</code>。</p>
+<pre><code class="language-wpl">|take(message)|chars_replace(old, new)|
+|take(message)|chars_replace("hello world", "hi")|
+</code></pre>
+<p>参数格式：</p>
+<ul>
+<li>支持裸字符串</li>
+<li>支持单引号或双引号字符串</li>
+</ul>
+<p>说明：</p>
+<ul>
+<li>替换是全量替换，不是只替换第一个</li>
+<li><code>from</code> 为空字符串时，会在每个字符边界插入 <code>to</code></li>
+</ul>
+<h3 id="regex_matchpattern"><a class="header" href="#regex_matchpattern"><code>regex_match(pattern)</code></a></h3>
+<p>对活跃字符串字段执行正则匹配。</p>
+<pre><code class="language-wpl">|take(email)|regex_match('^\\w+@\\w+\\.\\w+$')|
+</code></pre>
+<p>参数格式：</p>
+<ul>
+<li>支持裸字符串</li>
+<li>支持单引号或双引号字符串</li>
+<li>正则由 Rust <code>regex</code> crate 编译</li>
+</ul>
+<p>失败条件：</p>
+<ul>
+<li>活跃字段不存在</li>
+<li>活跃字段不是字符串</li>
+<li>正则不合法</li>
+<li>正则未匹配</li>
+</ul>
+<h3 id="starts_withprefix"><a class="header" href="#starts_withprefix"><code>starts_with(prefix)</code></a></h3>
+<p>检查活跃字符串字段是否以前缀开头。</p>
+<pre><code class="language-wpl">|take(path)|starts_with('/api/')|
+</code></pre>
+<p>参数格式：</p>
+<ul>
+<li>支持裸字符串</li>
+<li>支持单引号或双引号字符串</li>
+</ul>
+<p>当前实现的关键行为：</p>
+<ul>
+<li>若字段是字符串且以前缀开头：成功，字段保持原值</li>
+<li>若字段不是字符串，或字符串不匹配：不会报错，而是把该字段改成 <code>ignore</code>，然后返回成功</li>
+</ul>
+<p>这意味着 <code>starts_with(...)</code> 更像“筛掉当前字段”而不是“严格断言失败”。</p>
+<h3 id="notinner_fun"><a class="header" href="#notinner_fun"><code>not(inner_fun)</code></a></h3>
+<p>反转内层字段函数的成功/失败结果。</p>
+<pre><code class="language-wpl">|not(chars_has(error))|
+|not(f_chars_has(level, error))|
+</code></pre>
+<p>说明：</p>
+<ul>
+<li>只能包裹字段函数</li>
+<li>不能包裹选择器函数，例如 <code>not(take(name))</code> 不成立</li>
+<li>会沿用内层函数的自动选字段逻辑</li>
+</ul>
+<hr>
+<h2 id="使用建议"><a class="header" href="#使用建议">使用建议</a></h2>
+<h3 id="目标字段函数-vs-活跃字段函数"><a class="header" href="#目标字段函数-vs-活跃字段函数">目标字段函数 vs 活跃字段函数</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>场景</th><th>推荐写法</th></tr>
+</thead>
+<tbody>
+<tr><td>只校验某个字段是否存在</td><td><code>f_has(name)</code></td></tr>
+<tr><td>先定位字段，再连续做多步处理</td><td><code>take(name)</code> + 活跃字段函数</td></tr>
+<tr><td>需要做字段值转换</td><td><code>take(name)</code> + <code>json_unescape()</code> / <code>base64_decode()</code> / <code>chars_replace()</code></td></tr>
+<tr><td>需要否定一个条件</td><td><code>not(...)</code></td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="当前实现里容易踩坑的点"><a class="header" href="#当前实现里容易踩坑的点">当前实现里容易踩坑的点</a></h3>
+<ul>
+<li><code>chars_not_has(...)</code> 和 <code>f_chars_not_has(...)</code> 在字段缺失时会成功</li>
+<li><code>starts_with(...)</code> 在不匹配时会把字段转成 <code>ignore</code>，不是直接失败</li>
+<li>并不是所有字符串参数都支持带引号
+<ul>
+<li>明确支持引号：<code>take</code>、<code>chars_replace</code>、<code>regex_match</code>、<code>starts_with</code></li>
+<li>其余如 <code>chars_has</code>、<code>f_chars_has</code> 目前应优先写裸值</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="相关实现"><a class="header" href="#相关实现">相关实现</a></h2>
+<ul>
+<li>函数解析：<a href="/Users/zuowenjian/devspace/wp-labs/dev/wparse/wp-lang/src/parser/wpl_fun.rs">src/parser/wpl_fun.rs</a></li>
+<li>函数 AST：<a href="/Users/zuowenjian/devspace/wp-labs/dev/wparse/wp-lang/src/ast/processor/function.rs">src/ast/processor/function.rs</a></li>
+<li>字段管道执行：<a href="/Users/zuowenjian/devspace/wp-labs/dev/wparse/wp-lang/src/eval/builtins/pipe_fun.rs">src/eval/builtins/pipe_fun.rs</a></li>
+<li>内置预处理器注册：<a href="/Users/zuowenjian/devspace/wp-labs/dev/wparse/wp-lang/src/eval/builtins/mod.rs">src/eval/builtins/mod.rs</a></li>
 </ul>
 
                     </main>
@@ -831,8 +614,7 @@
         <script src="../../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
-        <script src="../../../theme/lang-switch.js"></script>
-        <script src="../../../theme/version-badge.js"></script>
+        <script src="../../theme/site-fb88a44a.js"></script>
         <script src="../../mermaid-eefea253.min.js"></script>
         <script src="../../mermaid-init-ccf746f1.js"></script>
 

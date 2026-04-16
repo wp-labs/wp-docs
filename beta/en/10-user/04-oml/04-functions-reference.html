@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="ayu sidebar-visible" dir="ltr">
+<html lang="en" class="light sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -28,19 +28,18 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../../../theme/lang-switch.css">
-        <link rel="stylesheet" href="../../../theme/version-badge.css">
+        <link rel="stylesheet" href="../../theme/site-ebe709e1.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
             const path_to_root = "../../";
-            const default_light_theme = "ayu";
+            const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-bab637e3.js";
+            window.path_to_searchindex_js = "../../searchindex-edc6cbb1.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-6f276faf.js"></script>
+        <script src="../../toc-d7a13aa9.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -78,7 +77,7 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
-            html.classList.remove('ayu')
+            html.classList.remove('light')
             html.classList.add(theme);
             html.classList.add("js");
         </script>
@@ -180,55 +179,285 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="oml-functions-reference"><a class="header" href="#oml-functions-reference">OML Functions Reference</a></h1>
+<p>This document lists only the built-in functions, built-in expressions, and pipe functions that are actually supported by the current parser implementation in <code>wp-motor/crates/wp-oml/src/parser</code>.</p>
 <blockquote>
-<p><strong>Translation in Progress</strong></p>
-<p>This document is currently being translated from Chinese to English.</p>
-<p>Please refer to the Chinese version: <code>docs/10-user/04-oml-new/04-functions-reference.md</code></p>
+<p>Notes:</p>
+<ol>
+<li><code>match</code> condition functions are documented separately in <a href="./functions/match_functions.html">functions/match_functions.md</a></li>
+<li>Older docs mentioned <code>sxf_get(...)</code>, but it is not supported by the current parser</li>
+<li>Pipe expressions can be written either as <code>pipe read(x) | ...</code> or as <code>read(x) | ...</code></li>
+</ol>
 </blockquote>
 <hr>
-<p>This document provides complete reference for all built-in functions and pipeline functions, using a standardized format for easy lookup.</p>
-<h2 id="oml-all-functions-quick-reference"><a class="header" href="#oml-all-functions-quick-reference">OML All Functions Quick Reference</a></h2>
-<h3 id="built-in-functions"><a class="header" href="#built-in-functions">Built-in Functions</a></h3>
+<h2 id="quick-reference"><a class="header" href="#quick-reference">Quick Reference</a></h2>
+<h3 id="built-in-expressions--built-in-functions"><a class="header" href="#built-in-expressions--built-in-functions">Built-in Expressions / Built-in Functions</a></h3>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Function</th><th>Description</th><th>Example</th></tr>
+<tr><th>Name</th><th>Description</th><th>Example</th></tr>
 </thead>
 <tbody>
-<tr><td><code>calc(...)</code></td><td>Evaluate an explicit arithmetic expression</td><td><code>score = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;</code></td></tr>
-<tr><td><code>Now::time()</code></td><td>Get current time</td><td><code>event_time = Now::time() ;</code></td></tr>
-<tr><td><code>Now::date()</code></td><td>Get current date (YYYYMMDD)</td><td><code>today = Now::date() ;</code></td></tr>
-<tr><td><code>Now::hour()</code></td><td>Get current hour (YYYYMMDDHH)</td><td><code>current_hour = Now::hour() ;</code></td></tr>
+<tr><td><code>calc(...)</code></td><td>Explicit numeric expressions</td><td><code>score = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;</code></td></tr>
+<tr><td><code>lookup_nocase(...)</code></td><td>Case-insensitive lookup against a static object</td><td><code>score = lookup_nocase(score_map, read(status), 40.0) ;</code></td></tr>
+<tr><td><code>Now::time()</code></td><td>Current time</td><td><code>event_time = Now::time() ;</code></td></tr>
+<tr><td><code>Now::date()</code></td><td>Current date as <code>YYYYMMDD</code></td><td><code>today = Now::date() ;</code></td></tr>
+<tr><td><code>Now::hour()</code></td><td>Current hour as <code>YYYYMMDDHH</code></td><td><code>hour = Now::hour() ;</code></td></tr>
 </tbody>
 </table>
 </div>
-<h3 id="pipeline-functions"><a class="header" href="#pipeline-functions">Pipeline Functions</a></h3>
+<h3 id="pipe-functions"><a class="header" href="#pipe-functions">Pipe Functions</a></h3>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Category</th><th>Function</th><th>Description</th><th>Example</th></tr>
+<tr><th>Category</th><th>Name</th><th>Example</th></tr>
 </thead>
 <tbody>
-<tr><td><strong>Encoding</strong></td><td><code>base64_encode</code></td><td>Base64 encode</td><td><code>read(data) | base64_encode</code></td></tr>
-<tr><td></td><td><code>base64_decode</code></td><td>Base64 decode (supports Utf8/Gbk)</td><td><code>read(data) | base64_decode(Utf8)</code></td></tr>
-<tr><td><strong>Escaping</strong></td><td><code>html_escape</code></td><td>HTML escape</td><td><code>read(text) | html_escape</code></td></tr>
-<tr><td></td><td><code>json_escape</code></td><td>JSON escape</td><td><code>read(text) | json_escape</code></td></tr>
-<tr><td><strong>Time</strong></td><td><code>Time::to_ts</code></td><td>Convert to timestamp (seconds, UTC+8)</td><td><code>read(time) | Time::to_ts</code></td></tr>
-<tr><td></td><td><code>Time::to_ts_zone</code></td><td>Convert to specified timezone timestamp</td><td><code>read(time) | Time::to_ts_zone(0, ms)</code></td></tr>
-<tr><td><strong>Data Access</strong></td><td><code>nth(index)</code></td><td>Get array element</td><td><code>read(arr) | nth(0)</code></td></tr>
-<tr><td></td><td><code>get(key)</code></td><td>Get object field</td><td><code>read(obj) | get(name)</code></td></tr>
-<tr><td></td><td><code>url(part)</code></td><td>Extract URL parts</td><td><code>read(url) | url(domain)</code></td></tr>
-<tr><td><strong>Conversion</strong></td><td><code>to_str</code></td><td>Convert to string</td><td><code>read(ip) | to_str</code></td></tr>
-<tr><td></td><td><code>to_json</code></td><td>Convert to JSON</td><td><code>read(arr) | to_json</code></td></tr>
-<tr><td></td><td><code>ip4_to_int</code></td><td>IPv4 to integer</td><td><code>read(ip) | ip4_to_int</code></td></tr>
-<tr><td><strong>Control</strong></td><td><code>skip_empty</code></td><td>Skip empty values</td><td><code>read(field) | skip_empty</code></td></tr>
+<tr><td>Access</td><td><code>nth(index)</code></td><td>`first = read(items)</td></tr>
+<tr><td>Access</td><td><code>get(name)</code></td><td>`code = read(obj)</td></tr>
+<tr><td>Condition</td><td><code>starts_with('prefix')</code></td><td>`secure = read(url)</td></tr>
+<tr><td>Mapping</td><td><code>map_to(value)</code></td><td>`flag = read(level)</td></tr>
+<tr><td>Encoding</td><td><code>base64_encode</code></td><td>`encoded = read(msg)</td></tr>
+<tr><td>Encoding</td><td><code>base64_decode([EncodeType])</code></td><td>`decoded = read(msg)</td></tr>
+<tr><td>Escaping</td><td><code>html_escape</code></td><td>`safe = read(html)</td></tr>
+<tr><td>Escaping</td><td><code>html_unescape</code></td><td>`raw = read(html)</td></tr>
+<tr><td>Escaping</td><td><code>str_escape</code></td><td>`escaped = read(message)</td></tr>
+<tr><td>Escaping</td><td><code>json_escape</code></td><td>`escaped = read(text)</td></tr>
+<tr><td>Escaping</td><td><code>json_unescape</code></td><td>`raw = read(text)</td></tr>
+<tr><td>Time</td><td><code>Time::to_ts</code></td><td>`ts = read(time)</td></tr>
+<tr><td>Time</td><td><code>Time::to_ts_ms</code></td><td>`ts = read(time)</td></tr>
+<tr><td>Time</td><td><code>Time::to_ts_us</code></td><td>`ts = read(time)</td></tr>
+<tr><td>Time</td><td><code>Time::to_ts_zone(zone, unit)</code></td><td>`ts = read(time)</td></tr>
+<tr><td>Conversion</td><td><code>to_json</code></td><td>`payload = read(arr)</td></tr>
+<tr><td>Conversion</td><td><code>to_str</code></td><td>`ip_s = read(ip)</td></tr>
+<tr><td>Conversion</td><td><code>ip4_to_int</code></td><td>`ip_i = read(src_ip)</td></tr>
+<tr><td>Extraction</td><td>`path([name</td><td>path])`</td></tr>
+<tr><td>Extraction</td><td>`url([domain</td><td>host</td></tr>
+<tr><td>Control</td><td><code>skip_empty</code></td><td>`v = read(maybe_empty)</td></tr>
+<tr><td>Text</td><td><code>extract_main_word</code></td><td>`kw = read(msg)</td></tr>
+<tr><td>Text</td><td><code>extract_subject_object</code></td><td>`info = read(msg)</td></tr>
 </tbody>
 </table>
 </div>
 <hr>
-<p><code>calc(...)</code> performs numeric arithmetic with <code>+ - * / %</code> and <code>abs/round/floor/ceil</code>.
-For full syntax and failure semantics, see <code>docs/usage/en/04-oml/06-grammar-reference.md</code>.</p>
-<p><strong>For the complete English documentation, please check back later or refer to the Chinese version.</strong></p>
+<h2 id="built-in-expressions--built-in-functions-1"><a class="header" href="#built-in-expressions--built-in-functions-1">Built-in Expressions / Built-in Functions</a></h2>
+<h3 id="calc"><a class="header" href="#calc"><code>calc(...)</code></a></h3>
+<p>Executes explicit numeric calculations.</p>
+<p><strong>Syntax</strong></p>
+<pre><code class="language-oml">calc(&lt;expr&gt;)
+</code></pre>
+<p><strong>Supported by the current implementation</strong></p>
+<ul>
+<li>operators: <code>+ - * / %</code></li>
+<li>unary negation: <code>-x</code></li>
+<li>parentheses</li>
+<li>math functions: <code>abs(...)</code>, <code>round(...)</code>, <code>floor(...)</code>, <code>ceil(...)</code></li>
+<li>operands: numeric literals, <code>read(...)</code>, <code>take(...)</code>, <code>@field</code></li>
+</ul>
+<p><strong>Type rules</strong></p>
+<ul>
+<li><code>+ - *</code>: result is <code>float</code> if either operand is floating-point, otherwise <code>digit</code></li>
+<li><code>/</code>: result is always <code>float</code></li>
+<li><code>%</code>: only accepts integer operands and returns <code>digit</code></li>
+</ul>
+<p><strong>Failure behavior</strong></p>
+<p>The result becomes <code>ignore</code> in these cases:</p>
+<ul>
+<li>division by zero</li>
+<li>missing fields</li>
+<li>non-numeric input</li>
+<li>integer overflow</li>
+<li><code>NaN</code> / <code>inf</code></li>
+<li><code>%</code> used with floating-point values</li>
+</ul>
+<p><strong>Example</strong></p>
+<pre><code class="language-oml">risk_score : float = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;
+delta : digit = calc(read(cur) - read(prev)) ;
+bucket : digit = calc(read(uid) % 16) ;
+error_pct : digit = calc(round((read(err_cnt) * 100) / read(total_cnt))) ;
+</code></pre>
+<p>For more details, see <a href="./functions/calc.html">functions/calc.md</a>.</p>
+<hr>
+<h3 id="lookup_nocase"><a class="header" href="#lookup_nocase"><code>lookup_nocase(...)</code></a></h3>
+<p>Performs case-insensitive lookup against an object defined in <code>static</code>.</p>
+<p><strong>Syntax</strong></p>
+<pre><code class="language-oml">lookup_nocase(&lt;dict_symbol&gt;, &lt;key_expr&gt;, &lt;default_expr&gt;)
+</code></pre>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><code>dict_symbol</code>: the static object symbol name</li>
+<li><code>key_expr</code>: the key to look up, commonly <code>read(status)</code></li>
+<li><code>default_expr</code>: the fallback value returned when no match is found</li>
+</ul>
+<p><strong>Current implementation details</strong></p>
+<ul>
+<li>the first argument must be a static symbol name</li>
+<li>the second and third arguments may themselves contain nested <code>lookup_nocase</code>, direct <code>read/take</code>, noprefix pipes, SQL literals, value literals, <code>Now::*</code>, or static symbols</li>
+<li>the key is normalized with <code>trim + lowercase</code> before lookup</li>
+</ul>
+<p><strong>Example</strong></p>
+<pre><code class="language-oml">static {
+    score_map = object {
+        error = float(90.0);
+        warning = float(70.0);
+        success = float(20.0);
+    };
+}
+
+risk_score : float = lookup_nocase(score_map, read(status), 40.0) ;
+</code></pre>
+<p>For more details, see <a href="./functions/lookup_nocase.html">functions/lookup_nocase.md</a>.</p>
+<hr>
+<h3 id="nowtime"><a class="header" href="#nowtime"><code>Now::time()</code></a></h3>
+<p>Returns the current time.</p>
+<pre><code class="language-oml">event_time : time = Now::time() ;
+</code></pre>
+<hr>
+<h3 id="nowdate"><a class="header" href="#nowdate"><code>Now::date()</code></a></h3>
+<p>Returns the current date in <code>YYYYMMDD</code> format.</p>
+<pre><code class="language-oml">today : digit = Now::date() ;
+</code></pre>
+<hr>
+<h3 id="nowhour"><a class="header" href="#nowhour"><code>Now::hour()</code></a></h3>
+<p>Returns the current hour in <code>YYYYMMDDHH</code> format.</p>
+<pre><code class="language-oml">current_hour : digit = Now::hour() ;
+</code></pre>
+<hr>
+<h2 id="pipe-functions-1"><a class="header" href="#pipe-functions-1">Pipe Functions</a></h2>
+<h3 id="basic-form"><a class="header" href="#basic-form">Basic Form</a></h3>
+<pre><code class="language-oml">result = pipe read(field) | function1 | function2(param) ;
+result = read(field) | function1 | function2(param) ;
+</code></pre>
+<p>The current parser only allows these pipe starting points:</p>
+<ul>
+<li><code>read(...)</code></li>
+<li><code>take(...)</code></li>
+<li><code>@field</code></li>
+</ul>
+<p>A bare identifier cannot be used directly as a noprefix pipe source.</p>
+<hr>
+<h2 id="access-functions"><a class="header" href="#access-functions">Access Functions</a></h2>
+<h3 id="nthindex"><a class="header" href="#nthindex"><code>nth(index)</code></a></h3>
+<p>Reads the <code>index</code>-th element from an array.</p>
+<pre><code class="language-oml">first_item = read(items) | nth(0) ;
+</code></pre>
+<h3 id="getname"><a class="header" href="#getname"><code>get(name)</code></a></h3>
+<p>Reads a value from an object or nested structure. The argument is parsed with the implementation’s <code>take_key</code>, so path-like values such as <code>a/b/c</code> are also accepted.</p>
+<pre><code class="language-oml">status = read(obj) | get(status) ;
+nested = read(obj) | get(one/two) ;
+</code></pre>
+<h3 id="pathnamepath"><a class="header" href="#pathnamepath"><code>path([name|path])</code></a></h3>
+<p>Extracts a specific part from a file path.</p>
+<pre><code class="language-oml">file_name = read(file_path) | path(name) ;
+dir_path = read(file_path) | path(path) ;
+</code></pre>
+<h3 id="urldomainhosturipathparams"><a class="header" href="#urldomainhosturipathparams"><code>url([domain|host|uri|path|params])</code></a></h3>
+<p>Extracts a specific part from a URL.</p>
+<pre><code class="language-oml">host = read(url) | url(host) ;
+path_only = read(url) | url(path) ;
+query = read(url) | url(params) ;
+</code></pre>
+<hr>
+<h2 id="condition--mapping-functions"><a class="header" href="#condition--mapping-functions">Condition / Mapping Functions</a></h2>
+<h3 id="starts_withprefix"><a class="header" href="#starts_withprefix"><code>starts_with('prefix')</code></a></h3>
+<p>Keeps the original value only when the input string starts with the given prefix; otherwise the result becomes <code>ignore</code>.</p>
+<pre><code class="language-oml">https_only = read(url) | starts_with('https://') ;
+</code></pre>
+<h3 id="map_tovalue"><a class="header" href="#map_tovalue"><code>map_to(value)</code></a></h3>
+<p>Maps a non-<code>ignore</code> input to a fixed value.</p>
+<p>Current supported argument types:</p>
+<ul>
+<li><code>bool</code></li>
+<li>integer</li>
+<li>floating-point number</li>
+<li>single-quoted string</li>
+</ul>
+<pre><code class="language-oml">is_error = read(level) | starts_with('ERROR') | map_to(true) ;
+bucket = read(status) | starts_with('5') | map_to(500) ;
+</code></pre>
+<hr>
+<h2 id="encoding--escaping-functions"><a class="header" href="#encoding--escaping-functions">Encoding / Escaping Functions</a></h2>
+<h3 id="base64_encode"><a class="header" href="#base64_encode"><code>base64_encode</code></a></h3>
+<pre><code class="language-oml">encoded = read(message) | base64_encode ;
+</code></pre>
+<h3 id="base64_decodeencodetype"><a class="header" href="#base64_decodeencodetype"><code>base64_decode([EncodeType])</code></a></h3>
+<p>The argument may be omitted. If omitted, it defaults to <code>Utf8</code>.</p>
+<pre><code class="language-oml">decoded = read(payload) | base64_decode() ;
+decoded_gbk = read(payload) | base64_decode(Gbk) ;
+</code></pre>
+<p><code>EncodeType</code> follows the implementation enum. Common values include <code>Utf8</code>, <code>Gbk</code>, <code>Ascii</code>, and <code>Imap</code>.</p>
+<h3 id="html_escape"><a class="header" href="#html_escape"><code>html_escape</code></a></h3>
+<pre><code class="language-oml">safe_html = read(raw_html) | html_escape ;
+</code></pre>
+<h3 id="html_unescape"><a class="header" href="#html_unescape"><code>html_unescape</code></a></h3>
+<pre><code class="language-oml">raw_html = read(encoded_html) | html_unescape ;
+</code></pre>
+<h3 id="str_escape"><a class="header" href="#str_escape"><code>str_escape</code></a></h3>
+<pre><code class="language-oml">escaped = read(message) | str_escape ;
+</code></pre>
+<h3 id="json_escape"><a class="header" href="#json_escape"><code>json_escape</code></a></h3>
+<pre><code class="language-oml">escaped = read(message) | json_escape ;
+</code></pre>
+<h3 id="json_unescape"><a class="header" href="#json_unescape"><code>json_unescape</code></a></h3>
+<pre><code class="language-oml">raw = read(message) | json_unescape ;
+</code></pre>
+<hr>
+<h2 id="time-conversion-functions"><a class="header" href="#time-conversion-functions">Time Conversion Functions</a></h2>
+<h3 id="timeto_ts"><a class="header" href="#timeto_ts"><code>Time::to_ts</code></a></h3>
+<p>Converts to a second-level timestamp.</p>
+<pre><code class="language-oml">ts = read(event_time) | Time::to_ts ;
+</code></pre>
+<h3 id="timeto_ts_ms"><a class="header" href="#timeto_ts_ms"><code>Time::to_ts_ms</code></a></h3>
+<p>Converts to a millisecond timestamp.</p>
+<pre><code class="language-oml">ts = read(event_time) | Time::to_ts_ms ;
+</code></pre>
+<h3 id="timeto_ts_us"><a class="header" href="#timeto_ts_us"><code>Time::to_ts_us</code></a></h3>
+<p>Converts to a microsecond timestamp.</p>
+<pre><code class="language-oml">ts = read(event_time) | Time::to_ts_us ;
+</code></pre>
+<h3 id="timeto_ts_zonezone-unit"><a class="header" href="#timeto_ts_zonezone-unit"><code>Time::to_ts_zone(zone, unit)</code></a></h3>
+<p>Converts to a timestamp using the specified timezone offset and unit.</p>
+<p>Current supported units:</p>
+<ul>
+<li><code>s</code></li>
+<li><code>ss</code></li>
+<li><code>ms</code></li>
+<li><code>us</code></li>
+</ul>
+<pre><code class="language-oml">utc_ms = read(event_time) | Time::to_ts_zone(0, ms) ;
+local_s = read(event_time) | Time::to_ts_zone(8, s) ;
+</code></pre>
+<hr>
+<h2 id="conversion--control-functions"><a class="header" href="#conversion--control-functions">Conversion / Control Functions</a></h2>
+<h3 id="to_json"><a class="header" href="#to_json"><code>to_json</code></a></h3>
+<pre><code class="language-oml">payload = read(arr) | to_json ;
+</code></pre>
+<h3 id="to_str"><a class="header" href="#to_str"><code>to_str</code></a></h3>
+<pre><code class="language-oml">ip_text = read(src_ip) | to_str ;
+</code></pre>
+<h3 id="ip4_to_int"><a class="header" href="#ip4_to_int"><code>ip4_to_int</code></a></h3>
+<pre><code class="language-oml">ip_num = read(src_ip) | ip4_to_int ;
+</code></pre>
+<h3 id="skip_empty"><a class="header" href="#skip_empty"><code>skip_empty</code></a></h3>
+<p>Returns <code>ignore</code> for an empty string; otherwise passes through the original value.</p>
+<pre><code class="language-oml">city = read(city) | skip_empty ;
+</code></pre>
+<hr>
+<h2 id="text-extraction-functions"><a class="header" href="#text-extraction-functions">Text Extraction Functions</a></h2>
+<h3 id="extract_main_word"><a class="header" href="#extract_main_word"><code>extract_main_word</code></a></h3>
+<p>Extracts the main word from text.</p>
+<pre><code class="language-oml">keyword = read(message) | extract_main_word ;
+</code></pre>
+<h3 id="extract_subject_object"><a class="header" href="#extract_subject_object"><code>extract_subject_object</code></a></h3>
+<p>Extracts subject-object structure from text.</p>
+<pre><code class="language-oml">summary = read(message) | extract_subject_object ;
+</code></pre>
+<hr>
+<h2 id="related-documents"><a class="header" href="#related-documents">Related Documents</a></h2>
+<ul>
+<li><a href="./06-grammar-reference.html">06-grammar-reference.md</a></li>
+<li><a href="./functions/function_index.html">functions/function_index.md</a></li>
+<li><a href="./functions/match_functions.html">functions/match_functions.md</a></li>
+</ul>
 
                     </main>
 
@@ -281,8 +510,7 @@ For full syntax and failure semantics, see <code>docs/usage/en/04-oml/06-grammar
         <script src="../../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
-        <script src="../../../theme/lang-switch.js"></script>
-        <script src="../../../theme/version-badge.js"></script>
+        <script src="../../theme/site-fb88a44a.js"></script>
         <script src="../../mermaid-eefea253.min.js"></script>
         <script src="../../mermaid-init-ccf746f1.js"></script>
 

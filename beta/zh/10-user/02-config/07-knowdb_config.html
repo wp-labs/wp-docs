@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
-<html lang="zh-CN" class="ayu sidebar-visible" dir="ltr">
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>KnowDB 配置 - Warp Parse 文档 [BETA]</title>
+        <title>KnowDB 配置说明 - Warp Parse 文档 [BETA]</title>
 
 
         <!-- Custom HTML head -->
@@ -28,19 +28,18 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../../../theme/lang-switch.css">
-        <link rel="stylesheet" href="../../../theme/version-badge.css">
+        <link rel="stylesheet" href="../../theme/site-ebe709e1.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
             const path_to_root = "../../";
-            const default_light_theme = "ayu";
+            const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-37cffb89.js";
+            window.path_to_searchindex_js = "../../searchindex-257b32ae.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-536d74fd.js"></script>
+        <script src="../../toc-6c095515.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -78,7 +77,7 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
-            html.classList.remove('ayu')
+            html.classList.remove('light')
             html.classList.add(theme);
             html.classList.add("js");
         </script>
@@ -179,187 +178,272 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="knowdb-配置"><a class="header" href="#knowdb-配置">KnowDB 配置</a></h1>
-<p>本指南描述知识库（KnowDB）的目录式配置与装载规范。</p>
-<p>适用范围</p>
+                        <h1 id="knowdb-配置说明"><a class="header" href="#knowdb-配置说明">KnowDB 配置说明</a></h1>
+<p>只记三件事：</p>
+<ol>
+<li>当前只支持 <code>version = 2</code></li>
+<li>只能二选一：目录式 SQLite authority，或外部 PostgreSQL / MySQL</li>
+<li><code>[cache]</code> 只控制 <code>result cache</code></li>
+</ol>
+<h2 id="两种模式"><a class="header" href="#两种模式">两种模式</a></h2>
 <ul>
-<li>初始化权威库（CSV → SQLite），用于 wparse/wproj 等工具在启动时装载</li>
+<li>静态 CSV 随包分发：用目录式 SQLite authority</li>
+<li>数据已经在 PostgreSQL / MySQL：用外部 provider</li>
 </ul>
-<p>核心原则</p>
+<h2 id="最小示例"><a class="header" href="#最小示例">最小示例</a></h2>
+<h3 id="目录式-sqlite-authority"><a class="header" href="#目录式-sqlite-authority">目录式 SQLite authority</a></h3>
+<pre><code class="language-toml">version = 2
+base_dir = "."
+
+[default]
+transaction = true
+batch_size = 2000
+on_error = "fail"
+
+[csv]
+has_header = true
+delimiter = ","
+encoding = "utf-8"
+trim = true
+
+[cache]
+enabled = true
+capacity = 1024
+ttl_ms = 30000
+
+[[tables]]
+name = "example"
+dir = "example"
+enabled = true
+columns.by_header = ["name", "pinying"]
+
+[tables.expected_rows]
+min = 5
+max = 100
+</code></pre>
+<h3 id="外部-postgresql--mysql"><a class="header" href="#外部-postgresql--mysql">外部 PostgreSQL / MySQL</a></h3>
+<pre><code class="language-toml">version = 2
+
+[cache]
+enabled = true
+capacity = 1024
+ttl_ms = 30000
+
+[provider]
+kind = "postgres"
+connection_uri = "postgres://user:${DB_PASSWORD}@127.0.0.1:5432/demo"
+pool_size = 8
+</code></pre>
+<p>把 <code>kind = "postgres"</code> 换成 <code>kind = "mysql"</code>，连接串换成 MySQL 格式即可。</p>
+<h2 id="哪些配置会生效"><a class="header" href="#哪些配置会生效">哪些配置会生效</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>模式</th><th>会生效</th><th>不参与主流程</th></tr>
+</thead>
+<tbody>
+<tr><td>目录式 SQLite authority</td><td><code>version</code> <code>base_dir</code> <code>[default]</code> <code>[csv]</code> <code>[cache]</code> <code>[[tables]]</code></td><td><code>authority_uri</code> 不从 <code>knowdb.toml</code> 读取</td></tr>
+<tr><td>外部 PostgreSQL / MySQL</td><td><code>version</code> <code>[provider]</code> <code>[cache]</code></td><td><code>base_dir</code> <code>[default]</code> <code>[csv]</code> <code>[[tables]]</code></td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="关键字段速查"><a class="header" href="#关键字段速查">关键字段速查</a></h2>
+<h3 id="顶层"><a class="header" href="#顶层">顶层</a></h3>
 <ul>
-<li>SQL 外置：每张表的 DDL/DML 均放在对应目录下的 .sql 文件中</li>
-<li>安全：运行期只允许访问配置里声明过的表名；SQL 仅支持 {table} 占位符</li>
-<li>默认可用：多数字段可省略，内置默认值与自动探测能满足常见场景</li>
+<li><code>version</code>
+<ul>
+<li>必填，只能是 <code>2</code></li>
 </ul>
-<p>目录布局（推荐，默认位于 <code>${models.knowledge}</code>）</p>
-<pre><code>${models.knowledge}/
-  knowdb.toml                     # 本配置
+</li>
+<li><code>base_dir</code>
+<ul>
+<li>表目录根路径，相对 <code>knowdb.toml</code> 所在目录解析</li>
+</ul>
+</li>
+<li><code>[provider]</code>
+<ul>
+<li>只在外部 provider 模式下使用</li>
+</ul>
+</li>
+<li><code>[[tables]]</code>
+<ul>
+<li>只在目录式 SQLite authority 模式下使用</li>
+</ul>
+</li>
+</ul>
+<h3 id="default"><a class="header" href="#default"><code>[default]</code></a></h3>
+<ul>
+<li><code>transaction</code>
+<ul>
+<li>默认 <code>true</code></li>
+</ul>
+</li>
+<li><code>batch_size</code>
+<ul>
+<li>默认 <code>2000</code></li>
+</ul>
+</li>
+<li><code>on_error</code>
+<ul>
+<li><code>fail</code> 直接失败</li>
+<li><code>skip</code> 跳过坏行</li>
+</ul>
+</li>
+</ul>
+<h3 id="csv"><a class="header" href="#csv"><code>[csv]</code></a></h3>
+<ul>
+<li><code>has_header</code>
+<ul>
+<li>默认 <code>true</code></li>
+</ul>
+</li>
+<li><code>delimiter</code>
+<ul>
+<li>建议单字符</li>
+</ul>
+</li>
+<li><code>encoding</code>
+<ul>
+<li>目前只支持 <code>utf-8</code></li>
+</ul>
+</li>
+<li><code>trim</code>
+<ul>
+<li>默认 <code>true</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="cache"><a class="header" href="#cache"><code>[cache]</code></a></h3>
+<ul>
+<li><code>enabled</code>
+<ul>
+<li>默认 <code>true</code></li>
+</ul>
+</li>
+<li><code>capacity</code>
+<ul>
+<li>默认 <code>1024</code>，单位是条目数</li>
+</ul>
+</li>
+<li><code>ttl_ms</code>
+<ul>
+<li>默认 <code>30000</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="provider"><a class="header" href="#provider"><code>[provider]</code></a></h3>
+<ul>
+<li><code>kind</code>
+<ul>
+<li>必填，<code>postgres</code> 或 <code>mysql</code></li>
+</ul>
+</li>
+<li><code>connection_uri</code>
+<ul>
+<li>必填，支持 <code>${VAR}</code></li>
+</ul>
+</li>
+<li><code>pool_size</code>
+<ul>
+<li>可选，默认 <code>8</code></li>
+</ul>
+</li>
+</ul>
+<p>不要写 <code>kind = "sqlite_authority"</code>。目录式模式下直接省略 <code>[provider]</code>。</p>
+<h3 id="tables"><a class="header" href="#tables"><code>[[tables]]</code></a></h3>
+<ul>
+<li><code>name</code>
+<ul>
+<li>必填</li>
+</ul>
+</li>
+<li><code>dir</code>
+<ul>
+<li>默认等于 <code>name</code></li>
+</ul>
+</li>
+<li><code>data_file</code>
+<ul>
+<li>默认 <code>data.csv</code></li>
+</ul>
+</li>
+<li><code>enabled</code>
+<ul>
+<li>默认 <code>true</code></li>
+</ul>
+</li>
+<li>列映射至少配置一组：
+<ul>
+<li><code>columns.by_header</code></li>
+<li><code>columns.by_index</code></li>
+</ul>
+</li>
+<li>优先级：
+<ul>
+<li><code>by_header</code> 优先</li>
+<li><code>by_header</code> 为空时才用 <code>by_index</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="表目录约定"><a class="header" href="#表目录约定">表目录约定</a></h2>
+<p>每个表目录通常长这样：</p>
+<pre><code class="language-text">knowdb/
+  knowdb.toml
   example/
     create.sql
     insert.sql
-    data.csv                     # 单一数据文件（表目录根）
-  address/
+    data.csv
+  zone/
     create.sql
     insert.sql
-    data.csv
+    clean.sql
+    data.scv
 </code></pre>
-<p>顶层配置（<code>${models.knowledge}/knowdb.toml</code>）</p>
-<pre><code class="language-toml">version = 2
-
-[[tables]]
-name = "example"
-# dir 省略时等于 name；此示例即使用目录 ${models.knowledge}/example
-# data_file 省略时使用表目录下的 data.csv
-columns.by_header = ["name", "pinying"]
-
-# 如需更多表，追加 [[tables]] 段落
+<p>规则：</p>
+<ul>
+<li><code>create.sql</code> 必需</li>
+<li><code>insert.sql</code> 必需</li>
+<li><code>data.csv</code> 是默认数据文件</li>
+<li><code>clean.sql</code> 可选；缺省时默认执行 <code>DELETE FROM {table}</code></li>
+<li>SQL 文件中的 <code>{table}</code> 会被当前表名替换</li>
+</ul>
+<h2 id="路径和环境变量"><a class="header" href="#路径和环境变量">路径和环境变量</a></h2>
+<ul>
+<li><code>${VAR}</code> 会在 TOML 反序列化前展开，例如：</li>
+</ul>
+<pre><code class="language-toml">[provider]
+kind = "mysql"
+connection_uri = "mysql://root:${MYSQL_PASSWORD}@127.0.0.1:3306/demo"
 </code></pre>
-<p>SQL 文件规范</p>
 <ul>
-<li>create.sql：建表语句，必须存在；可使用占位符 <code>{table}</code>；允许包含多条语句（如 <code>CREATE INDEX</code>）</li>
-<li>insert.sql：插入语句，必须存在；参数位置用 <code>?1..?N</code>；允许 <code>{table}</code></li>
-<li>clean.sql：可选；若不存在，装载前默认执行 <code>DELETE FROM {table}</code></li>
+<li>值来自 <code>init_thread_cloned_from_knowdb(..., dict)</code> 传入的 <code>EnvDict</code></li>
+<li>不是 <code>wp-knowledge</code> 直接读进程环境变量</li>
 </ul>
-<p>列映射（columns）</p>
-<ul>
-<li>推荐 <code>by_header=[..]</code>，按 CSV 表头名映射到 <code>insert.sql</code> 中的列</li>
-<li>若 <code>has_header=false</code>，必须提供 <code>by_index=[..]</code></li>
-<li>可选增强（实现层）：若未配置 columns，且 <code>insert.sql</code> 显式了列清单，可解析 insert 的列名作为 <code>by_header</code></li>
-</ul>
-<p>装载策略（默认可省略）</p>
-<ul>
-<li>默认：<code>transaction=true</code>、<code>batch_size=2000</code>、<code>on_error="fail"</code></li>
-<li>on_error:
-<ul>
-<li>fail：遇到坏行（缺列/解析失败）即失败回滚</li>
-<li>skip：跳过坏行并计数告警</li>
-</ul>
-</li>
-</ul>
-<p>自动探测（当 data_file 未配置）</p>
-<ul>
-<li>使用 <code>{base_dir}/{tables.dir}/data.csv</code></li>
-<li>不存在则报错</li>
-</ul>
-<p>安全约束</p>
-<ul>
-<li>运行时（facade/query_cipher/SQL 评估）仅允许使用 <code>[[tables]].name</code> 中声明的表名</li>
-<li>SQL 模板仅允许 <code>{table}</code> 占位符；禁止其它动态拼接</li>
-</ul>
-<p>最小可运行示例</p>
+<p>路径解析顺序：</p>
 <ol>
-<li>目录</li>
+<li><code>knowdb_conf</code> 是相对路径时，先相对调用方传入的 <code>root</code> 解析</li>
+<li><code>base_dir</code> 再相对 <code>knowdb.toml</code> 所在目录解析</li>
+<li><code>tables[n].dir</code> 再相对 <code>base_dir</code> 解析</li>
+<li><code>tables[n].data_file</code> 再相对表目录解析</li>
 </ol>
-<pre><code>${models.knowledge}/knowdb.toml
-models/knowledge/example/{create.sql, insert.sql, data.csv}
-</code></pre>
-<ol start="2">
-<li>create.sql</li>
-</ol>
-<pre><code class="language-sql">CREATE TABLE IF NOT EXISTS {table} (
-  id      INTEGER PRIMARY KEY,
-  name    TEXT NOT NULL,
-  pinying TEXT NOT NULL
-);
-</code></pre>
-<ol start="3">
-<li>insert.sql</li>
-</ol>
-<pre><code class="language-sql">INSERT INTO {table} (name, pinying) VALUES (?1, ?2);
-</code></pre>
-<ol start="4">
-<li>data.csv</li>
-</ol>
-<pre><code>name,pinying
-令狐冲,linghuchong
-任盈盈,renyingying
-</code></pre>
-<ol start="5">
-<li>knowdb.toml（最小化）</li>
-</ol>
-<pre><code class="language-toml">version = 2
-base_dir = "./models/knowledge"
-[[tables]]
-name = "example"
-dir  = "example"
-columns.by_header = ["name", "pinying"]
-[tables.expected_rows]
-min = 1
-max = 100
-</code></pre>
-<p>常见错误与排障</p>
+<h2 id="常见失败原因"><a class="header" href="#常见失败原因">常见失败原因</a></h2>
 <ul>
-<li>缺少 create.sql / insert.sql：启动时失败并指向缺失文件</li>
-<li><code>has_header=false</code> 但未提供 <code>by_index</code>：装载报错</li>
-<li><code>expected_rows.min</code> 未满足：数据不足，装载失败</li>
-<li>数据源未找到：既未配置 <code>data_file</code>，也不存在默认路径 <code>data.csv</code></li>
-<li>运行期 SQL 访问未声明的表：安全校验失败</li>
+<li><code>version</code> 不是 <code>2</code></li>
+<li><code>create.sql</code>、<code>insert.sql</code> 或数据文件不存在</li>
+<li><code>columns.by_header</code> 和 <code>columns.by_index</code> 都没配置</li>
+<li><code>columns.by_header</code> 指向了不存在的表头</li>
+<li><code>encoding</code> 不是 <code>utf-8</code></li>
+<li>CSV 行解析失败且 <code>on_error = "fail"</code></li>
+<li>实际导入行数小于 <code>expected_rows.min</code></li>
+<li>PostgreSQL / MySQL 初始化连接失败</li>
 </ul>
-<p>与应用的关系</p>
+<h2 id="建议写法"><a class="header" href="#建议写法">建议写法</a></h2>
 <ul>
-<li>wparse/wproj 等会在启动处加载 knowdb：创建权威库并设置 Query Provider</li>
-<li>曾用于隐私模块的 <code>query_cipher(table)</code>（加载单列表词表）在当前版本默认不启用；如需脱敏请在业务侧实现</li>
-</ul>
-<p>内置 SQL 函数（UDF）</p>
-<ul>
-<li>运行时注册：
-<ul>
-<li>导入阶段（权威库写连接）与查询阶段（线程克隆的只读连接）均自动注册。</li>
-<li>可在 <code>INSERT/SELECT/WHERE</code> 中直接使用（DDL 不涉及）。</li>
-</ul>
-</li>
-<li>签名与语义：
-<ul>
-<li><code>ip4_int(text) -&gt; integer</code>：点分 IPv4 转 32 位整数；容忍空白/引号；非法返回 <code>0</code>。</li>
-<li><code>ip4_between(ip_text, start_text, end_text) -&gt; integer</code>：是否在闭区间 <code>[start,end]</code> 内（1/0）。</li>
-<li><code>cidr4_min(text) -&gt; integer</code>：CIDR 起始地址（含），如 <code>10.0.0.0/8</code>。</li>
-<li><code>cidr4_max(text) -&gt; integer</code>：CIDR 结束地址（含）。</li>
-<li><code>cidr4_contains(ip_text, cidr_text) -&gt; integer</code>：IP 是否落在 CIDR 段内（1/0）。</li>
-<li><code>ip4_text(integer|string) -&gt; text</code>：32 位整数转点分 IPv4（便于调试/展示）。</li>
-<li><code>trim_quotes(text) -&gt; text</code>：去除两端成对引号（’ 或 “），容忍前后空白；未成对则原样返回（去掉空白）。</li>
-</ul>
-</li>
-<li>导入示例（insert.sql）：
-<pre><code class="language-sql">INSERT INTO {table} (ip_start_int, ip_end_int, zone)
-VALUES (ip4_int(?1), ip4_int(?2), trim_quotes(?3));
-</code></pre>
-</li>
-<li>查询示例（普通 SQL）：
-<pre><code class="language-sql">-- 区间命中（推荐整数比较写法，避免在 WHERE 中直接比较函数返回）
-SELECT zone FROM zone
-WHERE ip_start_int &lt;= ip4_int(:ip)
-  AND ip_end_int   &gt;= ip4_int(:ip)
-LIMIT 1;
-
--- CIDR 命中
-SELECT zone FROM zone
-WHERE cidr4_contains(:ip, :cidr) = 1;
-
--- 调试回显
-SELECT ip4_text(ip_start_int) AS ip_start, ip4_text(ip_end_int) AS ip_end, zone
-FROM zone
-LIMIT 5;
-</code></pre>
-</li>
-<li>OML 中的 SQL 精确求值：
-<ul>
-<li>OML 的 <code>select … from … where …;</code> 语法对列段做了标识符白名单限制，不建议在列段直接写函数。</li>
-<li>推荐在上游产出数值型 IP（如 <code>src_ip_int</code>），在 OML 的 where 中用整数比较：
-<pre><code class="language-sql">from_zone: chars = sql(
-  select zone from zone
-  where ip_start_int &lt;= read(src_ip_int)
-    and ip_end_int   &gt;= read(src_ip_int);
-)
-</code></pre>
-</li>
-</ul>
-</li>
-<li>注意事项：
-<ul>
-<li>目前非法 IPv4/CIDR 输入返回 <code>0</code>（或匹配失败），为提高导入韧性；如需严格行为可定制。</li>
-<li>SQLite 原生已提供 <code>lower/upper/trim</code> 等字符串函数，可与上述 UDF 组合使用。</li>
-</ul>
-</li>
+<li>目录式 SQLite authority 模式下，不要写 <code>[provider]</code></li>
+<li><code>enabled</code> 写在 <code>[[tables]]</code> 层，不要写到 <code>[tables.expected_rows]</code> 下面</li>
+<li><code>delimiter</code> 用单字符</li>
+<li>使用 <code>columns.by_header</code> 时，保持 <code>csv.has_header = true</code></li>
+<li>外部 PostgreSQL / MySQL 场景下，把 <code>[cache]</code> 理解为 <code>result cache</code> 配置</li>
 </ul>
 
                     </main>
@@ -413,8 +497,7 @@ LIMIT 5;
         <script src="../../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
-        <script src="../../../theme/lang-switch.js"></script>
-        <script src="../../../theme/version-badge.js"></script>
+        <script src="../../theme/site-fb88a44a.js"></script>
         <script src="../../mermaid-eefea253.min.js"></script>
         <script src="../../mermaid-init-ccf746f1.js"></script>
 

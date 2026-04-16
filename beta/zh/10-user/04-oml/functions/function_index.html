@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
-<html lang="zh-CN" class="ayu sidebar-visible" dir="ltr">
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>OML Functions 函数索引 - Warp Parse 文档 [BETA]</title>
+        <title>OML 函数索引 - Warp Parse 文档 [BETA]</title>
 
 
         <!-- Custom HTML head -->
@@ -28,19 +28,18 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../../../../theme/lang-switch.css">
-        <link rel="stylesheet" href="../../../../theme/version-badge.css">
+        <link rel="stylesheet" href="../../../theme/site-ebe709e1.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
             const path_to_root = "../../../";
-            const default_light_theme = "ayu";
+            const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-37cffb89.js";
+            window.path_to_searchindex_js = "../../../searchindex-257b32ae.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../../toc-536d74fd.js"></script>
+        <script src="../../../toc-6c095515.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -78,7 +77,7 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
-            html.classList.remove('ayu')
+            html.classList.remove('light')
             html.classList.add(theme);
             html.classList.add("js");
         </script>
@@ -179,324 +178,33 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="oml-functions-函数索引"><a class="header" href="#oml-functions-函数索引">OML Functions 函数索引</a></h1>
-<p>本文档列出了 <code>docs/usage/zh/04-oml/functions/</code> 目录下的函数与专题文档。</p>
-<h2 id="内置表达式--内置函数"><a class="header" href="#内置表达式--内置函数">内置表达式 / 内置函数</a></h2>
+                        <h1 id="oml-函数与专题索引"><a class="header" href="#oml-函数与专题索引">OML 函数与专题索引</a></h1>
+<p>本目录收录的是 OML 中几个需要单独展开说明的表达式和专题页面。完整函数列表请以 <a href="../04-functions-reference.html">04-functions-reference.md</a> 为准。</p>
+<h2 id="表达式与专题"><a class="header" href="#表达式与专题">表达式与专题</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>名称</th><th>语法</th><th>说明</th><th>文档</th></tr>
+<tr><th>名称</th><th>说明</th><th>文档</th></tr>
 </thead>
 <tbody>
-<tr><td><code>calc(...)</code></td><td><code>calc(expr)</code></td><td>显式数值表达式，支持 <code>+ - * / %</code> 与 <code>abs/round/floor/ceil</code></td><td><a href="./calc.html">📖 详细文档</a></td></tr>
-<tr><td><code>lookup_nocase(...)</code></td><td><code>lookup_nocase(dict, key, default)</code></td><td>对 <code>static</code> object 做忽略大小写查表</td><td><a href="./lookup_nocase.html">📖 详细文档</a></td></tr>
-<tr><td><code>iequals_any(...)</code></td><td><code>iequals_any(v1, v2, ...)</code></td><td>忽略大小写的多候选匹配，用于 <code>match</code> 条件</td><td><a href="./match_functions.html">📖 详细文档</a></td></tr>
+<tr><td><code>calc(...)</code></td><td>显式数值表达式，支持 <code>+ - * / %</code> 与 <code>abs/round/floor/ceil</code></td><td><a href="./calc.html">calc.md</a></td></tr>
+<tr><td><code>lookup_nocase(...)</code></td><td>基于 <code>static object</code> 的忽略大小写查表</td><td><a href="./lookup_nocase.html">lookup_nocase.md</a></td></tr>
+<tr><td><code>match</code> 条件函数</td><td><code>starts_with</code>、<code>iequals_any</code> 等 <code>match</code> 条件能力</td><td><a href="./match_functions.html">match_functions.md</a></td></tr>
+<tr><td><code>map_to(...)</code></td><td>管道中的常量映射</td><td><a href="./map_to.html">map_to.md</a></td></tr>
+<tr><td><code>starts_with(...)</code></td><td>管道前缀判断</td><td><a href="./starts_with.html">starts_with.md</a></td></tr>
+<tr><td><code>extract_main_word</code></td><td>文本主词提取</td><td><a href="./extract_main_word.html">extract_main_word.md</a></td></tr>
+<tr><td><code>extract_subject_object</code></td><td>文本主客体结构提取</td><td><a href="./extract_subject_object.html">extract_subject_object.md</a></td></tr>
+<tr><td><code>static { ... }</code></td><td>静态常量块、可用表达式与限制</td><td><a href="./static_blocks.html">static_blocks.md</a></td></tr>
 </tbody>
 </table>
 </div>
-<h2 id="pipe-functions"><a class="header" href="#pipe-functions">Pipe Functions</a></h2>
-<p>以下为可通过管道调用的函数：</p>
-<h2 id="字段访问函数-field-accessors"><a class="header" href="#字段访问函数-field-accessors">字段访问函数 (Field Accessors)</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>函数</th><th>语法</th><th>说明</th><th>文档</th></tr>
-</thead>
-<tbody>
-<tr><td><code>take</code></td><td><code>take(field_name)</code></td><td>从输入数据中提取指定字段</td><td>-</td></tr>
-<tr><td><code>get</code></td><td><code>get(key)</code></td><td>从嵌套结构中获取指定键的值</td><td>-</td></tr>
-<tr><td><code>nth</code></td><td><code>nth(index)</code></td><td>从数组中获取指定索引的元素</td><td>-</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="字符串匹配函数-string-matching"><a class="header" href="#字符串匹配函数-string-matching">字符串匹配函数 (String Matching)</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>函数</th><th>语法</th><th>说明</th><th>文档</th></tr>
-</thead>
-<tbody>
-<tr><td><code>starts_with</code></td><td><code>starts_with('prefix')</code></td><td>检查字符串是否以指定前缀开始，否则转为 ignore</td><td><a href="./starts_with.html">📖 详细文档</a></td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="值转换函数-value-transformation"><a class="header" href="#值转换函数-value-transformation">值转换函数 (Value Transformation)</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>函数</th><th>语法</th><th>说明</th><th>文档</th></tr>
-</thead>
-<tbody>
-<tr><td><code>map_to</code></td><td><code>map_to(value)</code></td><td>将非 ignore 字段映射到指定值（支持多种类型）</td><td><a href="./map_to.html">📖 详细文档</a></td></tr>
-<tr><td><code>to_str</code></td><td><code>to_str</code></td><td>将字段值转换为字符串</td><td>-</td></tr>
-<tr><td><code>to_json</code></td><td><code>to_json</code></td><td>将字段值转换为 JSON 字符串</td><td>-</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="编码解码函数-encodingdecoding"><a class="header" href="#编码解码函数-encodingdecoding">编码/解码函数 (Encoding/Decoding)</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>函数</th><th>语法</th><th>说明</th><th>文档</th></tr>
-</thead>
-<tbody>
-<tr><td><code>base64_encode</code></td><td><code>base64_encode</code></td><td>Base64 编码字符串</td><td>-</td></tr>
-<tr><td><code>base64_decode</code></td><td><code>base64_decode(encoding)</code></td><td>Base64 解码字符串（可指定编码）</td><td>-</td></tr>
-<tr><td><code>html_escape</code></td><td><code>html_escape</code></td><td>HTML 转义字符串</td><td>-</td></tr>
-<tr><td><code>html_unescape</code></td><td><code>html_unescape</code></td><td>HTML 反转义字符串</td><td>-</td></tr>
-<tr><td><code>json_escape</code></td><td><code>json_escape</code></td><td>JSON 转义字符串</td><td>-</td></tr>
-<tr><td><code>json_unescape</code></td><td><code>json_unescape</code></td><td>JSON 反转义字符串</td><td>-</td></tr>
-<tr><td><code>str_escape</code></td><td><code>str_escape</code></td><td>通用字符串转义</td><td>-</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="时间转换函数-time-conversion"><a class="header" href="#时间转换函数-time-conversion">时间转换函数 (Time Conversion)</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>函数</th><th>语法</th><th>说明</th><th>文档</th></tr>
-</thead>
-<tbody>
-<tr><td><code>Time::to_ts</code></td><td><code>Time::to_ts</code></td><td>将时间转换为秒级时间戳</td><td>-</td></tr>
-<tr><td><code>Time::to_ts_ms</code></td><td><code>Time::to_ts_ms</code></td><td>将时间转换为毫秒级时间戳</td><td>-</td></tr>
-<tr><td><code>Time::to_ts_us</code></td><td><code>Time::to_ts_us</code></td><td>将时间转换为微秒级时间戳</td><td>-</td></tr>
-<tr><td><code>Time::to_ts_zone</code></td><td><code>Time::to_ts_zone(zone, unit)</code></td><td>将时间转换为指定时区的时间戳</td><td>-</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="网络函数-network"><a class="header" href="#网络函数-network">网络函数 (Network)</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>函数</th><th>语法</th><th>说明</th><th>文档</th></tr>
-</thead>
-<tbody>
-<tr><td><code>ip4_to_int</code></td><td><code>ip4_to_int</code></td><td>将 IPv4 地址转换为整数</td><td>-</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="url路径解析函数-urlpath-parsing"><a class="header" href="#url路径解析函数-urlpath-parsing">URL/路径解析函数 (URL/Path Parsing)</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>函数</th><th>语法</th><th>说明</th><th>文档</th></tr>
-</thead>
-<tbody>
-<tr><td><code>path</code></td><td><code>path(type)</code></td><td>从路径字符串中提取指定部分</td><td>-</td></tr>
-<tr><td><code>url</code></td><td><code>url(type)</code></td><td>从 URL 字符串中提取指定部分</td><td>-</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="控制流函数-control-flow"><a class="header" href="#控制流函数-control-flow">控制流函数 (Control Flow)</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>函数</th><th>语法</th><th>说明</th><th>文档</th></tr>
-</thead>
-<tbody>
-<tr><td><code>skip_empty</code></td><td><code>skip_empty</code></td><td>跳过空值字段</td><td>-</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="函数分类总览"><a class="header" href="#函数分类总览">函数分类总览</a></h2>
-<h3 id="按功能分类"><a class="header" href="#按功能分类">按功能分类</a></h3>
-<h4 id="1-数据提取函数"><a class="header" href="#1-数据提取函数">1. 数据提取函数</a></h4>
-<p>从输入数据或嵌套结构中提取字段。</p>
+<h2 id="当前实现中的函数边界"><a class="header" href="#当前实现中的函数边界">当前实现中的函数边界</a></h2>
 <ul>
-<li><code>take(field)</code>: 提取顶层字段</li>
-<li><code>get(key)</code>: 提取嵌套字段</li>
-<li><code>nth(index)</code>: 提取数组元素</li>
+<li>内置函数当前只有 <code>Now::time()</code>、<code>Now::date()</code>、<code>Now::hour()</code></li>
+<li>顶层内置表达式包括 <code>calc(...)</code>、<code>match ... { ... }</code>、<code>lookup_nocase(...)</code>、<code>fmt(...)</code>、<code>object { ... }</code>、<code>collect ...</code>、<code>select ... where ... ;</code></li>
+<li>管道函数集合以 <a href="../04-functions-reference.html">04-functions-reference.md</a> 中列出的解析器实际支持项为准</li>
+<li>历史文档中出现过的 <code>sxf_get(...)</code>、隐私段、<code>query ...</code> 等写法不属于当前 <code>wp-oml</code> 解析实现</li>
 </ul>
-<h4 id="2-条件过滤函数"><a class="header" href="#2-条件过滤函数">2. 条件过滤函数</a></h4>
-<p>检查条件，不满足时转换为 ignore。</p>
-<ul>
-<li><code>starts_with(prefix)</code>: 前缀匹配</li>
-</ul>
-<h4 id="3-值映射函数"><a class="header" href="#3-值映射函数">3. 值映射函数</a></h4>
-<p>修改字段值或类型。</p>
-<ul>
-<li><code>map_to(value)</code>: 通用值映射</li>
-<li><code>to_str</code>: 转字符串</li>
-<li><code>to_json</code>: 转 JSON</li>
-</ul>
-<h4 id="4-编码转换函数"><a class="header" href="#4-编码转换函数">4. 编码转换函数</a></h4>
-<p>在不同编码格式之间转换。</p>
-<ul>
-<li>Base64: <code>base64_encode</code>, <code>base64_decode</code></li>
-<li>HTML: <code>html_escape</code>, <code>html_unescape</code></li>
-<li>JSON: <code>json_escape</code>, <code>json_unescape</code></li>
-</ul>
-<h4 id="5-时间处理函数"><a class="header" href="#5-时间处理函数">5. 时间处理函数</a></h4>
-<p>处理时间相关的转换。</p>
-<ul>
-<li>时间戳转换: <code>Time::to_ts*</code></li>
-<li>时区转换: <code>Time::to_ts_zone</code></li>
-</ul>
-<h4 id="6-网络处理函数"><a class="header" href="#6-网络处理函数">6. 网络处理函数</a></h4>
-<p>处理网络相关数据。</p>
-<ul>
-<li>IP 地址: <code>ip4_to_int</code></li>
-<li>URL 解析: <code>url(type)</code></li>
-<li>路径解析: <code>path(type)</code></li>
-</ul>
-<h2 id="使用示例"><a class="header" href="#使用示例">使用示例</a></h2>
-<h3 id="基本管道"><a class="header" href="#基本管道">基本管道</a></h3>
-<pre><code class="language-oml">name : basic_pipeline
----
-# 1. 提取字段
-result = pipe take(message)
-    # 2. 过滤条件
-    | starts_with('ERROR')
-    # 3. 值映射
-    | map_to('error_type');
-</code></pre>
-<h3 id="复杂转换"><a class="header" href="#复杂转换">复杂转换</a></h3>
-<pre><code class="language-oml">name : complex_transformation
----
-# 提取并转换时间
-timestamp_ms = pipe take(time_str)
-    | Time::to_ts_ms;
-
-# Base64 编码
-encoded = pipe take(message)
-    | base64_encode;
-
-# URL 解析
-host = pipe take(url)
-    | url(host);
-</code></pre>
-<h3 id="条件分类"><a class="header" href="#条件分类">条件分类</a></h3>
-<pre><code class="language-oml">name : conditional_classification
----
-# 根据 URL 前缀分类安全级别
-high_security = pipe take(url)
-    | starts_with('https://')
-    | map_to(3);
-
-low_security = pipe take(url)
-    | starts_with('http://')
-    | map_to(1);
-</code></pre>
-<h3 id="数据清洗"><a class="header" href="#数据清洗">数据清洗</a></h3>
-<pre><code class="language-oml">name : data_cleaning
----
-# 提取并清理数据
-clean_message = pipe take(raw_message)
-    | html_unescape
-    | json_unescape
-    | skip_empty;
-</code></pre>
-<h2 id="性能参考"><a class="header" href="#性能参考">性能参考</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>函数类型</th><th>典型性能</th><th>说明</th></tr>
-</thead>
-<tbody>
-<tr><td>字段访问</td><td>&lt; 100ns</td><td>基于哈希表查找</td></tr>
-<tr><td>字符串匹配</td><td>&lt; 1μs</td><td>简单前缀比较</td></tr>
-<tr><td>值映射</td><td>&lt; 100ns</td><td>直接值替换</td></tr>
-<tr><td>Base64 编码</td><td>1-10μs</td><td>取决于字符串长度</td></tr>
-<tr><td>时间转换</td><td>1-5μs</td><td>时间解析和转换</td></tr>
-<tr><td>URL 解析</td><td>1-10μs</td><td>URL 结构解析</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="最佳实践"><a class="header" href="#最佳实践">最佳实践</a></h2>
-<h3 id="1-合理使用管道链"><a class="header" href="#1-合理使用管道链">1. 合理使用管道链</a></h3>
-<pre><code class="language-oml"># ✅ 推荐：按逻辑顺序组织管道
-result = pipe take(field)
-    | starts_with('prefix')  # 先过滤
-    | map_to('value');      # 再映射
-
-# ⚠️ 避免：不必要的长管道
-result = pipe take(field)
-    | to_str
-    | to_json
-    | to_str  # 冗余操作
-</code></pre>
-<h3 id="2-利用-ignore-传播"><a class="header" href="#2-利用-ignore-传播">2. 利用 ignore 传播</a></h3>
-<pre><code class="language-oml"># ✅ 推荐：利用 ignore 跳过后续处理
-secure_flag = pipe take(url)
-    | starts_with('https://')  # 失败返回 ignore
-    | map_to(true);           # ignore 会跳过此步
-
-# 这样可以安全地处理条件逻辑
-</code></pre>
-<h3 id="3-选择合适的函数"><a class="header" href="#3-选择合适的函数">3. 选择合适的函数</a></h3>
-<pre><code class="language-oml"># ✅ 推荐：使用专用函数
-result = pipe take(field) | map_to(123);  # 自动推断为整数
-
-# ⚠️ 不推荐：手动转换
-result = pipe take(field) | to_str | map_to('123');  # 额外开销
-</code></pre>
-<h3 id="4-避免重复提取"><a class="header" href="#4-避免重复提取">4. 避免重复提取</a></h3>
-<pre><code class="language-oml"># ✅ 推荐：一次提取，多次使用
-url_field = pipe take(url);
-host = pipe take(url) | url(host);
-path = pipe take(url) | url(path);
-
-# ⚠️ 避免：每次都提取同一字段（性能影响小但不够清晰）
-</code></pre>
-<h2 id="函数对比"><a class="header" href="#函数对比">函数对比</a></h2>
-<h3 id="starts_with-vs-正则表达式"><a class="header" href="#starts_with-vs-正则表达式">starts_with vs 正则表达式</a></h3>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>特性</th><th>starts_with</th><th>正则表达式</th></tr>
-</thead>
-<tbody>
-<tr><td>性能</td><td>极快</td><td>较慢</td></tr>
-<tr><td>功能</td><td>前缀匹配</td><td>复杂模式</td></tr>
-<tr><td>使用难度</td><td>简单</td><td>需要学习</td></tr>
-<tr><td>失败行为</td><td>转为 ignore</td><td>-</td></tr>
-</tbody>
-</table>
-</div>
-<h3 id="map_to-vs-to_str"><a class="header" href="#map_to-vs-to_str">map_to vs to_str</a></h3>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>特性</th><th>map_to</th><th>to_str</th></tr>
-</thead>
-<tbody>
-<tr><td>功能</td><td>值替换</td><td>类型转换</td></tr>
-<tr><td>类型支持</td><td>多种</td><td>仅字符串</td></tr>
-<tr><td>ignore 保留</td><td>是</td><td>否</td></tr>
-<tr><td>用途</td><td>条件赋值</td><td>类型转换</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="相关文档"><a class="header" href="#相关文档">相关文档</a></h2>
-<ul>
-<li><strong>开发指南</strong>: <a href="../../guide/oml_pipefun_development_guide.html">OML Pipe Function 开发指南</a></li>
-<li><strong>语法参考</strong>: <a href="../../syntax/oml_syntax.html">OML 语法指南</a></li>
-</ul>
-<h2 id="版本历史"><a class="header" href="#版本历史">版本历史</a></h2>
-<ul>
-<li>
-<p><strong>1.13.4</strong> (2026-02-03)</p>
-<ul>
-<li>新增 <code>starts_with</code> 函数</li>
-<li>新增 <code>map_to</code> 函数，支持多种类型自动推断</li>
-<li>完善文档体系</li>
-</ul>
-</li>
-<li>
-<p><strong>1.13.3</strong> (2026-02-03)</p>
-<ul>
-<li>修复编译错误</li>
-</ul>
-</li>
-<li>
-<p><strong>1.13.2</strong> (2026-02-03)</p>
-<ul>
-<li>完善 pipe 函数支持</li>
-</ul>
-</li>
-</ul>
-<hr>
-<p><strong>提示</strong>: OML pipe 函数设计用于数据转换和映射。合理使用 ignore 机制可以实现灵活的条件逻辑。</p>
 
                     </main>
 
@@ -549,8 +257,7 @@ path = pipe take(url) | url(path);
         <script src="../../../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
-        <script src="../../../../theme/lang-switch.js"></script>
-        <script src="../../../../theme/version-badge.js"></script>
+        <script src="../../../theme/site-fb88a44a.js"></script>
         <script src="../../../mermaid-eefea253.min.js"></script>
         <script src="../../../mermaid-init-ccf746f1.js"></script>
 

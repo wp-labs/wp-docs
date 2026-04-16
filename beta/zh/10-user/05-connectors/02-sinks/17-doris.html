@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="zh-CN" class="ayu sidebar-visible" dir="ltr">
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -28,19 +28,18 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../../../../theme/lang-switch.css">
-        <link rel="stylesheet" href="../../../../theme/version-badge.css">
+        <link rel="stylesheet" href="../../../theme/site-ebe709e1.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
             const path_to_root = "../../../";
-            const default_light_theme = "ayu";
+            const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-37cffb89.js";
+            window.path_to_searchindex_js = "../../../searchindex-257b32ae.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../../toc-536d74fd.js"></script>
+        <script src="../../../toc-6c095515.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -78,7 +77,7 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
-            html.classList.remove('ayu')
+            html.classList.remove('light')
             html.classList.add(theme);
             html.classList.add("js");
         </script>
@@ -189,17 +188,10 @@ type = "doris"
 allow_override = ["endpoint", "user", "password", "database", "table", "create_table"]
 
 [connectors.params]
-&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
 endpoint = "mysql://localhost:9030?charset=utf8mb4&amp;connect_timeout=10"
 user = "root"
 password = ""
 database = "wp_test"
-=======
-endpoint = "http://localhost:8040"
-user = "${SEC_USERNAME}"
-password = "${SEC_PASSWORD}"
-database = "test_db"
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; 728fbffd4a42b5dc14af2c748f651badecfed1c2
 table = "events_parsed"
 </code></pre>
 <h2 id="可用参数"><a class="header" href="#可用参数">可用参数</a></h2>
@@ -233,26 +225,14 @@ name = "doris_stream_load"
 connect = "doris_sink"
 
 [sink_group.sinks.params]
-&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
 endpoint = "mysql://localhost:9030?charset=utf8mb4&amp;connect_timeout=10"
 database = "wp_test"
 table = "events_parsed"
 user = "root"
 password = ""
-=======
-endpoint = "http://localhost:8040"
-database = "test_db"
-table = "wp_nginx"
-user = "${SEC_USERNAME}"
-password = "${SEC_PASSWORD}"
-timeout_secs = 30
-max_retries = 1
-batch_size = 10_0000
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; 728fbffd4a42b5dc14af2c748f651badecfed1c2
 </code></pre>
 <h3 id="自动建表"><a class="header" href="#自动建表">自动建表</a></h3>
-<pre><code class="language-toml">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
-[[sink_group.sinks]]
+<pre><code class="language-toml">[[sink_group.sinks]]
 name = "doris_stream_load"
 connect = "doris_sink"
 
@@ -288,15 +268,8 @@ password = ""
 <ul>
 <li>确保 Doris FE 的 MySQL 端口可访问，并开启 Stream Load 能力。</li>
 <li>需要为账号授予 <code>SELECT/INSERT</code> 以及 <code>LOAD</code> 权限。</li>
-<li>完整端到端示例可参考 <code>wp-examples/extensions/doris/README.md</code>。
-=======
-[sink_group.sinks.params.headers]
-strip_outer_array = “false”
-max_filter_ratio = “0.1”
-columns = “wp_event_id,wp_src_key,sip,timestamp,<code>http/request</code>,size,referer,<code>http/agent</code>”</li>
+<li>完整端到端示例可参考 <code>wp-examples/extensions/doris/README.md</code>。</li>
 </ul>
-<pre><code>&gt;&gt;&gt;&gt;&gt;&gt;&gt; 728fbffd4a42b5dc14af2c748f651badecfed1c2
-</code></pre>
 
                     </main>
 
@@ -349,8 +322,7 @@ columns = “wp_event_id,wp_src_key,sip,timestamp,<code>http/request</code>,size
         <script src="../../../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
-        <script src="../../../../theme/lang-switch.js"></script>
-        <script src="../../../../theme/version-badge.js"></script>
+        <script src="../../../theme/site-fb88a44a.js"></script>
         <script src="../../../mermaid-eefea253.min.js"></script>
         <script src="../../../mermaid-init-ccf746f1.js"></script>
 

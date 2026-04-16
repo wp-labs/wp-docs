@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="ayu sidebar-visible" dir="ltr">
+<html lang="en" class="light sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -28,19 +28,18 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../../../theme/lang-switch.css">
-        <link rel="stylesheet" href="../../../theme/version-badge.css">
+        <link rel="stylesheet" href="../../theme/site-ebe709e1.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
             const path_to_root = "../../";
-            const default_light_theme = "ayu";
+            const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-bab637e3.js";
+            window.path_to_searchindex_js = "../../searchindex-edc6cbb1.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-6f276faf.js"></script>
+        <script src="../../toc-d7a13aa9.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -78,7 +77,7 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
-            html.classList.remove('ayu')
+            html.classList.remove('light')
             html.classList.add(theme);
             html.classList.add("js");
         </script>
@@ -224,6 +223,7 @@
 <tr><td>💡 Understand concepts</td><td><a href="./02-core-concepts.html">02-core-concepts.md</a></td></tr>
 <tr><td>📝 Parse Nginx logs</td><td><a href="./03-practical-guide.html#1-parse-web-server-logs">03-practical-guide.md § 1</a></td></tr>
 <tr><td>📊 Parse JSON data</td><td><a href="./03-practical-guide.html#2-parse-json-data">03-practical-guide.md § 2</a></td></tr>
+<tr><td>🧩 Distinguish valid vs broken JSON</td><td><a href="./04-language-reference.html#json-like-routing">04-language-reference.md § JSON-like Routing</a></td></tr>
 <tr><td>🔑 Parse KV pairs</td><td><a href="./03-practical-guide.html#3-parse-kv-pairs">03-practical-guide.md § 3</a></td></tr>
 <tr><td>🔐 Handle Base64 encoding</td><td><a href="./03-practical-guide.html#4-handle-encoded-data">03-practical-guide.md § 4</a></td></tr>
 <tr><td>✅ Validate fields</td><td><a href="./03-practical-guide.html#5-field-validation--filtering">03-practical-guide.md § 5</a></td></tr>
@@ -248,6 +248,7 @@
 <tr><td><a href="./04-language-reference.html">04-language-reference.md</a></td><td>Complete type list + syntax elements + quick reference</td><td>Developers</td></tr>
 <tr><td><a href="./05-functions-reference.html">05-functions-reference.md</a></td><td>Standardized reference for all functions</td><td>Developers</td></tr>
 <tr><td><a href="./06-grammar-reference.html">06-grammar-reference.md</a></td><td>EBNF formal grammar definition</td><td>Compiler developers</td></tr>
+<tr><td><a href="../zh/09-checker-guide.html">../zh/09-checker-guide.md</a></td><td>Checker layering, API design, and implementation conventions</td><td>Tooling / integration developers</td></tr>
 </tbody>
 </table>
 </div>
@@ -398,8 +399,7 @@ A: Refer to <a href="./01-quickstart.html#quick-debugging-tips">01-quickstart.md
         <script src="../../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
-        <script src="../../../theme/lang-switch.js"></script>
-        <script src="../../../theme/version-badge.js"></script>
+        <script src="../../theme/site-fb88a44a.js"></script>
         <script src="../../mermaid-eefea253.min.js"></script>
         <script src="../../mermaid-init-ccf746f1.js"></script>
 

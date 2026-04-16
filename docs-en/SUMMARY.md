@@ -1,6 +1,7 @@
 # Summary
 
 - [Release Notes](00-release/README.md)
+  - [0.22 Release Notes](00-release/0.22.md)
   - [0.20 Release Notes](00-release/0.20.md)
 
 - [User Guide](10-user/README.md)

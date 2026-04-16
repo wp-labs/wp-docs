@@ -1,3 +1,96 @@
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) body {
+    background: var(--wp-bg);
+    color: var(--wp-text);
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .menu-bar {
+    background: var(--wp-menu-bg);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--wp-border);
+    box-shadow: none;
+    height: 56px;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .menu-title {
+    font-weight: 750;
+    letter-spacing: 0.015em;
+    color: var(--wp-text);
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar {
+    border-right: 1px solid var(--wp-border);
+    background: var(--wp-sidebar-bg);
+    box-shadow: none;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar-scrollbox {
+    padding-top: 14px;
+    padding-bottom: 24px;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #mdbook-content {
+    max-width: 1180px;
+    margin-inline: auto;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .page {
+    padding-inline: 0;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .page-wrapper {
+    background: transparent;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 980px;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content main {
+    box-sizing: border-box;
+    width: min(860px, calc(100% - 112px));
+    max-width: none;
+    margin: 2.5rem auto 4.5rem;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 2rem 2.5rem 3rem;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content h1,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content h2,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content h3 {
+    color: var(--wp-text);
+    letter-spacing: -0.02em;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content p,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content li {
+    line-height: 1.75;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content a {
+    color: var(--wp-accent);
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content a:hover {
+    color: var(--wp-accent-strong);
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) pre {
+    background: var(--wp-code-bg);
+    border: 1px solid var(--wp-border);
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .theme-popup {
+    border-radius: 14px;
+    box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
+}
+
 :root {
     --wp-bg: #f8fafc;
     --wp-panel: #ffffff;
@@ -114,37 +207,6 @@ html.coal {
     --color-scheme: dark;
 }
 
-html.light body,
-html.rust body,
-html.ayu body,
-html.navy body,
-html.coal body {
-    background: var(--wp-bg);
-    color: var(--wp-text);
-}
-
-html.light .menu-bar,
-html.rust .menu-bar,
-html.ayu .menu-bar,
-html.navy .menu-bar,
-html.coal .menu-bar {
-    background: var(--wp-menu-bg);
-    backdrop-filter: blur(14px);
-    border-bottom: 1px solid var(--wp-border);
-    box-shadow: none;
-    height: 56px;
-}
-
-html.light .menu-title,
-html.rust .menu-title,
-html.ayu .menu-title,
-html.navy .menu-title,
-html.coal .menu-title {
-    font-weight: 750;
-    letter-spacing: 0.015em;
-    color: var(--wp-text);
-}
-
 html.light .icon-button,
 html.rust .icon-button,
 html.ayu .icon-button,
@@ -169,25 +231,6 @@ html.ayu .right-buttons a:hover,
 html.navy .right-buttons a:hover,
 html.coal .right-buttons a:hover {
     color: var(--wp-accent);
-}
-
-html.light .sidebar,
-html.rust .sidebar,
-html.ayu .sidebar,
-html.navy .sidebar,
-html.coal .sidebar {
-    border-right: 1px solid var(--wp-border);
-    background: var(--wp-sidebar-bg);
-    box-shadow: none;
-}
-
-html.light .sidebar-scrollbox,
-html.rust .sidebar-scrollbox,
-html.ayu .sidebar-scrollbox,
-html.navy .sidebar-scrollbox,
-html.coal .sidebar-scrollbox {
-    padding-top: 14px;
-    padding-bottom: 24px;
 }
 
 html.light .sidebar .chapter li.part-title,
@@ -243,31 +286,6 @@ html.coal .sidebar .chapter ul {
     margin-left: 0.7rem;
 }
 
-html.light #mdbook-content,
-html.rust #mdbook-content,
-html.ayu #mdbook-content,
-html.navy #mdbook-content,
-html.coal #mdbook-content {
-    max-width: 1180px;
-    margin-inline: auto;
-}
-
-html.light .page,
-html.rust .page,
-html.ayu .page,
-html.navy .page,
-html.coal .page {
-    padding-inline: 0;
-}
-
-html.light .page-wrapper,
-html.rust .page-wrapper,
-html.ayu .page-wrapper,
-html.navy .page-wrapper,
-html.coal .page-wrapper {
-    background: transparent;
-}
-
 html.sidebar-visible .page-wrapper {
     margin-left: var(--sidebar-width);
 }
@@ -275,51 +293,6 @@ html.sidebar-visible .page-wrapper {
 [dir=rtl].sidebar-visible .page-wrapper {
     margin-right: var(--sidebar-width);
     margin-left: 0;
-}
-
-html.light .content,
-html.rust .content,
-html.ayu .content,
-html.navy .content,
-html.coal .content {
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 980px;
-}
-
-html.light .content main,
-html.rust .content main,
-html.ayu .content main,
-html.navy .content main,
-html.coal .content main {
-    box-sizing: border-box;
-    width: min(860px, calc(100% - 112px));
-    max-width: none;
-    margin: 2.5rem auto 4.5rem;
-    background: transparent;
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-    padding: 2rem 2.5rem 3rem;
-}
-
-html.light .content h1,
-html.rust .content h1,
-html.ayu .content h1,
-html.navy .content h1,
-html.coal .content h1,
-html.light .content h2,
-html.rust .content h2,
-html.ayu .content h2,
-html.navy .content h2,
-html.coal .content h2,
-html.light .content h3,
-html.rust .content h3,
-html.ayu .content h3,
-html.navy .content h3,
-html.coal .content h3 {
-    color: var(--wp-text);
-    letter-spacing: -0.02em;
 }
 
 html.light .content h1,
@@ -341,35 +314,6 @@ html.coal .content h2 {
     border-top: 1px solid var(--wp-border);
 }
 
-html.light .content p,
-html.rust .content p,
-html.ayu .content p,
-html.navy .content p,
-html.coal .content p,
-html.light .content li,
-html.rust .content li,
-html.ayu .content li,
-html.navy .content li,
-html.coal .content li {
-    line-height: 1.75;
-}
-
-html.light .content a,
-html.rust .content a,
-html.ayu .content a,
-html.navy .content a,
-html.coal .content a {
-    color: var(--wp-accent);
-}
-
-html.light .content a:hover,
-html.rust .content a:hover,
-html.ayu .content a:hover,
-html.navy .content a:hover,
-html.coal .content a:hover {
-    color: var(--wp-accent-strong);
-}
-
 html.light code,
 html.rust code,
 html.ayu code,
@@ -378,17 +322,6 @@ html.coal code {
     background: var(--wp-accent-soft);
     border-radius: 6px;
     padding: 0.12em 0.36em;
-}
-
-html.light pre,
-html.rust pre,
-html.ayu pre,
-html.navy pre,
-html.coal pre {
-    background: var(--wp-code-bg);
-    border: 1px solid var(--wp-border);
-    border-radius: 12px;
-    padding: 1rem 1.1rem;
 }
 
 html.light blockquote,
@@ -487,15 +420,6 @@ html.coal .mobile-nav-chapters:hover {
     background: var(--wp-floating-hover-bg);
     border-color: rgba(37, 99, 235, 0.2);
     color: var(--wp-accent);
-}
-
-html.light .theme-popup,
-html.rust .theme-popup,
-html.ayu .theme-popup,
-html.navy .theme-popup,
-html.coal .theme-popup {
-    border-radius: 14px;
-    box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
 }
 
 .wp-topbar {

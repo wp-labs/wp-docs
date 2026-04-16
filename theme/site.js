@@ -1,19 +1,4 @@
 (function() {
-    function normalizeTheme() {
-        try {
-            const stored = localStorage.getItem('mdbook-theme');
-            if (!stored) {
-                return;
-            }
-            if (stored === 'ayu' || stored === 'navy' || stored === 'coal' || stored === 'rust') {
-                localStorage.setItem('mdbook-theme', 'light');
-                const html = document.documentElement;
-                html.classList.remove('ayu', 'navy', 'coal', 'rust');
-                html.classList.add('light');
-            }
-        } catch (e) { }
-    }
-
     function buildTopbar() {
         const menuBar = document.getElementById('mdbook-menu-bar');
         if (!menuBar) {
@@ -68,20 +53,47 @@
         });
     }
 
+    function simplifyThemeMenu() {
+        const labels = {
+            'mdbook-theme-default_theme': 'Auto',
+            'mdbook-theme-light': 'Light',
+            'mdbook-theme-navy': 'Dark'
+        };
+        const hiddenThemes = [
+            'mdbook-theme-rust',
+            'mdbook-theme-coal',
+            'mdbook-theme-ayu'
+        ];
+
+        Object.keys(labels).forEach(function(id) {
+            const item = document.getElementById(id);
+            if (item) {
+                item.textContent = labels[id];
+            }
+        });
+
+        hiddenThemes.forEach(function(id) {
+            const item = document.getElementById(id);
+            if (item && item.parentElement) {
+                item.parentElement.style.display = 'none';
+            }
+        });
+    }
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
-            normalizeTheme();
             buildTopbar();
+            simplifyThemeMenu();
             watchTopbarItems();
         });
     } else {
-        normalizeTheme();
         buildTopbar();
+        simplifyThemeMenu();
         watchTopbarItems();
     }
 
     window.addEventListener('load', function() {
-        normalizeTheme();
         buildTopbar();
+        simplifyThemeMenu();
     });
 })();

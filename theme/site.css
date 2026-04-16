@@ -1,30 +1,33 @@
 :root {
-    --wp-bg: #f5f7fb;
+    --wp-bg: #f8fafc;
     --wp-panel: #ffffff;
     --wp-panel-strong: #ffffff;
-    --wp-border: rgba(29, 44, 63, 0.12);
-    --wp-border-strong: rgba(29, 44, 63, 0.2);
-    --wp-text: #172033;
+    --wp-border: rgba(15, 23, 42, 0.1);
+    --wp-border-strong: rgba(15, 23, 42, 0.18);
+    --wp-text: #111827;
     --wp-text-muted: #64748b;
-    --wp-accent: #0f8f83;
-    --wp-accent-soft: rgba(15, 143, 131, 0.12);
-    --wp-accent-strong: #08756b;
-    --wp-sidebar-bg: #eef3f8;
+    --wp-accent: #2563eb;
+    --wp-accent-soft: rgba(37, 99, 235, 0.08);
+    --wp-accent-strong: #1d4ed8;
+    --wp-sidebar-bg: #f8fafc;
     --wp-sidebar-panel: #ffffff;
-    --wp-sidebar-text: #243246;
+    --wp-sidebar-text: #1e293b;
     --wp-sidebar-muted: #64748b;
-    --wp-code-bg: #f3f7fb;
-    --wp-shadow: 0 18px 45px rgba(29, 44, 63, 0.08);
-    --wp-radius: 18px;
-    --sidebar-target-width: 285px;
+    --wp-code-bg: #f6f8fb;
+    --wp-menu-bg: rgba(255, 255, 255, 0.92);
+    --wp-hover-bg: #ffffff;
+    --wp-floating-bg: rgba(255, 255, 255, 0.92);
+    --wp-floating-hover-bg: #ffffff;
+    --wp-chip-bg: rgba(255, 255, 255, 0.86);
+    --wp-current-bg: #ffffff;
+    --wp-shadow: none;
+    --wp-radius: 12px;
+    --sidebar-target-width: 292px;
     --sidebar-width: min(var(--sidebar-target-width), 80vw);
 }
 
 html.light,
-html.rust,
-html.ayu,
-html.navy,
-html.coal {
+html.rust {
     --bg: var(--wp-bg);
     --fg: var(--wp-text);
     --sidebar-bg: var(--wp-sidebar-bg);
@@ -32,28 +35,83 @@ html.coal {
     --sidebar-non-existant: #a3afbd;
     --sidebar-active: var(--wp-accent);
     --sidebar-spacer: transparent;
-    --scrollbar: rgba(79, 61, 46, 0.18);
+    --scrollbar: rgba(100, 116, 139, 0.22);
     --icons: var(--wp-text-muted);
     --icons-hover: var(--wp-accent);
     --links: var(--wp-accent);
     --inline-code-color: var(--wp-accent-strong);
-    --theme-popup-bg: #fffaf3;
+    --theme-popup-bg: #ffffff;
     --theme-popup-border: var(--wp-border);
-    --theme-hover: #f0e4d5;
-    --quote-bg: #fffaf4;
-    --quote-border: #e0ccb3;
-    --table-border-color: rgba(79, 61, 46, 0.12);
-    --table-header-bg: #f2e6d8;
-    --table-alternate-bg: rgba(255, 250, 243, 0.75);
-    --searchbar-border-color: rgba(79, 61, 46, 0.12);
-    --searchbar-bg: #fffaf4;
+    --theme-hover: #eef2ff;
+    --quote-bg: #f8fafc;
+    --quote-border: #bfdbfe;
+    --table-border-color: rgba(15, 23, 42, 0.1);
+    --table-header-bg: #f8fafc;
+    --table-alternate-bg: rgba(248, 250, 252, 0.78);
+    --searchbar-border-color: rgba(15, 23, 42, 0.12);
+    --searchbar-bg: #ffffff;
     --searchbar-fg: var(--wp-text);
     --searchbar-shadow-color: transparent;
     --searchresults-header-fg: var(--wp-text-muted);
-    --searchresults-border-color: rgba(79, 61, 46, 0.12);
-    --searchresults-li-bg: #fffdf8;
-    --search-mark-bg: #fde7c8;
+    --searchresults-border-color: rgba(15, 23, 42, 0.1);
+    --searchresults-li-bg: #ffffff;
+    --search-mark-bg: #dbeafe;
     --color-scheme: light;
+}
+
+html.ayu,
+html.navy,
+html.coal {
+    --wp-bg: #0f172a;
+    --wp-panel: #111827;
+    --wp-panel-strong: #1e293b;
+    --wp-border: rgba(148, 163, 184, 0.18);
+    --wp-border-strong: rgba(148, 163, 184, 0.28);
+    --wp-text: #e5e7eb;
+    --wp-text-muted: #94a3b8;
+    --wp-accent: #60a5fa;
+    --wp-accent-soft: rgba(96, 165, 250, 0.14);
+    --wp-accent-strong: #93c5fd;
+    --wp-sidebar-bg: #111827;
+    --wp-sidebar-panel: #182235;
+    --wp-sidebar-text: #e2e8f0;
+    --wp-sidebar-muted: #94a3b8;
+    --wp-code-bg: #111827;
+    --wp-menu-bg: rgba(15, 23, 42, 0.9);
+    --wp-hover-bg: rgba(30, 41, 59, 0.88);
+    --wp-floating-bg: rgba(15, 23, 42, 0.9);
+    --wp-floating-hover-bg: rgba(30, 41, 59, 0.96);
+    --wp-chip-bg: rgba(15, 23, 42, 0.78);
+    --wp-current-bg: rgba(30, 41, 59, 0.94);
+    --bg: var(--wp-bg);
+    --fg: var(--wp-text);
+    --sidebar-bg: var(--wp-sidebar-bg);
+    --sidebar-fg: var(--wp-sidebar-muted);
+    --sidebar-non-existant: #64748b;
+    --sidebar-active: var(--wp-accent-strong);
+    --sidebar-spacer: transparent;
+    --scrollbar: rgba(148, 163, 184, 0.24);
+    --icons: var(--wp-text-muted);
+    --icons-hover: var(--wp-accent-strong);
+    --links: var(--wp-accent-strong);
+    --inline-code-color: var(--wp-accent-strong);
+    --theme-popup-bg: #111827;
+    --theme-popup-border: var(--wp-border);
+    --theme-hover: rgba(30, 41, 59, 0.9);
+    --quote-bg: rgba(30, 41, 59, 0.58);
+    --quote-border: rgba(96, 165, 250, 0.42);
+    --table-border-color: rgba(148, 163, 184, 0.18);
+    --table-header-bg: rgba(30, 41, 59, 0.92);
+    --table-alternate-bg: rgba(30, 41, 59, 0.38);
+    --searchbar-border-color: rgba(148, 163, 184, 0.22);
+    --searchbar-bg: #111827;
+    --searchbar-fg: var(--wp-text);
+    --searchbar-shadow-color: transparent;
+    --searchresults-header-fg: var(--wp-text-muted);
+    --searchresults-border-color: rgba(148, 163, 184, 0.18);
+    --searchresults-li-bg: #111827;
+    --search-mark-bg: rgba(96, 165, 250, 0.28);
+    --color-scheme: dark;
 }
 
 html.light body,
@@ -61,10 +119,7 @@ html.rust body,
 html.ayu body,
 html.navy body,
 html.coal body {
-    background:
-        radial-gradient(circle at 18% 0%, rgba(15, 143, 131, 0.08), transparent 30%),
-        radial-gradient(circle at 88% 8%, rgba(56, 132, 255, 0.08), transparent 34%),
-        linear-gradient(180deg, #fbfdff 0%, var(--wp-bg) 100%);
+    background: var(--wp-bg);
     color: var(--wp-text);
 }
 
@@ -73,16 +128,11 @@ html.rust .menu-bar,
 html.ayu .menu-bar,
 html.navy .menu-bar,
 html.coal .menu-bar {
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--wp-menu-bg);
     backdrop-filter: blur(14px);
-    border-bottom: 1px solid rgba(29, 44, 63, 0.1);
+    border-bottom: 1px solid var(--wp-border);
     box-shadow: none;
-    height: 58px;
-}
-
-#mdbook-theme-toggle,
-#mdbook-theme-list {
-    display: none !important;
+    height: 56px;
 }
 
 html.light .menu-title,
@@ -90,8 +140,8 @@ html.rust .menu-title,
 html.ayu .menu-title,
 html.navy .menu-title,
 html.coal .menu-title {
-    font-weight: 800;
-    letter-spacing: 0.02em;
+    font-weight: 750;
+    letter-spacing: 0.015em;
     color: var(--wp-text);
 }
 
@@ -126,10 +176,9 @@ html.rust .sidebar,
 html.ayu .sidebar,
 html.navy .sidebar,
 html.coal .sidebar {
-    border-right: 1px solid rgba(29, 44, 63, 0.1);
-    background:
-        linear-gradient(180deg, #f6f9fc 0%, #eef3f8 100%);
-    box-shadow: 8px 0 28px rgba(29, 44, 63, 0.06);
+    border-right: 1px solid var(--wp-border);
+    background: var(--wp-sidebar-bg);
+    box-shadow: none;
 }
 
 html.light .sidebar-scrollbox,
@@ -137,7 +186,7 @@ html.rust .sidebar-scrollbox,
 html.ayu .sidebar-scrollbox,
 html.navy .sidebar-scrollbox,
 html.coal .sidebar-scrollbox {
-    padding-top: 18px;
+    padding-top: 14px;
     padding-bottom: 24px;
 }
 
@@ -146,11 +195,11 @@ html.rust .sidebar .chapter li.part-title,
 html.ayu .sidebar .chapter li.part-title,
 html.navy .sidebar .chapter li.part-title,
 html.coal .sidebar .chapter li.part-title {
-    margin: 1.2rem 1rem 0.45rem;
+    margin: 1.35rem 1rem 0.5rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     font-size: 0.72rem;
-    color: #8a98aa;
+    color: var(--wp-text-muted);
 }
 
 html.light .sidebar .chapter li a,
@@ -158,9 +207,9 @@ html.rust .sidebar .chapter li a,
 html.ayu .sidebar .chapter li a,
 html.navy .sidebar .chapter li a,
 html.coal .sidebar .chapter li a {
-    margin: 0.08rem 0.7rem;
-    padding: 0.42rem 0.8rem;
-    border-radius: 10px;
+    margin: 0.03rem 0.65rem;
+    padding: 0.38rem 0.75rem;
+    border-radius: 8px;
     color: var(--wp-sidebar-muted);
     transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
@@ -170,7 +219,7 @@ html.rust .sidebar .chapter li a:hover,
 html.ayu .sidebar .chapter li a:hover,
 html.navy .sidebar .chapter li a:hover,
 html.coal .sidebar .chapter li a:hover {
-    background: rgba(255, 255, 255, 0.78);
+    background: var(--wp-hover-bg);
     color: var(--wp-sidebar-text);
     text-decoration: none;
     transform: translateX(1px);
@@ -181,9 +230,9 @@ html.rust .sidebar .chapter li a.active,
 html.ayu .sidebar .chapter li a.active,
 html.navy .sidebar .chapter li a.active,
 html.coal .sidebar .chapter li a.active {
-    background: linear-gradient(90deg, rgba(15, 143, 131, 0.18), rgba(15, 143, 131, 0.06));
+    background: var(--wp-accent-soft);
     color: var(--wp-accent-strong);
-    font-weight: 700;
+    font-weight: 650;
 }
 
 html.light .sidebar .chapter ul,
@@ -235,7 +284,7 @@ html.navy .content,
 html.coal .content {
     margin-left: auto;
     margin-right: auto;
-    max-width: 1220px;
+    max-width: 980px;
 }
 
 html.light .content main,
@@ -244,14 +293,14 @@ html.ayu .content main,
 html.navy .content main,
 html.coal .content main {
     box-sizing: border-box;
-    width: min(980px, calc(100% - 96px));
+    width: min(860px, calc(100% - 112px));
     max-width: none;
-    margin: 1.8rem auto 3rem;
-    background: var(--wp-panel);
-    border: 1px solid rgba(29, 44, 63, 0.1);
-    border-radius: var(--wp-radius);
-    box-shadow: var(--wp-shadow);
-    padding: 2.8rem 3.6rem 3.4rem;
+    margin: 2.5rem auto 4.5rem;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 2rem 2.5rem 3rem;
 }
 
 html.light .content h1,
@@ -278,7 +327,7 @@ html.rust .content h1,
 html.ayu .content h1,
 html.navy .content h1,
 html.coal .content h1 {
-    font-size: 2.45rem;
+    font-size: 2.35rem;
     margin-bottom: 1.2rem;
 }
 
@@ -289,7 +338,7 @@ html.navy .content h2,
 html.coal .content h2 {
     margin-top: 2.4rem;
     padding-top: 0.8rem;
-    border-top: 1px solid rgba(79, 61, 46, 0.08);
+    border-top: 1px solid var(--wp-border);
 }
 
 html.light .content p,
@@ -337,8 +386,8 @@ html.ayu pre,
 html.navy pre,
 html.coal pre {
     background: var(--wp-code-bg);
-    border: 1px solid rgba(177, 77, 22, 0.12);
-    border-radius: 14px;
+    border: 1px solid var(--wp-border);
+    border-radius: 12px;
     padding: 1rem 1.1rem;
 }
 
@@ -385,10 +434,10 @@ html.rust .mobile-nav-chapters,
 html.ayu .mobile-nav-chapters,
 html.navy .mobile-nav-chapters,
 html.coal .mobile-nav-chapters {
-    background: rgba(255, 255, 255, 0.86);
-    border: 1px solid rgba(29, 44, 63, 0.12);
+    background: var(--wp-floating-bg);
+    border: 1px solid var(--wp-border);
     border-radius: 999px;
-    box-shadow: 0 14px 32px rgba(29, 44, 63, 0.1);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
     color: var(--wp-text-muted);
 }
 
@@ -397,24 +446,24 @@ html.rust .nav-chapters,
 html.ayu .nav-chapters,
 html.navy .nav-chapters,
 html.coal .nav-chapters {
-    top: 50%;
-    bottom: auto;
-    width: 46px;
-    min-width: 46px;
-    max-width: 46px;
-    height: 72px;
+    top: auto;
+    bottom: 28px;
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
+    height: 40px;
     margin: 0;
-    transform: translateY(-50%);
-    font-size: 1.6rem;
+    transform: none;
+    font-size: 1.35rem;
     backdrop-filter: blur(12px);
 }
 
 html.sidebar-visible .nav-chapters.previous {
-    left: calc(var(--sidebar-width) + 18px);
+    left: calc(var(--sidebar-width) + 20px);
 }
 
 html:not(.sidebar-visible) .nav-chapters.previous {
-    left: 18px;
+    left: 20px;
 }
 
 html.light .nav-chapters.next,
@@ -422,7 +471,7 @@ html.rust .nav-chapters.next,
 html.ayu .nav-chapters.next,
 html.navy .nav-chapters.next,
 html.coal .nav-chapters.next {
-    right: 18px;
+    right: 20px;
 }
 
 html.light .nav-chapters:hover,
@@ -435,8 +484,8 @@ html.rust .mobile-nav-chapters:hover,
 html.ayu .mobile-nav-chapters:hover,
 html.navy .mobile-nav-chapters:hover,
 html.coal .mobile-nav-chapters:hover {
-    background: #ffffff;
-    border-color: rgba(15, 143, 131, 0.22);
+    background: var(--wp-floating-hover-bg);
+    border-color: rgba(37, 99, 235, 0.2);
     color: var(--wp-accent);
 }
 
@@ -446,7 +495,7 @@ html.ayu .theme-popup,
 html.navy .theme-popup,
 html.coal .theme-popup {
     border-radius: 14px;
-    box-shadow: 0 16px 30px rgba(78, 60, 44, 0.12);
+    box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
 }
 
 .wp-topbar {
@@ -466,7 +515,7 @@ html.coal .theme-popup {
     padding: 0 12px;
     border-radius: 999px;
     border: 1px solid var(--wp-border);
-    background: rgba(255, 255, 255, 0.86);
+    background: var(--wp-chip-bg);
     color: var(--wp-text-muted);
     text-decoration: none;
     font-size: 12px;
@@ -483,7 +532,7 @@ html.coal .theme-popup {
 .wp-topbar .wp-switch:hover {
     color: var(--wp-accent);
     border-color: rgba(15, 143, 131, 0.24);
-    background: #ffffff;
+    background: var(--wp-floating-hover-bg);
 }
 
 .wp-topbar .wp-switch.current {
@@ -540,7 +589,7 @@ html.coal .theme-popup {
     padding: 2px;
     border: 1px solid var(--wp-border);
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.66);
+    background: var(--wp-chip-bg);
 }
 
 .version-banner .version-switcher::before {
@@ -548,10 +597,10 @@ html.coal .theme-popup {
 }
 
 .version-banner .version-link.current {
-    background: #ffffff;
+    background: var(--wp-current-bg);
     color: var(--wp-accent);
-    border-color: rgba(15, 143, 131, 0.18);
-    box-shadow: 0 4px 12px rgba(15, 143, 131, 0.08);
+    border-color: rgba(37, 99, 235, 0.18);
+    box-shadow: none;
 }
 
 .version-banner .version-link.disabled:not(.current),
@@ -601,6 +650,11 @@ body.has-version-banner .page-wrapper {
     display: none !important;
 }
 
+.right-buttons #mdbook-theme-toggle,
+.right-buttons #search-toggle {
+    display: inline-flex !important;
+}
+
 .left-buttons {
     gap: 4px;
 }
@@ -624,9 +678,9 @@ body.has-version-banner .page-wrapper {
 
 .lang-switcher .current {
     color: var(--wp-accent-strong);
-    background: #ffffff;
-    border-color: rgba(15, 143, 131, 0.18);
-    box-shadow: 0 4px 12px rgba(15, 143, 131, 0.08);
+    background: var(--wp-current-bg);
+    border-color: rgba(37, 99, 235, 0.18);
+    box-shadow: none;
 }
 
 @media (max-width: 1080px) {
@@ -646,6 +700,7 @@ body.has-version-banner .page-wrapper {
     html.ayu .content main,
     html.navy .content main,
     html.coal .content main {
+        width: 100%;
         padding: 1.5rem 1.2rem 2rem;
         border-radius: 0;
         border-left: 0;

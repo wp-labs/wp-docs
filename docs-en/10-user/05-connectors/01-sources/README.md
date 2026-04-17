@@ -10,6 +10,7 @@ This guide describes how to configure and use the various data sources in the Wa
 - [Syslog Source Configuration](./04-syslog_source.md)
 - [TCP Source Configuration](./08-tcp_source.md)
 - [DataRecord Mechanism Data Fields](./09-metadata.md)
+- [PostgreSQL Source Configuration](./10-postgres_source.md)
 
 ## Quick Start
 
@@ -25,6 +26,7 @@ This guide describes how to configure and use the various data sources in the Wa
 | `kafka` | Consume messages from Kafka | [Kafka Source Configuration](./03-kafka_source.md) |
 | `syslog` | Receive Syslog protocol data (UDP/TCP) | [Syslog Source Configuration](./04-syslog_source.md) |
 | `tcp` | Receive data via TCP | [TCP Source Configuration](./08-tcp_source.md) |
+| `postgres` | Incrementally read data from PostgreSQL tables | [PostgreSQL Source Configuration](./10-postgres_source.md) |
 
 ## Related Documentation
 

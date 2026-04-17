@@ -11,6 +11,7 @@ This guide describes how to configure and use the various data sources in the Wa
 - [HTTP Source Configuration](./05-http_source.md)
 - [TCP Source Configuration](./08-tcp_source.md)
 - [DataRecord Mechanism Data Fields](./09-metadata.md)
+- [PostgreSQL Source Configuration](./10-pg_source.md)
 
 ## Quick Start
 
@@ -27,6 +28,7 @@ This guide describes how to configure and use the various data sources in the Wa
 | `syslog` | Receive Syslog protocol data (UDP/TCP) | [Syslog Source Configuration](./04-syslog_source.md) |
 | `http` | Receive data through HTTP requests | [HTTP Source Configuration](./05-http_source.md) |
 | `tcp` | Receive data via TCP | [TCP Source Configuration](./08-tcp_source.md) |
+| `postgres` | Incrementally read data from PostgreSQL tables | [PostgreSQL Source Configuration](./10-pg_source.md) |
 
 ## Related Documentation
 

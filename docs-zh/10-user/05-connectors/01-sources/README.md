@@ -10,6 +10,7 @@
 - [Syslog 源配置](./04-syslog_source.md)
 - [TCP 源配置](./08-tcp_source.md)
 - [DataRecord 机制数据字段](./09-metadata.md)
+- [PostgreSQL 源配置](./10-postgres_source.md)
 
 ## 快速开始
 

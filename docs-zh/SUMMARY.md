@@ -79,6 +79,7 @@
       - [HTTP 源配置](10-user/05-connectors/01-sources/05-http_source.md)
       - [TCP 源配置](10-user/05-connectors/01-sources/08-tcp_source.md)
       - [Source Meta](10-user/05-connectors/01-sources/09-metadata.md)
+      - [PostgreSQL 源配置](10-user/05-connectors/01-sources/10-postgres_source.md)
     - [Sinks 配置指南](10-user/05-connectors/02-sinks/README.md)
       - [Sink 基础](10-user/05-connectors/02-sinks/00-sinks_basics.md)
       - [defaults](10-user/05-connectors/02-sinks/01-defaults.md)

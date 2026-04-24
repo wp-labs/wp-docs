@@ -97,6 +97,7 @@
       - [ClickHouse Sink](10-user/05-connectors/02-sinks/21-clickhouse.md)
       - [HTTP Sink](10-user/05-connectors/02-sinks/22-http.md)
       - [PostgreSQL Sink](10-user/05-connectors/02-sinks/23-postgresql_sink.md)
+      - [DMDB Sink](10-user/05-connectors/02-sinks/24-dmdb_dink.md)
   - [排障指南](10-user/09-FQA/troubleshooting.md)
   - [用户建议 Q&A](10-user/09-FQA/user_suggestions_qa.md)
   - [Wp-Monitor](10-user/10-monitor/Wp-Monitor.md)

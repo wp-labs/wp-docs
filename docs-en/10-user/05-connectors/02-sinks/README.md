@@ -15,3 +15,7 @@ This guide introduces how to configure and use various data outputs (Sinks) in t
 | `kafka` | Output to Kafka | - |
 | `prometheus` | Prometheus metrics exposure | [Prometheus Sink Configuration](./14-prometheus_sink.md) |
 | `victorialogs` | Output to VictoriaLogs | [VictoriaLogs Sink Configuration](./16-victorialogs.md) |
+| `dmdb` | Output to DMDB | [DMDB Sink Configuration](./24-dmdb_sink.md) |
+| `elasticsearch` | Output to Elasticsearch | [Elasticsearch Sink Configuration](./20-elasticsearch_sink.md) |
+| `http` | Output to HTTP server | [HTTP Sink Configuration](./22-http.md) |
+| `clickhouse` | Output to ClickHouse database | [ClickHouse Sink Configuration](./21-clickhouse.md) |

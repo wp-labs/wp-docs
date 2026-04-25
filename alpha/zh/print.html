@@ -37,10 +37,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-257b32ae.js";
+            window.path_to_searchindex_js = "searchindex-2fc358fe.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-6c095515.js"></script>
+        <script src="toc-43d6062e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -18027,6 +18027,11 @@ framing = "line"  # 或 "len"
 <tr><td><code>mysql</code></td><td>输出到 MySQL</td><td><a href="#mysql-sink">MySQL Sink 配置</a></td></tr>
 <tr><td><code>doris</code></td><td>输出到 Doris</td><td><a href="#doris-sink">Doris Sink 配置</a></td></tr>
 <tr><td><code>prometheus</code></td><td>Prometheus 指标暴露</td><td><a href="#prometheus-sink">Prometheus Sink 配置</a></td></tr>
+<tr><td><code>victorialogs</code></td><td>输出到 VictoriaLogs</td><td><a href="#victorialogs">VictoriaLogs Sink 配置</a></td></tr>
+<tr><td><code>dmdb</code></td><td>输出到 DMDB</td><td><a href="10-user/05-connectors/02-sinks/24_dmdb_dink.html">DMDB Sink 配置</a></td></tr>
+<tr><td><code>elasticsearch</code></td><td>输出到 Elasticsearch</td><td><a href="10-user/05-connectors/02-sinks/25_elasticsearch.html">Elasticsearch Sink 配置</a></td></tr>
+<tr><td><code>http</code></td><td>输出到 HTTP 服务器</td><td><a href="10-user/05-connectors/02-sinks/26_http.html">HTTP Sink 配置</a></td></tr>
+<tr><td><code>clickhouse</code></td><td>输出到 ClickHouse 数据库</td><td><a href="10-user/05-connectors/02-sinks/27-clickhouse.html">ClickHouse Sink 配置</a></td></tr>
 </tbody>
 </table>
 </div>
@@ -19550,6 +19555,215 @@ batch_size = 1024
 <li>可通过环境变量 <code>POSTGRESQL_URL</code> 覆盖连接串（格式：<code>postgresql://user:pass@host:port/db</code>）。</li>
 <li>PostgreSQL 的配置项与 MySQL 完全一致，仅连接器 <code>type</code>、端口与连接信息不同。</li>
 </ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="dmdb-sink-使用配置说明"><a class="header" href="#dmdb-sink-使用配置说明">DMDB Sink 使用配置说明</a></h1>
+<h2 id="1-使用前准备"><a class="header" href="#1-使用前准备">1. 使用前准备</a></h2>
+<p>在使用 <code>dmdb</code> sink 之前，请先完成 ODBC 驱动安装。之后再根据实际接入方式，分别执行 <code>connection_string</code>/<code>endpoint</code> 或 <code>dsn</code> 对应的配置与验证步骤。</p>
+<h3 id="11-通用准备安装-odbc-环境与达梦驱动"><a class="header" href="#11-通用准备安装-odbc-环境与达梦驱动">1.1 通用准备：安装 ODBC 环境与达梦驱动</a></h3>
+<h4 id="安装系统依赖ubuntu-示例"><a class="header" href="#安装系统依赖ubuntu-示例">安装系统依赖（Ubuntu 示例）</a></h4>
+<pre><code class="language-bash">apt-get update
+apt-get install -y unixodbc unixodbc-dev odbcinst
+</code></pre>
+<p>执行以下命令验证安装结果：</p>
+<pre><code class="language-bash">root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# which isql
+/usr/bin/isql
+root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# isql --version
+unixODBC 2.3.12
+root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# odbcinst -j
+unixODBC 2.3.12
+DRIVERS............: /etc/odbcinst.ini
+SYSTEM DATA SOURCES: /etc/odbc.ini
+FILE DATA SOURCES..: /etc/ODBCDataSources
+USER DATA SOURCES..: /root/.odbc.ini
+SQLULEN Size.......: 8
+SQLLEN Size........: 8
+SQLSETPOSIROW Size.: 8
+</code></pre>
+<h4 id="安装达梦-odbc-驱动"><a class="header" href="#安装达梦-odbc-驱动">安装达梦 ODBC 驱动</a></h4>
+<ul>
+<li>Windows 版：<a href="https://dn.navicat.com/drivers/dameng_odbc_win.zip">https://dn.navicat.com/drivers/dameng_odbc_win.zip</a></li>
+<li>Linux 版：<a href="https://dn.navicat.com/drivers/dameng_odbc_linux.tar.gz">https://dn.navicat.com/drivers/dameng_odbc_linux.tar.gz</a></li>
+</ul>
+<p>以下示例假设压缩包下载到 <code>/root/wp</code> 目录：</p>
+<h4 id="配置动态库路径"><a class="header" href="#配置动态库路径">配置动态库路径</a></h4>
+<pre><code class="language-bash">echo "/root/wp/dameng_odbc_linux/libdodbc.so" &gt; /etc/ld.so.conf.d/dameng.conf
+ldconfig
+</code></pre>
+<p>执行以下命令验证动态库是否加载成功：</p>
+<pre><code class="language-bash">root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# ldconfig -p | grep libdodbc
+        libdodbc.so (libc6,x86-64) =&gt; /root/wp/dameng_odbc_linux/libdodbc.so
+</code></pre>
+<h3 id="12-通用准备注册-odbc-驱动"><a class="header" href="#12-通用准备注册-odbc-驱动">1.2 通用准备：注册 ODBC 驱动</a></h3>
+<p>编辑 <code>/etc/odbcinst.ini</code>。如果文件已存在，直接追加下面内容即可；如果文件不存在，可以直接创建后写入：</p>
+<pre><code class="language-ini">[DM8 ODBC DRIVER]
+Description = DM8 ODBC DRIVER for DM8
+Driver = /root/wp/dameng_odbc_linux/libdodbc.so
+FileUsage = 1
+</code></pre>
+<p>配置完成后，执行以下命令验证驱动对比输出是否注册成功：</p>
+<pre><code class="language-bash">root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# odbcinst -q -d -n "DM8 ODBC DRIVER"
+[DM8 ODBC DRIVER]
+Description=ODBC DRIVER FOR DM8
+Driver=/root/wp/dameng_odbc_linux/libdodbc.so
+Setup=/root/wp/dameng_odbc_linux/libdodbc.so
+</code></pre>
+<p>完成以上步骤后，表示宿主机已经具备达梦 ODBC 驱动能力。接下来请根据实际连接方式，选择下面两条路径之一继续配置。</p>
+<h3 id="13-connection_string--endpoint-模式配置过程"><a class="header" href="#13-connection_string--endpoint-模式配置过程">1.3 <code>connection_string</code> / <code>endpoint</code> 模式配置过程</a></h3>
+<p>这两种模式都不依赖 <code>/etc/odbc.ini</code> 中的 DSN 名称，只要求前面的 ODBC 驱动已经安装并注册成功。</p>
+<ul>
+<li><code>connection_string</code> 模式：直接提供完整 ODBC 连接串。</li>
+<li><code>endpoint</code> 模式：由 <code>endpoint + driver + username + password</code> 自动拼接连接串。</li>
+</ul>
+<p>可以直接在 <code>wparse</code> 运行机器上执行以下命令验证驱动与直连参数是否可用，并将其中的地址、端口、用户名和密码替换为实际值：</p>
+<pre><code class="language-bash">root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# isql -v -k "Driver={DM8 ODBC DRIVER};Server=127.0.0.1;Port=5236;UID=SYSDBA;PWD=SYSDBA"
++---------------------------------------+
+| Connected!                            |
+|                                       |
+| sql-statement                         |
+| help [tablename]                      |
+| echo [string]                         |
+| quit                                  |
+|                                       |
++---------------------------------------+
+SQL&gt;
+</code></pre>
+<p>如果上述命令可以正常连接，说明 <code>connection_string</code> 或 <code>endpoint</code> 方式所需的宿主机准备已完成。</p>
+<h3 id="14-dsn-模式配置过程"><a class="header" href="#14-dsn-模式配置过程">1.4 <code>dsn</code> 模式配置过程</a></h3>
+<p><code>dsn</code> 模式除了要求 ODBC 驱动已经安装并注册外，还需要在 <code>/etc/odbc.ini</code> 中额外配置一个数据源名称，且该名称必须与 sink 配置中的 <code>dsn</code> 参数保持一致。</p>
+<p>例如，可以在 <code>/etc/odbc.ini</code> 中补充一个达梦数据源：</p>
+<pre><code class="language-ini">[DM_DSN]
+Description = DM8 Database
+Driver = /root/wp/dameng_odbc_linux/libdodbc.so
+Server = 159.75.175.212
+Port = 5236
+User = SYSDBA
+Password = &lt;请替换为实际密码&gt;
+</code></pre>
+<p>配置完成后，可执行以下命令验证 DSN 是否可用（其中的地址、用户名、密码需要替换为实际值）：</p>
+<pre><code class="language-bash">root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# cat /etc/odbc.ini
+[DM_DSN]                          ; DSN 名称
+Description = DM8 Database
+Driver = /root/wp/dameng_odbc_linux/libdodbc.so
+Server = 127.0.0.1
+Port = 5236
+User = SYSDBA
+Password = Dayu@1234
+root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# isql DM_DSN SYSDBA SYSDBA
++---------------------------------------+
+| Connected!                            |
+|                                       |
+| sql-statement                         |
+| help [tablename]                      |
+| echo [string]                         |
+| quit                                  |
+|                                       |
++---------------------------------------+
+SQL&gt; 
+</code></pre>
+<p>如果上述命令可以正常连接，说明 <code>dsn = "DM_DSN"</code> 对应的系统级数据源已经配置完成。</p>
+<h3 id="15-准备目标表"><a class="header" href="#15-准备目标表">1.5 准备目标表</a></h3>
+<ul>
+<li>目标表需要预先存在。</li>
+<li><code>table</code> 和 <code>columns</code> 必须与目标表实际结构匹配，包括列名、列类型等。</li>
+</ul>
+<h2 id="2-连接方式"><a class="header" href="#2-连接方式">2. 连接方式</a></h2>
+<h3 id="21-connection_string-模式"><a class="header" href="#21-connection_string-模式">2.1 <code>connection_string</code> 模式</a></h3>
+<p>适合已经有完整 ODBC 连接串的场景。</p>
+<ul>
+<li>必填参数：<code>connection_string</code>、<code>table</code>、<code>columns</code></li>
+<li>可选参数：<code>schema</code>、<code>batch_size</code>、<code>connect_timeout_secs</code>、<code>query_timeout_secs</code></li>
+<li>不要求额外提供：<code>dsn</code>、<code>endpoint</code>、<code>driver</code>、<code>username</code>、<code>password</code></li>
+</ul>
+<p>示例：</p>
+<pre><code class="language-toml">[sink_group]
+name = "database"
+rule = ["/*"]
+parallel = 8
+[[sink_group.sinks]]
+name = "dmdb_sink"
+connect = "dmdb_connect_string"
+[sink_group.sinks.params]
+connection_string = "Driver={DM8 ODBC DRIVER};SERVER=127.0.0.1;TCP_PORT=5236;UID=SYSDBA;PWD=Dayu@1234;"
+table = "nginx_logs"
+columns = ["sip", "timestamp", "http/request", "status", "size", "referer", "http/agent"]
+batch_size = 2000
+query_timeout_secs = 15
+</code></pre>
+<h3 id="22-endpoint-模式"><a class="header" href="#22-endpoint-模式">2.2 <code>endpoint</code> 模式</a></h3>
+<p>适合不想预先配置 DSN，而是直接通过地址建连的场景。</p>
+<ul>
+<li>必填参数：<code>endpoint</code>、<code>driver</code>、<code>username</code>、<code>password</code>、<code>table</code>、<code>columns</code></li>
+<li>可选参数：<code>schema</code>、<code>batch_size</code>、<code>connect_timeout_secs</code>、<code>query_timeout_secs</code></li>
+<li><code>endpoint</code> 必须是 <code>host:port</code> 格式，且 <code>port</code> 必须能解析为合法 <code>u16</code></li>
+</ul>
+<p>示例：</p>
+<pre><code class="language-toml">[sink_group]
+name = "database"
+rule = ["/*"]
+parallel = 8
+[[sink_group.sinks]]
+name = "dmdb_sink"
+connect = "dmdb_endpoint"
+[sink_group.sinks.params]
+endpoint = "127.0.0.1:5236"
+driver = "DM8 ODBC DRIVER"
+username = "SYSDBA"
+password = "SYSDBA"
+schema = "WP_DATA"
+table = "EVENTS"
+columns = ["event_id", "event_time", "source", "payload"]
+batch_size = 2000
+connect_timeout_secs = 8
+query_timeout_secs = 15
+</code></pre>
+<h3 id="23-dsn-模式"><a class="header" href="#23-dsn-模式">2.3 <code>dsn</code> 模式</a></h3>
+<p>适合宿主机已经配置好 ODBC DSN，且没有传入 <code>connection_string</code> 或 <code>endpoint</code> 的场景。</p>
+<ul>
+<li>必填参数：<code>dsn</code>、<code>username</code>、<code>password</code>、<code>table</code>、<code>columns</code></li>
+<li>可选参数：<code>schema</code>、<code>batch_size</code>、<code>connect_timeout_secs</code>、<code>query_timeout_secs</code></li>
+<li>不要求额外提供：<code>endpoint</code>、<code>driver</code></li>
+</ul>
+<p>示例：</p>
+<pre><code class="language-toml">[sink_group]
+name = "database"
+rule = ["/*"]
+parallel = 8
+[[sink_group.sinks]]
+name = "dmdb_sink"
+connect = "dmdb_dsn"
+[sink_group.sinks.params]
+dsn = "DM_DSN"
+username = "SYSDBA"
+password = "SYSDBA"
+schema = "WP_DATA"
+table = "EVENTS"
+columns = ["event_id", "event_time", "source", "payload"]
+batch_size = 2000
+connect_timeout_secs = 8
+query_timeout_secs = 15
+</code></pre>
+<h2 id="3-参数说明"><a class="header" href="#3-参数说明">3. 参数说明</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>参数</th><th>类型</th><th>是否必填</th><th>适用模式</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><code>connection_string</code></td><td><code>string</code></td><td><code>connection_string</code> 模式必填</td><td>全部</td><td>完整 ODBC 连接串，优先级最高。</td></tr>
+<tr><td><code>endpoint</code></td><td><code>string</code></td><td><code>endpoint</code> 模式必填</td><td>全部</td><td>达梦地址，格式必须为 <code>host:port</code>；优先级高于 <code>dsn</code>。</td></tr>
+<tr><td><code>dsn</code></td><td><code>string</code></td><td><code>dsn</code> 模式必填</td><td>全部</td><td>ODBC 数据源名称；仅在未配置 <code>connection_string</code> 和 <code>endpoint</code> 时使用。</td></tr>
+<tr><td><code>driver</code></td><td><code>string</code></td><td><code>endpoint</code> 模式必填</td><td>全部</td><td>达梦 ODBC 驱动名称，例如 <code>DM8 ODBC DRIVER</code>。</td></tr>
+<tr><td><code>username</code></td><td><code>string</code></td><td><code>dsn</code>、<code>endpoint</code> 模式必填</td><td>全部</td><td>达梦用户名。<code>connection_string</code> 模式不要求单独传入。</td></tr>
+<tr><td><code>password</code></td><td><code>string</code></td><td><code>dsn</code>、<code>endpoint</code> 模式必填</td><td>全部</td><td>达梦密码。<code>connection_string</code> 模式不要求单独传入。</td></tr>
+<tr><td><code>schema</code></td><td><code>string</code></td><td>否</td><td>全部</td><td>用于拼接目标表的限定名；在 <code>endpoint</code> 模式下还会被附加进生成的连接串。</td></tr>
+<tr><td><code>table</code></td><td><code>string</code></td><td>是</td><td>全部</td><td>目标表名，不能为空。</td></tr>
+<tr><td><code>columns</code></td><td><code>string[]</code></td><td>是</td><td>全部</td><td>目标列名列表。必须是字符串数组，且每一项都不能为空字符串。</td></tr>
+<tr><td><code>batch_size</code></td><td><code>integer</code></td><td>否</td><td>全部</td><td>单次 SQL 最多写入的记录数，必须大于 <code>0</code>。未配置时 sink 内部回落为 <code>1024</code>。</td></tr>
+<tr><td><code>connect_timeout_secs</code></td><td><code>integer</code></td><td>否</td><td>全部</td><td>ODBC 登录超时秒数，必须大于 <code>0</code>。配置后会传给 <code>ConnectionOptions.login_timeout_sec</code>；未配置时不显式设置。</td></tr>
+<tr><td><code>query_timeout_secs</code></td><td><code>integer</code></td><td>否</td><td>全部</td><td>每批 SQL 的执行超时秒数，必须大于 <code>0</code>。未配置时不显式设置。</td></tr>
+</tbody>
+</table>
+</div>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="排障指南troubleshooting"><a class="header" href="#排障指南troubleshooting">排障指南（Troubleshooting）</a></h1>
 <!-- 角色：使用配置者 | 最近验证：2025-12-11 -->

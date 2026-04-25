@@ -37,10 +37,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-edc6cbb1.js";
+            window.path_to_searchindex_js = "searchindex-0c931736.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-d7a13aa9.js"></script>
+        <script src="toc-0d449733.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -11475,6 +11475,10 @@ framing = "line"  # or "len"
 <tr><td><code>kafka</code></td><td>Output to Kafka</td><td>-</td></tr>
 <tr><td><code>prometheus</code></td><td>Prometheus metrics exposure</td><td><a href="#prometheus-sink">Prometheus Sink Configuration</a></td></tr>
 <tr><td><code>victorialogs</code></td><td>Output to VictoriaLogs</td><td><a href="#victorialogs">VictoriaLogs Sink Configuration</a></td></tr>
+<tr><td><code>dmdb</code></td><td>Output to DMDB</td><td><a href="#dmdb-sink-usage-and-configuration-guide">DMDB Sink Configuration</a></td></tr>
+<tr><td><code>elasticsearch</code></td><td>Output to Elasticsearch</td><td><a href="#elasticsearch-sink">Elasticsearch Sink Configuration</a></td></tr>
+<tr><td><code>http</code></td><td>Output to HTTP server</td><td><a href="#http-sink">HTTP Sink Configuration</a></td></tr>
+<tr><td><code>clickhouse</code></td><td>Output to ClickHouse database</td><td><a href="#clickhouse-sink">ClickHouse Sink Configuration</a></td></tr>
 </tbody>
 </table>
 </div>
@@ -12677,6 +12681,215 @@ batch_size = 1024
 <li>You can override the connection string with <code>POSTGRESQL_URL</code> (format: <code>postgresql://user:pass@host:port/db</code>).</li>
 <li>PostgreSQL uses the same configuration keys as MySQL. Only connector <code>type</code>, port, and connection details differ.</li>
 </ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="dmdb-sink-usage-and-configuration-guide"><a class="header" href="#dmdb-sink-usage-and-configuration-guide">DMDB Sink Usage and Configuration Guide</a></h1>
+<h2 id="1-prerequisites"><a class="header" href="#1-prerequisites">1. Prerequisites</a></h2>
+<p>Before using the <code>dmdb</code> sink, first install the ODBC driver. Then follow the setup and verification steps for either <code>connection_string</code> / <code>endpoint</code> mode or <code>dsn</code> mode, depending on how you plan to connect.</p>
+<h3 id="11-common-preparation-install-the-odbc-environment-and-the-dm-driver"><a class="header" href="#11-common-preparation-install-the-odbc-environment-and-the-dm-driver">1.1 Common Preparation: Install the ODBC Environment and the DM Driver</a></h3>
+<h4 id="install-system-dependencies-ubuntu-example"><a class="header" href="#install-system-dependencies-ubuntu-example">Install System Dependencies (Ubuntu Example)</a></h4>
+<pre><code class="language-bash">apt-get update
+apt-get install -y unixodbc unixodbc-dev odbcinst
+</code></pre>
+<p>Run the following commands to verify the installation:</p>
+<pre><code class="language-bash">root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# which isql
+/usr/bin/isql
+root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# isql --version
+unixODBC 2.3.12
+root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# odbcinst -j
+unixODBC 2.3.12
+DRIVERS............: /etc/odbcinst.ini
+SYSTEM DATA SOURCES: /etc/odbc.ini
+FILE DATA SOURCES..: /etc/ODBCDataSources
+USER DATA SOURCES..: /root/.odbc.ini
+SQLULEN Size.......: 8
+SQLLEN Size........: 8
+SQLSETPOSIROW Size.: 8
+</code></pre>
+<h4 id="install-the-dm-odbc-driver"><a class="header" href="#install-the-dm-odbc-driver">Install the DM ODBC Driver</a></h4>
+<ul>
+<li>Windows version: <a href="https://dn.navicat.com/drivers/dameng_odbc_win.zip">https://dn.navicat.com/drivers/dameng_odbc_win.zip</a></li>
+<li>Linux version: <a href="https://dn.navicat.com/drivers/dameng_odbc_linux.tar.gz">https://dn.navicat.com/drivers/dameng_odbc_linux.tar.gz</a></li>
+</ul>
+<p>The following example assumes the archive is downloaded to <code>/root/wp</code>:</p>
+<h4 id="configure-the-dynamic-library-path"><a class="header" href="#configure-the-dynamic-library-path">Configure the Dynamic Library Path</a></h4>
+<pre><code class="language-bash">echo "/root/wp/dameng_odbc_linux/libdodbc.so" &gt; /etc/ld.so.conf.d/dameng.conf
+ldconfig
+</code></pre>
+<p>Run the following command to verify that the dynamic library has been loaded successfully:</p>
+<pre><code class="language-bash">root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# ldconfig -p | grep libdodbc
+        libdodbc.so (libc6,x86-64) =&gt; /root/wp/dameng_odbc_linux/libdodbc.so
+</code></pre>
+<h3 id="12-common-preparation-register-the-odbc-driver"><a class="header" href="#12-common-preparation-register-the-odbc-driver">1.2 Common Preparation: Register the ODBC Driver</a></h3>
+<p>Edit <code>/etc/odbcinst.ini</code>. If the file already exists, append the following content. If it does not exist, create it and write the content below:</p>
+<pre><code class="language-ini">[DM8 ODBC DRIVER]
+Description = DM8 ODBC DRIVER for DM8
+Driver = /root/wp/dameng_odbc_linux/libdodbc.so
+FileUsage = 1
+</code></pre>
+<p>After the configuration is complete, run the following command to verify that the driver registration output is correct:</p>
+<pre><code class="language-bash">root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# odbcinst -q -d -n "DM8 ODBC DRIVER"
+[DM8 ODBC DRIVER]
+Description=ODBC DRIVER FOR DM8
+Driver=/root/wp/dameng_odbc_linux/libdodbc.so
+Setup=/root/wp/dameng_odbc_linux/libdodbc.so
+</code></pre>
+<p>After these steps are complete, the host machine is ready to use the DM ODBC driver. Next, continue with one of the following paths based on your connection mode.</p>
+<h3 id="13-connection_string--endpoint-mode-setup"><a class="header" href="#13-connection_string--endpoint-mode-setup">1.3 <code>connection_string</code> / <code>endpoint</code> Mode Setup</a></h3>
+<p>These two modes do not depend on a DSN entry in <code>/etc/odbc.ini</code>. They only require the ODBC driver to be installed and registered successfully.</p>
+<ul>
+<li><code>connection_string</code> mode: provide the full ODBC connection string directly.</li>
+<li><code>endpoint</code> mode: build the connection string automatically from <code>endpoint + driver + username + password</code>.</li>
+</ul>
+<p>You can run the following command on the machine where <code>wparse</code> is running to verify that the driver and direct connection parameters are valid. Replace the host, port, username, and password with actual values:</p>
+<pre><code class="language-bash">root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# isql -v -k "Driver={DM8 ODBC DRIVER};Server=127.0.0.1;Port=5236;UID=SYSDBA;PWD=SYSDBA"
++---------------------------------------+
+| Connected!                            |
+|                                       |
+| sql-statement                         |
+| help [tablename]                      |
+| echo [string]                         |
+| quit                                  |
+|                                       |
++---------------------------------------+
+SQL&gt;
+</code></pre>
+<p>If the command above connects successfully, the host-side preparation required for <code>connection_string</code> or <code>endpoint</code> mode is complete.</p>
+<h3 id="14-dsn-mode-setup"><a class="header" href="#14-dsn-mode-setup">1.4 <code>dsn</code> Mode Setup</a></h3>
+<p>In addition to installing and registering the ODBC driver, <code>dsn</code> mode also requires a data source name to be configured in <code>/etc/odbc.ini</code>. That name must match the <code>dsn</code> parameter in the sink configuration.</p>
+<p>For example, you can add a DM data source to <code>/etc/odbc.ini</code>:</p>
+<pre><code class="language-ini">[DM_DSN]
+Description = DM8 Database
+Driver = /root/wp/dameng_odbc_linux/libdodbc.so
+Server = 159.75.175.212
+Port = 5236
+User = SYSDBA
+Password = &lt;replace with the actual password&gt;
+</code></pre>
+<p>After the configuration is complete, run the following commands to verify that the DSN is available. Replace the host, username, and password with actual values:</p>
+<pre><code class="language-bash">root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# cat /etc/odbc.ini
+[DM_DSN]                          ; DSN name
+Description = DM8 Database
+Driver = /root/wp/dameng_odbc_linux/libdodbc.so
+Server = 127.0.0.1
+Port = 5236
+User = SYSDBA
+Password = Dayu@1234
+root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# isql DM_DSN SYSDBA SYSDBA
++---------------------------------------+
+| Connected!                            |
+|                                       |
+| sql-statement                         |
+| help [tablename]                      |
+| echo [string]                         |
+| quit                                  |
+|                                       |
++---------------------------------------+
+SQL&gt;
+</code></pre>
+<p>If the command above connects successfully, the system-level data source for <code>dsn = "DM_DSN"</code> has been configured correctly.</p>
+<h3 id="15-prepare-the-target-table"><a class="header" href="#15-prepare-the-target-table">1.5 Prepare the Target Table</a></h3>
+<ul>
+<li>The target table must already exist.</li>
+<li><code>table</code> and <code>columns</code> must match the actual target table schema, including column names and column types.</li>
+</ul>
+<h2 id="2-connection-modes"><a class="header" href="#2-connection-modes">2. Connection Modes</a></h2>
+<h3 id="21-connection_string-mode"><a class="header" href="#21-connection_string-mode">2.1 <code>connection_string</code> Mode</a></h3>
+<p>Suitable when you already have a complete ODBC connection string.</p>
+<ul>
+<li>Required parameters: <code>connection_string</code>, <code>table</code>, <code>columns</code></li>
+<li>Optional parameters: <code>schema</code>, <code>batch_size</code>, <code>connect_timeout_secs</code>, <code>query_timeout_secs</code></li>
+<li>Not additionally required: <code>dsn</code>, <code>endpoint</code>, <code>driver</code>, <code>username</code>, <code>password</code></li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-toml">[sink_group]
+name = "database"
+rule = ["/*"]
+parallel = 8
+[[sink_group.sinks]]
+name = "dmdb_sink"
+connect = "dmdb_connect_string"
+[sink_group.sinks.params]
+connection_string = "Driver={DM8 ODBC DRIVER};SERVER=127.0.0.1;TCP_PORT=5236;UID=SYSDBA;PWD=Dayu@1234;"
+table = "nginx_logs"
+columns = ["sip", "timestamp", "http/request", "status", "size", "referer", "http/agent"]
+batch_size = 2000
+query_timeout_secs = 15
+</code></pre>
+<h3 id="22-endpoint-mode"><a class="header" href="#22-endpoint-mode">2.2 <code>endpoint</code> Mode</a></h3>
+<p>Suitable when you do not want to preconfigure a DSN and prefer to connect directly by host and port.</p>
+<ul>
+<li>Required parameters: <code>endpoint</code>, <code>driver</code>, <code>username</code>, <code>password</code>, <code>table</code>, <code>columns</code></li>
+<li>Optional parameters: <code>schema</code>, <code>batch_size</code>, <code>connect_timeout_secs</code>, <code>query_timeout_secs</code></li>
+<li><code>endpoint</code> must be in <code>host:port</code> format, and <code>port</code> must be parseable as a valid <code>u16</code></li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-toml">[sink_group]
+name = "database"
+rule = ["/*"]
+parallel = 8
+[[sink_group.sinks]]
+name = "dmdb_sink"
+connect = "dmdb_endpoint"
+[sink_group.sinks.params]
+endpoint = "127.0.0.1:5236"
+driver = "DM8 ODBC DRIVER"
+username = "SYSDBA"
+password = "SYSDBA"
+schema = "WP_DATA"
+table = "EVENTS"
+columns = ["event_id", "event_time", "source", "payload"]
+batch_size = 2000
+connect_timeout_secs = 8
+query_timeout_secs = 15
+</code></pre>
+<h3 id="23-dsn-mode"><a class="header" href="#23-dsn-mode">2.3 <code>dsn</code> Mode</a></h3>
+<p>Suitable when the host machine has already configured an ODBC DSN and neither <code>connection_string</code> nor <code>endpoint</code> is provided.</p>
+<ul>
+<li>Required parameters: <code>dsn</code>, <code>username</code>, <code>password</code>, <code>table</code>, <code>columns</code></li>
+<li>Optional parameters: <code>schema</code>, <code>batch_size</code>, <code>connect_timeout_secs</code>, <code>query_timeout_secs</code></li>
+<li>Not additionally required: <code>endpoint</code>, <code>driver</code></li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-toml">[sink_group]
+name = "database"
+rule = ["/*"]
+parallel = 8
+[[sink_group.sinks]]
+name = "dmdb_sink"
+connect = "dmdb_dsn"
+[sink_group.sinks.params]
+dsn = "DM_DSN"
+username = "SYSDBA"
+password = "SYSDBA"
+schema = "WP_DATA"
+table = "EVENTS"
+columns = ["event_id", "event_time", "source", "payload"]
+batch_size = 2000
+connect_timeout_secs = 8
+query_timeout_secs = 15
+</code></pre>
+<h2 id="3-parameter-reference"><a class="header" href="#3-parameter-reference">3. Parameter Reference</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Applicable Modes</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>connection_string</code></td><td><code>string</code></td><td>Required in <code>connection_string</code> mode</td><td>All</td><td>A complete ODBC connection string. This has the highest priority.</td></tr>
+<tr><td><code>endpoint</code></td><td><code>string</code></td><td>Required in <code>endpoint</code> mode</td><td>All</td><td>The DM database address. The format must be <code>host:port</code>; it has higher priority than <code>dsn</code>.</td></tr>
+<tr><td><code>dsn</code></td><td><code>string</code></td><td>Required in <code>dsn</code> mode</td><td>All</td><td>The ODBC data source name. It is used only when neither <code>connection_string</code> nor <code>endpoint</code> is configured.</td></tr>
+<tr><td><code>driver</code></td><td><code>string</code></td><td>Required in <code>endpoint</code> mode</td><td>All</td><td>The DM ODBC driver name, for example <code>DM8 ODBC DRIVER</code>.</td></tr>
+<tr><td><code>username</code></td><td><code>string</code></td><td>Required in <code>dsn</code> and <code>endpoint</code> modes</td><td>All</td><td>The DM username. It does not need to be provided separately in <code>connection_string</code> mode.</td></tr>
+<tr><td><code>password</code></td><td><code>string</code></td><td>Required in <code>dsn</code> and <code>endpoint</code> modes</td><td>All</td><td>The DM password. It does not need to be provided separately in <code>connection_string</code> mode.</td></tr>
+<tr><td><code>schema</code></td><td><code>string</code></td><td>No</td><td>All</td><td>Used to build the qualified target table name. In <code>endpoint</code> mode, it is also appended to the generated connection string.</td></tr>
+<tr><td><code>table</code></td><td><code>string</code></td><td>Yes</td><td>All</td><td>The target table name. It cannot be empty.</td></tr>
+<tr><td><code>columns</code></td><td><code>string[]</code></td><td>Yes</td><td>All</td><td>The list of target column names. It must be a string array, and each item must be a non-empty string.</td></tr>
+<tr><td><code>batch_size</code></td><td><code>integer</code></td><td>No</td><td>All</td><td>The maximum number of records written in a single SQL statement. It must be greater than <code>0</code>. If not configured, the sink falls back to <code>1024</code>.</td></tr>
+<tr><td><code>connect_timeout_secs</code></td><td><code>integer</code></td><td>No</td><td>All</td><td>The ODBC login timeout in seconds. It must be greater than <code>0</code>. When configured, it is passed to <code>ConnectionOptions.login_timeout_sec</code>; otherwise, it is not explicitly set.</td></tr>
+<tr><td><code>query_timeout_secs</code></td><td><code>integer</code></td><td>No</td><td>All</td><td>The execution timeout in seconds for each SQL batch. It must be greater than <code>0</code>. If not configured, it is not explicitly set.</td></tr>
+</tbody>
+</table>
+</div>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="troubleshootingmd"><a class="header" href="#troubleshootingmd">troubleshooting.md</a></h1>
 <div style="break-before: page; page-break-before: always;"></div>

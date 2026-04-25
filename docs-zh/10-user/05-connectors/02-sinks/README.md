@@ -16,3 +16,8 @@
 | `mysql` | 输出到 MySQL | [MySQL Sink 配置](./19-mysql_sink.md) |
 | `doris` | 输出到 Doris | [Doris Sink 配置](./17-doris.md) |
 | `prometheus` | Prometheus 指标暴露 | [Prometheus Sink 配置](./14-prometheus_sink.md) |
+| `victorialogs` | 输出到 VictoriaLogs | [VictoriaLogs Sink 配置](./16-victorialogs.md) |
+| `dmdb` | 输出到 DMDB | [DMDB Sink 配置](./24_dmdb_dink.md) |
+| `elasticsearch` | 输出到 Elasticsearch | [Elasticsearch Sink 配置](./25_elasticsearch.md) |
+| `http` | 输出到 HTTP 服务器 | [HTTP Sink 配置](./26_http.md) |
+| `clickhouse` | 输出到 ClickHouse 数据库 | [ClickHouse Sink 配置](./27-clickhouse.md) |

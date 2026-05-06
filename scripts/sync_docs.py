@@ -8,6 +8,7 @@ import fnmatch
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -178,11 +179,53 @@ def file_hash(path: Path) -> str:
     return digest.hexdigest()
 
 
+LANGUAGE_SWITCH_PATTERNS = [
+    re.compile(r"^中文\s*\|\s*\[English\]\([^)]+\)\s*$"),
+    re.compile(r"^\[中文\]\([^)]+\)\s*\|\s*English\s*$"),
+]
+
+
+def strip_language_switch_lines(text: str) -> str:
+    lines = text.splitlines()
+    rewritten_lines = [
+        line
+        for line in lines
+        if not any(pattern.match(line.strip()) for pattern in LANGUAGE_SWITCH_PATTERNS)
+    ]
+    rewritten = "\n".join(rewritten_lines)
+    if text.endswith("\n"):
+        rewritten += "\n"
+    return rewritten
+
+
+def source_bytes(src_path: Path, strip_language_switch_headers: bool) -> bytes:
+    if strip_language_switch_headers and src_path.suffix == ".md":
+        text = src_path.read_text(encoding="utf-8")
+        return strip_language_switch_lines(text).encode("utf-8")
+    return src_path.read_bytes()
+
+
+def file_bytes_hash(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def clear_tree(dest_root: Path, dry_run: bool) -> None:
+    if not dest_root.exists():
+        return
+
+    print(f"X  {dest_root}")
+    if dry_run:
+        return
+
+    shutil.rmtree(dest_root)
+
+
 def sync_tree(
     src_root: Path,
     dest_root: Path,
     ignore_patterns: list[str],
     dry_run: bool,
+    strip_language_switch_headers: bool = False,
 ) -> tuple[int, int, int]:
     created = 0
     updated = 0
@@ -210,19 +253,149 @@ def sync_tree(
             print(f"A  {dest_path}")
             created += 1
             if not dry_run:
-                shutil.copy2(src_path, dest_path)
+                if strip_language_switch_headers and src_path.suffix == ".md":
+                    dest_path.write_bytes(source_bytes(src_path, True))
+                else:
+                    shutil.copy2(src_path, dest_path)
             continue
 
-        if file_hash(src_path) == file_hash(dest_path):
+        src_bytes = source_bytes(src_path, strip_language_switch_headers)
+        if file_bytes_hash(src_bytes) == file_hash(dest_path):
             skipped += 1
             continue
 
         print(f"M  {dest_path}")
         updated += 1
         if not dry_run:
-            shutil.copy2(src_path, dest_path)
+            if strip_language_switch_headers and src_path.suffix == ".md":
+                dest_path.write_bytes(src_bytes)
+            else:
+                shutil.copy2(src_path, dest_path)
 
     return created, updated, skipped
+
+
+def sync_file(
+    src_path: Path,
+    dest_path: Path,
+    dry_run: bool,
+    strip_language_switch_headers: bool = False,
+) -> str:
+    if not src_path.exists():
+        raise SystemExit(f"Source file not found: {src_path}")
+    if not src_path.is_file():
+        raise SystemExit(f"Source path is not a file: {src_path}")
+
+    if not dry_run:
+        dest_path.parent.mkdir(parents=True, exist_ok=True)
+
+    if not dest_path.exists():
+        print(f"A  {dest_path}")
+        if not dry_run:
+            if strip_language_switch_headers and src_path.suffix == ".md":
+                dest_path.write_bytes(source_bytes(src_path, True))
+            else:
+                shutil.copy2(src_path, dest_path)
+        return "created"
+
+    src_bytes = source_bytes(src_path, strip_language_switch_headers)
+    if file_bytes_hash(src_bytes) == file_hash(dest_path):
+        return "skipped"
+
+    print(f"M  {dest_path}")
+    if not dry_run:
+        if strip_language_switch_headers and src_path.suffix == ".md":
+            dest_path.write_bytes(src_bytes)
+        else:
+            shutil.copy2(src_path, dest_path)
+    return "updated"
+
+
+def markdown_targets(target: Path) -> list[Path]:
+    if target.is_file() and target.suffix == ".md":
+        return [target]
+    if target.is_dir():
+        return sorted(target.rglob("*.md"))
+    return []
+
+
+def strip_language_switch_headers(target: Path, dry_run: bool) -> int:
+    updated = 0
+
+    for md_path in markdown_targets(target):
+        original = md_path.read_text(encoding="utf-8")
+        rewritten = strip_language_switch_lines(original)
+
+        if rewritten == original:
+            continue
+        print(f"L  {md_path}")
+        updated += 1
+        if not dry_run:
+            md_path.write_text(rewritten, encoding="utf-8")
+
+    return updated
+
+
+def rewrite_cross_language_links(
+    dest_root: Path,
+    counterpart_root: Path,
+    expected_lang: str,
+    dry_run: bool,
+) -> int:
+    updated = 0
+    pattern = re.compile(r"\]\(((?:\.\./)+)(zh|en)/([^)#]+?)(#[^)]+)?\)")
+
+    for md_path in sorted(dest_root.rglob("*.md")):
+        original = md_path.read_text(encoding="utf-8")
+
+        def replace(match: re.Match[str]) -> str:
+            lang = match.group(2)
+            if lang != expected_lang:
+                return match.group(0)
+
+            rel_target = Path(match.group(3))
+            anchor = match.group(4) or ""
+            target = counterpart_root / rel_target
+            if not target.exists():
+                return match.group(0)
+
+            rewritten = os.path.relpath(target, md_path.parent).replace(os.sep, "/")
+            return f"]({rewritten}{anchor})"
+
+        rewritten = pattern.sub(replace, original)
+        if rewritten == original:
+            continue
+
+        print(f"R  {md_path}")
+        updated += 1
+        if not dry_run:
+            md_path.write_text(rewritten, encoding="utf-8")
+
+    return updated
+
+
+def rewrite_file_contents(
+    dest_root: Path,
+    replacements: list[tuple[str, str]],
+    dry_run: bool,
+) -> int:
+    updated = 0
+
+    for md_path in sorted(dest_root.rglob("*.md")):
+        original = md_path.read_text(encoding="utf-8")
+        rewritten = original
+        for old, new in replacements:
+            rewritten = rewritten.replace(old, new)
+
+        if rewritten == original:
+            continue
+
+        print(f"T  {md_path}")
+        updated += 1
+        if not dry_run:
+            md_path.write_text(rewritten, encoding="utf-8")
+
+    return updated
 
 
 def sync_source(
@@ -246,16 +419,75 @@ def sync_source(
         token_env_name,
     )
     ignore_patterns = list(default_ignore) + list(source.get("ignore", []))
+    mappings = source.get("mappings", [])
+    file_mappings = source.get("files", [])
+    strip_language_switch = source.get("strip_language_switch_headers", False)
+    mapping_by_from = {mapping["from"]: mapping for mapping in mappings}
 
     print(f"=== Syncing {source_name} ===")
-    for mapping in source.get("mappings", []):
+    transformed_targets: list[Path] = []
+
+    file_counts = {"created": 0, "updated": 0, "skipped": 0}
+    for file_mapping in file_mappings:
+        src_file = source_root / file_mapping["from"]
+        dest_file = (repo_root / file_mapping["to"]).resolve()
+        print(f"  {src_file} -> {dest_file}")
+        result = sync_file(src_file, dest_file, dry_run, strip_language_switch)
+        file_counts[result] += 1
+        transformed_targets.append(dest_file)
+
+    if file_mappings:
+        print(
+            "  file summary: "
+            f"created={file_counts['created']} "
+            f"updated={file_counts['updated']} "
+            f"skipped={file_counts['skipped']}"
+        )
+
+    for mapping in mappings:
         src_dir = source_root / mapping["from"]
         dest_dir = (repo_root / mapping["to"]).resolve()
         print(f"  {src_dir} -> {dest_dir}")
-        created, updated, skipped = sync_tree(src_dir, dest_dir, ignore_patterns, dry_run)
+        if mapping.get("clean", False):
+            clear_tree(dest_dir, dry_run)
+        created, updated, skipped = sync_tree(
+            src_dir,
+            dest_dir,
+            ignore_patterns,
+            dry_run,
+            strip_language_switch,
+        )
+        transformed_targets.append(dest_dir)
         print(
             f"  summary: created={created} updated={updated} skipped={skipped}"
         )
+        if source.get("rewrite_cross_language_links", False):
+            counterpart_lang = "en" if mapping["from"] == "zh" else "zh"
+            counterpart_mapping = mapping_by_from.get(counterpart_lang)
+            if counterpart_mapping:
+                counterpart_root = (repo_root / counterpart_mapping["to"]).resolve()
+                rewritten = rewrite_cross_language_links(
+                    dest_dir,
+                    counterpart_root,
+                    counterpart_lang,
+                    dry_run,
+                )
+                if rewritten:
+                    print(f"  relinked cross-language refs: {rewritten}")
+        replacements_by_lang = source.get("replace_text", {})
+        replacements = [
+            (item["from"], item["to"])
+            for item in replacements_by_lang.get(mapping["from"], [])
+        ]
+        if replacements:
+            rewritten = rewrite_file_contents(dest_dir, replacements, dry_run)
+            if rewritten:
+                print(f"  normalized text replacements: {rewritten}")
+    if strip_language_switch:
+        for target in transformed_targets:
+            stripped = strip_language_switch_headers(target, dry_run)
+            if stripped:
+                print(f"  stripped language switch headers: {stripped}")
     print()
 
 

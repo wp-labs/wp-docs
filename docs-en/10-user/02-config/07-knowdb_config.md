@@ -1,158 +1,209 @@
 # KnowDB Configuration
 
-This guide describes the directory-based configuration and loading specification for the Knowledge Database (KnowDB).
 
-Applicable Scope
-- Initialize authoritative database (CSV -> SQLite), used for loading by wparse/wproj and other tools at startup
+Remember only three things:
 
-Core Principles
-- External SQL: DDL/DML for each table is placed in .sql files in the corresponding directory
-- Security: Runtime only allows access to table names declared in configuration; SQL only supports {table} placeholder
-- Ready to use by default: Most fields can be omitted; built-in defaults and auto-detection satisfy common scenarios
+1. only `version = 2` is supported
+2. choose one mode only: directory-based SQLite authority, or external PostgreSQL / MySQL
+3. `[cache]` controls `result cache` only
 
-Directory Layout (Recommended, default under `${models.knowledge}`)
-```
-${models.knowledge}/
-  knowdb.toml                     # This configuration
-  example/
-    create.sql
-    insert.sql
-    data.csv                     # Single data file (table directory root)
-  address/
-    create.sql
-    insert.sql
-    data.csv
-```
+## Two modes
 
-Top-level Configuration (`${models.knowledge}/knowdb.toml`)
+- Static CSV assets: use directory-based SQLite authority
+- Data already in PostgreSQL / MySQL: use external provider
+
+## Minimal examples
+
+### Directory-based SQLite authority
+
 ```toml
 version = 2
+base_dir = "."
+
+[default]
+transaction = true
+batch_size = 2000
+on_error = "fail"
+
+[csv]
+has_header = true
+delimiter = ","
+encoding = "utf-8"
+trim = true
+
+[cache]
+enabled = true
+capacity = 1024
+ttl_ms = 30000
 
 [[tables]]
 name = "example"
-# dir defaults to name when omitted; this example uses directory ${models.knowledge}/example
-# data_file defaults to data.csv in table directory when omitted
+dir = "example"
+enabled = true
 columns.by_header = ["name", "pinying"]
 
-# To add more tables, append [[tables]] sections
-```
-
-SQL File Specifications
-- create.sql: Table creation statement, must exist; can use placeholder `{table}`; allows multiple statements (e.g., `CREATE INDEX`)
-- insert.sql: Insert statement, must exist; parameter positions use `?1..?N`; allows `{table}`
-- clean.sql: Optional; if not present, `DELETE FROM {table}` is executed by default before loading
-
-Column Mapping (columns)
-- Recommended `by_header=[..]`, maps CSV header names to columns in `insert.sql`
-- If `has_header=false`, must provide `by_index=[..]`
-- Optional enhancement (implementation layer): If columns not configured and `insert.sql` explicitly lists columns, can parse insert column names as `by_header`
-
-Loading Strategy (defaults can be omitted)
-- Defaults: `transaction=true`, `batch_size=2000`, `on_error="fail"`
-- on_error:
-  - fail: Fails and rolls back on bad row (missing columns/parse failure)
-  - skip: Skips bad rows and counts warnings
-
-Auto-detection (when data_file is not configured)
-- Uses `{base_dir}/{tables.dir}/data.csv`
-- Reports error if not exists
-
-Security Constraints
-- Runtime (facade/query_cipher/SQL evaluation) only allows table names declared in `[[tables]].name`
-- SQL templates only allow `{table}` placeholder; other dynamic concatenation is prohibited
-
-Minimal Runnable Example
-1) Directory
-```
-${models.knowledge}/knowdb.toml
-models/knowledge/example/{create.sql, insert.sql, data.csv}
-```
-2) create.sql
-```sql
-CREATE TABLE IF NOT EXISTS {table} (
-  id      INTEGER PRIMARY KEY,
-  name    TEXT NOT NULL,
-  pinying TEXT NOT NULL
-);
-```
-3) insert.sql
-```sql
-INSERT INTO {table} (name, pinying) VALUES (?1, ?2);
-```
-4) data.csv
-```
-name,pinying
-令狐冲,linghuchong
-任盈盈,renyingying
-```
-5) knowdb.toml (minimal)
-```toml
-version = 2
-base_dir = "./models/knowledge"
-[[tables]]
-name = "example"
-dir  = "example"
-columns.by_header = ["name", "pinying"]
 [tables.expected_rows]
-min = 1
+min = 5
 max = 100
 ```
 
-Common Errors and Troubleshooting
-- Missing create.sql / insert.sql: Fails at startup and points to missing file
-- `has_header=false` but `by_index` not provided: Loading error
-- `expected_rows.min` not satisfied: Insufficient data, loading fails
-- Data source not found: Neither `data_file` configured nor default path `data.csv` exists
-- Runtime SQL accesses undeclared table: Security validation fails
+### External PostgreSQL / MySQL
 
-Relationship with Applications
-- wparse/wproj etc. load knowdb at startup: Create authoritative database and set up Query Provider
-- `query_cipher(table)` (loading single-column word list) formerly used by privacy module is disabled by default in current version; implement desensitization on business side if needed
+```toml
+version = 2
 
-Built-in SQL Functions (UDF)
-- Runtime registration:
-  - Both import phase (authoritative database write connection) and query phase (thread-cloned read-only connection) automatically register.
-  - Can be used directly in `INSERT/SELECT/WHERE` (not involved in DDL).
-- Signatures and Semantics:
-  - `ip4_int(text) -> integer`: Dotted IPv4 to 32-bit integer; tolerates whitespace/quotes; returns `0` on invalid input.
-  - `ip4_between(ip_text, start_text, end_text) -> integer`: Whether in closed interval `[start,end]` (1/0).
-  - `cidr4_min(text) -> integer`: CIDR start address (inclusive), e.g., `10.0.0.0/8`.
-  - `cidr4_max(text) -> integer`: CIDR end address (inclusive).
-  - `cidr4_contains(ip_text, cidr_text) -> integer`: Whether IP falls within CIDR range (1/0).
-  - `ip4_text(integer|string) -> text`: 32-bit integer to dotted IPv4 (useful for debugging/display).
-  - `trim_quotes(text) -> text`: Removes paired quotes (' or ") at both ends, tolerates surrounding whitespace; returns original (whitespace trimmed) if not paired.
-- Import Example (insert.sql):
-  ```sql
-  INSERT INTO {table} (ip_start_int, ip_end_int, zone)
-  VALUES (ip4_int(?1), ip4_int(?2), trim_quotes(?3));
-  ```
-- Query Example (regular SQL):
-  ```sql
-  -- Range match (recommended integer comparison, avoid directly comparing function returns in WHERE)
-  SELECT zone FROM zone
-  WHERE ip_start_int <= ip4_int(:ip)
-    AND ip_end_int   >= ip4_int(:ip)
-  LIMIT 1;
+[cache]
+enabled = true
+capacity = 1024
+ttl_ms = 30000
 
-  -- CIDR match
-  SELECT zone FROM zone
-  WHERE cidr4_contains(:ip, :cidr) = 1;
+[provider]
+kind = "postgres"
+connection_uri = "postgres://user:${DB_PASSWORD}@127.0.0.1:5432/demo"
+pool_size = 8
+```
 
-  -- Debug output
-  SELECT ip4_text(ip_start_int) AS ip_start, ip4_text(ip_end_int) AS ip_end, zone
-  FROM zone
-  LIMIT 5;
-  ```
-- OML SQL Exact Evaluation:
-  - OML's `select ... from ... where ...;` syntax has identifier whitelist restrictions on column segments, not recommended to write functions directly in column segments.
-  - Recommended to produce numeric IP upstream (e.g., `src_ip_int`) and use integer comparison in OML where:
-    ```sql
-    from_zone: chars = sql(
-      select zone from zone
-      where ip_start_int <= read(src_ip_int)
-        and ip_end_int   >= read(src_ip_int);
-    )
-    ```
-- Notes:
-  - Currently invalid IPv4/CIDR input returns `0` (or match failure) for import resilience; customize if strict behavior needed.
-  - SQLite natively provides `lower/upper/trim` and other string functions, can be combined with above UDFs.
+Replace `kind = "postgres"` with `kind = "mysql"` and switch the connection URI to MySQL format if needed.
+
+## Which settings take effect
+
+| Mode | Active settings | Not part of the main flow |
+| --- | --- | --- |
+| Directory-based SQLite authority | `version` `base_dir` `[default]` `[csv]` `[cache]` `[[tables]]` | `authority_uri` is not read from `knowdb.toml` |
+| External PostgreSQL / MySQL | `version` `[provider]` `[cache]` | `base_dir` `[default]` `[csv]` `[[tables]]` |
+
+## Key fields
+
+### Top level
+
+- `version`
+  - required, must be `2`
+- `base_dir`
+  - root for table directories
+- `[provider]`
+  - only for external provider mode
+- `[[tables]]`
+  - only for directory-based SQLite authority mode
+
+### `[default]`
+
+- `transaction`
+  - default `true`
+- `batch_size`
+  - default `2000`
+- `on_error`
+  - `fail` stops
+  - `skip` ignores bad rows
+
+### `[csv]`
+
+- `has_header`
+  - default `true`
+- `delimiter`
+  - keep it to one character
+- `encoding`
+  - only `utf-8` is supported
+- `trim`
+  - default `true`
+
+### `[cache]`
+
+- `enabled`
+  - default `true`
+- `capacity`
+  - default `1024`, in entries
+- `ttl_ms`
+  - default `30000`
+
+### `[provider]`
+
+- `kind`
+  - required, `postgres` or `mysql`
+- `connection_uri`
+  - required, `${VAR}` expansion supported
+- `pool_size`
+  - optional, default `8`
+
+Do not write `kind = "sqlite_authority"`. In directory-based mode, omit `[provider]` completely.
+
+### `[[tables]]`
+
+- `name`
+  - required
+- `dir`
+  - defaults to `name`
+- `data_file`
+  - defaults to `data.csv`
+- `enabled`
+  - defaults to `true`
+- configure at least one column mapping:
+  - `columns.by_header`
+  - `columns.by_index`
+- priority:
+  - `by_header` first
+  - `by_index` only when `by_header` is empty
+
+## Table directory convention
+
+A typical table directory looks like this:
+
+```text
+knowdb/
+  knowdb.toml
+  example/
+    create.sql
+    insert.sql
+    data.csv
+  zone/
+    create.sql
+    insert.sql
+    clean.sql
+    data.scv
+```
+
+Rules:
+
+- `create.sql` is required.
+- `insert.sql` is required.
+- `data.csv` is the default data file.
+- `clean.sql` is optional; if omitted, the default cleanup statement is `DELETE FROM {table}`.
+- `{table}` inside SQL files is replaced with the current table name.
+
+## Paths and environment variables
+
+- `${VAR}` is expanded before TOML deserialization. Example:
+
+```toml
+[provider]
+kind = "mysql"
+connection_uri = "mysql://root:${MYSQL_PASSWORD}@127.0.0.1:3306/demo"
+```
+
+- Values come from the `EnvDict` passed into `init_thread_cloned_from_knowdb(..., dict)`.
+- `wp-knowledge` does not read process environment variables directly.
+
+Path resolution order:
+
+1. If `knowdb_conf` is relative, resolve it against the caller-provided `root`.
+2. Resolve `base_dir` relative to the directory that contains `knowdb.toml`.
+3. Resolve `tables[n].dir` relative to `base_dir`.
+4. Resolve `tables[n].data_file` relative to the table directory.
+
+## Common failures
+
+- `version` is not `2`
+- `create.sql`, `insert.sql`, or the data file is missing
+- neither `columns.by_header` nor `columns.by_index` is configured
+- `columns.by_header` refers to a missing CSV header
+- `encoding` is not `utf-8`
+- CSV row parsing fails and `on_error = "fail"`
+- imported rows are below `expected_rows.min`
+- PostgreSQL / MySQL initialization fails to connect
+
+## Recommended patterns
+
+- In the directory-based SQLite authority mode, do not add a `[provider]` block.
+- Put `enabled` under `[[tables]]`, not under `[tables.expected_rows]`.
+- Keep `delimiter` to a single character.
+- If you use `columns.by_header`, keep `csv.has_header = true`.
+- In external PostgreSQL / MySQL mode, treat `[cache]` strictly as `result cache` configuration.

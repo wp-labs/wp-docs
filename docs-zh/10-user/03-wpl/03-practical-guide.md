@@ -322,11 +322,60 @@ package api {
 ```
 user: admin
 code: 200
+message: <missing>
+data: <missing>
 ```
 
 **要点：**
-- `opt(type)@key` 标记字段为可选
-- 不存在的字段不会导致解析失败
+- `opt(type)@key` 只用于 JSON/KV 子字段
+- 缺失字段不会导致整条 `json(...)` 规则失败
+
+---
+
+### 任务 2.5：区分合法 JSON 与坏 JSON
+
+**场景：** 同一条链路里既可能出现合法 JSON，也可能出现“看起来像 JSON 但已经损坏”的数据，需要把两类输入分开处理。
+
+**输入 1：合法 JSON**
+```json
+{"host":"qup.f.360.cn","method":"POST"}
+```
+
+**输入 2：损坏但像 JSON**
+```text
+{ "host": "qup.f.360.cn", "method": "POST", "rsp_body": "broken..., "afver": "TS3.0" }
+```
+
+**WPL 规则：**
+```wpl
+package api {
+  rule good_json {
+    (json(chars@host, chars@method))
+  }
+
+  rule broken_json {
+    |json_like|
+    (bad_json:raw)
+  }
+}
+```
+
+**输出 1：**
+```
+host: qup.f.360.cn
+method: POST
+```
+
+**输出 2：**
+```
+raw: { "host": "qup.f.360.cn", "method": "POST", "rsp_body": "broken..., "afver": "TS3.0" }
+```
+
+**要点：**
+- `json(...)` 现在已经内置了 `json_like` 式快速判断，所以合法 JSON 规则前面不必再写 `|json_like|`
+- `|json_like| (bad_json:raw)` 适合做坏 JSON 兜底
+- 这样普通文本不会被 `bad_json` 误吃掉
+- 只有“像 JSON 但严格解析失败”的输入，才应该落到 `bad_json`
 
 ---
 

@@ -6,16 +6,20 @@ Welcome to the Warp Parse documentation.
 
 ## Quick Start
 
-1. [Getting Started](01-cli/01-getting_started.md) - Quick start guide
-2. [Configuration](02-config/README.md) - Basic configuration
-3. [WPL Language](03-wpl/README.md) - WPL rule language
-4. [Connectors](05-connectors/README.md) - Sources and Sinks management
+1. [Getting Started](01-getting-started.md) - Quick start guide
+2. [WarpParse Core Concepts Quick Reference](00-core-concepts.md) - key concepts and terminology
+3. [CLI Usage Guide](01-cli/README.md) - full product, CLI, and operations manual
+4. [Configuration](02-config/README.md) - Basic configuration
+5. [WPL Language](03-wpl/README.md) - WPL rule language
+6. [Connectors](05-connectors/README.md) - Sources and Sinks management
 
 ## Documentation Navigation
 
 | Section | Description |
 |---------|-------------|
-| [CLI Tools](01-cli/README.md) | Command-line tools reference |
+| [Getting Started](01-getting-started.md) | First-run walkthrough |
+| [Core Concepts](00-core-concepts.md) | Warp Parse concepts and terminology |
+| [CLI Usage Guide](01-cli/README.md) | Synced upstream usage and operations docs |
 | [Configuration](02-config/README.md) | Configuration files and options |
 | [WPL Language](03-wpl/README.md) | Warp Parse Language guide |
 | [OML Language](04-oml/README.md) | Object Model Language guide |

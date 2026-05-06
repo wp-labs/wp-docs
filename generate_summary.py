@@ -24,6 +24,80 @@ def extract_title(file_path):
     return name.replace("_", " ").replace("-", " ").title()
 
 
+def shorten_summary_title(file_path, title):
+    """Shorten long headings for sidebar readability without changing document titles."""
+    shortened = title.strip()
+    path_str = str(file_path).replace("\\", "/")
+
+    # Drop long explanatory parentheticals commonly used for implementation notes.
+    shortened = re.sub(r"（对齐[^）]+）", "", shortened)
+    shortened = re.sub(r"\(aligned with [^)]+\)", "", shortened, flags=re.IGNORECASE)
+
+    # Common documentation suffixes can be shorter in navigation.
+    replacements = [
+        ("运行时管理面使用说明", "运行时管理"),
+        ("Remote Project Sync And Rule Reload SOP", "Project Sync SOP"),
+        ("远程工程拉取与规则热更新 SOP", "工程热更新 SOP"),
+        ("`wprescue` 与 rescue 数据使用指南", "`wprescue` 使用"),
+        ("与 rescue 数据使用指南", "Rescue 使用"),
+        ("And Rescue Data Usage", "Rescue Usage"),
+        ("项目工具使用指南", "项目工具"),
+        ("Sources Configuration Guide", "Sources Guide"),
+        ("Sinks Configuration Guide", "Sinks Guide"),
+        ("Configuration Guide", "配置指南"),
+        ("Quick Reference", "速查"),
+        ("排障指南（Troubleshooting）", "排障指南"),
+        ("用户建议 Q&A（产品能力与配置体验）", "用户建议 Q&A"),
+        ("Function and Topic Index", "函数索引"),
+        ("函数与专题索引", "函数索引"),
+        ("Field Functions 函数索引", "函数索引"),
+        ("Case-Insensitive Static Dictionary Lookup", "Static Dict Lookup"),
+        ("忽略大小写静态字典查表", "静态字典查表"),
+        ("Prefix Filtering for Strings", "Prefix Filter"),
+        ("结果反转包装函数", "结果反转"),
+        ("表达式函数匹配", "函数匹配"),
+        ("Processor 使用示例", "示例"),
+        ("Complete Type System Example", "Type System Example"),
+        ("Complete Feature Example", "Feature Example"),
+        ("Semantic Dictionary Configuration", "Semantic Dictionary"),
+        ("Connector Development Guide", "Connector Dev Guide"),
+        ("Docs Aggregation Automation", "Docs Sync Automation"),
+        ("Generator Usage", "Generator"),
+        ("Runtime Usage", "Runtime"),
+        ("CLI Usage Guide", "CLI"),
+        ("功能与 CLI 使用指南", "功能与 CLI"),
+        ("Product Overview", "产品概览"),
+        ("Core Concepts Quick Reference", "核心概念"),
+        ("Secure Variables and Environment Variables", "Secure Variables"),
+        ("安全变量与环境变量", "安全变量"),
+    ]
+    for old, new in replacements:
+        shortened = shortened.replace(old, new)
+
+    # Function/examples pages read better in navigation without repetitive suffixes.
+    if "/functions/" in path_str or "/examples/" in path_str:
+        shortened = re.sub(r"\s*使用指南$", "", shortened)
+        shortened = re.sub(r"\s*函数使用指南$", "", shortened)
+        shortened = re.sub(r"\s*使用示例$", "", shortened)
+        shortened = re.sub(r"\s*Function Usage Guide$", "", shortened, flags=re.IGNORECASE)
+        shortened = re.sub(r"\s*Function Guide$", "", shortened, flags=re.IGNORECASE)
+        shortened = re.sub(r"\s*Usage Guide$", "", shortened, flags=re.IGNORECASE)
+        shortened = re.sub(r"\s*Example$", "", shortened, flags=re.IGNORECASE)
+
+    # Release notes in sidebar can use shorter names.
+    if "/00-release/" in path_str:
+        m = re.match(r"^WarpParse\s+(\d+(?:\.\d+)*)", shortened, flags=re.IGNORECASE)
+        if m:
+            shortened = f"{m.group(1)} 更新说明"
+        m = re.match(r"^(\d+(?:\.\d+)*)\s+Release Notes$", shortened, flags=re.IGNORECASE)
+        if m:
+            shortened = f"{m.group(1)} Release Notes"
+
+    # Collapse leftover spacing after removals.
+    shortened = re.sub(r"\s{2,}", " ", shortened).strip(" -:：")
+    return shortened or title
+
+
 def should_ignore(file_path):
     """Check if file should be ignored"""
     ignore_patterns = [
@@ -77,6 +151,26 @@ def get_directory_title(dirname, readme_path=None):
     return titles.get(dirname, dirname.replace("_", " ").replace("-", " ").title())
 
 
+def release_sort_key(path_obj):
+    """Sort release notes by version descending."""
+    stem = path_obj.stem
+    parts = []
+    for token in stem.split("."):
+        try:
+            parts.append(int(token))
+        except ValueError:
+            parts.append(-1)
+    return tuple(parts)
+
+
+def sort_summary_files(dir_path, files):
+    """Sort files for SUMMARY generation."""
+    rel_dir = dir_path.as_posix()
+    if rel_dir.endswith("00-release"):
+        return sorted(files, key=lambda x: release_sort_key(Path(x[1])), reverse=True)
+    return sorted(files, key=lambda x: x[1])
+
+
 def process_directory(dir_path, docs_root, indent_level=0, parent_has_header=True):
     """Recursively process directory and return summary lines"""
     lines = []
@@ -111,7 +205,7 @@ def process_directory(dir_path, docs_root, indent_level=0, parent_has_header=Tru
             continue
 
         if item.is_file() and item.suffix == ".md" and item.name != "README.md":
-            title = extract_title(item)
+            title = shorten_summary_title(item, extract_title(item))
             link = item.relative_to(docs_root)
             files.append((title, str(link)))
         elif item.is_dir():
@@ -123,7 +217,7 @@ def process_directory(dir_path, docs_root, indent_level=0, parent_has_header=Tru
                 subdirs.append(item)
 
     # Add files in this directory (sorted by link/path for proper numerical order)
-    for title, link in sorted(files, key=lambda x: x[1]):
+    for title, link in sort_summary_files(rel_path, files):
         lines.append(f"{content_indent}- [{title}]({link})")
 
     # Recursively process subdirectories

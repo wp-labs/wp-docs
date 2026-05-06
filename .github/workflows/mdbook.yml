@@ -66,6 +66,15 @@ jobs:
       - name: Install mermaid support for English docs
         run: cd docs-en && mdbook-mermaid install .
 
+      - name: Copy theme sources
+        run: |
+          mkdir -p docs-zh/theme
+          mkdir -p docs-en/theme
+          cp theme/*.css docs-zh/theme/
+          cp theme/*.js docs-zh/theme/
+          cp theme/*.css docs-en/theme/
+          cp theme/*.js docs-en/theme/
+
       # Add version badge to title for non-main branches
       - name: Add version badge to documentation title
         if: steps.branch.outputs.name != 'main'
@@ -89,14 +98,10 @@ jobs:
         run: |
           mkdir -p book/zh/theme
           mkdir -p book/en/theme
-          cp theme/lang-switch.css book/zh/theme/
-          cp theme/lang-switch.js book/zh/theme/
-          cp theme/version-badge.css book/zh/theme/
-          cp theme/version-badge.js book/zh/theme/
-          cp theme/lang-switch.css book/en/theme/
-          cp theme/lang-switch.js book/en/theme/
-          cp theme/version-badge.css book/en/theme/
-          cp theme/version-badge.js book/en/theme/
+          cp theme/*.css book/zh/theme/
+          cp theme/*.js book/zh/theme/
+          cp theme/*.css book/en/theme/
+          cp theme/*.js book/en/theme/
 
       - name: Copy language selection page
         run: |

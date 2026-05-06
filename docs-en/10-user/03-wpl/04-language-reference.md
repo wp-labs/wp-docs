@@ -57,6 +57,63 @@ This is different from group-level `opt(...)`.
 
 ---
 
+## JSON-like Routing
+
+### `json_like`
+
+```wpl
+|json_like|
+```
+
+- `json_like` is a preorder line pipe
+- It only does a lightweight sniff to check whether the input looks like JSON
+- It does not extract fields and does not run full JSON parsing
+
+Use it in fallback rules before `bad_json`.
+
+### `json`
+
+`json(...)` now has built-in JSON-like sniffing, so this is enough:
+
+```wpl
+rule good_json {
+  (json(chars@host, chars@method))
+}
+```
+
+You do not need to add an extra `|json_like|` in front of `json(...)`.
+
+### `bad_json`
+
+```wpl
+(bad_json:raw)
+```
+
+- `bad_json` outputs the original input as a `chars` field
+- It is intended for inputs that look like JSON but fail strict JSON parsing
+- It should usually be guarded by `|json_like|`
+
+### Recommended Pattern
+
+```wpl
+rule good_json {
+  (json(chars@host, chars@method))
+}
+
+rule broken_json {
+  |json_like|
+  (bad_json:raw)
+}
+```
+
+Behavior:
+
+- Valid JSON is handled by `json(...)`
+- Broken but JSON-like payloads fall back to `json_like + bad_json`
+- Plain text will not be accidentally consumed by `bad_json`
+
+---
+
 ## Valid and Invalid Forms
 
 Valid:

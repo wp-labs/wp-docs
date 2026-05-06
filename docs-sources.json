@@ -11,7 +11,13 @@
       "repo": "https://github.com/wp-labs/wp-motor.git",
       "ref": "main",
       "checkout_subdir": "docs/usage",
-      "local_path": "../wp-motor/docs/usage",
+      "local_path": "../../dev/wparse/wp-motor/docs/usage",
+      "ignore": [
+        "README.md",
+        "01-cli",
+        "01-cli/*",
+        "01-cli/**"
+      ],
       "mappings": [
         {
           "from": "zh",
@@ -20,6 +26,53 @@
         {
           "from": "en",
           "to": "docs-en/10-user"
+        }
+      ]
+    },
+    {
+      "name": "wp-knowledge-docs",
+      "local_path": "../../dev/wparse/wp-knowledge/docs",
+      "strip_language_switch_headers": true,
+      "files": [
+        {
+          "from": "zh/guides/config.md",
+          "to": "docs-zh/10-user/02-config/07-knowdb_config.md"
+        },
+        {
+          "from": "en/guides/config.md",
+          "to": "docs-en/10-user/02-config/07-knowdb_config.md"
+        }
+      ],
+      "mappings": [
+        {
+          "from": "zh/architecture",
+          "to": "docs-zh/30-dev/knowledge/architecture",
+          "clean": true
+        },
+        {
+          "from": "en/architecture",
+          "to": "docs-en/30-dev/knowledge/architecture",
+          "clean": true
+        },
+        {
+          "from": "zh/performance",
+          "to": "docs-zh/20-report/knowledge",
+          "clean": true
+        },
+        {
+          "from": "en/performance",
+          "to": "docs-en/20-report/knowledge",
+          "clean": true
+        },
+        {
+          "from": "zh/tasks",
+          "to": "docs-zh/30-dev/knowledge/tasks",
+          "clean": true
+        },
+        {
+          "from": "en/tasks",
+          "to": "docs-en/30-dev/knowledge/tasks",
+          "clean": true
         }
       ]
     },
@@ -37,6 +90,42 @@
         {
           "from": "en",
           "to": "docs-en/10-user/03-wpl"
+        }
+      ]
+    },
+    {
+      "name": "warp-parse-use",
+      "local_path": "../../dev/wparse/warp-parse/docs/use",
+      "rewrite_cross_language_links": true,
+      "ignore": [
+        "tools",
+        "tools/*",
+        "tools/**"
+      ],
+      "replace_text": {
+        "zh": [
+          {
+            "from": "# 使用文档",
+            "to": "# CLI 使用手册"
+          }
+        ],
+        "en": [
+          {
+            "from": "# Usage Docs",
+            "to": "# CLI Usage Guide"
+          }
+        ]
+      },
+      "mappings": [
+        {
+          "from": "zh",
+          "to": "docs-zh/10-user/01-cli",
+          "clean": true
+        },
+        {
+          "from": "en",
+          "to": "docs-en/10-user/01-cli",
+          "clean": true
         }
       ]
     }

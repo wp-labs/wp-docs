@@ -101,6 +101,7 @@
   - [排障指南](10-user/09-FQA/troubleshooting.md)
   - [用户建议 Q&A](10-user/09-FQA/user_suggestions_qa.md)
   - [Wp-Monitor](10-user/10-monitor/Wp-Monitor.md)
+  - [wp-skills](10-user/11-skills/wp-skills.md)
 
 - [BenchMark Report](20-report/benchmark.md)
 - [WarpParse vs Vector 性能基准测试报告](20-report/report_mac.md)

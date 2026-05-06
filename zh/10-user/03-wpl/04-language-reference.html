@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="zh-CN" class="ayu sidebar-visible" dir="ltr">
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -28,19 +28,18 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../../../theme/lang-switch.css">
-        <link rel="stylesheet" href="../../../theme/version-badge.css">
+        <link rel="stylesheet" href="../../theme/site-bbe802d7.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
             const path_to_root = "../../";
-            const default_light_theme = "ayu";
+            const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-ed04a91f.js";
+            window.path_to_searchindex_js = "../../searchindex-8cf7f7f0.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-536d74fd.js"></script>
+        <script src="../../toc-6c095515.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -78,7 +77,7 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
-            html.classList.remove('ayu')
+            html.classList.remove('light')
             html.classList.add(theme);
             html.classList.add("js");
         </script>
@@ -192,6 +191,7 @@
 <tr><td><a href="#-类型系统">类型系统</a></td><td>所有数据类型速查表</td></tr>
 <tr><td><a href="#-语法元素">语法元素</a></td><td>基本结构、字段定义、格式控制</td></tr>
 <tr><td><a href="#-子字段语法">子字段语法</a></td><td>JSON、KV、数组子字段</td></tr>
+<tr><td><a href="#-json-like-路由">JSON-like 路由</a></td><td><code>json_like</code>、<code>json</code>、<code>bad_json</code> 的配合方式</td></tr>
 <tr><td><a href="#-注解">注解</a></td><td>tag、copy_raw 注解</td></tr>
 <tr><td><a href="#-语法速查">语法速查</a></td><td>常用模式快速参考</td></tr>
 </tbody>
@@ -398,6 +398,65 @@ json(chars@user/name, digit@user/age)
 # 可选字段
 json(chars@name, opt(chars)@email)
 </code></pre>
+<h3 id="bad_json"><a class="header" href="#bad_json"><code>bad_json</code></a></h3>
+<pre><code class="language-wpl">bad_json:name
+</code></pre>
+<p><strong>说明：</strong></p>
+<ul>
+<li><code>bad_json</code> 输出的是原始文本，字段类型为 <code>chars</code></li>
+<li>适合接住“看起来像 JSON，但严格解析失败”的输入</li>
+<li>推荐与 <code>json_like</code> 预处理一起使用，避免把普通文本误判为坏 JSON</li>
+</ul>
+<p><strong>示例：</strong></p>
+<pre><code class="language-wpl">(bad_json:raw)
+</code></pre>
+<hr>
+<h2 id="-json-like-路由"><a class="header" href="#-json-like-路由">🧩 JSON-like 路由</a></h2>
+<h3 id="json_like-预处理"><a class="header" href="#json_like-预处理"><code>json_like</code> 预处理</a></h3>
+<pre><code class="language-wpl">|json_like|
+</code></pre>
+<p><strong>语义：</strong></p>
+<ul>
+<li>这是规则前置的行 pipe</li>
+<li>只做轻量 sniff，判断当前输入是否“像 JSON”</li>
+<li>它不会提取字段，也不会做完整 JSON 解析</li>
+</ul>
+<p><code>json_like</code> 适合放在兜底规则前面，为 <code>bad_json</code> 提供保护。</p>
+<h3 id="json-的内置-sniff"><a class="header" href="#json-的内置-sniff"><code>json</code> 的内置 sniff</a></h3>
+<p><code>json</code> 现在已经内置了 <code>json_like</code> 式的快速判断，所以：</p>
+<pre><code class="language-wpl">rule good_json {
+  (json(chars@host, chars@method))
+}
+</code></pre>
+<p>不需要再额外写：</p>
+<pre><code class="language-wpl">rule good_json {
+  |json_like|
+  (json(chars@host, chars@method))
+}
+</code></pre>
+<h3 id="推荐写法"><a class="header" href="#推荐写法">推荐写法</a></h3>
+<p>当你希望把“合法 JSON”和“坏 JSON”分开处理时，推荐这样写：</p>
+<pre><code class="language-wpl">rule good_json {
+  (json(chars@host, chars@method))
+}
+
+rule broken_json {
+  |json_like|
+  (bad_json:raw)
+}
+</code></pre>
+<p>这套写法的行为是：</p>
+<ul>
+<li>合法 JSON：由 <code>json(...)</code> 规则命中</li>
+<li>损坏但像 JSON：由 <code>json_like + bad_json</code> 规则兜底</li>
+<li>普通文本：不会被 <code>bad_json</code> 吃掉</li>
+</ul>
+<h3 id="性能含义"><a class="header" href="#性能含义">性能含义</a></h3>
+<ul>
+<li><code>json_like</code> 是轻量判断，适合做前置过滤</li>
+<li><code>json</code> 已经内置快速 sniff，因此对普通文本的拒绝成本明显更低</li>
+<li>对“像 JSON 但损坏”的输入，先做 <code>json_like</code> 再走 <code>bad_json</code> 才有意义</li>
+</ul>
 <h3 id="kv-子字段"><a class="header" href="#kv-子字段">KV 子字段</a></h3>
 <pre><code class="language-wpl">kvarr(type@key, type@key, ...)
 </code></pre>
@@ -526,8 +585,7 @@ kvarr(digit@port)      # KV 字段
         <script src="../../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
-        <script src="../../../theme/lang-switch.js"></script>
-        <script src="../../../theme/version-badge.js"></script>
+        <script src="../../theme/site-873a9fb6.js"></script>
         <script src="../../mermaid-eefea253.min.js"></script>
         <script src="../../mermaid-init-ccf746f1.js"></script>
 

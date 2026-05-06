@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="zh-CN" class="ayu sidebar-visible" dir="ltr">
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -28,19 +28,18 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../../../theme/lang-switch.css">
-        <link rel="stylesheet" href="../../../theme/version-badge.css">
+        <link rel="stylesheet" href="../../theme/site-bbe802d7.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
             const path_to_root = "../../";
-            const default_light_theme = "ayu";
+            const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-ed04a91f.js";
+            window.path_to_searchindex_js = "../../searchindex-8cf7f7f0.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-536d74fd.js"></script>
+        <script src="../../toc-6c095515.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -78,7 +77,7 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
-            html.classList.remove('ayu')
+            html.classList.remove('light')
             html.classList.add(theme);
             html.classList.add("js");
         </script>
@@ -180,37 +179,29 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="oml-函数参考"><a class="header" href="#oml-函数参考">OML 函数参考</a></h1>
-<p>本文档提供所有内置函数和管道函数的完整参考，采用标准化格式便于查找。</p>
+<p>本文档只列出 <code>wp-motor/crates/wp-oml/src/parser</code> 当前解析实现真正支持的内置函数、内置表达式和管道函数。</p>
+<blockquote>
+<p>说明：</p>
+<ol>
+<li><code>match</code> 条件函数单独整理在 <a href="./functions/match_functions.html">functions/match_functions.md</a></li>
+<li>历史文档中的 <code>sxf_get(...)</code> 不在当前解析器支持范围内</li>
+<li>管道表达式既可以写成 <code>pipe read(x) | ...</code>，也可以省略 <code>pipe</code> 写成 <code>read(x) | ...</code></li>
+</ol>
+</blockquote>
 <hr>
-<h2 id="-详细文档导航"><a class="header" href="#-详细文档导航">📚 详细文档导航</a></h2>
-<ul>
-<li><a href="#内置函数">内置函数</a> - 可直接使用的函数</li>
-<li><a href="#管道函数">管道函数</a> - 通过管道操作符调用的函数
-<ul>
-<li><a href="#编码函数">编码函数</a> - Base64 编解码</li>
-<li><a href="#转义函数">转义函数</a> - HTML/JSON/字符串转义</li>
-<li><a href="#时间函数">时间函数</a> - 时间戳转换</li>
-<li><a href="#数据访问函数">数据访问函数</a> - 数组/对象/URL/路径访问</li>
-<li><a href="#转换函数">转换函数</a> - 类型转换</li>
-<li><a href="#控制函数">控制函数</a> - 流程控制</li>
-</ul>
-</li>
-<li><a href="#使用示例">使用示例</a> - 完整示例</li>
-</ul>
-<hr>
-<h2 id="-oml-所有函数速查"><a class="header" href="#-oml-所有函数速查">📋 OML 所有函数速查</a></h2>
-<h3 id="内置函数"><a class="header" href="#内置函数">内置函数</a></h3>
+<h2 id="速查"><a class="header" href="#速查">速查</a></h2>
+<h3 id="内置表达式--内置函数"><a class="header" href="#内置表达式--内置函数">内置表达式 / 内置函数</a></h3>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>函数</th><th>说明</th><th>示例</th></tr>
+<tr><th>名称</th><th>说明</th><th>示例</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="#calc"><code>calc(...)</code></a></td><td>执行显式算术表达式</td><td><code>score = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;</code></td></tr>
-<tr><td><a href="#lookup_nocase"><code>lookup_nocase(...)</code></a></td><td>对静态 object 做忽略大小写查表</td><td><code>score = lookup_nocase(status_score, read(status), 40.0) ;</code></td></tr>
-<tr><td><a href="#nowtime-1"><code>Now::time()</code></a></td><td>获取当前时间</td><td><code>event_time = Now::time() ;</code></td></tr>
-<tr><td><a href="#nowdate-1"><code>Now::date()</code></a></td><td>获取当前日期（YYYYMMDD）</td><td><code>today = Now::date() ;</code></td></tr>
-<tr><td><a href="#nowhour-1"><code>Now::hour()</code></a></td><td>获取当前小时（YYYYMMDDHH）</td><td><code>current_hour = Now::hour() ;</code></td></tr>
+<tr><td><code>calc(...)</code></td><td>显式数值表达式</td><td><code>score = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;</code></td></tr>
+<tr><td><code>lookup_nocase(...)</code></td><td>基于静态 object 的忽略大小写查表</td><td><code>score = lookup_nocase(score_map, read(status), 40.0) ;</code></td></tr>
+<tr><td><code>Now::time()</code></td><td>当前时间</td><td><code>event_time = Now::time() ;</code></td></tr>
+<tr><td><code>Now::date()</code></td><td>当前日期，返回 <code>YYYYMMDD</code> 数字</td><td><code>today = Now::date() ;</code></td></tr>
+<tr><td><code>Now::hour()</code></td><td>当前小时，返回 <code>YYYYMMDDHH</code> 数字</td><td><code>hour = Now::hour() ;</code></td></tr>
 </tbody>
 </table>
 </div>
@@ -218,592 +209,254 @@
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>功能分类</th><th>函数</th><th>说明</th><th>示例</th></tr>
+<tr><th>分类</th><th>名称</th><th>示例</th></tr>
 </thead>
 <tbody>
-<tr><td><strong>编码</strong></td><td><a href="#base64_encode-1"><code>base64_encode</code></a></td><td>Base64 编码</td><td><code>read(data) | base64_encode</code></td></tr>
-<tr><td></td><td><a href="#base64_decode-1"><code>base64_decode</code></a></td><td>Base64 解码（支持 Utf8/Gbk）</td><td><code>read(data) | base64_decode(Utf8)</code></td></tr>
-<tr><td><strong>转义</strong></td><td><a href="#html_escape"><code>html_escape</code></a></td><td>HTML 转义</td><td><code>read(text) | html_escape</code></td></tr>
-<tr><td></td><td><a href="#html_unescape"><code>html_unescape</code></a></td><td>HTML 反转义</td><td><code>read(html) | html_unescape</code></td></tr>
-<tr><td></td><td><a href="#json_escape"><code>json_escape</code></a></td><td>JSON 转义</td><td><code>read(text) | json_escape</code></td></tr>
-<tr><td></td><td><a href="#json_unescape"><code>json_unescape</code></a></td><td>JSON 反转义</td><td><code>read(json) | json_unescape</code></td></tr>
-<tr><td></td><td><a href="#str_escape"><code>str_escape</code></a></td><td>字符串转义</td><td><code>read(str) | str_escape</code></td></tr>
-<tr><td><strong>时间</strong></td><td><a href="#timeto_ts-1"><code>Time::to_ts</code></a></td><td>转时间戳（秒，UTC+8）</td><td><code>read(time) | Time::to_ts</code></td></tr>
-<tr><td></td><td><a href="#timeto_ts_ms-1"><code>Time::to_ts_ms</code></a></td><td>转时间戳（毫秒，UTC+8）</td><td><code>read(time) | Time::to_ts_ms</code></td></tr>
-<tr><td></td><td><a href="#timeto_ts_us-1"><code>Time::to_ts_us</code></a></td><td>转时间戳（微秒，UTC+8）</td><td><code>read(time) | Time::to_ts_us</code></td></tr>
-<tr><td></td><td><a href="#timeto_ts_zone-1"><code>Time::to_ts_zone</code></a></td><td>转指定时区时间戳</td><td><code>read(time) | Time::to_ts_zone(0, ms)</code></td></tr>
-<tr><td><strong>数据访问</strong></td><td><a href="#nth-1"><code>nth(index)</code></a></td><td>获取数组元素</td><td><code>read(arr) | nth(0)</code></td></tr>
-<tr><td></td><td><a href="#get-1"><code>get(key)</code></a></td><td>获取对象字段</td><td><code>read(obj) | get(name)</code></td></tr>
-<tr><td></td><td><a href="#path-1"><code>path(part)</code></a></td><td>提取文件路径（name/path）</td><td><code>read(path) | path(name)</code></td></tr>
-<tr><td></td><td><a href="#url-1"><code>url(part)</code></a></td><td>提取 URL（domain/host/path/params/uri）</td><td><code>read(url) | url(domain)</code></td></tr>
-<tr><td></td><td><a href="#sxf_get"><code>sxf_get(field)</code></a></td><td>提取特殊格式字段</td><td><code>read(log) | sxf_get(status)</code></td></tr>
-<tr><td><strong>转换</strong></td><td><a href="#to_str-1"><code>to_str</code></a></td><td>转换为字符串</td><td><code>read(ip) | to_str</code></td></tr>
-<tr><td></td><td><a href="#to_json-1"><code>to_json</code></a></td><td>转换为 JSON</td><td><code>read(arr) | to_json</code></td></tr>
-<tr><td></td><td><a href="#ip4_to_int"><code>ip4_to_int</code></a></td><td>IPv4 转整数</td><td><code>read(ip) | ip4_to_int</code></td></tr>
-<tr><td><strong>控制</strong></td><td><a href="#skip_empty-1"><code>skip_empty</code></a></td><td>跳过空值</td><td><code>read(field) | skip_empty</code></td></tr>
-</tbody>
-</table>
-</div>
-<h3 id="常用场景速查"><a class="header" href="#常用场景速查">常用场景速查</a></h3>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>我想做什么</th><th>使用方法</th></tr>
-</thead>
-<tbody>
-<tr><td><strong>获取当前时间</strong></td><td><code>event_time = Now::time() ;</code></td></tr>
-<tr><td><strong>时间转时间戳</strong></td><td><code>ts = read(time) | Time::to_ts_zone(0, ms) ;</code></td></tr>
-<tr><td><strong>Base64 解码</strong></td><td><code>decoded = read(data) | base64_decode(Utf8) ;</code></td></tr>
-<tr><td><strong>HTML 转义</strong></td><td><code>escaped = read(text) | html_escape ;</code></td></tr>
-<tr><td><strong>解析 URL</strong></td><td><code>domain = read(url) | url(domain) ;</code></td></tr>
-<tr><td><strong>提取文件名</strong></td><td><code>filename = read(path) | path(name) ;</code></td></tr>
-<tr><td><strong>获取数组第一个元素</strong></td><td><code>first = read(arr) | nth(0) ;</code></td></tr>
-<tr><td><strong>获取对象字段</strong></td><td><code>name = read(obj) | get(name) ;</code></td></tr>
-<tr><td><strong>IP 转整数</strong></td><td><code>ip_int = read(ip) | ip4_to_int ;</code></td></tr>
-<tr><td><strong>跳过空值</strong></td><td><code>result = read(field) | skip_empty ;</code></td></tr>
-<tr><td><strong>链式处理</strong></td><td><code>result = read(data) | to_json | base64_encode ;</code></td></tr>
-<tr><td><strong>字符串格式化</strong></td><td><code>msg = fmt("{}:{}", @ip, @port) ;</code></td></tr>
-<tr><td><strong>条件匹配</strong></td><td><code>level = match read(status) { ... } ;</code></td></tr>
-<tr><td><strong>忽略大小写多值匹配</strong></td><td><code>iequals_any('success', 'ok', 'done') =&gt; chars(good)</code></td></tr>
-<tr><td><strong>静态字典查表</strong></td><td><code>lookup_nocase(status_score, read(status), 40.0)</code></td></tr>
-<tr><td><strong>创建对象</strong></td><td><code>info : obj = object { ... } ;</code></td></tr>
-<tr><td><strong>创建数组</strong></td><td><code>items : array = collect read(keys:[...]) ;</code></td></tr>
-<tr><td><strong>提供默认值</strong></td><td><code>country = read(country) { _ : chars(CN) } ;</code></td></tr>
-<tr><td><strong>选择性读取</strong></td><td><code>id = read(option:[id, uid, user_id]) ;</code></td></tr>
-<tr><td><strong>批量收集</strong></td><td><code>metrics = collect read(keys:[cpu_*]) ;</code></td></tr>
-<tr><td><strong>算术计算</strong></td><td><code>risk = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;</code></td></tr>
+<tr><td>访问</td><td><code>nth(index)</code></td><td>`first = read(items)</td></tr>
+<tr><td>访问</td><td><code>get(name)</code></td><td>`code = read(obj)</td></tr>
+<tr><td>条件</td><td><code>starts_with('prefix')</code></td><td>`secure = read(url)</td></tr>
+<tr><td>映射</td><td><code>map_to(value)</code></td><td>`flag = read(level)</td></tr>
+<tr><td>编解码</td><td><code>base64_encode</code></td><td>`encoded = read(msg)</td></tr>
+<tr><td>编解码</td><td><code>base64_decode([EncodeType])</code></td><td>`decoded = read(msg)</td></tr>
+<tr><td>转义</td><td><code>html_escape</code></td><td>`safe = read(html)</td></tr>
+<tr><td>转义</td><td><code>html_unescape</code></td><td>`raw = read(html)</td></tr>
+<tr><td>转义</td><td><code>str_escape</code></td><td>`escaped = read(message)</td></tr>
+<tr><td>转义</td><td><code>json_escape</code></td><td>`escaped = read(text)</td></tr>
+<tr><td>转义</td><td><code>json_unescape</code></td><td>`raw = read(text)</td></tr>
+<tr><td>时间</td><td><code>Time::to_ts</code></td><td>`ts = read(time)</td></tr>
+<tr><td>时间</td><td><code>Time::to_ts_ms</code></td><td>`ts = read(time)</td></tr>
+<tr><td>时间</td><td><code>Time::to_ts_us</code></td><td>`ts = read(time)</td></tr>
+<tr><td>时间</td><td><code>Time::to_ts_zone(zone, unit)</code></td><td>`ts = read(time)</td></tr>
+<tr><td>转换</td><td><code>to_json</code></td><td>`payload = read(arr)</td></tr>
+<tr><td>转换</td><td><code>to_str</code></td><td>`ip_s = read(ip)</td></tr>
+<tr><td>转换</td><td><code>ip4_to_int</code></td><td>`ip_i = read(src_ip)</td></tr>
+<tr><td>提取</td><td>`path([name</td><td>path])`</td></tr>
+<tr><td>提取</td><td>`url([domain</td><td>host</td></tr>
+<tr><td>控制</td><td><code>skip_empty</code></td><td>`v = read(maybe_empty)</td></tr>
+<tr><td>文本</td><td><code>extract_main_word</code></td><td>`kw = read(msg)</td></tr>
+<tr><td>文本</td><td><code>extract_subject_object</code></td><td>`info = read(msg)</td></tr>
 </tbody>
 </table>
 </div>
 <hr>
-<h2 id="内置函数-1"><a class="header" href="#内置函数-1">内置函数</a></h2>
-<p>内置函数可以直接在赋值表达式中使用，无需 <code>pipe</code> 关键字。</p>
-<h3 id="calc"><a class="header" href="#calc">calc(…)</a></h3>
-<p>执行显式算术表达式。</p>
-<p><strong>语法</strong>：</p>
+<h2 id="内置表达式--内置函数-1"><a class="header" href="#内置表达式--内置函数-1">内置表达式 / 内置函数</a></h2>
+<h3 id="calc"><a class="header" href="#calc"><code>calc(...)</code></a></h3>
+<p>显式执行数值计算。</p>
+<p><strong>语法</strong></p>
 <pre><code class="language-oml">calc(&lt;expr&gt;)
 </code></pre>
-<p><strong>支持能力</strong>：</p>
+<p><strong>当前实现支持</strong></p>
 <ul>
 <li>运算符：<code>+ - * / %</code></li>
-<li>函数：<code>abs(...)</code>、<code>round(...)</code>、<code>floor(...)</code>、<code>ceil(...)</code></li>
+<li>一元负号：<code>-x</code></li>
+<li>括号分组</li>
+<li>数学函数：<code>abs(...)</code>、<code>round(...)</code>、<code>floor(...)</code>、<code>ceil(...)</code></li>
 <li>操作数：数值字面量、<code>read(...)</code>、<code>take(...)</code>、<code>@field</code></li>
 </ul>
-<p><strong>返回类型</strong>：</p>
+<p><strong>类型规则</strong></p>
 <ul>
-<li><code>+ - *</code>：若存在浮点操作数则返回 <code>float</code>，否则返回 <code>digit</code></li>
-<li><code>/</code>：始终返回 <code>float</code></li>
-<li><code>%</code>：仅支持整数取模，返回 <code>digit</code></li>
+<li><code>+ - *</code>：任一操作数为浮点时结果为 <code>float</code>，否则为 <code>digit</code></li>
+<li><code>/</code>：结果总是 <code>float</code></li>
+<li><code>%</code>：只接受整数操作数，结果为 <code>digit</code></li>
 </ul>
-<p><strong>失败行为</strong>：</p>
+<p><strong>失败行为</strong></p>
+<p>以下情况都会得到 <code>ignore</code>：</p>
 <ul>
-<li>除零、字段缺失、非数值输入、浮点 <code>%</code>、整数溢出、<code>NaN/inf</code> 都返回 <code>ignore</code></li>
+<li>除零</li>
+<li>字段缺失</li>
+<li>非数值输入</li>
+<li>整数溢出</li>
+<li><code>NaN</code> / <code>inf</code></li>
+<li>对浮点数使用 <code>%</code></li>
 </ul>
-<p><strong>示例</strong>：</p>
+<p><strong>示例</strong></p>
 <pre><code class="language-oml">risk_score : float = calc(read(cpu) * 0.7 + read(mem) * 0.3) ;
-delta      : digit = calc(read(cur) - read(prev)) ;
-distance   : float = calc(abs(read(actual) - read(expect))) ;
-error_pct  : digit = calc(round((read(err_cnt) * 100) / read(total_cnt))) ;
+delta : digit = calc(read(cur) - read(prev)) ;
+bucket : digit = calc(read(uid) % 16) ;
+error_pct : digit = calc(round((read(err_cnt) * 100) / read(total_cnt))) ;
 </code></pre>
+<p>更多说明见 <a href="./functions/calc.html">functions/calc.md</a>。</p>
 <hr>
-<h3 id="lookup_nocase"><a class="header" href="#lookup_nocase">lookup_nocase(…)</a></h3>
+<h3 id="lookup_nocase"><a class="header" href="#lookup_nocase"><code>lookup_nocase(...)</code></a></h3>
 <p>基于 <code>static</code> 中定义的 object 做忽略大小写查表。</p>
-<p><strong>语法</strong>：</p>
+<p><strong>语法</strong></p>
 <pre><code class="language-oml">lookup_nocase(&lt;dict_symbol&gt;, &lt;key_expr&gt;, &lt;default_expr&gt;)
 </code></pre>
-<p><strong>参数</strong>：</p>
+<p><strong>参数</strong></p>
 <ul>
-<li><code>dict_symbol</code>：<code>static</code> 中定义的 object 符号</li>
-<li><code>key_expr</code>：待查 key，通常是 <code>read(...)</code></li>
+<li><code>dict_symbol</code>：静态 object 的符号名</li>
+<li><code>key_expr</code>：待查 key，常见写法是 <code>read(status)</code></li>
 <li><code>default_expr</code>：未命中时返回的默认值</li>
 </ul>
-<p><strong>查表规则</strong>：</p>
+<p><strong>当前实现特点</strong></p>
 <ul>
-<li>key 会先做 <code>trim + lowercase</code></li>
-<li>命中后返回字典中的对应值</li>
-<li>未命中或 key 不是字符串时，返回 <code>default_expr</code></li>
+<li>第 1 个参数必须是静态符号名</li>
+<li>第 2、3 个参数可继续嵌套 <code>lookup_nocase</code>、<code>read/take</code>、无前缀 pipe、SQL 字面量、值字面量、<code>Now::*</code>、静态符号</li>
+<li>查找前会对 key 做 <code>trim + lowercase</code></li>
 </ul>
-<p><strong>示例</strong>：</p>
+<p><strong>示例</strong></p>
 <pre><code class="language-oml">static {
-    status_score = object {
+    score_map = object {
         error = float(90.0);
         warning = float(70.0);
         success = float(20.0);
     };
 }
 
-risk_score : float = lookup_nocase(status_score, read(status), 40.0) ;
+risk_score : float = lookup_nocase(score_map, read(status), 40.0) ;
 </code></pre>
-<p><strong>更多说明</strong>：</p>
-<ul>
-<li><code>iequals_any(...)</code> 详见 <a href="./functions/match_functions.html">functions/match_functions.md</a></li>
-<li><code>lookup_nocase(...)</code> 详见 <a href="./functions/lookup_nocase.html">functions/lookup_nocase.md</a></li>
-</ul>
+<p>更多说明见 <a href="./functions/lookup_nocase.html">functions/lookup_nocase.md</a>。</p>
 <hr>
-<h3 id="nowtime"><a class="header" href="#nowtime">Now::time()</a></h3>
-<p>获取当前时间。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">Now::time()
-</code></pre>
-<p><strong>参数</strong>：无</p>
-<p><strong>返回类型</strong>：<code>time</code></p>
-<p><strong>示例</strong>：</p>
+<h3 id="nowtime"><a class="header" href="#nowtime"><code>Now::time()</code></a></h3>
+<p>返回当前时间。</p>
 <pre><code class="language-oml">event_time : time = Now::time() ;
-# 输出：2024-01-15 14:30:45
 </code></pre>
 <hr>
-<h3 id="nowdate"><a class="header" href="#nowdate">Now::date()</a></h3>
-<p>获取当前日期，格式为 <code>YYYYMMDD</code> 的整数。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">Now::date()
-</code></pre>
-<p><strong>参数</strong>：无</p>
-<p><strong>返回类型</strong>：<code>digit</code></p>
-<p><strong>示例</strong>：</p>
+<h3 id="nowdate"><a class="header" href="#nowdate"><code>Now::date()</code></a></h3>
+<p>返回当前日期，格式为 <code>YYYYMMDD</code>。</p>
 <pre><code class="language-oml">today : digit = Now::date() ;
-# 输出：20240115
 </code></pre>
 <hr>
-<h3 id="nowhour"><a class="header" href="#nowhour">Now::hour()</a></h3>
-<p>获取当前时间精确到小时，格式为 <code>YYYYMMDDHH</code> 的整数。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">Now::hour()
-</code></pre>
-<p><strong>参数</strong>：无</p>
-<p><strong>返回类型</strong>：<code>digit</code></p>
-<p><strong>示例</strong>：</p>
+<h3 id="nowhour"><a class="header" href="#nowhour"><code>Now::hour()</code></a></h3>
+<p>返回当前小时，格式为 <code>YYYYMMDDHH</code>。</p>
 <pre><code class="language-oml">current_hour : digit = Now::hour() ;
-# 输出：2024011514
 </code></pre>
 <hr>
 <h2 id="管道函数-1"><a class="header" href="#管道函数-1">管道函数</a></h2>
-<p>管道函数通过 <code>pipe</code> 关键字和 <code>|</code> 操作符链式调用（<code>pipe</code> 关键字可省略）。</p>
-<p><strong>基本语法</strong>：</p>
-<pre><code class="language-oml"># 使用 pipe 关键字
-result = pipe read(field) | function1 | function2(param) ;
-
-# 省略 pipe 关键字
+<h3 id="基本写法"><a class="header" href="#基本写法">基本写法</a></h3>
+<pre><code class="language-oml">result = pipe read(field) | function1 | function2(param) ;
 result = read(field) | function1 | function2(param) ;
 </code></pre>
-<hr>
-<h2 id="编码函数"><a class="header" href="#编码函数">编码函数</a></h2>
-<h3 id="base64_encode"><a class="header" href="#base64_encode">base64_encode</a></h3>
-<p>将字符串进行 Base64 编码。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">| base64_encode
-</code></pre>
-<p><strong>参数</strong>：无</p>
-<p><strong>输入类型</strong>：<code>chars</code>
-<strong>输出类型</strong>：<code>chars</code></p>
-<p><strong>示例</strong>：</p>
-<pre><code class="language-oml">encoded = read(payload) | base64_encode ;
-# 输入："Hello, OML!"
-# 输出："SGVsbG8sIE9NTCE="
-</code></pre>
-<hr>
-<h3 id="base64_decode"><a class="header" href="#base64_decode">base64_decode</a></h3>
-<p>将 Base64 编码的字符串解码。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">| base64_decode
-| base64_decode(&lt;encoding&gt;)
-</code></pre>
-<p><strong>参数</strong>：</p>
+<p>管道起点当前必须是：</p>
 <ul>
-<li><code>encoding</code>（可选）：字符编码类型，默认为 <code>Utf8</code></li>
+<li><code>read(...)</code></li>
+<li><code>take(...)</code></li>
+<li><code>@field</code></li>
 </ul>
-<p><strong>支持的编码</strong>：</p>
-<ul>
-<li><code>Utf8</code> - UTF-8 编码（默认）</li>
-<li><code>Gbk</code> - GBK 中文编码</li>
-<li><code>Imap</code> - IMAP Base64 变体（将非 ASCII 字节转义为 <code>\xNN</code> 格式）</li>
-<li>更多编码请参阅源码文档</li>
-</ul>
-<p><strong>输入类型</strong>：<code>chars</code>
-<strong>输出类型</strong>：<code>chars</code></p>
-<p><strong>示例</strong>：</p>
-<pre><code class="language-oml"># 标准 UTF-8 解码
-decoded = read(data) | base64_decode ;
-# 输入："SGVsbG8sIE9NTCE="
-# 输出："Hello, OML!"
-
-# GBK 中文解码
-gbk_text = read(gbk_data) | base64_decode(Gbk) ;
-
-# IMAP 变体解码（处理二进制数据）
-raw = read(binary_data) | base64_decode(Imap) ;
-</code></pre>
+<p>不能直接把裸标识符当作无前缀管道起点。</p>
 <hr>
-<h2 id="转义函数"><a class="header" href="#转义函数">转义函数</a></h2>
-<h3 id="html_escape"><a class="header" href="#html_escape">html_escape</a></h3>
-<p>对 HTML 特殊字符进行转义。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">| html_escape
-</code></pre>
-<p><strong>参数</strong>：无</p>
-<p><strong>转义规则</strong>：</p>
-<ul>
-<li><code>&lt;</code> → <code>&amp;lt;</code></li>
-<li><code>&gt;</code> → <code>&amp;gt;</code></li>
-<li><code>&amp;</code> → <code>&amp;amp;</code></li>
-<li><code>"</code> → <code>&amp;quot;</code></li>
-<li><code>'</code> → <code>&amp;#x27;</code></li>
-</ul>
-<p><strong>输入类型</strong>：<code>chars</code>
-<strong>输出类型</strong>：<code>chars</code></p>
-<p><strong>示例</strong>：</p>
-<pre><code class="language-oml">safe_html = read(user_input) | html_escape ;
-# 输入："&lt;script&gt;alert('xss')&lt;/script&gt;"
-# 输出："&amp;lt;script&amp;gt;alert(&amp;#x27;xss&amp;#x27;)&amp;lt;/script&amp;gt;"
-</code></pre>
-<hr>
-<h3 id="html_unescape"><a class="header" href="#html_unescape">html_unescape</a></h3>
-<p>将 HTML 实体还原为原始字符。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">| html_unescape
-</code></pre>
-<p><strong>参数</strong>：无</p>
-<p><strong>输入类型</strong>：<code>chars</code>
-<strong>输出类型</strong>：<code>chars</code></p>
-<p><strong>示例</strong>：</p>
-<pre><code class="language-oml">original = read(escaped_html) | html_unescape ;
-# 输入："&amp;lt;div&amp;gt;Hello&amp;lt;/div&amp;gt;"
-# 输出："&lt;div&gt;Hello&lt;/div&gt;"
-</code></pre>
-<hr>
-<h3 id="json_escape"><a class="header" href="#json_escape">json_escape</a></h3>
-<p>对 JSON 字符串中的特殊字符进行转义。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">| json_escape
-</code></pre>
-<p><strong>参数</strong>：无</p>
-<p><strong>输入类型</strong>：<code>chars</code>
-<strong>输出类型</strong>：<code>chars</code></p>
-<p><strong>示例</strong>：</p>
-<pre><code class="language-oml">json_safe = read(text) | json_escape ;
-# 转义引号、反斜杠、换行符等 JSON 特殊字符
-</code></pre>
-<hr>
-<h3 id="json_unescape"><a class="header" href="#json_unescape">json_unescape</a></h3>
-<p>将 JSON 转义序列还原为原始字符。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">| json_unescape
-</code></pre>
-<p><strong>参数</strong>：无</p>
-<p><strong>输入类型</strong>：<code>chars</code>
-<strong>输出类型</strong>：<code>chars</code></p>
-<p><strong>示例</strong>：</p>
-<pre><code class="language-oml">original = read(escaped_json) | json_unescape ;
-# 还原 \n、\t、\"等转义序列
-</code></pre>
-<hr>
-<h3 id="str_escape"><a class="header" href="#str_escape">str_escape</a></h3>
-<p>对字符串中的特殊字符进行转义（主要是引号和反斜杠）。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">| str_escape
-</code></pre>
-<p><strong>参数</strong>：无</p>
-<p><strong>输入类型</strong>：<code>chars</code>
-<strong>输出类型</strong>：<code>chars</code></p>
-<p><strong>示例</strong>：</p>
-<pre><code class="language-oml">escaped = read(raw_string) | str_escape ;
-# 输入：'hello"world'
-# 输出：'hello\"world'
-</code></pre>
-<hr>
-<h2 id="时间函数"><a class="header" href="#时间函数">时间函数</a></h2>
-<h3 id="timeto_ts"><a class="header" href="#timeto_ts">Time::to_ts</a></h3>
-<p>将时间转换为 Unix 时间戳（秒），使用 UTC+8 时区。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">| Time::to_ts
-</code></pre>
-<p><strong>参数</strong>：无</p>
-<p><strong>输入类型</strong>：<code>time</code>
-<strong>输出类型</strong>：<code>digit</code></p>
-<p><strong>示例</strong>：</p>
-<pre><code class="language-oml">timestamp = read(occur_time) | Time::to_ts ;
-# 输入：2024-01-15 14:30:00
-# 输出：1705304400（UTC+8）
-</code></pre>
-<hr>
-<h3 id="timeto_ts_ms"><a class="header" href="#timeto_ts_ms">Time::to_ts_ms</a></h3>
-<p>将时间转换为 Unix 时间戳（毫秒），使用 UTC+8 时区。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">| Time::to_ts_ms
-</code></pre>
-<p><strong>参数</strong>：无</p>
-<p><strong>输入类型</strong>：<code>time</code>
-<strong>输出类型</strong>：<code>digit</code></p>
-<p><strong>示例</strong>：</p>
-<pre><code class="language-oml">timestamp_ms = read(occur_time) | Time::to_ts_ms ;
-# 输入：2024-01-15 14:30:00
-# 输出：1705304400000
-</code></pre>
-<hr>
-<h3 id="timeto_ts_us"><a class="header" href="#timeto_ts_us">Time::to_ts_us</a></h3>
-<p>将时间转换为 Unix 时间戳（微秒），使用 UTC+8 时区。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">| Time::to_ts_us
-</code></pre>
-<p><strong>参数</strong>：无</p>
-<p><strong>输入类型</strong>：<code>time</code>
-<strong>输出类型</strong>：<code>digit</code></p>
-<p><strong>示例</strong>：</p>
-<pre><code class="language-oml">timestamp_us = read(occur_time) | Time::to_ts_us ;
-# 输入：2024-01-15 14:30:00
-# 输出：1705304400000000
-</code></pre>
-<hr>
-<h3 id="timeto_ts_zone"><a class="header" href="#timeto_ts_zone">Time::to_ts_zone</a></h3>
-<p>将时间转换为指定时区的 Unix 时间戳。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">| Time::to_ts_zone(&lt;timezone_offset&gt;, &lt;unit&gt;)
-</code></pre>
-<p><strong>参数</strong>：</p>
-<ul>
-<li><code>timezone_offset</code>：时区偏移（小时）
-<ul>
-<li><code>0</code>：UTC</li>
-<li><code>8</code>：UTC+8（北京时间）</li>
-<li><code>-5</code>：UTC-5（美东时间）</li>
-</ul>
-</li>
-<li><code>unit</code>：时间戳单位
-<ul>
-<li><code>s</code> 或 <code>ss</code>：秒</li>
-<li><code>ms</code>：毫秒</li>
-<li><code>us</code>：微秒</li>
-</ul>
-</li>
-</ul>
-<p><strong>输入类型</strong>：<code>time</code>
-<strong>输出类型</strong>：<code>digit</code></p>
-<p><strong>示例</strong>：</p>
-<pre><code class="language-oml"># UTC 时间戳（秒）
-utc_ts = read(occur_time) | Time::to_ts_zone(0, s) ;
-
-# UTC+8 时间戳（毫秒）
-beijing_ts_ms = read(occur_time) | Time::to_ts_zone(8, ms) ;
-
-# UTC-5 时间戳（秒）
-eastern_ts = read(occur_time) | Time::to_ts_zone(-5, ss) ;
-
-# UTC 时间戳（微秒）
-utc_ts_us = read(occur_time) | Time::to_ts_zone(0, us) ;
-</code></pre>
-<hr>
-<h2 id="数据访问函数"><a class="header" href="#数据访问函数">数据访问函数</a></h2>
-<h3 id="nth"><a class="header" href="#nth">nth</a></h3>
-<p>获取数组中指定索引的元素。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">| nth(&lt;index&gt;)
-</code></pre>
-<p><strong>参数</strong>：</p>
-<ul>
-<li><code>index</code>：数组索引（从 0 开始）</li>
-</ul>
-<p><strong>输入类型</strong>：<code>array</code>
-<strong>输出类型</strong>：元素类型</p>
-<p><strong>示例</strong>：</p>
+<h2 id="访问类"><a class="header" href="#访问类">访问类</a></h2>
+<h3 id="nthindex"><a class="header" href="#nthindex"><code>nth(index)</code></a></h3>
+<p>读取数组中的第 <code>index</code> 个元素。</p>
 <pre><code class="language-oml">first_item = read(items) | nth(0) ;
-second_item = read(items) | nth(1) ;
-# 输入：[10, 20, 30]
-# nth(0) 输出：10
-# nth(1) 输出：20
+</code></pre>
+<h3 id="getname"><a class="header" href="#getname"><code>get(name)</code></a></h3>
+<p>从对象或嵌套结构中按键读取值；参数由实现里的 <code>take_key</code> 解析，因此常见的路径样式如 <code>a/b/c</code> 也可直接写入。</p>
+<pre><code class="language-oml">status = read(obj) | get(status) ;
+nested = read(obj) | get(one/two) ;
+</code></pre>
+<h3 id="pathnamepath"><a class="header" href="#pathnamepath"><code>path([name|path])</code></a></h3>
+<p>提取路径中的指定部分。</p>
+<pre><code class="language-oml">file_name = read(file_path) | path(name) ;
+dir_path = read(file_path) | path(path) ;
+</code></pre>
+<h3 id="urldomainhosturipathparams"><a class="header" href="#urldomainhosturipathparams"><code>url([domain|host|uri|path|params])</code></a></h3>
+<p>提取 URL 中的指定部分。</p>
+<pre><code class="language-oml">host = read(url) | url(host) ;
+path_only = read(url) | url(path) ;
+query = read(url) | url(params) ;
 </code></pre>
 <hr>
-<h3 id="get"><a class="header" href="#get">get</a></h3>
-<p>获取对象中指定键的值。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">| get(&lt;key&gt;)
+<h2 id="条件--映射类"><a class="header" href="#条件--映射类">条件 / 映射类</a></h2>
+<h3 id="starts_withprefix"><a class="header" href="#starts_withprefix"><code>starts_with('prefix')</code></a></h3>
+<p>仅当输入字符串以前缀开头时保留原值，否则返回 <code>ignore</code>。</p>
+<pre><code class="language-oml">https_only = read(url) | starts_with('https://') ;
 </code></pre>
-<p><strong>参数</strong>：</p>
+<h3 id="map_tovalue"><a class="header" href="#map_tovalue"><code>map_to(value)</code></a></h3>
+<p>将非 <code>ignore</code> 输入映射成一个固定值。</p>
+<p>参数类型当前支持：</p>
 <ul>
-<li><code>key</code>：对象的字段名</li>
+<li><code>bool</code></li>
+<li>整数</li>
+<li>浮点数</li>
+<li>单引号字符串</li>
 </ul>
-<p><strong>输入类型</strong>：<code>obj</code>
-<strong>输出类型</strong>：字段值类型</p>
-<p><strong>示例</strong>：</p>
-<pre><code class="language-oml"># 获取对象的字段
-name = read(user) | get(name) ;
-
-# 链式调用
-first_name = read(users) | nth(0) | get(name) ;
-# 输入：[{"name": "John", "age": 30}, {"name": "Jane", "age": 25}]
-# 输出："John"
+<pre><code class="language-oml">is_error = read(level) | starts_with('ERROR') | map_to(true) ;
+bucket = read(status) | starts_with('5') | map_to(500) ;
 </code></pre>
 <hr>
-<h3 id="path"><a class="header" href="#path">path</a></h3>
-<p>从文件路径中提取指定部分。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">| path(&lt;part&gt;)
+<h2 id="编解码--转义类"><a class="header" href="#编解码--转义类">编解码 / 转义类</a></h2>
+<h3 id="base64_encode"><a class="header" href="#base64_encode"><code>base64_encode</code></a></h3>
+<pre><code class="language-oml">encoded = read(message) | base64_encode ;
 </code></pre>
-<p><strong>参数</strong>：</p>
+<h3 id="base64_decodeencodetype"><a class="header" href="#base64_decodeencodetype"><code>base64_decode([EncodeType])</code></a></h3>
+<p>括号参数可省略；省略时默认按 <code>Utf8</code> 处理。</p>
+<pre><code class="language-oml">decoded = read(payload) | base64_decode() ;
+decoded_gbk = read(payload) | base64_decode(Gbk) ;
+</code></pre>
+<p><code>EncodeType</code> 以实现中的枚举为准，常见值包括 <code>Utf8</code>、<code>Gbk</code>、<code>Ascii</code>、<code>Imap</code> 等。</p>
+<h3 id="html_escape"><a class="header" href="#html_escape"><code>html_escape</code></a></h3>
+<pre><code class="language-oml">safe_html = read(raw_html) | html_escape ;
+</code></pre>
+<h3 id="html_unescape"><a class="header" href="#html_unescape"><code>html_unescape</code></a></h3>
+<pre><code class="language-oml">raw_html = read(encoded_html) | html_unescape ;
+</code></pre>
+<h3 id="str_escape"><a class="header" href="#str_escape"><code>str_escape</code></a></h3>
+<pre><code class="language-oml">escaped = read(message) | str_escape ;
+</code></pre>
+<h3 id="json_escape"><a class="header" href="#json_escape"><code>json_escape</code></a></h3>
+<pre><code class="language-oml">escaped = read(message) | json_escape ;
+</code></pre>
+<h3 id="json_unescape"><a class="header" href="#json_unescape"><code>json_unescape</code></a></h3>
+<pre><code class="language-oml">raw = read(message) | json_unescape ;
+</code></pre>
+<hr>
+<h2 id="时间转换类"><a class="header" href="#时间转换类">时间转换类</a></h2>
+<h3 id="timeto_ts"><a class="header" href="#timeto_ts"><code>Time::to_ts</code></a></h3>
+<p>转为秒级时间戳。</p>
+<pre><code class="language-oml">ts = read(event_time) | Time::to_ts ;
+</code></pre>
+<h3 id="timeto_ts_ms"><a class="header" href="#timeto_ts_ms"><code>Time::to_ts_ms</code></a></h3>
+<p>转为毫秒级时间戳。</p>
+<pre><code class="language-oml">ts = read(event_time) | Time::to_ts_ms ;
+</code></pre>
+<h3 id="timeto_ts_us"><a class="header" href="#timeto_ts_us"><code>Time::to_ts_us</code></a></h3>
+<p>转为微秒级时间戳。</p>
+<pre><code class="language-oml">ts = read(event_time) | Time::to_ts_us ;
+</code></pre>
+<h3 id="timeto_ts_zonezone-unit"><a class="header" href="#timeto_ts_zonezone-unit"><code>Time::to_ts_zone(zone, unit)</code></a></h3>
+<p>按指定时区和单位转换时间戳。</p>
+<p><code>unit</code> 当前支持：</p>
 <ul>
-<li><code>part</code>：要提取的部分
-<ul>
-<li><code>name</code>：文件名（含扩展名）</li>
-<li><code>path</code>：目录路径</li>
+<li><code>s</code></li>
+<li><code>ss</code></li>
+<li><code>ms</code></li>
+<li><code>us</code></li>
 </ul>
-</li>
-</ul>
-<p><strong>输入类型</strong>：<code>chars</code>
-<strong>输出类型</strong>：<code>chars</code></p>
-<p><strong>示例</strong>：</p>
-<pre><code class="language-oml"># 输入："C:\Users\test\file.txt"
-filename = read(file_path) | path(name) ;
-# 输出："file.txt"
-
-parent = read(file_path) | path(path) ;
-# 输出："C:/Users/test"
+<pre><code class="language-oml">utc_ms = read(event_time) | Time::to_ts_zone(0, ms) ;
+local_s = read(event_time) | Time::to_ts_zone(8, s) ;
 </code></pre>
 <hr>
-<h3 id="url"><a class="header" href="#url">url</a></h3>
-<p>从 URL 中提取指定部分。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">| url(&lt;part&gt;)
+<h2 id="转换--控制类"><a class="header" href="#转换--控制类">转换 / 控制类</a></h2>
+<h3 id="to_json"><a class="header" href="#to_json"><code>to_json</code></a></h3>
+<pre><code class="language-oml">payload = read(arr) | to_json ;
 </code></pre>
-<p><strong>参数</strong>：</p>
+<h3 id="to_str"><a class="header" href="#to_str"><code>to_str</code></a></h3>
+<pre><code class="language-oml">ip_text = read(src_ip) | to_str ;
+</code></pre>
+<h3 id="ip4_to_int"><a class="header" href="#ip4_to_int"><code>ip4_to_int</code></a></h3>
+<pre><code class="language-oml">ip_num = read(src_ip) | ip4_to_int ;
+</code></pre>
+<h3 id="skip_empty"><a class="header" href="#skip_empty"><code>skip_empty</code></a></h3>
+<p>空字符串时返回 <code>ignore</code>，否则透传原值。</p>
+<pre><code class="language-oml">city = read(city) | skip_empty ;
+</code></pre>
+<hr>
+<h2 id="文本抽取类"><a class="header" href="#文本抽取类">文本抽取类</a></h2>
+<h3 id="extract_main_word"><a class="header" href="#extract_main_word"><code>extract_main_word</code></a></h3>
+<p>从文本中提取主词。</p>
+<pre><code class="language-oml">keyword = read(message) | extract_main_word ;
+</code></pre>
+<h3 id="extract_subject_object"><a class="header" href="#extract_subject_object"><code>extract_subject_object</code></a></h3>
+<p>从文本中提取主客体结构。</p>
+<pre><code class="language-oml">summary = read(message) | extract_subject_object ;
+</code></pre>
+<hr>
+<h2 id="相关文档"><a class="header" href="#相关文档">相关文档</a></h2>
 <ul>
-<li><code>part</code>：要提取的部分
-<ul>
-<li><code>domain</code>：域名（不含端口）</li>
-<li><code>host</code>：主机（含端口）</li>
-<li><code>path</code>：路径</li>
-<li><code>uri</code>：完整 URI（路径 + 查询 + 片段）</li>
-<li><code>params</code>：查询参数</li>
-</ul>
-</li>
-</ul>
-<p><strong>输入类型</strong>：<code>chars</code>
-<strong>输出类型</strong>：<code>chars</code></p>
-<p><strong>示例</strong>：</p>
-<pre><code class="language-oml"># 输入："https://api.example.com:8080/v1/users?id=1&amp;type=admin#section"
-
-domain = read(http_url) | url(domain) ;
-# 输出："api.example.com"
-
-host = read(http_url) | url(host) ;
-# 输出："api.example.com:8080"
-
-path = read(http_url) | url(path) ;
-# 输出："/v1/users"
-
-uri = read(http_url) | url(uri) ;
-# 输出："/v1/users?id=1&amp;type=admin#section"
-
-params = read(http_url) | url(params) ;
-# 输出："id=1&amp;type=admin"
-</code></pre>
-<hr>
-<h3 id="sxf_get"><a class="header" href="#sxf_get">sxf_get</a></h3>
-<p>从特殊格式的文本中提取字段值。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">| sxf_get(&lt;field_name&gt;)
-</code></pre>
-<p><strong>参数</strong>：</p>
-<ul>
-<li><code>field_name</code>：要提取的字段名</li>
-</ul>
-<p><strong>输入类型</strong>：<code>chars</code>
-<strong>输出类型</strong>：<code>chars</code></p>
-<p><strong>示例</strong>：</p>
-<pre><code class="language-oml"># 从格式化文本中提取字段
-status = read(log_line) | sxf_get(statusCode) ;
-username = read(log_line) | sxf_get(username) ;
-</code></pre>
-<hr>
-<h2 id="转换函数"><a class="header" href="#转换函数">转换函数</a></h2>
-<h3 id="to_str"><a class="header" href="#to_str">to_str</a></h3>
-<p>将值转换为字符串。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">| to_str
-</code></pre>
-<p><strong>参数</strong>：无</p>
-<p><strong>输入类型</strong>：任意类型
-<strong>输出类型</strong>：<code>chars</code></p>
-<p><strong>示例</strong>：</p>
-<pre><code class="language-oml">ip_str = read(src_ip) | to_str ;
-# 输入：192.168.1.100（IP 类型）
-# 输出："192.168.1.100"
-
-num_str = read(count) | to_str ;
-# 输入：42（digit 类型）
-# 输出："42"
-</code></pre>
-<hr>
-<h3 id="to_json"><a class="header" href="#to_json">to_json</a></h3>
-<p>将值转换为 JSON 字符串。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">| to_json
-</code></pre>
-<p><strong>参数</strong>：无</p>
-<p><strong>输入类型</strong>：任意类型
-<strong>输出类型</strong>：<code>chars</code></p>
-<p><strong>示例</strong>：</p>
-<pre><code class="language-oml"># 数组转 JSON
-ports_json = read(ports) | to_json ;
-# 输入：[80, 443]
-# 输出："[80,443]"
-
-# 对象转 JSON
-user_json = read(user) | to_json ;
-# 输入：{name: "John", age: 30}
-# 输出：'{"name":"John","age":30}'
-</code></pre>
-<hr>
-<h3 id="ip4_to_int"><a class="header" href="#ip4_to_int">ip4_to_int</a></h3>
-<p>将 IPv4 地址转换为整数。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">| ip4_to_int
-</code></pre>
-<p><strong>参数</strong>：无</p>
-<p><strong>输入类型</strong>：<code>ip</code> 或 <code>chars</code>
-<strong>输出类型</strong>：<code>digit</code></p>
-<p><strong>示例</strong>：</p>
-<pre><code class="language-oml">ip_int = read(src_ip) | ip4_to_int ;
-# 输入：192.168.1.100
-# 输出：3232235876
-
-# 用于 IP 范围比较
-ip_int = read(src_ip) | ip4_to_int ;
-in_range = match read(ip_int) {
-    in (digit(3232235776), digit(3232236031)) =&gt; chars(True) ;
-    _ =&gt; chars(False) ;
-} ;
-</code></pre>
-<hr>
-<h2 id="控制函数"><a class="header" href="#控制函数">控制函数</a></h2>
-<h3 id="skip_empty"><a class="header" href="#skip_empty">skip_empty</a></h3>
-<p>如果输入值为空，则跳过该字段的输出。</p>
-<p><strong>语法</strong>：</p>
-<pre><code class="language-oml">| skip_empty
-</code></pre>
-<p><strong>参数</strong>：无</p>
-<p><strong>输入类型</strong>：任意类型
-<strong>输出类型</strong>：原类型或跳过</p>
-<p><strong>何时被视为“空“</strong>：</p>
-<ul>
-<li>空字符串 <code>""</code></li>
-<li>空数组 <code>[]</code></li>
-<li>数值 <code>0</code></li>
-<li>空对象 <code>{}</code></li>
-</ul>
-<p><strong>示例</strong>：</p>
-<pre><code class="language-oml"># 如果 optional_field 为空，则不输出 result 字段
-result = read(optional_field) | skip_empty ;
-
-# 常用于过滤空数组
-items = read(items_array) | skip_empty ;
-</code></pre>
-<hr>
-<hr>
-<h2 id="下一步"><a class="header" href="#下一步">下一步</a></h2>
-<ul>
-<li><strong><a href="./07-complete-example.html">🌟 完整功能示例</a></strong> - 查看所有功能的完整演示</li>
-<li><a href="./03-practical-guide.html">实战指南</a> - 查看实际应用场景</li>
-<li><a href="./02-core-concepts.html">核心概念</a> - 深入理解函数工作原理</li>
-<li><a href="./01-quickstart.html">快速入门</a> - 回顾基础用法</li>
-<li><a href="./06-grammar-reference.html">语法参考</a> - 查看完整语法定义</li>
+<li><a href="./06-grammar-reference.html">06-grammar-reference.md</a></li>
+<li><a href="./functions/function_index.html">functions/function_index.md</a></li>
+<li><a href="./functions/match_functions.html">functions/match_functions.md</a></li>
 </ul>
 
                     </main>
@@ -857,8 +510,7 @@ items = read(items_array) | skip_empty ;
         <script src="../../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
-        <script src="../../../theme/lang-switch.js"></script>
-        <script src="../../../theme/version-badge.js"></script>
+        <script src="../../theme/site-873a9fb6.js"></script>
         <script src="../../mermaid-eefea253.min.js"></script>
         <script src="../../mermaid-init-ccf746f1.js"></script>
 

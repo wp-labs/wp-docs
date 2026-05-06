@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="ayu sidebar-visible" dir="ltr">
+<html lang="en" class="light sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -28,19 +28,18 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../../../../theme/lang-switch.css">
-        <link rel="stylesheet" href="../../../../theme/version-badge.css">
+        <link rel="stylesheet" href="../../../theme/site-bbe802d7.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
             const path_to_root = "../../../";
-            const default_light_theme = "ayu";
+            const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../../searchindex-bab637e3.js";
+            window.path_to_searchindex_js = "../../../searchindex-edc6cbb1.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../../toc-6f276faf.js"></script>
+        <script src="../../../toc-d7a13aa9.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -78,7 +77,7 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
-            html.classList.remove('ayu')
+            html.classList.remove('light')
             html.classList.add(theme);
             html.classList.add("js");
         </script>
@@ -182,7 +181,7 @@
                         <h1 id="file-source"><a class="header" href="#file-source">File Source</a></h1>
 <p>This document provides detailed instructions on configuring and using file data sources in the Warp Parse system.</p>
 <h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
-<p>File sources are used to read data from the local file system, supporting multiple encoding formats and flexible path configuration.</p>
+<p>File sources read data from the local file system. Path configuration uses <code>base + file</code>, and only <code>file</code> supports wildcard patterns.</p>
 <h2 id="connector-definition"><a class="header" href="#connector-definition">Connector Definition</a></h2>
 <h3 id="basic-file-connector"><a class="header" href="#basic-file-connector">Basic File Connector</a></h3>
 <pre><code class="language-toml"># connectors/source.d/00-file-default.toml
@@ -198,7 +197,7 @@ encode = "text"
 </code></pre>
 <h2 id="supported-parameters"><a class="header" href="#supported-parameters">Supported Parameters</a></h2>
 <h3 id="path-configuration"><a class="header" href="#path-configuration">Path Configuration</a></h3>
-<h4 id="base--file-combination-recommended"><a class="header" href="#base--file-combination-recommended">base + file Combination (Recommended)</a></h4>
+<h4 id="base--file-combination-the-only-supported-path-form"><a class="header" href="#base--file-combination-the-only-supported-path-form">base + file Combination (The only supported path form)</a></h4>
 <pre><code class="language-toml">[[sources]]
 key = "file_composed"
 connect = "file_src"
@@ -207,6 +206,11 @@ connect = "file_src"
 base = "/var/log"
 file = "access.log"
 </code></pre>
+<blockquote>
+<p>The <code>path</code> parameter is no longer supported; use <code>base + file</code>.</p>
+<p><code>base</code> is a directory prefix and does not support wildcards.</p>
+<p><code>file</code> supports wildcard patterns such as <code>app-*.log</code>.</p>
+</blockquote>
 <h4 id="instances-multi-instance-parallel-reading"><a class="header" href="#instances-multi-instance-parallel-reading">instances (Multi-instance Parallel Reading)</a></h4>
 <pre><code class="language-toml">[[sources.params]]
 instances = 4   # 1-32, default is 1
@@ -252,6 +256,27 @@ connect = "file_src"
 base = "/var/log/nginx"
 file = "error.log"
 </code></pre>
+<h3 id="wildcard-sequential-reading"><a class="header" href="#wildcard-sequential-reading">Wildcard Sequential Reading</a></h3>
+<pre><code class="language-toml"># wpsrc.toml
+[[sources]]
+enable = true
+key = "nginx_shards"
+connect = "file_src"
+
+[[sources.params]]
+base = "/var/log/nginx"
+file = "access-*.log"
+</code></pre>
+<blockquote>
+<p>When <code>file</code> uses a wildcard pattern:</p>
+<ul>
+<li>files are expanded once at startup</li>
+<li>newly created files are not discovered incrementally</li>
+<li>matched files are processed one file at a time in file-name order</li>
+<li>if <code>instances = 1</code>, line order inside each file is preserved</li>
+<li>if <code>instances &gt; 1</code>, the current file is split into line-aligned ranges and read in parallel, so full in-file line order is not guaranteed</li>
+</ul>
+</blockquote>
 <h3 id="different-encoding-formats"><a class="header" href="#different-encoding-formats">Different Encoding Formats</a></h3>
 <pre><code class="language-toml"># Base64 encoded file
 [[sources]]
@@ -346,8 +371,7 @@ encode = "hex"
         <script src="../../../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
-        <script src="../../../../theme/lang-switch.js"></script>
-        <script src="../../../../theme/version-badge.js"></script>
+        <script src="../../../theme/site-873a9fb6.js"></script>
         <script src="../../../mermaid-eefea253.min.js"></script>
         <script src="../../../mermaid-init-ccf746f1.js"></script>
 

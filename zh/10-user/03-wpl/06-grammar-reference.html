@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
-<html lang="zh-CN" class="ayu sidebar-visible" dir="ltr">
+<html lang="zh-CN" class="light sidebar-visible" dir="ltr">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>WPL 语法参考（EBNF） - Warp Parse 文档</title>
+        <title>WPL 语法参考 - Warp Parse 文档</title>
 
 
         <!-- Custom HTML head -->
@@ -28,19 +28,18 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../../../theme/lang-switch.css">
-        <link rel="stylesheet" href="../../../theme/version-badge.css">
+        <link rel="stylesheet" href="../../theme/site-bbe802d7.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
             const path_to_root = "../../";
-            const default_light_theme = "ayu";
+            const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-ed04a91f.js";
+            window.path_to_searchindex_js = "../../searchindex-8cf7f7f0.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-536d74fd.js"></script>
+        <script src="../../toc-6c095515.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -78,7 +77,7 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
             if (theme === null || theme === undefined) { theme = default_theme; }
             const html = document.documentElement;
-            html.classList.remove('ayu')
+            html.classList.remove('light')
             html.classList.add(theme);
             html.classList.add("js");
         </script>
@@ -179,404 +178,296 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="wpl-语法参考ebnf"><a class="header" href="#wpl-语法参考ebnf">WPL 语法参考（EBNF）</a></h1>
-<p>本文档提供 WPL 的形式化语法定义，适合：</p>
+                        <h1 id="wpl-语法参考对齐-srcparser"><a class="header" href="#wpl-语法参考对齐-srcparser">WPL 语法参考（对齐 <code>src/parser</code>）</a></h1>
+<p>本文档按 <code>wp-lang/src/parser</code> 的当前实现整理，重点说明：</p>
 <ul>
-<li>编译器/解析器开发者</li>
-<li>精确理解语法规则</li>
-<li>工具集成开发</li>
+<li>包、规则、表达式的真实语法入口</li>
+<li>组、字段、分隔符、字段管道的组合顺序</li>
+<li>解析器当前支持的约束和限制</li>
 </ul>
-<p><strong>普通用户请参考：</strong></p>
+<p>权威实现位置：</p>
 <ul>
-<li>快速入门：<a href="./01-quickstart.html">01-quickstart.md</a></li>
-<li>核心概念：<a href="./02-core-concepts.html">02-core-concepts.md</a></li>
-<li>实战指南：<a href="./03-practical-guide.html">03-practical-guide.md</a></li>
-<li>语言参考：<a href="./04-language-reference.html">04-language-reference.md</a></li>
+<li><code>src/parser/wpl_pkg.rs</code></li>
+<li><code>src/parser/wpl_rule.rs</code></li>
+<li><code>src/parser/parse_code.rs</code></li>
+<li><code>src/parser/wpl_group.rs</code></li>
+<li><code>src/parser/wpl_field.rs</code></li>
+<li><code>src/parser/wpl_fun.rs</code></li>
 </ul>
 <hr>
-<h2 id="-文档导航"><a class="header" href="#-文档导航">📑 文档导航</a></h2>
+<h2 id="文档导航"><a class="header" href="#文档导航">文档导航</a></h2>
 <div class="table-wrapper">
 <table>
 <thead>
 <tr><th>章节</th><th>说明</th></tr>
 </thead>
 <tbody>
-<tr><td><a href="#完整-ebnf-定义">完整 EBNF 定义</a></td><td>形式化语法定义</td></tr>
-<tr><td><a href="#语义说明">语义说明</a></td><td>语法规则的语义解释</td></tr>
-<tr><td><a href="#实现参考">实现参考</a></td><td>源代码位置</td></tr>
+<tr><td><a href="#完整-ebnf">完整 EBNF</a></td><td>以当前解析器行为为准的语法摘要</td></tr>
+<tr><td><a href="#实现约束">实现约束</a></td><td>当前 parser/eval 的关键限制</td></tr>
+<tr><td><a href="#相关实现">相关实现</a></td><td>对应源码位置</td></tr>
 </tbody>
 </table>
 </div>
 <hr>
-<h2 id="完整-ebnf-定义"><a class="header" href="#完整-ebnf-定义">完整 EBNF 定义</a></h2>
-<p>权威实现以当前仓库中的 <code>src/parser/</code> 解析器为准；此处与源代码保持同步。</p>
-<pre><code class="language-ebnf">; WPL 语法（EBNF）
-; 基于当前仓库 src/parser 下解析实现（winnow）整理
-; 说明：本文件给出语法产生式与必要的词法约定。除显式标注外，token 之间允许可选空白 `ws`。
+<h2 id="完整-ebnf"><a class="header" href="#完整-ebnf">完整 EBNF</a></h2>
+<pre><code class="language-ebnf">; 顶层通常从 package 开始；某些内部 API 也允许单独解析 rule / express
 
-wpl_document     = { package_decl } ;
+package_decl     = [ annotation ] "package" wsp1 key wsp? "{" wsp? rule_decl+ wsp? "}" ;
+rule_decl        = [ annotation ] "rule" wsp? exact_path wsp? "{" wsp? express wsp? "}" ;
 
-package_decl     = [ annotation ] "package" ws? ident ws? "{" ws? rule_decl+ ws? "}" ;
+express          = [ preproc ] group { wsp? "," wsp? group } ;
 
-rule_decl        = [ annotation ] "rule" ws? rule_name ws? "{" ws? statement ws? "}" ;
+; 预处理管道：至少一个步骤，并且必须以 '|' 结尾
+preproc          = preproc_item { preproc_item } "|" ;
+preproc_item     = "|" wsp? preproc_step wsp? ;
+preproc_step     = key
+                 | "plg_pipe" ( "/" wsp? key | "(" wsp? key wsp? ")" ) ;
 
-statement        = plg_pipe_block | express ;
+group            = [ group_meta wsp? ] "(" wsp? field_list_opt wsp? ")"
+                   [ "[" number "]" ]
+                   [ group_sep ] ;
 
-plg_pipe_block   = ["@"]? "plg_pipe" ws? "(" ws? "id" ws? ":" ws? key ws? ")" ws? "{" ws? express ws? "}" ;
-
-express          = [ preproc ] group { ws? "," ws? group } ;
-
-preproc          = "|" ws? preproc_step { ws? "|" ws? preproc_step } ws? "|" ;   ; 至少一个步骤，且以 '|' 结尾
-preproc_step     = builtin_preproc | plg_pipe_step ;
-builtin_preproc  = ns "/" name ;
-plg_pipe_step    = "plg_pipe" ws? "/" ws? key ;                   ; 通过注册表查找自定义扩展
-ns               = "decode" | "unquote" | "strip" ;              ; 命名空间白名单
-name             = ("base64" | "hex") | "unescape" | "bom" ;     ; 步骤名白名单
-; 支持的预处理器：
-;   decode/base64 - Base64 解码
-;   decode/hex - 十六进制解码
-;   unquote/unescape - URL 转义解码
-;   strip/bom - 移除 BOM（字节顺序标记）
-
-group            = [ group_meta ] ws? "(" ws? field_list_opt ws? ")" [ ws? group_len ] [ ws? group_sep ] ;
 group_meta       = "alt" | "opt" | "some_of" | "seq" | "not" ;
-group_len        = "[" number "]" ;
-group_sep        = sep ;
+group_sep        = shortcut_sep ;    ; 当前组级分隔符只支持 `\x` 风格，不支持 `{...}` 模式分隔符
 
-; 列表：允许空、允许尾随逗号
-field_list_opt   = [ field { ws? "," ws? field } [ ws? "," ] ] ;
+field_list_opt   = [ field { wsp? "," wsp? field } [ wsp? "," ] ] ;
 
-field            = [ repeat ] data_type [ symbol_content ]
-                   [ subfields ]
-                   [ ":" ws? var_name ]
-                   [ length ]
-                   [ format ]
-                   [ sep ]
-                   { pipe } ;                              ; 允许多个管道
-
-repeat           = [ number ] "*" ;                        ; "*ip" 或 "3*ip"
-length           = "[" number "]" ;                       ; 仅顶层字段支持（子字段不支持）
-
-; 复合字段（如 kvarr/json 等）的子字段列表
-subfields        = "(" ws? subfields_opt ws? ")" ;
-subfields_opt    = [ subfield { ws? "," ws? subfield } [ ws? "," ] ] ;
-subfield         = [ opt_datatype | data_type ]
+field            = [ repeat ] meta_token
                    [ symbol_content ]
-                   [ "@" ref_path ]
-                   [ ":" ws? var_name ]
+                   [ subfields ]
+                   [ ":" wsp? var_name ]
+                   [ "[" number "]" ]
                    [ format ]
-                   [ sep ]
+                   [ field_sep ]
                    { pipe } ;
 
-opt_datatype     = "opt" "(" ws? data_type ws? ")" ;     ; 声明该子字段为可选
+repeat           = [ number ] "*" ;  ; `*meta` 或 `3*meta`
 
-; 字段数据类型（与外部 crate wp-model-core::DataType 对应）
-data_type        = builtin_type | ns_type | array_type ;
+; 复合字段（如 json/kv/kvarr）中的子字段定义
+subfields        = "(" wsp? subfield_list_opt wsp? ")" ;
+subfield_list_opt = [ subfield { wsp? "," wsp? subfield } [ wsp? "," ] ] ;
 
-builtin_type     = "auto" | "bool" | "chars" | "symbol" | "peek_symbol"
-                   | "digit" | "float" | "_" | "sn"
-                   | "time" | "time/clf" | "time_iso" | "time_3339" | "time_2822" | "time_timestamp"
-                   | "ip" | "ip_net" | "domain" | "email" | "port"
-                   | "hex" | "base64"
-                   | "kv" | "kvarr" | "json" | "exact_json"
-                   | "url"
-                   | "proto_text" | "obj"
-                   | "id_card" | "mobile_phone" ;
+subfield         = [ subfield_meta ]
+                   [ symbol_content ]
+                   [ "@" ref_path_or_quoted ]
+                   [ ":" wsp? var_name ]
+                   [ format ]
+                   [ field_sep ]
+                   { pipe } ;
 
-ns_type          = path_ident ;                               ; 例如 http/request、http/status 等
-; 注：实现层面建议对白名单前缀（如 "http/"）做校验，以避免任意路径膨胀语言面。
-; 支持的命名空间类型：
-;   http/request, http/status, http/agent (或 http/user_agent), http/method
-;   time/clf (或 time/apache, time/httpd, time/nginx)
-;   time/rfc3339 (别名 time_3339), time/rfc2822 (别名 time_2822)
-;   time/timestamp (或 time/epoch, 别名 time_timestamp)
-;   proto/text (别名 proto_text)
+subfield_meta    = meta_token | "opt" "(" wsp? key wsp? ")" ;
+; 若 subfield 未显式声明 meta，则默认是 chars
 
-array_type       = "array" [ "/" subtype ] ;                 ; 如："array" 或 "array/ip" 或 "array/chars"
-subtype          = key ;                                      ; 可以是任意已支持的类型名
+; meta_token 由实现中的 `resolve_meta()` 决定：
+; 1. `bad_json`
+; 2. 或 `wp_model_core::model::DataType::from(token)` 可识别的类型
+meta_token       = meta_char { meta_char } ;
 
-; 仅当 data_type 为 symbol/peek_symbol 时允许携带内容
+; 仅 symbol / peek_symbol 允许内容，例如 `symbol(OK)`
 symbol_content   = "(" symbol_chars ")" ;
 
-; 字段显示/抽取格式
-format           = scope_fmt | quote_fmt ;
-scope_fmt        = "&lt;" any_chars "," any_chars "&gt;" ;   ; 作用域首尾定界，如 &lt;[,]&gt;
-quote_fmt        = '"' ;                                ; 等价首尾均为 '"'
+format           = scope_format | quote_format ;
+scope_format     = "&lt;" scope_chars "," scope_chars "&gt;" ;
+quote_format     = '"' ;      ; 等价于首尾都用双引号
 
+field_sep        = shortcut_sep | pattern_sep ;
 
-; 分隔符（两种形式）
-sep              = shortcut_sep | pattern_sep ;
+shortcut_sep     = sep_char { sep_char } ;
+sep_char         = '\' any_char ;
 
-; 快捷分隔符：反斜杠转义的字符序列
-shortcut_sep     = sep_char , { sep_char } ;             ; 例："\\," =&gt; ","；"\\!\\|" =&gt; "!|"
-sep_char         = '\\' , any_char ;
-
-; 模式分隔符：花括号包裹的模式表达式
 pattern_sep      = "{" pattern_content "}" ;
-pattern_content  = glob_segments [ preserve ] ;
-glob_segments    = glob_segment { glob_segment } ;
-glob_segment     = literal_char | wildcard | escape_seq ;
+pattern_content  = pattern_unit { pattern_unit } [ preserve ] ;
+pattern_unit     = literal_char | wildcard | escape_seq ;
+wildcard         = "*" | "?" ;
+escape_seq       = '\' ( '\' | "*" | "?" | "{" | "}" | "(" | ")" | "s" | "S" | "h" | "H" | "0" | "n" | "t" | "r" ) ;
+preserve         = "(" pattern_unit { pattern_unit } ")" ;
 
-; 通配符
-wildcard         = "*" | "?" ;                          ; "*" - 零或多个任意字符（非贪婪）；"?" - 恰好一个任意字符
-; 约束：模式中 "*" 最多出现一次
+pipe             = "|" wsp? ( fun_call | group ) ;
 
-; 转义序列
-escape_seq       = "\\" ( special_char | macro_char ) ;
-special_char     = "\\" | "*" | "?" | "{" | "}" | "(" | ")" ;  ; 字面转义
-macro_char       = "s" | "S" | "h" | "H" | "0" | "n" | "t" | "r" ;  ; 宏字符
-; 支持的宏：
-;   \s - 一个或多个连续空白字符 [ \t\r\n]+
-;   \S - 一个或多个连续非空白字符 [^ \t\r\n]+
-;   \h - 一个或多个连续水平空白 [ \t]+
-;   \H - 一个或多个连续非水平空白 [^ \t]+
-;   \0 - 空字节
-;   \n - 换行
-;   \t - 制表符
-;   \r - 回车
+fun_call         = "take" "(" wsp? take_target wsp? ")"
+                 | "last" "(" wsp? ")"
+                 | "f_has" "(" wsp? key wsp? ")"
+                 | "f_chars_has" "(" wsp? key wsp? "," wsp? bare_string wsp? ")"
+                 | "f_chars_not_has" "(" wsp? key wsp? "," wsp? bare_string wsp? ")"
+                 | "f_chars_in" "(" wsp? key wsp? "," wsp? bare_string_array wsp? ")"
+                 | "f_digit_has" "(" wsp? key wsp? "," wsp? number wsp? ")"
+                 | "f_digit_in" "(" wsp? key wsp? "," wsp? number_array wsp? ")"
+                 | "f_ip_in" "(" wsp? key wsp? "," wsp? ip_array wsp? ")"
+                 | "has" "(" wsp? ")"
+                 | "chars_has" "(" wsp? bare_string wsp? ")"
+                 | "chars_not_has" "(" wsp? bare_string wsp? ")"
+                 | "chars_in" "(" wsp? bare_string_array wsp? ")"
+                 | "digit_has" "(" wsp? number wsp? ")"
+                 | "digit_in" "(" wsp? number_array wsp? ")"
+                 | "digit_range" "(" wsp? number wsp? "," wsp? number wsp? ")"
+                 | "ip_in" "(" wsp? ip_array wsp? ")"
+                 | "json_unescape" "(" wsp? ")"
+                 | "base64_decode" "(" wsp? ")"
+                 | "chars_replace" "(" wsp? string_or_quoted wsp? "," wsp? string_or_quoted wsp? ")"
+                 | "regex_match" "(" wsp? string_or_quoted wsp? ")"
+                 | "starts_with" "(" wsp? string_or_quoted wsp? ")"
+                 | "not" "(" wsp? fun_call wsp? ")" ;
 
-; 保留标记
-preserve         = "(" glob_segments ")" ;              ; 匹配但不消费，仅在模式末尾
-; 约束：
-;   1. preserve 只能出现在 pattern_content 的末尾
-;   2. preserve 内不允许包含 "*" 通配符
-;   3. preserve 不允许嵌套
+annotation       = "#[" wsp? annotation_item { wsp? "," wsp? annotation_item } wsp? "]" ;
+annotation_item  = tag_annotation | copy_raw_annotation ;
+tag_annotation   = "tag" "(" wsp? tag_kv { wsp? "," wsp? tag_kv } wsp? ")" ;
+copy_raw_annotation = "copy_raw" "(" wsp? tag_kv wsp? ")" ;
+tag_kv           = key wsp? ":" wsp? ( quoted_string | raw_string ) ;
 
-; 字面字符（非特殊字符的任意字符）
-literal_char     = any_char_except_special ;            ; 排除 '\', '*', '?', '{', '}', '(', ')' 的任意字符
+take_target      = key | quoted_string ;
+ref_path_or_quoted = ref_path | single_quoted_raw ;
 
-; 字段级管道：函数调用或嵌套分组
-pipe             = "|" ws? ( fun_call | group ) ;
+bare_string_array = "[" wsp? bare_string { wsp? "," wsp? bare_string } wsp? "]" ;
+number_array     = "[" wsp? number { wsp? "," wsp? number } wsp? "]" ;
+ip_array         = "[" wsp? ip_addr { wsp? "," wsp? ip_addr } wsp? "]" ;
 
-; 预置函数（wpl_fun.rs）：
-; - 选择器函数：take, last
-; - f_ 前缀表示字段集合操作（需指定字段名）
-; - 无前缀表示活跃字段操作
-; - 转换函数：json_unescape, base64_decode, chars_replace
-; - 包装器函数：not
-fun_call         = selector_fun | target_fun | active_fun | transform_fun | wrapper_fun ;
+key              = key_char { key_char } ;
+exact_path       = key ;
+var_name         = var_char { var_char } ;
+ref_path         = ref_char { ref_char } ;
 
-; 选择器函数
-selector_fun     = take_fun | last_fun ;
-take_fun         = "take" "(" ws? key ws? ")" ;
-last_fun         = "last" "(" ws? ")" ;
+quoted_string    = double_quoted | single_quoted ;
+raw_string       = 'r#"' { any_char } '"#' | 'r"' { any_char } '"' ;
+single_quoted_raw = "'" { single_raw_char } "'" ;
+string_or_quoted = bare_string | quoted_string ;
 
-; 字段集合操作函数（f_ 前缀）
-target_fun       = f_has | f_chars_has | f_chars_not_has | f_chars_in
-                 | f_digit_has | f_digit_in | f_ip_in ;
-f_has            = "f_has" "(" ws? key ws? ")" ;
-f_chars_has      = "f_chars_has" "(" ws? key ws? "," ws? path ws? ")" ;
-f_chars_not_has  = "f_chars_not_has" "(" ws? key ws? "," ws? path ws? ")" ;
-f_chars_in       = "f_chars_in" "(" ws? key ws? "," ws? path_array ws? ")" ;
-f_digit_has      = "f_digit_has" "(" ws? key ws? "," ws? number ws? ")" ;
-f_digit_in       = "f_digit_in" "(" ws? key ws? "," ws? number_array ws? ")" ;
-f_ip_in          = "f_ip_in" "(" ws? key ws? "," ws? ip_array ws? ")" ;
-
-; 活跃字段操作函数（无前缀）
-active_fun       = has_fun | chars_has | chars_not_has | chars_in | starts_with | regex_match
-                 | digit_has | digit_in | digit_range | ip_in ;
-has_fun          = "has" "(" ws? ")" ;
-chars_has        = "chars_has" "(" ws? path ws? ")" ;
-chars_not_has    = "chars_not_has" "(" ws? path ws? ")" ;
-chars_in         = "chars_in" "(" ws? path_array ws? ")" ;
-starts_with      = "starts_with" "(" ws? quoted_string ws? ")" ;
-regex_match      = "regex_match" "(" ws? quoted_string ws? ")" ;
-digit_has        = "digit_has" "(" ws? number ws? ")" ;
-digit_in         = "digit_in" "(" ws? number_array ws? ")" ;
-digit_range      = "digit_range" "(" ws? number ws? "," ws? number ws? ")" ;
-ip_in            = "ip_in" "(" ws? ip_array ws? ")" ;
-
-; 转换函数
-transform_fun    = json_unescape | base64_decode | chars_replace ;
-json_unescape    = "json_unescape" "(" ws? ")" ;
-base64_decode    = "base64_decode" "(" ws? ")" ;
-chars_replace    = "chars_replace" "(" ws? path ws? "," ws? path ws? ")" ;
-
-; 包装器函数
-wrapper_fun      = not_fun ;
-not_fun          = "not" "(" ws? fun_call ws? ")" ;
-
-path_array       = "[" ws? path { ws? "," ws? path } ws? "]" ;
-number_array     = "[" ws? number { ws? "," ws? number } ws? "]" ;
-ip_array         = "[" ws? ip_addr { ws? "," ws? ip_addr } ws? "]" ;
-
-annotation       = "#[" ws? ann_item { ws? "," ws? ann_item } ws? "]" ;
-ann_item         = tag_anno | copy_raw_anno ;
-tag_anno         = "tag" "(" ws? tag_kv { ws? "," ws? tag_kv } ws? ")" ;
-tag_kv           = ident ":" ( quoted_string | raw_string ) ;      ; 键为标识符；值为字符串
-copy_raw_anno    = "copy_raw" "(" ws? "name" ws? ":" ws? ( quoted_string | raw_string ) ws? ")" ;
-
-; 词法与辅助记号 --------------------------------------------------------
-field_name       = var_name ;
-rule_name        = exact_path ;
-key              = key_char { key_char } ;              ; [A-Za-z0-9_./-]+
-var_name         = var_char { var_char } ;              ; [A-Za-z0-9_.-]+
-ref_path         = ref_char { ref_char } ;              ; [A-Za-z0-9_./\-.[\]*]+
-; 标识符与路径标识符（推荐写法）
-ident            = ( letter | '_' ) { letter | digit | '_' | '.' | '-' } ;
-path_ident       = ident { "/" ident } ;
-
-exact_path       = exact_path_char { exact_path_char } ; ; 不含 '[' ']' '*'
-exact_path_char  = letter | digit | '_' | '.' | '/' | '-' ;
-path             = key | ref_path ;
-
+bare_string      = bare_char { bare_char } ;
 number           = digit { digit } ;
-digit            = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' ;
+ip_addr          = ipv4 | ipv6 | quoted_string ;
 
-key_char         = letter | digit | '_' | '.' | '/' | '-' ;
-var_char         = letter | digit | '_' | '.' | '-' ;
-ref_char         = key_char | '[' | ']' | '*' ;
+key_char         = letter | digit | "_" | "." | "/" | "-" ;
+var_char         = letter | digit | "_" | "." | "-" ;
+ref_char         = key_char | "[" | "]" | "*" ;
+meta_char        = letter | digit | "_" | "/" ;
 
-letter           = 'A'..'Z' | 'a'..'z' ;
-
-quoted_string    = '"' { escaped | char_no_quote_backslash } '"' ;
-raw_string       = 'r' '#' '"' { any_char } '"' '#' ;          ; r#"..."#，内部不处理转义（内容可包含 '"'）
-char_no_quote    = ? any char except '"' ? ;
-escaped          = '\\' ( '"' | '\\' | 'n' | 't' | 'r' | 'x' hex hex ) ;
-char_no_quote_backslash = ? any char except '"' and '\\' ? ;
-hex              = '0'..'9' | 'a'..'f' | 'A'..'F' ;
-
-free_string      = { fchar } ;                          ; 直至 ',' 或 ')'（不含）
-fchar            = ? any char except ',' and ')' ? ;
-
-symbol_chars     = { schar } ;                          ; 允许除 ')' 与 '\\' 外字符，或使用 '\)' 转义
-schar            = char_no_close_paren_backslash | '\\' ')' ;
-char_no_close_paren_backslash = ? any char except ')' and '\\' ? ;
-any_chars        = { any_char } ;
-any_char         = ? any character ? ;
-
-ip_addr          = quoted_string | ipv4 | ipv6 ;        ; 支持 IPv4/IPv6 裸字面量或带引号
-ipv4             = digit1 "." digit1 "." digit1 "." digit1 ;
-digit1           = digit { digit } ;
-ipv6             = ? valid IPv6 literal (RFC 4291), including compressed forms like "::1" ? ;
-
-ws               = { ' ' | '\t' | '\n' | '\r' } ;
-
-;保留关键字（不可作为标识符使用；由实现侧进行冲突校验）
-ReservedKeyword  = "package" | "rule" | "alt" | "opt" | "some_of" | "seq" | "not" | "order"
-                 | "tag" | "copy_raw" | "include" | "macro" ;
-
-
+bare_char        = ? 由 `take_string` 决定的非分隔文本；通常用于裸字符串参数 ? ;
+scope_chars      = ? 任意非空内容，按 `&lt;..., ...&gt;` 成对截取 ? ;
+symbol_chars     = ? 任意字符，允许 `\)` 转义右括号 ? ;
+single_raw_char  = ? 任意字符；仅 `\'` 具有特殊意义 ? ;
+literal_char     = ? 任意非特殊字符 ? ;
+double_quoted    = '"' { escaped | dq_char } '"' ;
+single_quoted    = "'" { escaped | sq_char } "'" ;
+escaped          = '\' ( '"' | "'" | '\' | "n" | "t" | "r" | "x" hex hex ) ;
+dq_char          = ? 非 `"` 且非 `\` 的字符 ? ;
+sq_char          = ? 非 `'` 且非 `\` 的字符 ? ;
+digit            = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+hex              = digit | "a".."f" | "A".."F" ;
+letter           = "A".."Z" | "a".."z" ;
+wsp              = { " " | "\t" | "\n" | "\r" } ;
+wsp1             = ( " " | "\t" | "\n" | "\r" ) { wsp } ;
 </code></pre>
 <hr>
-<h2 id="语义说明"><a class="header" href="#语义说明">语义说明</a></h2>
+<h2 id="实现约束"><a class="header" href="#实现约束">实现约束</a></h2>
+<h3 id="顶层入口"><a class="header" href="#顶层入口">顶层入口</a></h3>
+<ul>
+<li><code>wpl_package()</code> 解析 <code>package ... { rule ... }</code></li>
+<li><code>wpl_rule()</code> 可以单独解析一个 <code>rule</code></li>
+<li><code>wpl_express()</code> 只解析规则体内部的表达式</li>
+</ul>
 <h3 id="预处理管道"><a class="header" href="#预处理管道">预处理管道</a></h3>
 <ul>
-<li><code>preproc</code> 管道（例如 <code>|decode/base64|unquote/unescape|</code>）出现在 <code>express</code> 起始处，独立于字段级 <code>pipe</code></li>
-<li>作用于整行输入，在字段解析前执行</li>
-<li>执行顺序：从左到右</li>
-<li>必须以 <code>|</code> 结尾</li>
-<li>支持的预处理器：
+<li>预处理语法由 <code>src/parser/wpl_rule.rs::pip_proc</code> 解析</li>
+<li>形式上支持任意 <code>key</code>，以及 <code>plg_pipe/&lt;name&gt;</code> / <code>plg_pipe(&lt;name&gt;)</code></li>
+<li>内置注册项目前在 <code>src/eval/builtins/mod.rs</code> 中包括：
 <ul>
-<li><code>decode/base64</code> - Base64 解码</li>
-<li><code>decode/hex</code> - 十六进制解码</li>
-<li><code>unquote/unescape</code> - URL 转义解码</li>
-<li><code>strip/bom</code> - 移除 BOM（字节顺序标记）</li>
+<li><code>decode/base64</code></li>
+<li><code>decode/hex</code></li>
+<li><code>unquote/unescape</code></li>
+<li><code>strip/bom</code></li>
+<li><code>json_like</code></li>
+</ul>
+</li>
+<li><code>plg_pipe(&lt;name&gt;)</code> 在解析后会规范化成 <code>plg_pipe/&lt;name&gt;</code></li>
+</ul>
+<h3 id="分组"><a class="header" href="#分组">分组</a></h3>
+<ul>
+<li>组元信息仅支持：<code>alt</code>、<code>opt</code>、<code>some_of</code>、<code>seq</code>、<code>not</code></li>
+<li>组后可接 <code>[n]</code>，解析器会把这个长度写回组内每个字段</li>
+<li>当前组级分隔符只支持 <code>\...</code> 快捷分隔符，不支持 <code>{...}</code> 模式分隔符</li>
+</ul>
+<h3 id="字段"><a class="header" href="#字段">字段</a></h3>
+<ul>
+<li>顶层字段必须显式写出 <code>meta_token</code></li>
+<li>复合字段里的子字段可以省略 meta，省略时默认是 <code>chars</code></li>
+<li>只有子字段支持 <code>opt(type)</code>，当前顶层字段不支持 <code>opt(type)</code></li>
+<li><code>peek_symbol(...)</code> 在解析后会被规整为 <code>symbol(...)</code>，但保留 peek 语义</li>
+<li><code>bad_json</code> 是本地别名：底层类型按 <code>Chars</code> 处理，但 <code>meta_name</code> 保留为 <code>bad_json</code></li>
+</ul>
+<h3 id="类型名"><a class="header" href="#类型名">类型名</a></h3>
+<ul>
+<li>文档不再硬编码完整类型列表</li>
+<li>当前可用类型由 <code>wp_model_core::model::DataType::from(token)</code> 决定</li>
+<li>因此是否支持某个 <code>meta_token</code>，要以实际依赖版本中的 <code>DataType</code> 实现为准</li>
+</ul>
+<h3 id="格式与分隔符"><a class="header" href="#格式与分隔符">格式与分隔符</a></h3>
+<ul>
+<li><code>"</code> 是快捷格式，等价于首尾都用双引号</li>
+<li><code>&lt;beg,end&gt;</code> 是通用边界格式，支持嵌套括号内容，由 <code>interval_impl()</code> 处理</li>
+<li>字段级分隔符支持两类：
+<ul>
+<li><code>\...</code> 快捷分隔符</li>
+<li><code>{...}</code> 模式分隔符</li>
+</ul>
+</li>
+<li>模式分隔符支持：
+<ul>
+<li><code>*</code></li>
+<li><code>?</code></li>
+<li><code>\s</code> <code>\S</code> <code>\h</code> <code>\H</code> <code>\0</code> <code>\n</code> <code>\t</code> <code>\r</code></li>
+<li>末尾 <code>(...)</code> preserve 片段</li>
 </ul>
 </li>
 </ul>
-<h3 id="分组元数据group-meta"><a class="header" href="#分组元数据group-meta">分组元数据（Group Meta）</a></h3>
-<ul>
-<li><code>group_meta</code> 用于指定分组的行为模式</li>
-<li><code>alt</code> - 选择性匹配，匹配组内任意一个字段即可</li>
-<li><code>opt</code> - 可选分组，整个分组可以不存在</li>
-<li><code>some_of</code> - 部分匹配，匹配组内部分字段</li>
-<li><code>seq</code> - 序列匹配，按顺序匹配组内所有字段</li>
-<li><code>not</code> - 否定匹配，匹配除组内字段外的其他内容</li>
-</ul>
-<h3 id="分组长度和分隔符"><a class="header" href="#分组长度和分隔符">分组长度和分隔符</a></h3>
-<ul>
-<li><code>group</code> 后可跟 <code>[n]</code> 与分隔符 <code>sep</code></li>
-<li>长度会应用到组内所有字段</li>
-<li><code>sep</code> 仅存储在组上，具体组合策略见实现</li>
-</ul>
-<h3 id="符号类型"><a class="header" href="#符号类型">符号类型</a></h3>
-<ul>
-<li><code>symbol/peek_symbol</code> 可携带 <code>symbol_content</code>，如 <code>symbol(boy)</code></li>
-<li><code>peek_symbol</code> 等价于 <code>symbol</code>，且仅改变“窥探“语义（预读但不消费）</li>
-</ul>
-<h3 id="子字段"><a class="header" href="#子字段">子字段</a></h3>
-<ul>
-<li><code>subfields</code> 中未显式 <code>"@ref"</code> 时，键默认为 <code>"*"</code>（通配键）</li>
-<li>子字段支持 <code>opt(type)</code> 标记为可选</li>
-</ul>
-<h3 id="分隔符"><a class="header" href="#分隔符">分隔符</a></h3>
-<p>分隔符支持两种形式：</p>
-<h4 id="快捷分隔符"><a class="header" href="#快捷分隔符">快捷分隔符</a></h4>
-<ul>
-<li>使用反斜杠转义的单个或多个字符</li>
-<li>例如 <code>\\,</code> 代表逗号 <code>,</code>，<code>\\!\\|</code> 代表字符串 <code>"!|"</code></li>
-<li>优先级：字段级 &gt; 组级 &gt; 上游</li>
-</ul>
-<h4 id="模式分隔符"><a class="header" href="#模式分隔符">模式分隔符</a></h4>
-<ul>
-<li>使用花括号 <code>{...}</code> 包裹的模式表达式</li>
-<li>支持通配符、空白匹配宏和保留标记</li>
-<li>适用于复杂场景的分隔</li>
-</ul>
-<p><strong>通配符：</strong></p>
-<ul>
-<li><code>*</code> - 零或多个任意字符（非贪婪，最短匹配）</li>
-<li><code>?</code> - 恰好一个任意字符</li>
-<li>约束：模式中 <code>*</code> 最多出现一次</li>
-</ul>
-<p><strong>空白匹配宏：</strong></p>
-<ul>
-<li><code>\s</code> - 一个或多个连续空白字符 <code>[ \t\r\n]+</code></li>
-<li><code>\S</code> - 一个或多个连续非空白字符 <code>[^ \t\r\n]+</code></li>
-<li><code>\h</code> - 一个或多个连续水平空白 <code>[ \t]+</code></li>
-<li><code>\H</code> - 一个或多个连续非水平空白 <code>[^ \t]+</code></li>
-</ul>
-<p><strong>保留标记：</strong></p>
-<ul>
-<li><code>(...)</code> - 匹配但不消费，将匹配的内容留给下一阶段</li>
-<li>只能出现在模式末尾</li>
-<li>内部不允许包含 <code>*</code> 通配符</li>
-</ul>
-<p><strong>示例：</strong></p>
-<ul>
-<li><code>chars{*=}</code> - 匹配到第一个 <code>=</code> 符号</li>
-<li><code>chars{\s=}</code> - 跳过空白后匹配 <code>=</code></li>
-<li><code>chars{*(key=)}</code> - 匹配到 <code>key=</code> 并保留 <code>key=</code> 给下一个字段</li>
-<li><code>chars{field?:\s}</code> - 匹配 <code>field</code> + 任意字符 + <code>:</code> + 空白</li>
-</ul>
-<p><strong>约束：</strong></p>
-<ul>
-<li>模式中 <code>*</code> 最多出现一次</li>
-<li><code>()</code> 只能在模式末尾</li>
-<li><code>()</code> 内不允许 <code>*</code></li>
-<li><code>()</code> 不允许嵌套</li>
-<li>不能与 upstream separator 混用</li>
-</ul>
 <h3 id="注解"><a class="header" href="#注解">注解</a></h3>
 <ul>
-<li><code>annotation</code> 可用于 <code>package</code> 与 <code>rule</code></li>
-<li>若同时存在，会在 <code>rule</code> 侧合并（<code>rule</code> 优先）</li>
-</ul>
-<h3 id="管道函数"><a class="header" href="#管道函数">管道函数</a></h3>
+<li>当前只有两个注解函数：
 <ul>
-<li>字段级管道函数包括：选择器、条件检查、转换、包装器</li>
-<li><code>not()</code> 包装器可反转任何管道函数的成功/失败结果</li>
-<li><code>starts_with()</code> 检查字符串字段是否以指定前缀开始</li>
-<li><code>regex_match()</code> 支持正则表达式模式匹配</li>
-<li><code>digit_range()</code> 支持数值范围检查（闭区间）</li>
-<li><code>chars_replace()</code> 执行字符串替换操作</li>
+<li><code>tag(k: "v")</code></li>
+<li><code>copy_raw(name: "raw_field")</code></li>
+</ul>
+</li>
+<li>注解值支持：
+<ul>
+<li>普通引号字符串</li>
+<li>原始字符串 <code>r#"..."#</code></li>
+<li>兼容旧写法 <code>r"..."</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="字段管道"><a class="header" href="#字段管道">字段管道</a></h3>
+<ul>
+<li>解析入口在 <code>src/parser/wpl_fun.rs</code></li>
+<li>支持三类参数风格：
+<ul>
+<li>只能接裸值的函数，如 <code>chars_has(ok)</code></li>
+<li>接数组的函数，如 <code>digit_in([200, 201])</code></li>
+<li>接裸值或引号字符串的函数，如 <code>chars_replace("a,b", "c d")</code></li>
+</ul>
+</li>
+<li><code>not(...)</code> 只能包裹字段函数，不能包裹选择器或分组</li>
+<li><code>pipe</code> 右侧除了函数，也可以直接接一个嵌套分组，例如 <code>|(time, ip)</code></li>
+</ul>
+<h3 id="引号与路径"><a class="header" href="#引号与路径">引号与路径</a></h3>
+<ul>
+<li><code>take(...)</code> 支持裸标识符、双引号字符串、单引号字符串</li>
+<li>子字段 <code>@ref</code> 支持：
+<ul>
+<li>裸路径：<code>@payload/data</code></li>
+<li>单引号原始字符串：<code>@'@special-field'</code></li>
+</ul>
+</li>
+<li>注解值和某些函数参数支持转义字符串；并不是所有字符串参数都支持带引号写法</li>
 </ul>
 <hr>
-<h2 id="相关文档"><a class="header" href="#相关文档">相关文档</a></h2>
+<h2 id="相关实现"><a class="header" href="#相关实现">相关实现</a></h2>
 <ul>
-<li>快速入门：<a href="./01-quickstart.html">01-quickstart.md</a></li>
-<li>核心概念：<a href="./02-core-concepts.html">02-core-concepts.md</a></li>
-<li>实战指南：<a href="./03-practical-guide.html">03-practical-guide.md</a></li>
-<li>语言参考：<a href="./04-language-reference.html">04-language-reference.md</a></li>
-<li>函数参考：<a href="./05-functions-reference.html">05-functions-reference.md</a></li>
-</ul>
-<hr>
-<h2 id="实现参考"><a class="header" href="#实现参考">实现参考</a></h2>
-<ul>
-<li>语法实现：<code>src/parser/</code></li>
-<li>管道函数：<code>src/parser/wpl_fun.rs</code></li>
-<li>数据类型：外部 crate <code>wp-model-core</code></li>
+<li>包解析：<a href="/Users/zuowenjian/devspace/wp-labs/dev/wparse/wp-lang/src/parser/wpl_pkg.rs">src/parser/wpl_pkg.rs</a></li>
+<li>规则解析：<a href="/Users/zuowenjian/devspace/wp-labs/dev/wparse/wp-lang/src/parser/wpl_rule.rs">src/parser/wpl_rule.rs</a></li>
+<li>表达式解析：<a href="/Users/zuowenjian/devspace/wp-labs/dev/wparse/wp-lang/src/parser/parse_code.rs">src/parser/parse_code.rs</a></li>
+<li>分组解析：<a href="/Users/zuowenjian/devspace/wp-labs/dev/wparse/wp-lang/src/parser/wpl_group.rs">src/parser/wpl_group.rs</a></li>
+<li>字段解析：<a href="/Users/zuowenjian/devspace/wp-labs/dev/wparse/wp-lang/src/parser/wpl_field.rs">src/parser/wpl_field.rs</a></li>
+<li>函数解析：<a href="/Users/zuowenjian/devspace/wp-labs/dev/wparse/wp-lang/src/parser/wpl_fun.rs">src/parser/wpl_fun.rs</a></li>
+<li>内置预处理器注册：<a href="/Users/zuowenjian/devspace/wp-labs/dev/wparse/wp-lang/src/eval/builtins/mod.rs">src/eval/builtins/mod.rs</a></li>
 </ul>
 
                     </main>
@@ -630,8 +521,7 @@ ReservedKeyword  = "package" | "rule" | "alt" | "opt" | "some_of" | "seq" | "not
         <script src="../../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
-        <script src="../../../theme/lang-switch.js"></script>
-        <script src="../../../theme/version-badge.js"></script>
+        <script src="../../theme/site-873a9fb6.js"></script>
         <script src="../../mermaid-eefea253.min.js"></script>
         <script src="../../mermaid-init-ccf746f1.js"></script>
 

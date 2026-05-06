@@ -1,32 +1,293 @@
-:is(html.light, html.rust, html.ayu, html.navy, html.coal) body {
-    background: var(--wp-bg);
-    color: var(--wp-text);
+/* ==========================================================================
+   wp-docs VitePress-style theme
+   Design tokens adapted from VitePress default theme
+   ========================================================================== */
+
+/* ---- Light theme variables ---- */
+:root {
+    /* Background */
+    --wp-bg: #ffffff;
+    --wp-bg-alt: #f6f6f7;
+    --wp-bg-soft: #f6f6f7;
+    --wp-bg-elv: #ffffff;
+
+    /* Border */
+    --wp-border: #c2c2c4;
+    --wp-divider: #e2e2e3;
+
+    /* Text */
+    --wp-text-1: #3c3c43;
+    --wp-text-2: #67676c;
+    --wp-text-3: #929295;
+
+    /* Brand (indigo) */
+    --wp-brand-1: #3451b2;
+    --wp-brand-2: #3a5ccc;
+    --wp-brand-3: #5672cd;
+    --wp-brand-soft: rgba(100, 108, 255, 0.14);
+
+    /* Code */
+    --wp-code-bg: #f6f6f7;
+    --wp-code-color: var(--wp-brand-1);
+    --wp-code-block-bg: #f6f6f7;
+
+    /* Shadows */
+    --wp-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --wp-shadow-2: 0 3px 12px rgba(0, 0, 0, 0.07), 0 1px 4px rgba(0, 0, 0, 0.07);
+    --wp-shadow-3: 0 12px 32px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.08);
+
+    /* Layout */
+    --wp-nav-height: 64px;
+    --wp-sidebar-width: 272px;
+
+    /* Radius */
+    --wp-radius: 8px;
+
+    /* Font */
+    --wp-font-base: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    --wp-font-mono: ui-monospace, "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
 }
 
+/* ---- Map wp vars to mdBook vars (light theme) ---- */
+html.light,
+html.rust {
+    --bg: var(--wp-bg);
+    --fg: var(--wp-text-1);
+    --sidebar-bg: var(--wp-bg-alt);
+    --sidebar-fg: var(--wp-text-2);
+    --sidebar-non-existant: var(--wp-text-3);
+    --sidebar-active: var(--wp-brand-1);
+    --sidebar-spacer: transparent;
+    --scrollbar: rgba(100, 116, 139, 0.22);
+    --icons: var(--wp-text-2);
+    --icons-hover: var(--wp-brand-1);
+    --links: var(--wp-brand-1);
+    --inline-code-color: var(--wp-brand-1);
+    --theme-popup-bg: var(--wp-bg-elv);
+    --theme-popup-border: var(--wp-border);
+    --theme-hover: var(--wp-bg-soft);
+    --quote-bg: var(--wp-bg-soft);
+    --quote-border: rgba(52, 81, 178, 0.3);
+    --table-border-color: var(--wp-divider);
+    --table-header-bg: var(--wp-bg-soft);
+    --table-alternate-bg: rgba(246, 246, 247, 0.6);
+    --searchbar-border-color: var(--wp-border);
+    --searchbar-bg: var(--wp-bg-elv);
+    --searchbar-fg: var(--wp-text-1);
+    --searchbar-shadow-color: transparent;
+    --searchresults-header-fg: var(--wp-text-2);
+    --searchresults-border-color: var(--wp-divider);
+    --searchresults-li-bg: var(--wp-bg-elv);
+    --search-mark-bg: var(--wp-brand-soft);
+    --color-scheme: light;
+}
+
+/* ---- Dark theme variables ---- */
+html.ayu,
+html.navy,
+html.coal {
+    --wp-bg: #1b1b1f;
+    --wp-bg-alt: #161618;
+    --wp-bg-soft: #202127;
+    --wp-bg-elv: #202127;
+    --wp-border: #3c3c44;
+    --wp-divider: #2e2e32;
+    --wp-text-1: #e4e4e9;
+    --wp-text-2: #9898a0;
+    --wp-text-3: #6b6b75;
+    --wp-brand-1: #a8b1ff;
+    --wp-brand-2: #c0c6ff;
+    --wp-brand-3: #8b94e8;
+    --wp-brand-soft: rgba(100, 108, 255, 0.16);
+    --wp-code-bg: #161618;
+    --wp-code-color: var(--wp-brand-1);
+    --wp-code-block-bg: #161618;
+
+    --bg: var(--wp-bg);
+    --fg: var(--wp-text-1);
+    --sidebar-bg: var(--wp-bg-alt);
+    --sidebar-fg: var(--wp-text-2);
+    --sidebar-non-existant: var(--wp-text-3);
+    --sidebar-active: var(--wp-brand-1);
+    --sidebar-spacer: transparent;
+    --scrollbar: rgba(148, 163, 184, 0.24);
+    --icons: var(--wp-text-2);
+    --icons-hover: var(--wp-brand-1);
+    --links: var(--wp-brand-1);
+    --inline-code-color: var(--wp-brand-1);
+    --theme-popup-bg: var(--wp-bg-elv);
+    --theme-popup-border: var(--wp-border);
+    --theme-hover: var(--wp-bg-soft);
+    --quote-bg: var(--wp-bg-soft);
+    --quote-border: rgba(100, 108, 255, 0.3);
+    --table-border-color: var(--wp-divider);
+    --table-header-bg: var(--wp-bg-soft);
+    --table-alternate-bg: rgba(32, 33, 39, 0.5);
+    --searchbar-border-color: var(--wp-border);
+    --searchbar-bg: var(--wp-bg-elv);
+    --searchbar-fg: var(--wp-text-1);
+    --searchbar-shadow-color: transparent;
+    --searchresults-header-fg: var(--wp-text-2);
+    --searchresults-border-color: var(--wp-divider);
+    --searchresults-li-bg: var(--wp-bg-elv);
+    --search-mark-bg: var(--wp-brand-soft);
+    --color-scheme: dark;
+}
+
+
+/* ==========================================================================
+   Global
+   ========================================================================== */
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) body {
+    background: var(--wp-bg);
+    color: var(--wp-text-1);
+    font-family: var(--wp-font-base);
+}
+
+
+/* ==========================================================================
+   Menu Bar / Top Navigation
+   ========================================================================== */
+
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .menu-bar {
-    background: var(--wp-menu-bg);
-    backdrop-filter: blur(14px);
-    border-bottom: 1px solid var(--wp-border);
+    height: var(--wp-nav-height);
+    background: var(--wp-bg);
+    backdrop-filter: none;
+    border-bottom: 1px solid var(--wp-divider);
     box-shadow: none;
-    height: 56px;
 }
 
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .menu-title {
-    font-weight: 750;
-    letter-spacing: 0.015em;
-    color: var(--wp-text);
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.01em;
+    color: var(--wp-brand-1);
 }
 
+.menu-title::before {
+    content: "";
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+    vertical-align: -5px;
+    background: var(--wp-brand-1);
+    border-radius: 6px;
+}
+
+.left-buttons {
+    gap: 4px;
+}
+
+.right-buttons {
+    gap: 4px;
+}
+
+
+/* ==========================================================================
+   Icon buttons (theme toggle, search, sidebar toggle)
+   ========================================================================== */
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .icon-button,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .right-buttons a {
+    color: var(--wp-text-2);
+    border-radius: var(--wp-radius);
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s, background-color 0.15s;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .icon-button:hover,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .right-buttons a:hover {
+    color: var(--wp-brand-1);
+    background: var(--wp-bg-soft);
+}
+
+
+/* ==========================================================================
+   Sidebar
+   ========================================================================== */
+
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar {
-    border-right: 1px solid var(--wp-border);
-    background: var(--wp-sidebar-bg);
+    background: var(--wp-bg-alt);
+    border-right: 1px solid var(--wp-divider);
     box-shadow: none;
 }
 
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar-scrollbox {
-    padding-top: 14px;
-    padding-bottom: 24px;
+    padding: 16px 8px 24px 8px;
 }
+
+/* Part titles (section headers) */
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li.part-title {
+    margin: 16px 10px 4px;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--wp-text-2);
+}
+
+/* Nav links */
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li a {
+    margin: 0 6px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    color: var(--wp-text-2);
+    font-size: 13px;
+    font-weight: 450;
+    line-height: 1.4;
+    transition: color 0.15s, background-color 0.15s;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li a:hover {
+    background: var(--wp-bg-soft);
+    color: var(--wp-text-1);
+    text-decoration: none;
+    transform: none;
+}
+
+/* Active nav link — VitePress style with left bar indicator */
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li a.active {
+    background: transparent;
+    color: var(--wp-brand-1);
+    font-weight: 600;
+    position: relative;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li a.active::before {
+    content: "";
+    position: absolute;
+    left: -4px;
+    top: 6px;
+    bottom: 6px;
+    width: 3px;
+    background: var(--wp-brand-1);
+    border-radius: 0 2px 2px 0;
+}
+
+/* Nested lists */
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter ul {
+    margin-left: 12px;
+}
+
+html.sidebar-visible .page-wrapper {
+    margin-left: var(--wp-sidebar-width);
+}
+
+[dir=rtl].sidebar-visible .page-wrapper {
+    margin-right: var(--wp-sidebar-width);
+    margin-left: 0;
+}
+
+
+/* ==========================================================================
+   Content area
+   ========================================================================== */
 
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) #mdbook-content {
     max-width: 1180px;
@@ -59,417 +320,235 @@
     padding: 2rem 2.5rem 3rem;
 }
 
-:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content h1,
-:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content h2,
-:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content h3 {
-    color: var(--wp-text);
+/* Typography */
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content h1 {
+    font-size: 2rem;
+    font-weight: 700;
     letter-spacing: -0.02em;
+    color: var(--wp-text-1);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--wp-divider);
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content h2 {
+    font-size: 1.45rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--wp-text-1);
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--wp-divider);
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--wp-text-1);
+    margin-top: 1.5rem;
 }
 
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .content p,
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .content li {
-    line-height: 1.75;
+    line-height: 1.7;
+    color: var(--wp-text-1);
 }
 
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .content a {
-    color: var(--wp-accent);
+    color: var(--wp-brand-1);
+    text-decoration: none;
+    transition: color 0.15s;
 }
 
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .content a:hover {
-    color: var(--wp-accent-strong);
+    color: var(--wp-brand-2);
+    text-decoration: underline;
 }
+
+
+/* ==========================================================================
+   Inline code
+   ========================================================================== */
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) code {
+    font-family: var(--wp-font-mono);
+    font-size: 0.875em;
+    background: var(--wp-bg-soft);
+    color: var(--wp-code-color);
+    border-radius: 4px;
+    padding: 0.15em 0.4em;
+}
+
+
+/* ==========================================================================
+   Code blocks
+   ========================================================================== */
 
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) pre {
-    background: var(--wp-code-bg);
-    border: 1px solid var(--wp-border);
-    border-radius: 12px;
-    padding: 1rem 1.1rem;
+    background: var(--wp-code-block-bg);
+    border: 1px solid var(--wp-divider);
+    border-radius: var(--wp-radius);
+    padding: 1.2rem 1.4rem;
+    font-family: var(--wp-font-mono);
+    font-size: 0.875em;
+    line-height: 1.7;
+    overflow-x: auto;
 }
 
-:is(html.light, html.rust, html.ayu, html.navy, html.coal) .theme-popup {
-    border-radius: 14px;
-    box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
+
+/* ==========================================================================
+   Blockquotes
+   ========================================================================== */
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) blockquote {
+    background: var(--wp-bg-soft);
+    border-inline-start: 4px solid var(--wp-brand-1);
+    border-radius: 0 var(--wp-radius) var(--wp-radius) 0;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+    color: var(--wp-text-2);
 }
 
-:root {
-    --wp-bg: #f8fafc;
-    --wp-panel: #ffffff;
-    --wp-panel-strong: #ffffff;
-    --wp-border: rgba(15, 23, 42, 0.1);
-    --wp-border-strong: rgba(15, 23, 42, 0.18);
-    --wp-text: #111827;
-    --wp-text-muted: #64748b;
-    --wp-accent: #2563eb;
-    --wp-accent-soft: rgba(37, 99, 235, 0.08);
-    --wp-accent-strong: #1d4ed8;
-    --wp-sidebar-bg: #f8fafc;
-    --wp-sidebar-panel: #ffffff;
-    --wp-sidebar-text: #1e293b;
-    --wp-sidebar-muted: #64748b;
-    --wp-code-bg: #f6f8fb;
-    --wp-menu-bg: rgba(255, 255, 255, 0.92);
-    --wp-hover-bg: #ffffff;
-    --wp-floating-bg: rgba(255, 255, 255, 0.92);
-    --wp-floating-hover-bg: #ffffff;
-    --wp-chip-bg: rgba(255, 255, 255, 0.86);
-    --wp-current-bg: #ffffff;
-    --wp-shadow: none;
-    --wp-radius: 12px;
-    --sidebar-target-width: 292px;
-    --sidebar-width: min(var(--sidebar-target-width), 80vw);
-}
 
-html.light,
-html.rust {
-    --bg: var(--wp-bg);
-    --fg: var(--wp-text);
-    --sidebar-bg: var(--wp-sidebar-bg);
-    --sidebar-fg: var(--wp-sidebar-muted);
-    --sidebar-non-existant: #a3afbd;
-    --sidebar-active: var(--wp-accent);
-    --sidebar-spacer: transparent;
-    --scrollbar: rgba(100, 116, 139, 0.22);
-    --icons: var(--wp-text-muted);
-    --icons-hover: var(--wp-accent);
-    --links: var(--wp-accent);
-    --inline-code-color: var(--wp-accent-strong);
-    --theme-popup-bg: #ffffff;
-    --theme-popup-border: var(--wp-border);
-    --theme-hover: #eef2ff;
-    --quote-bg: #f8fafc;
-    --quote-border: #bfdbfe;
-    --table-border-color: rgba(15, 23, 42, 0.1);
-    --table-header-bg: #f8fafc;
-    --table-alternate-bg: rgba(248, 250, 252, 0.78);
-    --searchbar-border-color: rgba(15, 23, 42, 0.12);
-    --searchbar-bg: #ffffff;
-    --searchbar-fg: var(--wp-text);
-    --searchbar-shadow-color: transparent;
-    --searchresults-header-fg: var(--wp-text-muted);
-    --searchresults-border-color: rgba(15, 23, 42, 0.1);
-    --searchresults-li-bg: #ffffff;
-    --search-mark-bg: #dbeafe;
-    --color-scheme: light;
-}
+/* ==========================================================================
+   Tables
+   ========================================================================== */
 
-html.ayu,
-html.navy,
-html.coal {
-    --wp-bg: #0f172a;
-    --wp-panel: #111827;
-    --wp-panel-strong: #1e293b;
-    --wp-border: rgba(148, 163, 184, 0.18);
-    --wp-border-strong: rgba(148, 163, 184, 0.28);
-    --wp-text: #e5e7eb;
-    --wp-text-muted: #94a3b8;
-    --wp-accent: #60a5fa;
-    --wp-accent-soft: rgba(96, 165, 250, 0.14);
-    --wp-accent-strong: #93c5fd;
-    --wp-sidebar-bg: #111827;
-    --wp-sidebar-panel: #182235;
-    --wp-sidebar-text: #e2e8f0;
-    --wp-sidebar-muted: #94a3b8;
-    --wp-code-bg: #111827;
-    --wp-menu-bg: rgba(15, 23, 42, 0.9);
-    --wp-hover-bg: rgba(30, 41, 59, 0.88);
-    --wp-floating-bg: rgba(15, 23, 42, 0.9);
-    --wp-floating-hover-bg: rgba(30, 41, 59, 0.96);
-    --wp-chip-bg: rgba(15, 23, 42, 0.78);
-    --wp-current-bg: rgba(30, 41, 59, 0.94);
-    --bg: var(--wp-bg);
-    --fg: var(--wp-text);
-    --sidebar-bg: var(--wp-sidebar-bg);
-    --sidebar-fg: var(--wp-sidebar-muted);
-    --sidebar-non-existant: #64748b;
-    --sidebar-active: var(--wp-accent-strong);
-    --sidebar-spacer: transparent;
-    --scrollbar: rgba(148, 163, 184, 0.24);
-    --icons: var(--wp-text-muted);
-    --icons-hover: var(--wp-accent-strong);
-    --links: var(--wp-accent-strong);
-    --inline-code-color: var(--wp-accent-strong);
-    --theme-popup-bg: #111827;
-    --theme-popup-border: var(--wp-border);
-    --theme-hover: rgba(30, 41, 59, 0.9);
-    --quote-bg: rgba(30, 41, 59, 0.58);
-    --quote-border: rgba(96, 165, 250, 0.42);
-    --table-border-color: rgba(148, 163, 184, 0.18);
-    --table-header-bg: rgba(30, 41, 59, 0.92);
-    --table-alternate-bg: rgba(30, 41, 59, 0.38);
-    --searchbar-border-color: rgba(148, 163, 184, 0.22);
-    --searchbar-bg: #111827;
-    --searchbar-fg: var(--wp-text);
-    --searchbar-shadow-color: transparent;
-    --searchresults-header-fg: var(--wp-text-muted);
-    --searchresults-border-color: rgba(148, 163, 184, 0.18);
-    --searchresults-li-bg: #111827;
-    --search-mark-bg: rgba(96, 165, 250, 0.28);
-    --color-scheme: dark;
-}
-
-html.light .icon-button,
-html.rust .icon-button,
-html.ayu .icon-button,
-html.navy .icon-button,
-html.coal .icon-button,
-html.light .right-buttons a,
-html.rust .right-buttons a,
-html.ayu .right-buttons a,
-html.navy .right-buttons a,
-html.coal .right-buttons a {
-    color: var(--wp-text-muted);
-}
-
-html.light .icon-button:hover,
-html.rust .icon-button:hover,
-html.ayu .icon-button:hover,
-html.navy .icon-button:hover,
-html.coal .icon-button:hover,
-html.light .right-buttons a:hover,
-html.rust .right-buttons a:hover,
-html.ayu .right-buttons a:hover,
-html.navy .right-buttons a:hover,
-html.coal .right-buttons a:hover {
-    color: var(--wp-accent);
-}
-
-html.light .sidebar .chapter li.part-title,
-html.rust .sidebar .chapter li.part-title,
-html.ayu .sidebar .chapter li.part-title,
-html.navy .sidebar .chapter li.part-title,
-html.coal .sidebar .chapter li.part-title {
-    margin: 1.35rem 1rem 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-size: 0.72rem;
-    color: var(--wp-text-muted);
-}
-
-html.light .sidebar .chapter li a,
-html.rust .sidebar .chapter li a,
-html.ayu .sidebar .chapter li a,
-html.navy .sidebar .chapter li a,
-html.coal .sidebar .chapter li a {
-    margin: 0.03rem 0.65rem;
-    padding: 0.38rem 0.75rem;
-    border-radius: 0;
-    color: var(--wp-sidebar-muted);
-    transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
-}
-
-html.light .sidebar .chapter li a:hover,
-html.rust .sidebar .chapter li a:hover,
-html.ayu .sidebar .chapter li a:hover,
-html.navy .sidebar .chapter li a:hover,
-html.coal .sidebar .chapter li a:hover {
-    background: var(--wp-hover-bg);
-    color: var(--wp-sidebar-text);
-    text-decoration: none;
-    transform: translateX(1px);
-}
-
-html.light .sidebar .chapter li a.active,
-html.rust .sidebar .chapter li a.active,
-html.ayu .sidebar .chapter li a.active,
-html.navy .sidebar .chapter li a.active,
-html.coal .sidebar .chapter li a.active {
-    background: var(--wp-accent-soft);
-    color: var(--wp-accent-strong);
-    font-weight: 650;
-}
-
-html.light .sidebar .chapter ul,
-html.rust .sidebar .chapter ul,
-html.ayu .sidebar .chapter ul,
-html.navy .sidebar .chapter ul,
-html.coal .sidebar .chapter ul {
-    margin-left: 0.7rem;
-}
-
-html.sidebar-visible .page-wrapper {
-    margin-left: var(--sidebar-width);
-}
-
-[dir=rtl].sidebar-visible .page-wrapper {
-    margin-right: var(--sidebar-width);
-    margin-left: 0;
-}
-
-html.light .content h1,
-html.rust .content h1,
-html.ayu .content h1,
-html.navy .content h1,
-html.coal .content h1 {
-    font-size: 2.35rem;
-    margin-bottom: 1.2rem;
-}
-
-html.light .content h2,
-html.rust .content h2,
-html.ayu .content h2,
-html.navy .content h2,
-html.coal .content h2 {
-    margin-top: 2.4rem;
-    padding-top: 0.8rem;
-    border-top: 1px solid var(--wp-border);
-}
-
-html.light code,
-html.rust code,
-html.ayu code,
-html.navy code,
-html.coal code {
-    background: var(--wp-accent-soft);
-    border-radius: 6px;
-    padding: 0.12em 0.36em;
-}
-
-html.light blockquote,
-html.rust blockquote,
-html.ayu blockquote,
-html.navy blockquote,
-html.coal blockquote {
-    background: var(--quote-bg);
-    border-inline-start: 4px solid var(--wp-accent);
-    border-radius: 0 12px 12px 0;
-    padding: 0.8rem 1rem;
-}
-
-html.light table,
-html.rust table,
-html.ayu table,
-html.navy table,
-html.coal table {
-    border-radius: 12px;
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) table {
+    border-radius: var(--wp-radius);
     overflow: hidden;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid var(--wp-divider);
 }
 
-html.light .nav-wrapper,
-html.rust .nav-wrapper,
-html.ayu .nav-wrapper,
-html.navy .nav-wrapper,
-html.coal .nav-wrapper,
-html.light .nav-wide-wrapper,
-html.rust .nav-wide-wrapper,
-html.ayu .nav-wide-wrapper,
-html.navy .nav-wide-wrapper,
-html.coal .nav-wide-wrapper {
-    margin-top: 1rem;
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) table th,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) table td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--wp-divider);
+    font-size: 14px;
 }
 
-html.light .nav-chapters,
-html.rust .nav-chapters,
-html.ayu .nav-chapters,
-html.navy .nav-chapters,
-html.coal .nav-chapters,
-html.light .mobile-nav-chapters,
-html.rust .mobile-nav-chapters,
-html.ayu .mobile-nav-chapters,
-html.navy .mobile-nav-chapters,
-html.coal .mobile-nav-chapters {
-    background: var(--wp-floating-bg);
-    border: 1px solid var(--wp-border);
-    border-radius: 0;
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-    color: var(--wp-text-muted);
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) table th {
+    background: var(--wp-bg-soft);
+    font-weight: 600;
+    color: var(--wp-text-1);
+    text-align: left;
 }
 
-html.light .nav-chapters,
-html.rust .nav-chapters,
-html.ayu .nav-chapters,
-html.navy .nav-chapters,
-html.coal .nav-chapters {
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) table tr:last-child td {
+    border-bottom: 0;
+}
+
+
+/* ==========================================================================
+   Prev / Next navigation buttons
+   ========================================================================== */
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .nav-wrapper,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .nav-wide-wrapper,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .nav-wide,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .nav-wrapper {
+    margin-top: 1.5rem;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .nav-chapters,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .mobile-nav-chapters {
+    background: var(--wp-bg-elv);
+    border: 1px solid var(--wp-divider);
+    border-radius: var(--wp-radius);
+    box-shadow: var(--wp-shadow-1);
+    color: var(--wp-text-2);
+    transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .nav-chapters {
     top: auto;
-    bottom: 28px;
-    width: 40px;
-    min-width: 40px;
-    max-width: 40px;
-    height: 40px;
+    bottom: 32px;
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+    height: 44px;
     margin: 0;
     transform: none;
-    font-size: 1.35rem;
-    backdrop-filter: blur(12px);
+    font-size: 1.25rem;
+    backdrop-filter: none;
 }
 
 html.sidebar-visible .nav-chapters.previous {
-    left: calc(var(--sidebar-width) + 20px);
+    left: calc(var(--wp-sidebar-width) + 24px);
 }
 
 html:not(.sidebar-visible) .nav-chapters.previous {
-    left: 20px;
+    left: 24px;
 }
 
-html.light .nav-chapters.next,
-html.rust .nav-chapters.next,
-html.ayu .nav-chapters.next,
-html.navy .nav-chapters.next,
-html.coal .nav-chapters.next {
-    right: 20px;
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .nav-chapters.next {
+    right: 24px;
 }
 
-html.light .nav-chapters:hover,
-html.rust .nav-chapters:hover,
-html.ayu .nav-chapters:hover,
-html.navy .nav-chapters:hover,
-html.coal .nav-chapters:hover,
-html.light .mobile-nav-chapters:hover,
-html.rust .mobile-nav-chapters:hover,
-html.ayu .mobile-nav-chapters:hover,
-html.navy .mobile-nav-chapters:hover,
-html.coal .mobile-nav-chapters:hover {
-    background: var(--wp-floating-hover-bg);
-    border-color: rgba(37, 99, 235, 0.2);
-    color: var(--wp-accent);
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .nav-chapters:hover,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .mobile-nav-chapters:hover {
+    background: var(--wp-bg-elv);
+    border-color: var(--wp-brand-1);
+    color: var(--wp-brand-1);
+    box-shadow: var(--wp-shadow-2);
 }
+
+
+/* ==========================================================================
+   Theme popup
+   ========================================================================== */
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .theme-popup {
+    border-radius: var(--wp-radius);
+    border: 1px solid var(--wp-border);
+    box-shadow: var(--wp-shadow-3);
+    background: var(--wp-bg-elv);
+    padding: 4px;
+}
+
+.theme-popup button {
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 13px;
+    color: var(--wp-text-2);
+    transition: color 0.15s, background-color 0.15s;
+}
+
+.theme-popup button:hover {
+    background: var(--wp-bg-soft);
+    color: var(--wp-text-1);
+}
+
+
+/* ==========================================================================
+   Custom: wp-topbar (version switch + lang switch container)
+   ========================================================================== */
 
 .wp-topbar {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     margin-left: auto;
-    margin-right: 8px;
+    margin-right: 12px;
 }
 
-.wp-topbar .wp-chip,
-.wp-topbar .wp-switch {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    height: 32px;
-    padding: 0 12px;
-    border-radius: 0;
-    border: 1px solid var(--wp-border);
-    background: var(--wp-chip-bg);
-    color: var(--wp-text-muted);
-    text-decoration: none;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    white-space: nowrap;
-}
-
-.wp-topbar > .wp-chip {
+.wp-topbar .wp-chip {
     display: none;
-}
-
-.wp-topbar .wp-chip:hover,
-.wp-topbar .wp-switch:hover {
-    color: var(--wp-accent);
-    border-color: rgba(15, 143, 131, 0.24);
-    background: var(--wp-floating-hover-bg);
-}
-
-.wp-topbar .wp-switch.current {
-    background: var(--wp-accent-soft);
-    color: var(--wp-accent-strong);
-    border-color: rgba(15, 143, 131, 0.2);
 }
 
 .wp-topbar .wp-sep {
     width: 1px;
     height: 20px;
-    background: var(--wp-border);
+    background: var(--wp-divider);
 }
+
+
+/* ==========================================================================
+   Custom: Version banner / switcher
+   ========================================================================== */
 
 .version-banner {
     position: static;
@@ -483,20 +562,7 @@ html.coal .mobile-nav-chapters:hover {
 }
 
 .version-banner .banner-content {
-    gap: 6px;
-}
-
-.version-banner .version-link {
-    height: 30px;
-    display: inline-flex;
-    align-items: center;
-    border-radius: 0;
-    padding: 0 11px;
-    font-size: 12px;
-    letter-spacing: 0.02em;
-    border: 1px solid transparent;
-    background: transparent;
-    color: var(--wp-text-muted);
+    gap: 0;
 }
 
 .version-banner .version-info {
@@ -509,29 +575,238 @@ html.coal .mobile-nav-chapters:hover {
 
 .version-banner .version-switcher {
     display: flex;
-    gap: 4px;
-    padding: 2px;
-    border: 1px solid var(--wp-border);
-    border-radius: 0;
-    background: var(--wp-chip-bg);
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid var(--wp-divider);
+    border-radius: var(--wp-radius);
+    background: var(--wp-bg-soft);
 }
 
-.version-banner .version-switcher::before {
-    display: none;
+.version-banner .version-link {
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 6px;
+    padding: 0 10px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--wp-text-2);
+    text-decoration: none;
+    transition: color 0.15s, background-color 0.15s;
+}
+
+.version-banner .version-link:hover:not(.disabled) {
+    color: var(--wp-text-1);
 }
 
 .version-banner .version-link.current {
-    background: var(--wp-current-bg);
-    color: var(--wp-accent);
-    border-color: rgba(37, 99, 235, 0.18);
-    box-shadow: none;
+    background: var(--wp-bg-elv);
+    color: var(--wp-brand-1);
+    border-color: var(--wp-divider);
+    box-shadow: var(--wp-shadow-1);
+    font-weight: 600;
 }
 
-.version-banner .version-link.disabled:not(.current),
-.lang-switcher a[href="#"] {
-    opacity: 0.45;
+.version-banner .version-link.disabled:not(.current) {
+    opacity: 0.4;
     pointer-events: none;
 }
+
+
+/* ==========================================================================
+   Custom: Language switcher
+   ========================================================================== */
+
+.lang-switcher {
+    position: static;
+    top: auto;
+    right: auto;
+    z-index: auto;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.lang-switcher::before {
+    content: "";
+    width: 1px;
+    height: 20px;
+    background: var(--wp-divider);
+    margin-right: 6px;
+}
+
+.lang-switcher a,
+.lang-switcher .current {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--wp-text-2);
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.15s, background-color 0.15s;
+}
+
+.lang-switcher a:hover {
+    color: var(--wp-text-1);
+    background: var(--wp-bg-soft);
+}
+
+.lang-switcher .current {
+    color: var(--wp-brand-1);
+    background: var(--wp-bg-elv);
+    border-color: var(--wp-divider);
+    box-shadow: var(--wp-shadow-1);
+    font-weight: 600;
+}
+
+.lang-switcher a[href="#"] {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+
+/* ==========================================================================
+   Custom: Page TOC (right sidebar outline)
+   ========================================================================== */
+
+.sidebar .on-this-page {
+    display: none;
+}
+
+.page-toc {
+    position: fixed;
+    top: calc(var(--wp-nav-height) + 2rem);
+    width: 240px;
+    max-height: calc(100vh - var(--wp-nav-height) - 4rem);
+    overflow: auto;
+    padding-left: 1rem;
+    border-left: 1px solid var(--wp-divider);
+    color: var(--wp-text-2);
+    z-index: 10;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.page-toc-title {
+    margin: 0 0 0.75rem 0;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--wp-text-2);
+}
+
+.page-toc ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.page-toc li {
+    margin: 2px 0;
+}
+
+.page-toc a {
+    position: relative;
+    display: block;
+    padding: 4px 0 4px 12px;
+    border-radius: 0;
+    color: var(--wp-text-2);
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.page-toc a:hover {
+    color: var(--wp-brand-1);
+}
+
+.page-toc a.active {
+    color: var(--wp-brand-1);
+    font-weight: 600;
+}
+
+.page-toc a.active::before {
+    content: "";
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: -1.03rem;
+    width: 3px;
+    background: var(--wp-brand-1);
+    border-radius: 0 2px 2px 0;
+}
+
+.page-toc-h3 {
+    padding-left: 12px;
+}
+
+
+/* ==========================================================================
+   Layout: adjust main content when TOC is visible
+   ========================================================================== */
+
+@media (min-width: 1280px) {
+    :is(html.light, html.rust, html.ayu, html.navy, html.coal) .content main {
+        margin-right: calc(240px + 48px + max(2rem, calc((100% - 1180px) / 2)));
+    }
+}
+
+@media (max-width: 1279px) {
+    .page-toc {
+        display: none;
+    }
+}
+
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 1080px) {
+    .wp-topbar {
+        gap: 6px;
+        margin-left: 8px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    :is(html.light, html.rust, html.ayu, html.navy, html.coal) .content main {
+        width: 100%;
+        padding: 1.5rem 1.2rem 2rem;
+        border-radius: 0;
+        border-left: 0;
+        border-right: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    :is(html.light, html.rust, html.ayu, html.navy, html.coal) .menu-bar {
+        height: 56px;
+    }
+
+    :is(html.light, html.rust, html.ayu, html.navy, html.coal) .content h1 {
+        font-size: 1.6rem;
+    }
+
+    .version-banner .desc-text {
+        display: none;
+    }
+}
+
+
+/* ==========================================================================
+   Version banner body offset — disabled (integrated in topbar)
+   ========================================================================== */
 
 body.has-version-banner {
     padding-top: 0;
@@ -546,29 +821,10 @@ body.has-version-banner .page-wrapper {
     margin-top: 0;
 }
 
-.lang-switcher {
-    position: static;
-    top: auto;
-    right: auto;
-    z-index: auto;
-    background: transparent;
-    border: 0;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
 
-.lang-switcher::before {
-    content: "";
-    width: 1px;
-    height: 20px;
-    background: var(--wp-border);
-}
-
-.right-buttons {
-    gap: 8px;
-}
+/* ==========================================================================
+   Right buttons cleanup (hide unused mdBook defaults)
+   ========================================================================== */
 
 .right-buttons a {
     display: none !important;
@@ -577,163 +833,4 @@ body.has-version-banner .page-wrapper {
 .right-buttons #mdbook-theme-toggle,
 .right-buttons #search-toggle {
     display: inline-flex !important;
-}
-
-.left-buttons {
-    gap: 4px;
-}
-
-.left-buttons .icon-button {
-    border-radius: 0;
-}
-
-.lang-switcher a,
-.lang-switcher .current {
-    display: inline-flex;
-    align-items: center;
-    height: 30px;
-    padding: 0 11px;
-    border-radius: 0;
-    border: 1px solid transparent;
-    background: transparent;
-    color: var(--wp-text-muted);
-    font-weight: 600;
-}
-
-.lang-switcher .current {
-    color: var(--wp-accent-strong);
-    background: var(--wp-current-bg);
-    border-color: rgba(37, 99, 235, 0.18);
-    box-shadow: none;
-}
-
-.sidebar .chapter li a,
-.nav-chapters,
-.mobile-nav-chapters,
-.wp-topbar .wp-chip,
-.wp-topbar .wp-switch,
-.version-banner,
-.version-banner .banner-content,
-.version-banner .version-switcher,
-.version-banner .version-link,
-.lang-switcher,
-.lang-switcher a,
-.lang-switcher .current,
-.left-buttons .icon-button,
-.right-buttons .icon-button,
-.right-buttons a,
-.page-toc,
-.page-toc a {
-    border-radius: 0 !important;
-}
-
-.sidebar .on-this-page {
-    display: none;
-}
-
-.page-toc {
-    position: fixed;
-    top: 5.6rem;
-    width: 320px;
-    max-height: calc(100vh - 7.2rem);
-    overflow: auto;
-    padding-left: 1.15rem;
-    border-left: 1px solid var(--wp-border);
-    font-size: 1.18rem;
-    line-height: 1.55;
-    color: var(--wp-text-muted);
-    z-index: 10;
-}
-
-.page-toc-title {
-    margin: 0 0 0.82rem 0.2rem;
-    font-size: 1rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    color: var(--wp-text-muted);
-}
-
-.page-toc ol {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-.page-toc li {
-    margin: 0.14rem 0;
-}
-
-.page-toc a {
-    position: relative;
-    display: block;
-    padding: 0.34rem 0 0.34rem 0.62rem;
-    border-radius: 0;
-    color: var(--wp-text-muted);
-    text-decoration: none;
-    transition: background-color 0.15s ease, color 0.15s ease;
-}
-
-.page-toc a:hover {
-    color: var(--wp-accent);
-}
-
-.page-toc a.active {
-    color: var(--wp-accent-strong);
-    font-weight: 700;
-}
-
-.page-toc a.active::before {
-    content: "";
-    position: absolute;
-    top: 0.34rem;
-    bottom: 0.34rem;
-    left: -1.18rem;
-    width: 3px;
-    background: var(--wp-accent);
-}
-
-.page-toc-h3 {
-    padding-left: 0.8rem;
-    font-size: 1.1rem;
-}
-
-@media (min-width: 1280px) {
-    html.light .content main,
-    html.rust .content main,
-    html.ayu .content main,
-    html.navy .content main,
-    html.coal .content main {
-        margin-right: calc(320px + 42px + max(3rem, calc((100% - 1180px) / 2)));
-    }
-}
-
-@media (max-width: 1279px) {
-    .page-toc {
-        display: none;
-    }
-}
-
-@media (max-width: 1080px) {
-    .wp-topbar {
-        gap: 6px;
-        margin-left: 8px;
-        overflow-x: auto;
-        padding-bottom: 4px;
-    }
-
-    .wp-topbar .desc-text {
-        display: none;
-    }
-
-    html.light .content main,
-    html.rust .content main,
-    html.ayu .content main,
-    html.navy .content main,
-    html.coal .content main {
-        width: 100%;
-        padding: 1.5rem 1.2rem 2rem;
-        border-radius: 0;
-        border-left: 0;
-        border-right: 0;
-    }
 }

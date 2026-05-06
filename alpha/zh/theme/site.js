@@ -255,6 +255,85 @@
         document.head.appendChild(script);
     }
 
+    function pageTocText(header) {
+        const anchor = header.querySelector('a.header');
+        return (anchor || header).textContent.trim();
+    }
+
+    function buildPageToc() {
+        const main = document.querySelector('main');
+        if (!main) {
+            return;
+        }
+
+        const headers = Array.from(main.querySelectorAll('h2, h3')).filter(header => {
+            return header.id && pageTocText(header);
+        });
+
+        if (headers.length < 4 || document.querySelector('.page-toc')) {
+            return;
+        }
+
+        const nav = document.createElement('nav');
+        nav.className = 'page-toc';
+        nav.setAttribute('aria-label', '本页目录');
+
+        const title = document.createElement('div');
+        title.className = 'page-toc-title';
+        title.textContent = '本页目录';
+        nav.appendChild(title);
+
+        const list = document.createElement('ol');
+        nav.appendChild(list);
+
+        headers.forEach(header => {
+            const item = document.createElement('li');
+            item.className = 'page-toc-' + header.tagName.toLowerCase();
+
+            const link = document.createElement('a');
+            link.href = '#' + header.id;
+            link.textContent = pageTocText(header);
+
+            item.appendChild(link);
+            list.appendChild(item);
+        });
+
+        document.body.appendChild(nav);
+
+        const links = Array.from(nav.querySelectorAll('a'));
+
+        function placeToc() {
+            const mainRect = main.getBoundingClientRect();
+            const tocWidth = 320;
+            const gap = 42;
+            const viewportPadding = 24;
+            const preferredLeft = mainRect.right + gap;
+            const maxLeft = window.innerWidth - tocWidth - viewportPadding;
+            nav.style.left = Math.max(viewportPadding, Math.min(preferredLeft, maxLeft)) + 'px';
+        }
+
+        function setActive() {
+            let active = headers[0];
+            for (const header of headers) {
+                if (header.getBoundingClientRect().top <= 120) {
+                    active = header;
+                } else {
+                    break;
+                }
+            }
+
+            links.forEach(link => {
+                link.classList.toggle('active', link.getAttribute('href') === '#' + active.id);
+            });
+        }
+
+        placeToc();
+        setActive();
+        window.addEventListener('resize', placeToc);
+        document.addEventListener('scroll', placeToc, { passive: true });
+        document.addEventListener('scroll', setActive, { passive: true });
+    }
+
     function init() {
         const parsed = parseDocPath();
         renderLangSwitcher(parsed);
@@ -262,6 +341,7 @@
         simplifyThemeMenu();
         loadVersionBanner(parsed);
         loadMermaidIfNeeded();
+        buildPageToc();
     }
 
     window.wpDocsRefreshTopbar = refreshTopbar;

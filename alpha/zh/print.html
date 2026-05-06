@@ -37,10 +37,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-91a20004.js";
+            window.path_to_searchindex_js = "searchindex-42e442be.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-43d6062e.js"></script>
+        <script src="toc-81a9ffca.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -19926,6 +19926,66 @@ cd wp-monitor/example
 <li>查看下游输出是否有损耗或波动</li>
 </ol>
 <p>如果只是想快速判断链路是否正常，通常先看时间窗口内的总览和 MISS 即可。</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="wp-skills"><a class="header" href="#wp-skills">wp-skills</a></h1>
+<p><code>wp-skills</code> 是面向 WarpParse 的 AI 技能集合，在使用skills之前，您需要具备使用AI agent的基础知识，并且已经安装了支持skills的AI工具（如Claude、Codex等）。<code>wp-skills</code> 目前包含以下技能：</p>
+<h3 id="wp-deploy"><a class="header" href="#wp-deploy"><code>wp-deploy</code></a></h3>
+<p>用于 WarpParse 的部署和配置指导，主要处理：</p>
+<ul>
+<li><code>connectors/source.d</code> / <code>connectors/sink.d</code></li>
+<li><code>topology/sources</code> / <code>topology/sinks</code></li>
+<li><code>conf/wparse.toml</code></li>
+<li><code>conf/wpgen.toml</code></li>
+<li><code>wp-monitor/config/app.toml</code></li>
+<li>联调接线、部署说明、观察链路是否跑通</li>
+</ul>
+<p>适合这样的问题：</p>
+<ul>
+<li>帮我加一个 <code>file source</code></li>
+<li>帮我把 <code>source</code> 和 <code>sink</code> 接起来</li>
+<li>帮我补一个 <code>wpgen</code> 做回放</li>
+<li>帮我接上 <code>wp-monitor</code> 看指标和 MISS</li>
+</ul>
+<h3 id="wpl-rule-check"><a class="header" href="#wpl-rule-check"><code>wpl-rule-check</code></a></h3>
+<p>用于根据日志样本编写和验证 <code>WPL</code> / <code>OML</code>，主要处理：</p>
+<ul>
+<li>分析原始日志样本</li>
+<li>编写 <code>parse.wpl</code></li>
+<li>编写 <code>.oml</code></li>
+<li>使用 <code>wpl-check</code> 验证规则</li>
+<li>排查规则为什么匹配不上</li>
+</ul>
+<p>适合这样的问题：</p>
+<ul>
+<li>这条日志帮我写规则</li>
+<li>这个字段怎么提取</li>
+<li>帮我写 <code>OML</code></li>
+<li>这条规则为什么匹配失败</li>
+</ul>
+<h2 id="安装命令"><a class="header" href="#安装命令">安装命令</a></h2>
+<p>安装 <code>wp-skills alpha</code>：</p>
+<pre><code class="language-bash">curl -sSf https://get.warpparse.ai/inst-x.sh | bash -s -- wp-skills alpha
+</code></pre>
+<p>该命令会提示你选择需要的skill，选择后，会安装到如下目录中:</p>
+<ul>
+<li><code>~/.claude/skills</code></li>
+<li><code>~/.codex/skills</code></li>
+</ul>
+<h2 id="怎么使用"><a class="header" href="#怎么使用">怎么使用</a></h2>
+<p>安装完成后，就可以在支持 skills 的 AI 工具(codex、claude、opencode)中直接描述你的目标。</p>
+<p>例如：</p>
+<ul>
+<li>帮我配一个 <code>file source</code>，把样本跑进 WarpParse</li>
+<li>帮我增加一个 <code>file sink</code>，把结果输出成 JSON</li>
+<li>帮我接一个 <code>wpgen</code>，往 <code>tcp source</code> 发送测试数据</li>
+<li>帮我给链路接上 <code>wp-monitor</code></li>
+<li>这条日志帮我写 <code>WPL</code> 和 <code>OML</code>，并验证一下</li>
+</ul>
+<p>建议：</p>
+<ul>
+<li>配置和部署问题优先使用 <code>wp-deploy</code></li>
+<li>规则编写和验证问题优先使用 <code>wpl-rule-check</code></li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="benchmark-report"><a class="header" href="#benchmark-report">BenchMark Report</a></h1>
 <p>4 种日志 * 3 种拓扑 * 2 种能力 * 2 种平台 * 2 种引擎。</p>

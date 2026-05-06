@@ -304,8 +304,8 @@
 
         function placeToc() {
             const mainRect = main.getBoundingClientRect();
-            const tocWidth = 420;
-            const gap = 34;
+            const tocWidth = 320;
+            const gap = 42;
             const viewportPadding = 24;
             const preferredLeft = mainRect.right + gap;
             const maxLeft = window.innerWidth - tocWidth - viewportPadding;

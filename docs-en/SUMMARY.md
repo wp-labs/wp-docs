@@ -1,7 +1,7 @@
 # Summary
 
 - [Release Notes](00-release/README.md)
-  - [0.22 Release Notes](00-release/0.22.md)
+  - [0.22 更新说明](00-release/0.22.md)
   - [0.20 Release Notes](00-release/0.20.md)
 
 - [User Guide](10-user/README.md)
@@ -99,6 +99,3 @@
 
 - [Connector Dev Guide](30-dev/connector_dev_guide.md)
 - [Docs Sync Automation](30-dev/docs_aggregation_automation.md)
-- [wp-knowledge Provider and Cache Plan](30-dev/knowledge/architecture/provider-cache.md)
-- [PostgreSQL Provider Tasks](30-dev/knowledge/tasks/postgres-provider.md)
-- [Provider / Cache Refactor Tasks](30-dev/knowledge/tasks/provider-cache.md)

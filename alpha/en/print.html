@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-296d4d5d.js";
+            window.path_to_searchindex_js = "searchindex-7c5a091d.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-6d516428.js"></script>
@@ -11389,7 +11389,7 @@ framing = "line"  # or "len"
 <tr><td><code>kafka</code></td><td>Output to Kafka</td><td>-</td></tr>
 <tr><td><code>prometheus</code></td><td>Prometheus metrics exposure</td><td><a href="#prometheus-sink">Prometheus Sink Configuration</a></td></tr>
 <tr><td><code>victorialogs</code></td><td>Output to VictoriaLogs</td><td><a href="#victorialogs">VictoriaLogs Sink Configuration</a></td></tr>
-<tr><td><code>dmdb</code></td><td>Output to DMDB</td><td><a href="#dmdb-sink-usage-and-configuration-guide">DMDB Sink Configuration</a></td></tr>
+<tr><td><code>dmdb</code></td><td>Output to DMDB</td><td><a href="#dmdb-sink">DMDB Sink Configuration</a></td></tr>
 <tr><td><code>elasticsearch</code></td><td>Output to Elasticsearch</td><td><a href="#elasticsearch-sink">Elasticsearch Sink Configuration</a></td></tr>
 <tr><td><code>http</code></td><td>Output to HTTP server</td><td><a href="#http-sink">HTTP Sink Configuration</a></td></tr>
 <tr><td><code>clickhouse</code></td><td>Output to ClickHouse database</td><td><a href="#clickhouse-sink">ClickHouse Sink Configuration</a></td></tr>
@@ -12596,7 +12596,7 @@ batch_size = 1024
 <li>PostgreSQL uses the same configuration keys as MySQL. Only connector <code>type</code>, port, and connection details differ.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="dmdb-sink-usage-and-configuration-guide"><a class="header" href="#dmdb-sink-usage-and-configuration-guide">DMDB Sink Usage and Configuration Guide</a></h1>
+<h1 id="dmdb-sink"><a class="header" href="#dmdb-sink">DMDB Sink</a></h1>
 <h2 id="1-prerequisites"><a class="header" href="#1-prerequisites">1. Prerequisites</a></h2>
 <p>Before using the <code>dmdb</code> sink, first install the ODBC driver. Then follow the setup and verification steps for either <code>connection_string</code> / <code>endpoint</code> mode or <code>dsn</code> mode, depending on how you plan to connect.</p>
 <h3 id="11-common-preparation-install-the-odbc-environment-and-the-dm-driver"><a class="header" href="#11-common-preparation-install-the-odbc-environment-and-the-dm-driver">1.1 Common Preparation: Install the ODBC Environment and the DM Driver</a></h3>

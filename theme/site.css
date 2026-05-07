@@ -38,7 +38,7 @@
 
     /* Layout */
     --wp-nav-height: 64px;
-    --wp-sidebar-width: 272px;
+    --sidebar-target-width: 272px;
 
     /* Radius */
     --wp-radius: 8px;
@@ -269,6 +269,46 @@ html.coal {
     transition: color 0.15s, background-color 0.15s;
 }
 
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li.chapter-item {
+    display: flex;
+    align-items: center;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li > a.toggle {
+    flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    margin: 0 0 0 6px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    color: var(--wp-text-1);
+    text-decoration: none;
+    transition: color 0.15s, background-color 0.15s, transform 0.15s;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li > a.toggle:hover {
+    color: var(--wp-brand-1);
+    background: var(--wp-bg-soft);
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li > a.toggle div {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    transition: transform 0.2s ease;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li.expanded > a.toggle div {
+    transform: rotate(90deg);
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li:not(.expanded) + li > ol {
+    display: none;
+}
+
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li a:hover {
     background: var(--wp-bg-soft);
     color: var(--wp-text-1);
@@ -300,16 +340,6 @@ html.coal {
     margin-left: 12px;
 }
 
-html.sidebar-visible .page-wrapper {
-    margin-left: var(--wp-sidebar-width);
-}
-
-[dir=rtl].sidebar-visible .page-wrapper {
-    margin-right: var(--wp-sidebar-width);
-    margin-left: 0;
-}
-
-
 /* ==========================================================================
    Content area
    ========================================================================== */
@@ -325,6 +355,7 @@ html.sidebar-visible .page-wrapper {
 
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .page-wrapper {
     background: transparent;
+    transition: margin-inline-start 0.3s ease, transform 0.3s ease;
 }
 
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .content {
@@ -502,7 +533,7 @@ html.sidebar-visible .page-wrapper {
 }
 
 html.sidebar-visible .nav-chapters.previous {
-    left: calc(var(--wp-sidebar-width) + 24px);
+    left: calc(var(--sidebar-width) + var(--sidebar-resize-indicator-width) + 24px);
 }
 
 html:not(.sidebar-visible) .nav-chapters.previous {

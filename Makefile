@@ -1,6 +1,6 @@
 # Makefile for mdbook documentation management
 
-.PHONY: help build serve install clean summary summary-simple validate build-zh build-en build-all serve-zh serve-en sync sync-dry-run copy-theme-zh copy-theme-en
+.PHONY: help build serve install clean summary summary-simple validate build-zh build-en build-all serve-zh serve-en sync sync-dry-run copy-theme copy-theme-zh copy-theme-en
 
 # Default target
 help:
@@ -36,13 +36,15 @@ install:
 	fi
 
 # Build all language versions
-build: build-zh build-en copy-assets
+build: copy-theme build-zh build-en copy-assets
 	@echo "All documentation built successfully!"
 
 # Build Chinese version
 build-zh: copy-theme-zh
 	@echo "Building Chinese documentation..."
 	cd docs-zh && mdbook build
+
+copy-theme: copy-theme-zh copy-theme-en
 
 copy-theme-zh:
 	@mkdir -p docs-zh/theme
@@ -66,7 +68,7 @@ copy-assets:
 	@cp index.html book/
 
 # Serve documentation locally (Chinese, default port 3000)
-serve: serve-zh
+serve: copy-theme serve-zh
 
 # Serve Chinese version
 serve-zh: copy-theme-zh

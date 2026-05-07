@@ -29,7 +29,7 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="theme/site-fc95efb8.v20260507-1.css">
+        <link rel="stylesheet" href="theme/site-9bb75b21.v20260507-1.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -37,10 +37,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-edc6cbb1.js";
+            window.path_to_searchindex_js = "searchindex-a1ae6b27.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-d7a13aa9.js"></script>
+        <script src="toc-041b2dad.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -2275,271 +2275,185 @@ grep "version" ${models.knowledge}/semantic_dict.toml
 <p>Last Updated: 2026-02-08</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="knowdb-configuration"><a class="header" href="#knowdb-configuration">KnowDB Configuration</a></h1>
-<p>Remember only three things:</p>
-<ol>
-<li>only <code>version = 2</code> is supported</li>
-<li>choose one mode only: directory-based SQLite authority, or external PostgreSQL / MySQL</li>
-<li><code>[cache]</code> controls <code>result cache</code> only</li>
-</ol>
-<h2 id="two-modes"><a class="header" href="#two-modes">Two modes</a></h2>
+<p>This guide describes the directory-based configuration and loading specification for the Knowledge Database (KnowDB).</p>
+<p>Applicable Scope</p>
 <ul>
-<li>Static CSV assets: use directory-based SQLite authority</li>
-<li>Data already in PostgreSQL / MySQL: use external provider</li>
+<li>Initialize authoritative database (CSV -&gt; SQLite), used for loading by wparse/wproj and other tools at startup</li>
 </ul>
-<h2 id="minimal-examples"><a class="header" href="#minimal-examples">Minimal examples</a></h2>
-<h3 id="directory-based-sqlite-authority"><a class="header" href="#directory-based-sqlite-authority">Directory-based SQLite authority</a></h3>
-<pre><code class="language-toml">version = 2
-base_dir = "."
-
-[default]
-transaction = true
-batch_size = 2000
-on_error = "fail"
-
-[csv]
-has_header = true
-delimiter = ","
-encoding = "utf-8"
-trim = true
-
-[cache]
-enabled = true
-capacity = 1024
-ttl_ms = 30000
-
-[[tables]]
-name = "example"
-dir = "example"
-enabled = true
-columns.by_header = ["name", "pinying"]
-
-[tables.expected_rows]
-min = 5
-max = 100
-</code></pre>
-<h3 id="external-postgresql--mysql"><a class="header" href="#external-postgresql--mysql">External PostgreSQL / MySQL</a></h3>
-<pre><code class="language-toml">version = 2
-
-[cache]
-enabled = true
-capacity = 1024
-ttl_ms = 30000
-
-[provider]
-kind = "postgres"
-connection_uri = "postgres://user:${DB_PASSWORD}@127.0.0.1:5432/demo"
-pool_size = 8
-</code></pre>
-<p>Replace <code>kind = "postgres"</code> with <code>kind = "mysql"</code> and switch the connection URI to MySQL format if needed.</p>
-<h2 id="which-settings-take-effect"><a class="header" href="#which-settings-take-effect">Which settings take effect</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Mode</th><th>Active settings</th><th>Not part of the main flow</th></tr>
-</thead>
-<tbody>
-<tr><td>Directory-based SQLite authority</td><td><code>version</code> <code>base_dir</code> <code>[default]</code> <code>[csv]</code> <code>[cache]</code> <code>[[tables]]</code></td><td><code>authority_uri</code> is not read from <code>knowdb.toml</code></td></tr>
-<tr><td>External PostgreSQL / MySQL</td><td><code>version</code> <code>[provider]</code> <code>[cache]</code></td><td><code>base_dir</code> <code>[default]</code> <code>[csv]</code> <code>[[tables]]</code></td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="key-fields"><a class="header" href="#key-fields">Key fields</a></h2>
-<h3 id="top-level"><a class="header" href="#top-level">Top level</a></h3>
+<p>Core Principles</p>
 <ul>
-<li><code>version</code>
-<ul>
-<li>required, must be <code>2</code></li>
+<li>External SQL: DDL/DML for each table is placed in .sql files in the corresponding directory</li>
+<li>Security: Runtime only allows access to table names declared in configuration; SQL only supports {table} placeholder</li>
+<li>Ready to use by default: Most fields can be omitted; built-in defaults and auto-detection satisfy common scenarios</li>
 </ul>
-</li>
-<li><code>base_dir</code>
-<ul>
-<li>root for table directories</li>
-</ul>
-</li>
-<li><code>[provider]</code>
-<ul>
-<li>only for external provider mode</li>
-</ul>
-</li>
-<li><code>[[tables]]</code>
-<ul>
-<li>only for directory-based SQLite authority mode</li>
-</ul>
-</li>
-</ul>
-<h3 id="default"><a class="header" href="#default"><code>[default]</code></a></h3>
-<ul>
-<li><code>transaction</code>
-<ul>
-<li>default <code>true</code></li>
-</ul>
-</li>
-<li><code>batch_size</code>
-<ul>
-<li>default <code>2000</code></li>
-</ul>
-</li>
-<li><code>on_error</code>
-<ul>
-<li><code>fail</code> stops</li>
-<li><code>skip</code> ignores bad rows</li>
-</ul>
-</li>
-</ul>
-<h3 id="csv"><a class="header" href="#csv"><code>[csv]</code></a></h3>
-<ul>
-<li><code>has_header</code>
-<ul>
-<li>default <code>true</code></li>
-</ul>
-</li>
-<li><code>delimiter</code>
-<ul>
-<li>keep it to one character</li>
-</ul>
-</li>
-<li><code>encoding</code>
-<ul>
-<li>only <code>utf-8</code> is supported</li>
-</ul>
-</li>
-<li><code>trim</code>
-<ul>
-<li>default <code>true</code></li>
-</ul>
-</li>
-</ul>
-<h3 id="cache"><a class="header" href="#cache"><code>[cache]</code></a></h3>
-<ul>
-<li><code>enabled</code>
-<ul>
-<li>default <code>true</code></li>
-</ul>
-</li>
-<li><code>capacity</code>
-<ul>
-<li>default <code>1024</code>, in entries</li>
-</ul>
-</li>
-<li><code>ttl_ms</code>
-<ul>
-<li>default <code>30000</code></li>
-</ul>
-</li>
-</ul>
-<h3 id="provider"><a class="header" href="#provider"><code>[provider]</code></a></h3>
-<ul>
-<li><code>kind</code>
-<ul>
-<li>required, <code>postgres</code> or <code>mysql</code></li>
-</ul>
-</li>
-<li><code>connection_uri</code>
-<ul>
-<li>required, <code>${VAR}</code> expansion supported</li>
-</ul>
-</li>
-<li><code>pool_size</code>
-<ul>
-<li>optional, default <code>8</code></li>
-</ul>
-</li>
-</ul>
-<p>Do not write <code>kind = "sqlite_authority"</code>. In directory-based mode, omit <code>[provider]</code> completely.</p>
-<h3 id="tables"><a class="header" href="#tables"><code>[[tables]]</code></a></h3>
-<ul>
-<li><code>name</code>
-<ul>
-<li>required</li>
-</ul>
-</li>
-<li><code>dir</code>
-<ul>
-<li>defaults to <code>name</code></li>
-</ul>
-</li>
-<li><code>data_file</code>
-<ul>
-<li>defaults to <code>data.csv</code></li>
-</ul>
-</li>
-<li><code>enabled</code>
-<ul>
-<li>defaults to <code>true</code></li>
-</ul>
-</li>
-<li>configure at least one column mapping:
-<ul>
-<li><code>columns.by_header</code></li>
-<li><code>columns.by_index</code></li>
-</ul>
-</li>
-<li>priority:
-<ul>
-<li><code>by_header</code> first</li>
-<li><code>by_index</code> only when <code>by_header</code> is empty</li>
-</ul>
-</li>
-</ul>
-<h2 id="table-directory-convention"><a class="header" href="#table-directory-convention">Table directory convention</a></h2>
-<p>A typical table directory looks like this:</p>
-<pre><code class="language-text">knowdb/
-  knowdb.toml
+<p>Directory Layout (Recommended, default under <code>${models.knowledge}</code>)</p>
+<pre><code>${models.knowledge}/
+  knowdb.toml                     # This configuration
   example/
     create.sql
     insert.sql
-    data.csv
-  zone/
+    data.csv                     # Single data file (table directory root)
+  address/
     create.sql
     insert.sql
-    clean.sql
-    data.scv
+    data.csv
 </code></pre>
-<p>Rules:</p>
-<ul>
-<li><code>create.sql</code> is required.</li>
-<li><code>insert.sql</code> is required.</li>
-<li><code>data.csv</code> is the default data file.</li>
-<li><code>clean.sql</code> is optional; if omitted, the default cleanup statement is <code>DELETE FROM {table}</code>.</li>
-<li><code>{table}</code> inside SQL files is replaced with the current table name.</li>
-</ul>
-<h2 id="paths-and-environment-variables"><a class="header" href="#paths-and-environment-variables">Paths and environment variables</a></h2>
-<ul>
-<li><code>${VAR}</code> is expanded before TOML deserialization. Example:</li>
-</ul>
-<pre><code class="language-toml">[provider]
-kind = "mysql"
-connection_uri = "mysql://root:${MYSQL_PASSWORD}@127.0.0.1:3306/demo"
+<p>Top-level Configuration (<code>${models.knowledge}/knowdb.toml</code>)</p>
+<pre><code class="language-toml">version = 2
+
+[[tables]]
+name = "example"
+# dir defaults to name when omitted; this example uses directory ${models.knowledge}/example
+# data_file defaults to data.csv in table directory when omitted
+columns.by_header = ["name", "pinying"]
+
+# To add more tables, append [[tables]] sections
 </code></pre>
+<p>SQL File Specifications</p>
 <ul>
-<li>Values come from the <code>EnvDict</code> passed into <code>init_thread_cloned_from_knowdb(..., dict)</code>.</li>
-<li><code>wp-knowledge</code> does not read process environment variables directly.</li>
+<li>create.sql: Table creation statement, must exist; can use placeholder <code>{table}</code>; allows multiple statements (e.g., <code>CREATE INDEX</code>)</li>
+<li>insert.sql: Insert statement, must exist; parameter positions use <code>?1..?N</code>; allows <code>{table}</code></li>
+<li>clean.sql: Optional; if not present, <code>DELETE FROM {table}</code> is executed by default before loading</li>
 </ul>
-<p>Path resolution order:</p>
+<p>Column Mapping (columns)</p>
+<ul>
+<li>Recommended <code>by_header=[..]</code>, maps CSV header names to columns in <code>insert.sql</code></li>
+<li>If <code>has_header=false</code>, must provide <code>by_index=[..]</code></li>
+<li>Optional enhancement (implementation layer): If columns not configured and <code>insert.sql</code> explicitly lists columns, can parse insert column names as <code>by_header</code></li>
+</ul>
+<p>Loading Strategy (defaults can be omitted)</p>
+<ul>
+<li>Defaults: <code>transaction=true</code>, <code>batch_size=2000</code>, <code>on_error="fail"</code></li>
+<li>on_error:
+<ul>
+<li>fail: Fails and rolls back on bad row (missing columns/parse failure)</li>
+<li>skip: Skips bad rows and counts warnings</li>
+</ul>
+</li>
+</ul>
+<p>Auto-detection (when data_file is not configured)</p>
+<ul>
+<li>Uses <code>{base_dir}/{tables.dir}/data.csv</code></li>
+<li>Reports error if not exists</li>
+</ul>
+<p>Security Constraints</p>
+<ul>
+<li>Runtime (facade / SQL evaluation) only allows table names declared in <code>[[tables]].name</code></li>
+<li>SQL templates only allow <code>{table}</code> placeholder; other dynamic concatenation is prohibited</li>
+</ul>
+<p>Minimal Runnable Example</p>
 <ol>
-<li>If <code>knowdb_conf</code> is relative, resolve it against the caller-provided <code>root</code>.</li>
-<li>Resolve <code>base_dir</code> relative to the directory that contains <code>knowdb.toml</code>.</li>
-<li>Resolve <code>tables[n].dir</code> relative to <code>base_dir</code>.</li>
-<li>Resolve <code>tables[n].data_file</code> relative to the table directory.</li>
+<li>Directory</li>
 </ol>
-<h2 id="common-failures"><a class="header" href="#common-failures">Common failures</a></h2>
+<pre><code>${models.knowledge}/knowdb.toml
+models/knowledge/example/{create.sql, insert.sql, data.csv}
+</code></pre>
+<ol start="2">
+<li>create.sql</li>
+</ol>
+<pre><code class="language-sql">CREATE TABLE IF NOT EXISTS {table} (
+  id      INTEGER PRIMARY KEY,
+  name    TEXT NOT NULL,
+  pinying TEXT NOT NULL
+);
+</code></pre>
+<ol start="3">
+<li>insert.sql</li>
+</ol>
+<pre><code class="language-sql">INSERT INTO {table} (name, pinying) VALUES (?1, ?2);
+</code></pre>
+<ol start="4">
+<li>data.csv</li>
+</ol>
+<pre><code>name,pinying
+令狐冲,linghuchong
+任盈盈,renyingying
+</code></pre>
+<ol start="5">
+<li>knowdb.toml (minimal)</li>
+</ol>
+<pre><code class="language-toml">version = 2
+base_dir = "./models/knowledge"
+[[tables]]
+name = "example"
+dir  = "example"
+columns.by_header = ["name", "pinying"]
+[tables.expected_rows]
+min = 1
+max = 100
+</code></pre>
+<p>Common Errors and Troubleshooting</p>
 <ul>
-<li><code>version</code> is not <code>2</code></li>
-<li><code>create.sql</code>, <code>insert.sql</code>, or the data file is missing</li>
-<li>neither <code>columns.by_header</code> nor <code>columns.by_index</code> is configured</li>
-<li><code>columns.by_header</code> refers to a missing CSV header</li>
-<li><code>encoding</code> is not <code>utf-8</code></li>
-<li>CSV row parsing fails and <code>on_error = "fail"</code></li>
-<li>imported rows are below <code>expected_rows.min</code></li>
-<li>PostgreSQL / MySQL initialization fails to connect</li>
+<li>Missing create.sql / insert.sql: Fails at startup and points to missing file</li>
+<li><code>has_header=false</code> but <code>by_index</code> not provided: Loading error</li>
+<li><code>expected_rows.min</code> not satisfied: Insufficient data, loading fails</li>
+<li>Data source not found: Neither <code>data_file</code> configured nor default path <code>data.csv</code> exists</li>
+<li>Runtime SQL accesses undeclared table: Security validation fails</li>
 </ul>
-<h2 id="recommended-patterns"><a class="header" href="#recommended-patterns">Recommended patterns</a></h2>
+<p>Relationship with Applications</p>
 <ul>
-<li>In the directory-based SQLite authority mode, do not add a <code>[provider]</code> block.</li>
-<li>Put <code>enabled</code> under <code>[[tables]]</code>, not under <code>[tables.expected_rows]</code>.</li>
-<li>Keep <code>delimiter</code> to a single character.</li>
-<li>If you use <code>columns.by_header</code>, keep <code>csv.has_header = true</code>.</li>
-<li>In external PostgreSQL / MySQL mode, treat <code>[cache]</code> strictly as <code>result cache</code> configuration.</li>
+<li>wparse/wproj etc. load knowdb at startup: Create authoritative database and set up Query Provider</li>
+</ul>
+<p>Built-in SQL Functions (UDF)</p>
+<ul>
+<li>Runtime registration:
+<ul>
+<li>Both import phase (authoritative database write connection) and query phase (thread-cloned read-only connection) automatically register.</li>
+<li>Can be used directly in <code>INSERT/SELECT/WHERE</code> (not involved in DDL).</li>
+</ul>
+</li>
+<li>Signatures and Semantics:
+<ul>
+<li><code>ip4_int(text) -&gt; integer</code>: Dotted IPv4 to 32-bit integer; tolerates whitespace/quotes; returns <code>0</code> on invalid input.</li>
+<li><code>ip4_between(ip_text, start_text, end_text) -&gt; integer</code>: Whether in closed interval <code>[start,end]</code> (1/0).</li>
+<li><code>cidr4_min(text) -&gt; integer</code>: CIDR start address (inclusive), e.g., <code>10.0.0.0/8</code>.</li>
+<li><code>cidr4_max(text) -&gt; integer</code>: CIDR end address (inclusive).</li>
+<li><code>cidr4_contains(ip_text, cidr_text) -&gt; integer</code>: Whether IP falls within CIDR range (1/0).</li>
+<li><code>ip4_text(integer|string) -&gt; text</code>: 32-bit integer to dotted IPv4 (useful for debugging/display).</li>
+<li><code>trim_quotes(text) -&gt; text</code>: Removes paired quotes (’ or “) at both ends, tolerates surrounding whitespace; returns original (whitespace trimmed) if not paired.</li>
+</ul>
+</li>
+<li>Import Example (insert.sql):
+<pre><code class="language-sql">INSERT INTO {table} (ip_start_int, ip_end_int, zone)
+VALUES (ip4_int(?1), ip4_int(?2), trim_quotes(?3));
+</code></pre>
+</li>
+<li>Query Example (regular SQL):
+<pre><code class="language-sql">-- Range match (recommended integer comparison, avoid directly comparing function returns in WHERE)
+SELECT zone FROM zone
+WHERE ip_start_int &lt;= ip4_int(:ip)
+  AND ip_end_int   &gt;= ip4_int(:ip)
+LIMIT 1;
+
+-- CIDR match
+SELECT zone FROM zone
+WHERE cidr4_contains(:ip, :cidr) = 1;
+
+-- Debug output
+SELECT ip4_text(ip_start_int) AS ip_start, ip4_text(ip_end_int) AS ip_end, zone
+FROM zone
+LIMIT 5;
+</code></pre>
+</li>
+<li>OML SQL Exact Evaluation:
+<ul>
+<li>OML’s <code>select ... from ... where ...;</code> syntax has identifier whitelist restrictions on column segments, not recommended to write functions directly in column segments.</li>
+<li>Recommended to produce numeric IP upstream (e.g., <code>src_ip_int</code>) and use integer comparison in OML where:
+<pre><code class="language-sql">from_zone: chars = sql(
+  select zone from zone
+  where ip_start_int &lt;= read(src_ip_int)
+    and ip_end_int   &gt;= read(src_ip_int);
+)
+</code></pre>
+</li>
+</ul>
+</li>
+<li>Notes:
+<ul>
+<li>Currently invalid IPv4/CIDR input returns <code>0</code> (or match failure) for import resilience; customize if strict behavior needed.</li>
+<li>SQLite natively provides <code>lower/upper/trim</code> and other string functions, can be combined with above UDFs.</li>
+</ul>
+</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="logging-configuration-1"><a class="header" href="#logging-configuration-1">Logging Configuration</a></h1>
@@ -13047,360 +12961,6 @@ cargo test --manifest-path ../wp-motor/Cargo.toml -p wp-oml \
 <li>Run Markdown validation and mdBook build after sync.</li>
 <li>Record upstream commit SHAs in the generated PR description.</li>
 </ol>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="wp-knowledge-provider-and-cache-plan"><a class="header" href="#wp-knowledge-provider-and-cache-plan">wp-knowledge Provider and Cache Plan</a></h1>
-<p>Companion tasks:</p>
-<ul>
-<li><a href="#provider--cache-refactor-tasks">Provider / Cache Follow-up Tasks</a></li>
-</ul>
-<h2 id="one-line-summary"><a class="header" href="#one-line-summary">One-line summary</a></h2>
-<p>The target architecture is simple:</p>
-<ul>
-<li>providers are replaceable</li>
-<li>cache layers are explicit</li>
-<li>reload has one invalidation contract</li>
-<li>legacy facade APIs still exist, but only as wrappers over one runtime</li>
-</ul>
-<p>Correctness depends on two values:</p>
-<ul>
-<li><code>datasource_id</code></li>
-<li><code>generation</code></li>
-</ul>
-<p>Every cache entry and every thread-local snapshot must be tied to them.</p>
-<h2 id="why-this-exists"><a class="header" href="#why-this-exists">Why this exists</a></h2>
-<p>The old implementation was built for <code>SQLite + single process + per-call cache</code>. Once SQLite, PostgreSQL, and MySQL all coexist, the old assumptions become correctness and maintenance problems:</p>
-<ul>
-<li>provider lifecycle is too static</li>
-<li>caller-owned cache keys are too weak</li>
-<li>metadata cache has no clear bound</li>
-<li><code>ThreadClonedMDB</code> is not version-aware</li>
-</ul>
-<h2 id="target-model"><a class="header" href="#target-model">Target model</a></h2>
-<p>Keep only four layers:</p>
-<ol>
-<li><code>DatasourceRegistry</code>
-<ul>
-<li>owns the active provider</li>
-<li>manages <code>datasource_id</code></li>
-<li>manages <code>generation</code></li>
-<li>handles replace / reload</li>
-</ul>
-</li>
-<li><code>KnowledgeProvider</code>
-<ul>
-<li>executes queries only</li>
-<li>does not own cache policy</li>
-</ul>
-</li>
-<li><code>QueryRuntime</code>
-<ul>
-<li>decides cache usage</li>
-<li>builds cache keys</li>
-<li>owns result cache and metadata cache</li>
-</ul>
-</li>
-<li><code>Facade Compatibility Layer</code>
-<ul>
-<li>keeps <code>query/query_row/query_named/cache_query</code></li>
-<li>serves only as compatibility glue</li>
-</ul>
-</li>
-</ol>
-<h2 id="core-contracts"><a class="header" href="#core-contracts">Core contracts</a></h2>
-<h3 id="datasourceid"><a class="header" href="#datasourceid"><code>DatasourceId</code></a></h3>
-<ul>
-<li>identifies the current data source</li>
-<li>can come from config hash or authority-path hash</li>
-<li>must not expose secrets</li>
-</ul>
-<h3 id="generation"><a class="header" href="#generation"><code>Generation</code></a></h3>
-<ul>
-<li>identifies the current runtime version</li>
-<li>must advance on reload, provider switch, authority rebuild, or schema refresh</li>
-<li>is the main invalidation mechanism; TTL is only fallback</li>
-</ul>
-<h3 id="queryrequest"><a class="header" href="#queryrequest"><code>QueryRequest</code></a></h3>
-<p>Use one internal request model that carries at least:</p>
-<ul>
-<li><code>sql</code></li>
-<li><code>params</code></li>
-<li><code>mode</code></li>
-<li><code>cache_policy</code></li>
-</ul>
-<p>Providers perform their own binding internally. Runtime code should not depend on <code>rusqlite::ToSql</code>.</p>
-<h3 id="cachepolicy"><a class="header" href="#cachepolicy"><code>CachePolicy</code></a></h3>
-<p>Only three meanings are needed:</p>
-<ul>
-<li><code>Bypass</code>
-<ul>
-<li>no cache</li>
-</ul>
-</li>
-<li><code>UseGlobal</code>
-<ul>
-<li>shared result cache</li>
-</ul>
-</li>
-<li><code>UseCallScope</code>
-<ul>
-<li>per-call cache, mainly for compatibility</li>
-</ul>
-</li>
-</ul>
-<h2 id="cache-layers"><a class="header" href="#cache-layers">Cache layers</a></h2>
-<p>Keep only three layers, with separate responsibilities.</p>
-<h3 id="1-result-cache"><a class="header" href="#1-result-cache">1. Result Cache</a></h3>
-<ul>
-<li>for reuse across calls</li>
-<li>key must include:
-<ul>
-<li><code>datasource_id</code></li>
-<li><code>generation</code></li>
-<li><code>query_hash</code></li>
-<li><code>params_hash</code></li>
-<li><code>mode</code></li>
-</ul>
-</li>
-<li>only for explicitly cacheable hotspot queries</li>
-</ul>
-<h3 id="2-local-cache"><a class="header" href="#2-local-cache">2. Local Cache</a></h3>
-<ul>
-<li>for deduplication inside one evaluation</li>
-<li>does not provide global consistency</li>
-<li><code>FieldQueryCache</code> should be treated as this layer</li>
-</ul>
-<h3 id="3-metadata-cache"><a class="header" href="#3-metadata-cache">3. Metadata Cache</a></h3>
-<ul>
-<li>for column names and schema fragments</li>
-<li>key must include at least:
-<ul>
-<li><code>datasource_id</code></li>
-<li><code>generation</code></li>
-<li><code>query_hash</code></li>
-</ul>
-</li>
-<li>must be bounded</li>
-</ul>
-<h2 id="reload-contract"><a class="header" href="#reload-contract">Reload contract</a></h2>
-<p>Reload follows one simple rule:</p>
-<ul>
-<li>whether old state is still valid is decided by <code>generation</code>, not by time</li>
-</ul>
-<p>That means:</p>
-<ul>
-<li>result cache invalidates naturally when generation changes</li>
-<li>metadata cache invalidates naturally when generation changes</li>
-<li><code>ThreadClonedMDB</code> must rebuild snapshots when generation changes</li>
-<li>reload failure must keep the old provider alive; runtime must not enter a half-initialized state</li>
-</ul>
-<h2 id="current-landing-status"><a class="header" href="#current-landing-status">Current landing status</a></h2>
-<p>On the 2026-03-25 baseline, most core pieces already exist:</p>
-<ul>
-<li><code>KnowledgeRuntime</code></li>
-<li>unified <code>QueryRequest / QueryParam / CachePolicy</code></li>
-<li>bounded global result cache keyed by <code>datasource_id + generation</code></li>
-<li>generation-aware <code>FieldQueryCache</code></li>
-<li>generation-aware <code>ThreadClonedMDB</code></li>
-<li>bounded SQLite metadata cache</li>
-</ul>
-<p>The main unfinished areas are now:</p>
-<ul>
-<li>host-side telemetry / metrics adapters</li>
-<li>shrinking and deprecating the old compatibility surface</li>
-</ul>
-<h2 id="migration-order"><a class="header" href="#migration-order">Migration order</a></h2>
-<p>The remaining work should stay in this order:</p>
-<ol>
-<li>finish the external reload / observability contract</li>
-<li>make provider-neutral APIs the default path</li>
-<li>shrink the role of <code>query_named(...)</code> and <code>cache_query(...)</code></li>
-<li>keep local cache only where compatibility still needs it</li>
-</ol>
-<h2 id="final-judgment"><a class="header" href="#final-judgment">Final judgment</a></h2>
-<p>This direction is already validated. The remaining job is cleanup, not another redesign.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="postgresql-provider-tasks"><a class="header" href="#postgresql-provider-tasks">PostgreSQL Provider Tasks</a></h1>
-<h2 id="current-baseline"><a class="header" href="#current-baseline">Current baseline</a></h2>
-<p>Already available:</p>
-<ul>
-<li><code>[provider] kind = "postgres"</code> support</li>
-<li><code>query_fields(...)</code> / <code>cache_query_fields(...)</code> as the recommended path</li>
-<li>baseline queries, named-parameter rewriting, and manual verification scripts</li>
-</ul>
-<p>This is enough to validate the main flow, but not yet enough for long-term production-grade PostgreSQL support.</p>
-<h2 id="remaining-work"><a class="header" href="#remaining-work">Remaining work</a></h2>
-<h3 id="1-connection-pool"><a class="header" href="#1-connection-pool">1. Connection pool</a></h3>
-<ul>
-<li>Current: <code>src/postgres.rs</code> still behaves like a serialized single-client path</li>
-<li>Goal:
-<ul>
-<li>integrate a connection pool</li>
-<li>define connect/disconnect/retry behavior</li>
-<li>remove dependence on one serialized client</li>
-</ul>
-</li>
-</ul>
-<h3 id="2-startup-validation"><a class="header" href="#2-startup-validation">2. Startup validation</a></h3>
-<ul>
-<li>Current: startup mostly checks only basic connectivity</li>
-<li>Goal:
-<ul>
-<li>validate database, schema, permissions, and key objects at startup</li>
-<li>fail early on wrong DB, wrong schema, or wrong permissions</li>
-</ul>
-</li>
-</ul>
-<h3 id="3-sql--udf-boundary"><a class="header" href="#3-sql--udf-boundary">3. SQL / UDF boundary</a></h3>
-<ul>
-<li>Current: baseline SQL works, but SQLite UDF assumptions are still incomplete</li>
-<li>Goal:
-<ul>
-<li>list SQL that can move directly</li>
-<li>list SQL that must be rewritten</li>
-<li>list functions users must provide in PostgreSQL themselves</li>
-</ul>
-</li>
-</ul>
-<h3 id="4-type-coverage"><a class="header" href="#4-type-coverage">4. Type coverage</a></h3>
-<ul>
-<li>Current: result-type support and bind behavior are still incomplete</li>
-<li>Goal:
-<ul>
-<li>cover common numeric, temporal, JSON, and network types</li>
-<li>return clearer errors for unsupported types</li>
-</ul>
-</li>
-</ul>
-<h3 id="5-automated-verification"><a class="header" href="#5-automated-verification">5. Automated verification</a></h3>
-<ul>
-<li>Current: verification is still too manual</li>
-<li>Goal:
-<ul>
-<li>add a stable CI path</li>
-<li>choose one main path between Compose and <code>testcontainers</code></li>
-<li>emit enough diagnostics on failure</li>
-</ul>
-</li>
-</ul>
-<h3 id="6-end-to-end-example-in-a-consuming-repo"><a class="header" href="#6-end-to-end-example-in-a-consuming-repo">6. End-to-end example in a consuming repo</a></h3>
-<ul>
-<li>Current: <code>wp-knowledge</code> can validate itself, but the consuming-repo chain is incomplete</li>
-<li>Goal:
-<ul>
-<li>add a PostgreSQL example in a consumer repo</li>
-<li>validate <code>wp-oml</code> with a real schema</li>
-<li>provide reusable run instructions</li>
-</ul>
-</li>
-</ul>
-<h3 id="7-compatibility-cleanup"><a class="header" href="#7-compatibility-cleanup">7. Compatibility cleanup</a></h3>
-<ul>
-<li>Current: <code>query_named(...)</code> / <code>cache_query(...)</code> still preserve older SQLite-shaped behavior</li>
-<li>Goal:
-<ul>
-<li>make provider-neutral APIs the default for new code</li>
-<li>define the retention and deprecation strategy for compatibility APIs</li>
-</ul>
-</li>
-</ul>
-<h2 id="suggested-order"><a class="header" href="#suggested-order">Suggested order</a></h2>
-<ol>
-<li>connection pool</li>
-<li>startup validation</li>
-<li>SQL / UDF boundary</li>
-<li>type coverage</li>
-<li>automated verification</li>
-<li>end-to-end example</li>
-<li>compatibility cleanup</li>
-</ol>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="provider--cache-refactor-tasks"><a class="header" href="#provider--cache-refactor-tasks">Provider / Cache Refactor Tasks</a></h1>
-<h2 id="work-rules"><a class="header" href="#work-rules">Work rules</a></h2>
-<p>Before each task:</p>
-<ol>
-<li>reread the current code</li>
-<li>mark done / partial / not started</li>
-<li>keep only the smallest still-useful scope</li>
-</ol>
-<p>After each task:</p>
-<ol>
-<li>test / verify</li>
-<li>review</li>
-<li>fix review findings before closing</li>
-</ol>
-<h2 id="current-status"><a class="header" href="#current-status">Current status</a></h2>
-<h3 id="completed"><a class="header" href="#completed">Completed</a></h3>
-<ul>
-<li><code>KnowledgeRuntime</code></li>
-<li>replaceable provider handle</li>
-<li><code>datasource_id + generation</code></li>
-<li>unified <code>QueryRequest / QueryParam / CachePolicy</code></li>
-<li>bounded global result cache</li>
-<li>generation-aware <code>FieldQueryCache</code></li>
-<li>generation-aware <code>ThreadClonedMDB</code></li>
-<li>bounded SQLite metadata cache</li>
-</ul>
-<h3 id="partially-completed"><a class="header" href="#partially-completed">Partially completed</a></h3>
-<ul>
-<li>reload / observability
-<ul>
-<li>baseline logs, snapshots, counters, and rollback already exist</li>
-<li>host-side exporters / adapters are still missing</li>
-</ul>
-</li>
-<li>compatibility layer
-<ul>
-<li><code>query_named(...)</code> / <code>cache_query(...)</code> still exist</li>
-<li>provider-neutral migration is still incomplete</li>
-</ul>
-</li>
-</ul>
-<h3 id="main-remaining-items"><a class="header" href="#main-remaining-items">Main remaining items</a></h3>
-<ul>
-<li>host-side metrics / telemetry adapters</li>
-<li>deprecation strategy for the compatibility surface</li>
-</ul>
-<h2 id="remaining-work-1"><a class="header" href="#remaining-work-1">Remaining work</a></h2>
-<h3 id="1-external-reload--observability-contract"><a class="header" href="#1-external-reload--observability-contract">1. External reload / observability contract</a></h3>
-<ul>
-<li>Goal:
-<ul>
-<li>let hosts wire metrics / telemetry cleanly</li>
-<li>unify diagnostics for reload success, failure, and rollback</li>
-<li>make it easy to answer which provider, which cache layer, and which generation served a query</li>
-</ul>
-</li>
-</ul>
-<h3 id="2-compatibility-cleanup"><a class="header" href="#2-compatibility-cleanup">2. Compatibility cleanup</a></h3>
-<ul>
-<li>Goal:
-<ul>
-<li>make provider-neutral APIs the default for new code</li>
-<li>define the long-term role of <code>query_named(...)</code> and <code>cache_query(...)</code></li>
-<li>add <code>deprecated</code> where SQLite-shaped APIs should start shrinking</li>
-</ul>
-</li>
-</ul>
-<h3 id="3-keep-local-cache-as-compatibility-only"><a class="header" href="#3-keep-local-cache-as-compatibility-only">3. Keep local cache as compatibility only</a></h3>
-<ul>
-<li>Goal:
-<ul>
-<li>keep <code>FieldQueryCache</code> only for per-call deduplication</li>
-<li>stop treating it as a global-consistency mechanism</li>
-</ul>
-</li>
-</ul>
-<h2 id="suggested-order-1"><a class="header" href="#suggested-order-1">Suggested order</a></h2>
-<ol>
-<li>external reload / observability contract</li>
-<li>compatibility cleanup</li>
-<li>further narrowing of local-cache semantics</li>
-</ol>
-<h2 id="notes-11"><a class="header" href="#notes-11">Notes</a></h2>
-<ul>
-<li>the core refactor is already in place; the current job is cleanup, not another full redesign</li>
-<li>if implementation and docs drift, update docs first, then code</li>
-</ul>
 
                     </main>
 

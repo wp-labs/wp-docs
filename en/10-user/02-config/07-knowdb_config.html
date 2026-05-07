@@ -28,7 +28,7 @@
         <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../../theme/site-fc95efb8.v20260507-1.css">
+        <link rel="stylesheet" href="../../theme/site-9bb75b21.v20260507-1.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -36,10 +36,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-edc6cbb1.js";
+            window.path_to_searchindex_js = "../../searchindex-a1ae6b27.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-d7a13aa9.js"></script>
+        <script src="../../toc-041b2dad.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -179,271 +179,185 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="knowdb-configuration"><a class="header" href="#knowdb-configuration">KnowDB Configuration</a></h1>
-<p>Remember only three things:</p>
-<ol>
-<li>only <code>version = 2</code> is supported</li>
-<li>choose one mode only: directory-based SQLite authority, or external PostgreSQL / MySQL</li>
-<li><code>[cache]</code> controls <code>result cache</code> only</li>
-</ol>
-<h2 id="two-modes"><a class="header" href="#two-modes">Two modes</a></h2>
+<p>This guide describes the directory-based configuration and loading specification for the Knowledge Database (KnowDB).</p>
+<p>Applicable Scope</p>
 <ul>
-<li>Static CSV assets: use directory-based SQLite authority</li>
-<li>Data already in PostgreSQL / MySQL: use external provider</li>
+<li>Initialize authoritative database (CSV -&gt; SQLite), used for loading by wparse/wproj and other tools at startup</li>
 </ul>
-<h2 id="minimal-examples"><a class="header" href="#minimal-examples">Minimal examples</a></h2>
-<h3 id="directory-based-sqlite-authority"><a class="header" href="#directory-based-sqlite-authority">Directory-based SQLite authority</a></h3>
-<pre><code class="language-toml">version = 2
-base_dir = "."
-
-[default]
-transaction = true
-batch_size = 2000
-on_error = "fail"
-
-[csv]
-has_header = true
-delimiter = ","
-encoding = "utf-8"
-trim = true
-
-[cache]
-enabled = true
-capacity = 1024
-ttl_ms = 30000
-
-[[tables]]
-name = "example"
-dir = "example"
-enabled = true
-columns.by_header = ["name", "pinying"]
-
-[tables.expected_rows]
-min = 5
-max = 100
-</code></pre>
-<h3 id="external-postgresql--mysql"><a class="header" href="#external-postgresql--mysql">External PostgreSQL / MySQL</a></h3>
-<pre><code class="language-toml">version = 2
-
-[cache]
-enabled = true
-capacity = 1024
-ttl_ms = 30000
-
-[provider]
-kind = "postgres"
-connection_uri = "postgres://user:${DB_PASSWORD}@127.0.0.1:5432/demo"
-pool_size = 8
-</code></pre>
-<p>Replace <code>kind = "postgres"</code> with <code>kind = "mysql"</code> and switch the connection URI to MySQL format if needed.</p>
-<h2 id="which-settings-take-effect"><a class="header" href="#which-settings-take-effect">Which settings take effect</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Mode</th><th>Active settings</th><th>Not part of the main flow</th></tr>
-</thead>
-<tbody>
-<tr><td>Directory-based SQLite authority</td><td><code>version</code> <code>base_dir</code> <code>[default]</code> <code>[csv]</code> <code>[cache]</code> <code>[[tables]]</code></td><td><code>authority_uri</code> is not read from <code>knowdb.toml</code></td></tr>
-<tr><td>External PostgreSQL / MySQL</td><td><code>version</code> <code>[provider]</code> <code>[cache]</code></td><td><code>base_dir</code> <code>[default]</code> <code>[csv]</code> <code>[[tables]]</code></td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="key-fields"><a class="header" href="#key-fields">Key fields</a></h2>
-<h3 id="top-level"><a class="header" href="#top-level">Top level</a></h3>
+<p>Core Principles</p>
 <ul>
-<li><code>version</code>
-<ul>
-<li>required, must be <code>2</code></li>
+<li>External SQL: DDL/DML for each table is placed in .sql files in the corresponding directory</li>
+<li>Security: Runtime only allows access to table names declared in configuration; SQL only supports {table} placeholder</li>
+<li>Ready to use by default: Most fields can be omitted; built-in defaults and auto-detection satisfy common scenarios</li>
 </ul>
-</li>
-<li><code>base_dir</code>
-<ul>
-<li>root for table directories</li>
-</ul>
-</li>
-<li><code>[provider]</code>
-<ul>
-<li>only for external provider mode</li>
-</ul>
-</li>
-<li><code>[[tables]]</code>
-<ul>
-<li>only for directory-based SQLite authority mode</li>
-</ul>
-</li>
-</ul>
-<h3 id="default"><a class="header" href="#default"><code>[default]</code></a></h3>
-<ul>
-<li><code>transaction</code>
-<ul>
-<li>default <code>true</code></li>
-</ul>
-</li>
-<li><code>batch_size</code>
-<ul>
-<li>default <code>2000</code></li>
-</ul>
-</li>
-<li><code>on_error</code>
-<ul>
-<li><code>fail</code> stops</li>
-<li><code>skip</code> ignores bad rows</li>
-</ul>
-</li>
-</ul>
-<h3 id="csv"><a class="header" href="#csv"><code>[csv]</code></a></h3>
-<ul>
-<li><code>has_header</code>
-<ul>
-<li>default <code>true</code></li>
-</ul>
-</li>
-<li><code>delimiter</code>
-<ul>
-<li>keep it to one character</li>
-</ul>
-</li>
-<li><code>encoding</code>
-<ul>
-<li>only <code>utf-8</code> is supported</li>
-</ul>
-</li>
-<li><code>trim</code>
-<ul>
-<li>default <code>true</code></li>
-</ul>
-</li>
-</ul>
-<h3 id="cache"><a class="header" href="#cache"><code>[cache]</code></a></h3>
-<ul>
-<li><code>enabled</code>
-<ul>
-<li>default <code>true</code></li>
-</ul>
-</li>
-<li><code>capacity</code>
-<ul>
-<li>default <code>1024</code>, in entries</li>
-</ul>
-</li>
-<li><code>ttl_ms</code>
-<ul>
-<li>default <code>30000</code></li>
-</ul>
-</li>
-</ul>
-<h3 id="provider"><a class="header" href="#provider"><code>[provider]</code></a></h3>
-<ul>
-<li><code>kind</code>
-<ul>
-<li>required, <code>postgres</code> or <code>mysql</code></li>
-</ul>
-</li>
-<li><code>connection_uri</code>
-<ul>
-<li>required, <code>${VAR}</code> expansion supported</li>
-</ul>
-</li>
-<li><code>pool_size</code>
-<ul>
-<li>optional, default <code>8</code></li>
-</ul>
-</li>
-</ul>
-<p>Do not write <code>kind = "sqlite_authority"</code>. In directory-based mode, omit <code>[provider]</code> completely.</p>
-<h3 id="tables"><a class="header" href="#tables"><code>[[tables]]</code></a></h3>
-<ul>
-<li><code>name</code>
-<ul>
-<li>required</li>
-</ul>
-</li>
-<li><code>dir</code>
-<ul>
-<li>defaults to <code>name</code></li>
-</ul>
-</li>
-<li><code>data_file</code>
-<ul>
-<li>defaults to <code>data.csv</code></li>
-</ul>
-</li>
-<li><code>enabled</code>
-<ul>
-<li>defaults to <code>true</code></li>
-</ul>
-</li>
-<li>configure at least one column mapping:
-<ul>
-<li><code>columns.by_header</code></li>
-<li><code>columns.by_index</code></li>
-</ul>
-</li>
-<li>priority:
-<ul>
-<li><code>by_header</code> first</li>
-<li><code>by_index</code> only when <code>by_header</code> is empty</li>
-</ul>
-</li>
-</ul>
-<h2 id="table-directory-convention"><a class="header" href="#table-directory-convention">Table directory convention</a></h2>
-<p>A typical table directory looks like this:</p>
-<pre><code class="language-text">knowdb/
-  knowdb.toml
+<p>Directory Layout (Recommended, default under <code>${models.knowledge}</code>)</p>
+<pre><code>${models.knowledge}/
+  knowdb.toml                     # This configuration
   example/
     create.sql
     insert.sql
-    data.csv
-  zone/
+    data.csv                     # Single data file (table directory root)
+  address/
     create.sql
     insert.sql
-    clean.sql
-    data.scv
+    data.csv
 </code></pre>
-<p>Rules:</p>
-<ul>
-<li><code>create.sql</code> is required.</li>
-<li><code>insert.sql</code> is required.</li>
-<li><code>data.csv</code> is the default data file.</li>
-<li><code>clean.sql</code> is optional; if omitted, the default cleanup statement is <code>DELETE FROM {table}</code>.</li>
-<li><code>{table}</code> inside SQL files is replaced with the current table name.</li>
-</ul>
-<h2 id="paths-and-environment-variables"><a class="header" href="#paths-and-environment-variables">Paths and environment variables</a></h2>
-<ul>
-<li><code>${VAR}</code> is expanded before TOML deserialization. Example:</li>
-</ul>
-<pre><code class="language-toml">[provider]
-kind = "mysql"
-connection_uri = "mysql://root:${MYSQL_PASSWORD}@127.0.0.1:3306/demo"
+<p>Top-level Configuration (<code>${models.knowledge}/knowdb.toml</code>)</p>
+<pre><code class="language-toml">version = 2
+
+[[tables]]
+name = "example"
+# dir defaults to name when omitted; this example uses directory ${models.knowledge}/example
+# data_file defaults to data.csv in table directory when omitted
+columns.by_header = ["name", "pinying"]
+
+# To add more tables, append [[tables]] sections
 </code></pre>
+<p>SQL File Specifications</p>
 <ul>
-<li>Values come from the <code>EnvDict</code> passed into <code>init_thread_cloned_from_knowdb(..., dict)</code>.</li>
-<li><code>wp-knowledge</code> does not read process environment variables directly.</li>
+<li>create.sql: Table creation statement, must exist; can use placeholder <code>{table}</code>; allows multiple statements (e.g., <code>CREATE INDEX</code>)</li>
+<li>insert.sql: Insert statement, must exist; parameter positions use <code>?1..?N</code>; allows <code>{table}</code></li>
+<li>clean.sql: Optional; if not present, <code>DELETE FROM {table}</code> is executed by default before loading</li>
 </ul>
-<p>Path resolution order:</p>
+<p>Column Mapping (columns)</p>
+<ul>
+<li>Recommended <code>by_header=[..]</code>, maps CSV header names to columns in <code>insert.sql</code></li>
+<li>If <code>has_header=false</code>, must provide <code>by_index=[..]</code></li>
+<li>Optional enhancement (implementation layer): If columns not configured and <code>insert.sql</code> explicitly lists columns, can parse insert column names as <code>by_header</code></li>
+</ul>
+<p>Loading Strategy (defaults can be omitted)</p>
+<ul>
+<li>Defaults: <code>transaction=true</code>, <code>batch_size=2000</code>, <code>on_error="fail"</code></li>
+<li>on_error:
+<ul>
+<li>fail: Fails and rolls back on bad row (missing columns/parse failure)</li>
+<li>skip: Skips bad rows and counts warnings</li>
+</ul>
+</li>
+</ul>
+<p>Auto-detection (when data_file is not configured)</p>
+<ul>
+<li>Uses <code>{base_dir}/{tables.dir}/data.csv</code></li>
+<li>Reports error if not exists</li>
+</ul>
+<p>Security Constraints</p>
+<ul>
+<li>Runtime (facade / SQL evaluation) only allows table names declared in <code>[[tables]].name</code></li>
+<li>SQL templates only allow <code>{table}</code> placeholder; other dynamic concatenation is prohibited</li>
+</ul>
+<p>Minimal Runnable Example</p>
 <ol>
-<li>If <code>knowdb_conf</code> is relative, resolve it against the caller-provided <code>root</code>.</li>
-<li>Resolve <code>base_dir</code> relative to the directory that contains <code>knowdb.toml</code>.</li>
-<li>Resolve <code>tables[n].dir</code> relative to <code>base_dir</code>.</li>
-<li>Resolve <code>tables[n].data_file</code> relative to the table directory.</li>
+<li>Directory</li>
 </ol>
-<h2 id="common-failures"><a class="header" href="#common-failures">Common failures</a></h2>
+<pre><code>${models.knowledge}/knowdb.toml
+models/knowledge/example/{create.sql, insert.sql, data.csv}
+</code></pre>
+<ol start="2">
+<li>create.sql</li>
+</ol>
+<pre><code class="language-sql">CREATE TABLE IF NOT EXISTS {table} (
+  id      INTEGER PRIMARY KEY,
+  name    TEXT NOT NULL,
+  pinying TEXT NOT NULL
+);
+</code></pre>
+<ol start="3">
+<li>insert.sql</li>
+</ol>
+<pre><code class="language-sql">INSERT INTO {table} (name, pinying) VALUES (?1, ?2);
+</code></pre>
+<ol start="4">
+<li>data.csv</li>
+</ol>
+<pre><code>name,pinying
+令狐冲,linghuchong
+任盈盈,renyingying
+</code></pre>
+<ol start="5">
+<li>knowdb.toml (minimal)</li>
+</ol>
+<pre><code class="language-toml">version = 2
+base_dir = "./models/knowledge"
+[[tables]]
+name = "example"
+dir  = "example"
+columns.by_header = ["name", "pinying"]
+[tables.expected_rows]
+min = 1
+max = 100
+</code></pre>
+<p>Common Errors and Troubleshooting</p>
 <ul>
-<li><code>version</code> is not <code>2</code></li>
-<li><code>create.sql</code>, <code>insert.sql</code>, or the data file is missing</li>
-<li>neither <code>columns.by_header</code> nor <code>columns.by_index</code> is configured</li>
-<li><code>columns.by_header</code> refers to a missing CSV header</li>
-<li><code>encoding</code> is not <code>utf-8</code></li>
-<li>CSV row parsing fails and <code>on_error = "fail"</code></li>
-<li>imported rows are below <code>expected_rows.min</code></li>
-<li>PostgreSQL / MySQL initialization fails to connect</li>
+<li>Missing create.sql / insert.sql: Fails at startup and points to missing file</li>
+<li><code>has_header=false</code> but <code>by_index</code> not provided: Loading error</li>
+<li><code>expected_rows.min</code> not satisfied: Insufficient data, loading fails</li>
+<li>Data source not found: Neither <code>data_file</code> configured nor default path <code>data.csv</code> exists</li>
+<li>Runtime SQL accesses undeclared table: Security validation fails</li>
 </ul>
-<h2 id="recommended-patterns"><a class="header" href="#recommended-patterns">Recommended patterns</a></h2>
+<p>Relationship with Applications</p>
 <ul>
-<li>In the directory-based SQLite authority mode, do not add a <code>[provider]</code> block.</li>
-<li>Put <code>enabled</code> under <code>[[tables]]</code>, not under <code>[tables.expected_rows]</code>.</li>
-<li>Keep <code>delimiter</code> to a single character.</li>
-<li>If you use <code>columns.by_header</code>, keep <code>csv.has_header = true</code>.</li>
-<li>In external PostgreSQL / MySQL mode, treat <code>[cache]</code> strictly as <code>result cache</code> configuration.</li>
+<li>wparse/wproj etc. load knowdb at startup: Create authoritative database and set up Query Provider</li>
+</ul>
+<p>Built-in SQL Functions (UDF)</p>
+<ul>
+<li>Runtime registration:
+<ul>
+<li>Both import phase (authoritative database write connection) and query phase (thread-cloned read-only connection) automatically register.</li>
+<li>Can be used directly in <code>INSERT/SELECT/WHERE</code> (not involved in DDL).</li>
+</ul>
+</li>
+<li>Signatures and Semantics:
+<ul>
+<li><code>ip4_int(text) -&gt; integer</code>: Dotted IPv4 to 32-bit integer; tolerates whitespace/quotes; returns <code>0</code> on invalid input.</li>
+<li><code>ip4_between(ip_text, start_text, end_text) -&gt; integer</code>: Whether in closed interval <code>[start,end]</code> (1/0).</li>
+<li><code>cidr4_min(text) -&gt; integer</code>: CIDR start address (inclusive), e.g., <code>10.0.0.0/8</code>.</li>
+<li><code>cidr4_max(text) -&gt; integer</code>: CIDR end address (inclusive).</li>
+<li><code>cidr4_contains(ip_text, cidr_text) -&gt; integer</code>: Whether IP falls within CIDR range (1/0).</li>
+<li><code>ip4_text(integer|string) -&gt; text</code>: 32-bit integer to dotted IPv4 (useful for debugging/display).</li>
+<li><code>trim_quotes(text) -&gt; text</code>: Removes paired quotes (’ or “) at both ends, tolerates surrounding whitespace; returns original (whitespace trimmed) if not paired.</li>
+</ul>
+</li>
+<li>Import Example (insert.sql):
+<pre><code class="language-sql">INSERT INTO {table} (ip_start_int, ip_end_int, zone)
+VALUES (ip4_int(?1), ip4_int(?2), trim_quotes(?3));
+</code></pre>
+</li>
+<li>Query Example (regular SQL):
+<pre><code class="language-sql">-- Range match (recommended integer comparison, avoid directly comparing function returns in WHERE)
+SELECT zone FROM zone
+WHERE ip_start_int &lt;= ip4_int(:ip)
+  AND ip_end_int   &gt;= ip4_int(:ip)
+LIMIT 1;
+
+-- CIDR match
+SELECT zone FROM zone
+WHERE cidr4_contains(:ip, :cidr) = 1;
+
+-- Debug output
+SELECT ip4_text(ip_start_int) AS ip_start, ip4_text(ip_end_int) AS ip_end, zone
+FROM zone
+LIMIT 5;
+</code></pre>
+</li>
+<li>OML SQL Exact Evaluation:
+<ul>
+<li>OML’s <code>select ... from ... where ...;</code> syntax has identifier whitelist restrictions on column segments, not recommended to write functions directly in column segments.</li>
+<li>Recommended to produce numeric IP upstream (e.g., <code>src_ip_int</code>) and use integer comparison in OML where:
+<pre><code class="language-sql">from_zone: chars = sql(
+  select zone from zone
+  where ip_start_int &lt;= read(src_ip_int)
+    and ip_end_int   &gt;= read(src_ip_int);
+)
+</code></pre>
+</li>
+</ul>
+</li>
+<li>Notes:
+<ul>
+<li>Currently invalid IPv4/CIDR input returns <code>0</code> (or match failure) for import resilience; customize if strict behavior needed.</li>
+<li>SQLite natively provides <code>lower/upper/trim</code> and other string functions, can be combined with above UDFs.</li>
+</ul>
+</li>
 </ul>
 
                     </main>

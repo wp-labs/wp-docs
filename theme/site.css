@@ -286,8 +286,8 @@ html.coal {
 }
 
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter-fold-toggle {
-    width: 18px;
-    height: 18px;
+    width: 12px;
+    height: 12px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -307,10 +307,10 @@ html.coal {
 }
 
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter-fold-chevron {
-    width: 8px;
-    height: 8px;
-    border-right: 2px solid currentColor;
-    border-bottom: 2px solid currentColor;
+    width: 5px;
+    height: 5px;
+    border-right: 1.35px solid currentColor;
+    border-bottom: 1.35px solid currentColor;
     transform: rotate(-45deg);
     transform-origin: center;
     transition: transform 0.2s ease;

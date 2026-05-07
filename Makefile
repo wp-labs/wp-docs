@@ -2,6 +2,8 @@
 
 .PHONY: help build serve install clean summary summary-simple validate build-zh build-en build-all serve-zh serve-en sync sync-dry-run copy-theme copy-theme-zh copy-theme-en
 
+THEME_ASSET_VERSION := v20260507-1
+
 # Default target
 help:
 	@echo "Available targets:"
@@ -50,6 +52,8 @@ copy-theme-zh:
 	@mkdir -p docs-zh/theme
 	@cp theme/*.css docs-zh/theme/
 	@cp theme/*.js docs-zh/theme/
+	@cp theme/site.css docs-zh/theme/site.$(THEME_ASSET_VERSION).css
+	@cp theme/site.js docs-zh/theme/site.$(THEME_ASSET_VERSION).js
 
 # Build English version
 build-en: copy-theme-en
@@ -60,6 +64,8 @@ copy-theme-en:
 	@mkdir -p docs-en/theme
 	@cp theme/*.css docs-en/theme/
 	@cp theme/*.js docs-en/theme/
+	@cp theme/site.css docs-en/theme/site.$(THEME_ASSET_VERSION).css
+	@cp theme/site.js docs-en/theme/site.$(THEME_ASSET_VERSION).js
 
 # Copy index.html and assets
 copy-assets:

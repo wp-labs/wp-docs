@@ -103,7 +103,7 @@
 
 - [BenchMark Report](20-report/benchmark.md)
 - [性能基准测试报告](20-report/report_mac.md)
-- [Async Provider 性能测试与结论](20-report/knowledge/async-provider.md)
+- [Provider 性能测试与结论](20-report/knowledge/async-provider.md)
 
 - [Connector 实现指南](30-dev/connector_dev_guide.md)
 - [文档聚合自动化方案](30-dev/docs_aggregation_automation.md)

@@ -131,6 +131,7 @@
             return;
         }
 
+        const topbar = ensureTopbar();
         const currentLang = parsed.currentLang;
         const switcher = document.createElement('div');
         switcher.className = 'lang-switcher';
@@ -156,14 +157,27 @@
         }
 
         switcher.append(zh, sep, en);
-        document.body.appendChild(switcher);
+        if (topbar) {
+            topbar.appendChild(switcher);
+        } else {
+            document.body.appendChild(switcher);
+        }
+    }
+
+    function updateVersionInfo(wpVersion) {
+        const info = document.querySelector('.version-banner .version-info');
+        if (info && wpVersion) {
+            info.textContent = `WarpParse ${wpVersion}`;
+        }
     }
 
     function renderVersionBanner(wpVersion, parsed) {
         if (document.querySelector('.version-banner')) {
+            updateVersionInfo(wpVersion);
             return;
         }
 
+        const topbar = ensureTopbar();
         const banner = document.createElement('div');
         const isZh = parsed.currentLang === 'zh';
         const versions = [
@@ -180,16 +194,20 @@
 
         banner.className = `version-banner ${parsed.version}`;
         banner.innerHTML = `<div class="banner-content">${versionInfo}<div class="version-switcher">${versionLinks}</div></div>`;
-        document.body.insertBefore(banner, document.body.firstChild);
+        if (topbar) {
+            topbar.insertBefore(banner, topbar.firstChild);
+        } else {
+            document.body.insertBefore(banner, document.body.firstChild);
+        }
         document.body.classList.add('has-version-banner');
-        refreshTopbar();
     }
 
     function loadVersionBanner(parsed) {
+        renderVersionBanner(null, parsed);
         fetch(buildVersionFilePath(parsed))
             .then(response => response.ok ? response.text() : Promise.reject())
-            .then(wpVersion => renderVersionBanner(wpVersion.trim(), parsed))
-            .catch(() => renderVersionBanner(null, parsed));
+            .then(wpVersion => updateVersionInfo(wpVersion.trim()))
+            .catch(() => {});
     }
 
     function simplifyThemeMenu() {
@@ -348,6 +366,40 @@
         document.addEventListener('scroll', setActive, { passive: true });
     }
 
+    function trackSidebarClickOffset() {
+        const sidebar = document.querySelector('#mdbook-sidebar');
+        if (!sidebar) {
+            return;
+        }
+
+        sidebar.addEventListener('click', event => {
+            const link = event.target && typeof event.target.closest === 'function'
+                ? event.target.closest('a[href]')
+                : null;
+            if (!link || !sidebar.contains(link)) {
+                return;
+            }
+
+            if (!event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+                const currentUrl = window.location.href.split('#')[0];
+                const targetUrl = link.href.split('#')[0];
+                if (targetUrl === currentUrl) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return;
+                }
+            }
+
+            const clientRect = link.getBoundingClientRect();
+            const sidebarRect = sidebar.getBoundingClientRect();
+            try {
+                sessionStorage.setItem('sidebar-scroll-offset', String(clientRect.top - sidebarRect.top));
+            } catch {
+                // Ignore storage failures.
+            }
+        }, true);
+    }
+
     function initCollapsibleSidebar() {
         const storageKey = 'wp-docs-sidebar-state';
 
@@ -374,22 +426,6 @@
             chapter.dataset.wpSidebarEnhanced = 'true';
 
             const state = getState();
-            const activeLink = chapter.querySelector('a.active');
-            if (activeLink) {
-                let section = activeLink.closest('ol.section');
-                while (section) {
-                    const titleLi = section.parentElement;
-                    const titleLink = titleLi && titleLi.querySelector(':scope > .chapter-link-wrapper a[href], :scope > a[href]');
-                    if (titleLink) {
-                        const key = titleLink.getAttribute('href') || titleLink.textContent.trim();
-                        state[key] = true;
-                    }
-                    section = titleLi && titleLi.parentElement
-                        ? titleLi.parentElement.closest('ol.section')
-                        : null;
-                }
-                saveState(state);
-            }
 
             chapter.querySelectorAll(':scope > li.chapter-item, ol.section > li.chapter-item').forEach(titleLi => {
                 const childOl = titleLi.querySelector(':scope > ol.section');
@@ -404,8 +440,6 @@
                 }
 
                 const key = link.getAttribute('href') || link.textContent.trim();
-                const hasActive = !!childOl.querySelector('a.active');
-
                 let toggle = titleLi.querySelector(':scope > .chapter-link-wrapper .chapter-fold-toggle, :scope > .chapter-fold-toggle');
                 if (!toggle) {
                     toggle = document.createElement('div');
@@ -437,13 +471,6 @@
                     }
                 }
 
-                let shouldExpand = hasActive;
-                if (state[key] === true) {
-                    shouldExpand = true;
-                } else if (state[key] === false) {
-                    shouldExpand = false;
-                }
-                titleLi.classList.toggle('expanded', shouldExpand);
             });
         }
 
@@ -475,6 +502,7 @@
         simplifyThemeMenu();
         loadVersionBanner(parsed);
         loadMermaidIfNeeded();
+        trackSidebarClickOffset();
         initCollapsibleSidebar();
         buildPageToc();
     }

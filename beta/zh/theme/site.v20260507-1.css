@@ -298,7 +298,7 @@ html.coal {
     border-radius: 4px;
     opacity: 1;
     box-shadow: none;
-    transition: color 0.15s, background-color 0.15s, transform 0.15s;
+    transition: color 0.15s, background-color 0.15s;
 }
 
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter-fold-toggle:hover {
@@ -313,7 +313,6 @@ html.coal {
     border-bottom: 1.35px solid currentColor;
     transform: rotate(-45deg);
     transform-origin: center;
-    transition: transform 0.2s ease;
 }
 
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar li.expanded > .chapter-link-wrapper .chapter-fold-chevron,
@@ -367,7 +366,7 @@ html.coal {
 
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .page-wrapper {
     background: transparent;
-    transition: margin-inline-start 0.3s ease, transform 0.3s ease;
+    transition: none;
 }
 
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .content {
@@ -666,7 +665,7 @@ html:not(.sidebar-visible) .nav-chapters.previous {
     background: transparent;
     color: var(--wp-text-2);
     text-decoration: none;
-    transition: color 0.15s, background-color 0.15s;
+    transition: none;
 }
 
 .version-banner .version-link:hover:not(.disabled) {
@@ -899,6 +898,12 @@ body.has-version-banner .sidebar {
 
 body.has-version-banner .page-wrapper {
     margin-top: 0;
+}
+
+html.sidebar-visible #mdbook-sidebar,
+html:not(.sidebar-visible) #mdbook-sidebar,
+#mdbook-sidebar {
+    transition: none;
 }
 
 

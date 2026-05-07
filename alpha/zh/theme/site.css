@@ -38,7 +38,7 @@
 
     /* Layout */
     --wp-nav-height: 64px;
-    --wp-sidebar-width: 272px;
+    --sidebar-target-width: 272px;
 
     /* Radius */
     --wp-radius: 8px;
@@ -150,7 +150,15 @@ html.coal {
    Menu Bar / Top Navigation
    ========================================================================== */
 
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #mdbook-menu-bar,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar,
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .menu-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 12px;
+    box-sizing: border-box;
+    padding: 0 12px;
     height: var(--wp-nav-height);
     background: var(--wp-bg);
     backdrop-filter: none;
@@ -158,7 +166,19 @@ html.coal {
     box-shadow: none;
 }
 
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #mdbook-menu-bar,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #mdbook-menu-bar-hover-placeholder,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar-hover-placeholder {
+    margin: 0;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #mdbook-menu-bar > .menu-title,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar > .menu-title,
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .menu-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
     font-weight: 700;
     font-size: 16px;
     letter-spacing: -0.01em;
@@ -176,12 +196,24 @@ html.coal {
     border-radius: 6px;
 }
 
+#mdbook-menu-bar > .left-buttons,
+#menu-bar > .left-buttons,
 .left-buttons {
+    flex: 0 0 auto;
     gap: 4px;
 }
 
+#mdbook-menu-bar > .right-buttons,
+#menu-bar > .right-buttons,
 .right-buttons {
+    flex: 0 0 auto;
+    margin-left: 0;
     gap: 4px;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #mdbook-menu-bar > .menu-title,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar > .menu-title {
+    display: none;
 }
 
 
@@ -244,6 +276,50 @@ html.coal {
     transition: color 0.15s, background-color 0.15s;
 }
 
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li.chapter-item {
+    line-height: 1.5em;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter-link-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter-fold-toggle {
+    width: 12px;
+    height: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-inline-start: 8px;
+    color: var(--wp-text-1);
+    background: transparent;
+    border: 0;
+    border-radius: 4px;
+    opacity: 1;
+    box-shadow: none;
+    transition: color 0.15s, background-color 0.15s;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter-fold-toggle:hover {
+    color: var(--wp-brand-1);
+    background: rgba(52, 81, 178, 0.08);
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter-fold-chevron {
+    width: 5px;
+    height: 5px;
+    border-right: 1.35px solid currentColor;
+    border-bottom: 1.35px solid currentColor;
+    transform: rotate(-45deg);
+    transform-origin: center;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar li.expanded > .chapter-link-wrapper .chapter-fold-chevron,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar li.expanded > .chapter-fold-toggle .chapter-fold-chevron {
+    transform: rotate(45deg) translateY(-1px);
+}
+
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li a:hover {
     background: var(--wp-bg-soft);
     color: var(--wp-text-1);
@@ -275,16 +351,6 @@ html.coal {
     margin-left: 12px;
 }
 
-html.sidebar-visible .page-wrapper {
-    margin-left: var(--wp-sidebar-width);
-}
-
-[dir=rtl].sidebar-visible .page-wrapper {
-    margin-right: var(--wp-sidebar-width);
-    margin-left: 0;
-}
-
-
 /* ==========================================================================
    Content area
    ========================================================================== */
@@ -300,6 +366,7 @@ html.sidebar-visible .page-wrapper {
 
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .page-wrapper {
     background: transparent;
+    transition: none;
 }
 
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .content {
@@ -477,7 +544,7 @@ html.sidebar-visible .page-wrapper {
 }
 
 html.sidebar-visible .nav-chapters.previous {
-    left: calc(var(--wp-sidebar-width) + 24px);
+    left: calc(var(--sidebar-width) + var(--sidebar-resize-indicator-width) + 24px);
 }
 
 html:not(.sidebar-visible) .nav-chapters.previous {
@@ -529,10 +596,13 @@ html:not(.sidebar-visible) .nav-chapters.previous {
 
 .wp-topbar {
     display: flex;
+    flex: 0 0 auto;
     align-items: center;
+    justify-content: flex-end;
     gap: 8px;
     margin-left: auto;
     margin-right: 12px;
+    white-space: nowrap;
 }
 
 .wp-topbar .wp-chip {
@@ -595,7 +665,7 @@ html:not(.sidebar-visible) .nav-chapters.previous {
     background: transparent;
     color: var(--wp-text-2);
     text-decoration: none;
-    transition: color 0.15s, background-color 0.15s;
+    transition: none;
 }
 
 .version-banner .version-link:hover:not(.disabled) {
@@ -773,6 +843,13 @@ html:not(.sidebar-visible) .nav-chapters.previous {
    ========================================================================== */
 
 @media (max-width: 1080px) {
+    :is(html.light, html.rust, html.ayu, html.navy, html.coal) #mdbook-menu-bar,
+    :is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar,
+    :is(html.light, html.rust, html.ayu, html.navy, html.coal) .menu-bar {
+        gap: 8px;
+        padding: 0 8px;
+    }
+
     .wp-topbar {
         gap: 6px;
         margin-left: 8px;
@@ -790,6 +867,8 @@ html:not(.sidebar-visible) .nav-chapters.previous {
 }
 
 @media (max-width: 768px) {
+    :is(html.light, html.rust, html.ayu, html.navy, html.coal) #mdbook-menu-bar,
+    :is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar,
     :is(html.light, html.rust, html.ayu, html.navy, html.coal) .menu-bar {
         height: 56px;
     }
@@ -819,6 +898,12 @@ body.has-version-banner .sidebar {
 
 body.has-version-banner .page-wrapper {
     margin-top: 0;
+}
+
+html.sidebar-visible #mdbook-sidebar,
+html:not(.sidebar-visible) #mdbook-sidebar,
+#mdbook-sidebar {
+    transition: none;
 }
 
 

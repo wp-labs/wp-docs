@@ -378,28 +378,27 @@
             if (activeLink) {
                 let section = activeLink.closest('ol.section');
                 while (section) {
-                    const wrapperLi = section.parentElement;
-                    const titleLi = wrapperLi && wrapperLi.previousElementSibling;
-                    const titleLink = titleLi && titleLi.querySelector('a[href]');
+                    const titleLi = section.parentElement;
+                    const titleLink = titleLi && titleLi.querySelector(':scope > .chapter-link-wrapper a[href], :scope > a[href]');
                     if (titleLink) {
                         const key = titleLink.getAttribute('href') || titleLink.textContent.trim();
                         state[key] = true;
                     }
-                    section = wrapperLi && wrapperLi.parentElement
-                        ? wrapperLi.parentElement.closest('ol.section')
+                    section = titleLi && titleLi.parentElement
+                        ? titleLi.parentElement.closest('ol.section')
                         : null;
                 }
                 saveState(state);
             }
 
             chapter.querySelectorAll(':scope > li.chapter-item, ol.section > li.chapter-item').forEach(titleLi => {
-                const wrapperLi = titleLi.nextElementSibling;
-                const childOl = wrapperLi && wrapperLi.querySelector(':scope > ol.section');
-                if (!childOl || titleLi.querySelector(':scope > a.toggle')) {
+                const childOl = titleLi.querySelector(':scope > ol.section');
+                const linkWrapper = titleLi.querySelector(':scope > .chapter-link-wrapper');
+                if (!childOl) {
                     return;
                 }
 
-                const link = titleLi.querySelector(':scope > a[href]');
+                const link = titleLi.querySelector(':scope > .chapter-link-wrapper a[href], :scope > a[href]');
                 if (!link) {
                     return;
                 }
@@ -407,20 +406,36 @@
                 const key = link.getAttribute('href') || link.textContent.trim();
                 const hasActive = !!childOl.querySelector('a.active');
 
-                const toggle = document.createElement('a');
-                toggle.className = 'toggle';
-                toggle.href = '#';
-                toggle.setAttribute('aria-label', 'Toggle section');
-                toggle.innerHTML = '<div>▶</div>';
-                toggle.addEventListener('click', event => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    titleLi.classList.toggle('expanded');
-                    state[key] = titleLi.classList.contains('expanded');
-                    saveState(state);
-                });
+                let toggle = titleLi.querySelector(':scope > .chapter-link-wrapper .chapter-fold-toggle, :scope > .chapter-fold-toggle');
+                if (!toggle) {
+                    toggle = document.createElement('div');
+                    toggle.className = 'chapter-fold-toggle';
+                    toggle.setAttribute('role', 'button');
+                    toggle.setAttribute('tabindex', '0');
+                    toggle.setAttribute('aria-label', 'Toggle section');
+                    toggle.innerHTML = '<div class="chapter-fold-chevron" aria-hidden="true"></div>';
 
-                titleLi.insertBefore(toggle, link);
+                    const onToggle = event => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        titleLi.classList.toggle('expanded');
+                        state[key] = titleLi.classList.contains('expanded');
+                        saveState(state);
+                    };
+
+                    toggle.addEventListener('click', onToggle);
+                    toggle.addEventListener('keydown', event => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                            onToggle(event);
+                        }
+                    });
+
+                    if (linkWrapper) {
+                        linkWrapper.appendChild(toggle);
+                    } else {
+                        titleLi.appendChild(toggle);
+                    }
+                }
 
                 let shouldExpand = hasActive;
                 if (state[key] === true) {

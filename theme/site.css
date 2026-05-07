@@ -277,43 +277,48 @@ html.coal {
 }
 
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li.chapter-item {
+    line-height: 1.5em;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter-link-wrapper {
     display: flex;
     align-items: center;
 }
 
-:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li > a.toggle {
-    flex: 0 0 auto;
-    width: 22px;
-    height: 22px;
-    margin: 0 0 0 6px;
-    padding: 0;
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter-fold-toggle {
+    width: 18px;
+    height: 18px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 6px;
+    margin-inline-start: 8px;
     color: var(--wp-text-1);
-    text-decoration: none;
+    background: transparent;
+    border: 0;
+    border-radius: 4px;
+    opacity: 1;
+    box-shadow: none;
     transition: color 0.15s, background-color 0.15s, transform 0.15s;
 }
 
-:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li > a.toggle:hover {
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter-fold-toggle:hover {
     color: var(--wp-brand-1);
-    background: var(--wp-bg-soft);
+    background: rgba(52, 81, 178, 0.08);
 }
 
-:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li > a.toggle div {
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1;
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter-fold-chevron {
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(-45deg);
+    transform-origin: center;
     transition: transform 0.2s ease;
 }
 
-:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li.expanded > a.toggle div {
-    transform: rotate(90deg);
-}
-
-:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li:not(.expanded) + li > ol {
-    display: none;
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar li.expanded > .chapter-link-wrapper .chapter-fold-chevron,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar li.expanded > .chapter-fold-toggle .chapter-fold-chevron {
+    transform: rotate(45deg) translateY(-1px);
 }
 
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li a:hover {

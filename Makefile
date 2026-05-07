@@ -2,6 +2,7 @@
 
 .PHONY: help build serve install clean summary summary-simple validate build-zh build-en build-all serve-zh serve-en sync sync-dry-run copy-theme copy-theme-zh copy-theme-en
 
+MDBOOK_VERSION := 0.5.2
 THEME_ASSET_VERSION := v20260507-1
 
 # Default target
@@ -26,7 +27,7 @@ help:
 install:
 	@echo "Installing mdbook..."
 	@if ! command -v mdbook &> /dev/null; then \
-		curl -L https://github.com/rust-lang/mdBook/releases/download/v0.4.21/mdbook-v0.4.21-x86_64-apple-darwin.tar.gz | tar xz -C /usr/local/bin; \
+		curl -L https://github.com/rust-lang/mdBook/releases/download/v$(MDBOOK_VERSION)/mdbook-v$(MDBOOK_VERSION)-x86_64-apple-darwin.tar.gz | tar xz -C /usr/local/bin; \
 	fi
 	@echo "Installing mdbook-auto-summary..."
 	@if ! command -v mdbook-auto-summary &> /dev/null; then \

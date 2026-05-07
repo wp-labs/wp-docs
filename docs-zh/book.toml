@@ -15,4 +15,4 @@ default-theme = "light"
 git-repository-url = "https://github.com/wp-labs/warp-parse"
 preferred-dark-theme = "navy"
 additional-css = ["theme/site.v20260507-1.css"]
-additional-js = ["theme/site.v20260507-1.js"]
+additional-js = ["theme/site.v20260507-1.js", "mermaid.min.js", "mermaid-init.js"]

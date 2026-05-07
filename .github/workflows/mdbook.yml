@@ -33,11 +33,16 @@ jobs:
       - name: Setup mdBook
         uses: peaceiris/actions-mdbook@v2
         with:
-          mdbook-version: "latest"
+          mdbook-version: "0.5.2"
 
       - name: Install mdbook-mermaid
         run: |
           cargo install mdbook-mermaid
+
+      - name: Print tool versions
+        run: |
+          mdbook --version
+          mdbook-mermaid --version
 
       # Determine branch name and output path
       - name: Set branch info

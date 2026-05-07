@@ -1,8 +1,9 @@
 # Summary
 
 - [Release Notes](00-release/README.md)
-  - [0.22 Release Notes](00-release/0.22.md)
+  - [0.22 更新说明](00-release/0.22.md)
   - [0.20 Release Notes](00-release/0.20.md)
+  - [Wp-Monitor Release Notes](00-release/wp-monitor/release.md)
 
 - [User Guide](10-user/README.md)
   - [WarpParse Core Concepts 速查](10-user/00-core-concepts.md)
@@ -90,9 +91,9 @@
       - [ClickHouse Sink](10-user/05-connectors/02-sinks/21-clickhouse.md)
       - [HTTP Sink](10-user/05-connectors/02-sinks/22-http.md)
       - [PostgreSQL Sink](10-user/05-connectors/02-sinks/23-postgresql_sink.md)
-      - [DMDB Sink](10-user/05-connectors/02-sinks/24-dmdb_sink.md)
+      - [DMDB Sink Usage and 配置指南](10-user/05-connectors/02-sinks/24-dmdb_sink.md)
   - [troubleshooting.md](10-user/09-FQA/troubleshooting.md)
-  - [Wp-Monitor](10-user/10-monitor/Wp-Monitor.md)
+  - [Wp-Monitor](10-user/10-monitor/guide.md)
 
 - [Benchmark Report](20-report/benchmark.md)
 - [Async Provider Performance](20-report/knowledge/async-provider.md)

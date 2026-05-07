@@ -128,6 +128,35 @@
           "clean": true
         }
       ]
+    },
+    {
+      "name": "wp-monitor-usage",
+      "repo": "https://github.com/wp-labs/wp-monitor.git",
+      "ref": "main",
+      "checkout_subdir": "doc",
+      "local_path": "../../developer/wparse/wp-monitor/doc",
+      "files": [
+        {
+          "from": "zh/release.md",
+          "to": "docs-zh/00-release/wp-monitor/release.md"
+        },
+        {
+          "from": "en/release.md",
+          "to": "docs-en/00-release/wp-monitor/release.md"
+        }
+      ],
+      "mappings": [
+        {
+          "from": "zh/user",
+          "to": "docs-zh/10-user/10-monitor",
+          "clean": true
+        },
+        {
+          "from": "en/user",
+          "to": "docs-en/10-user/10-monitor",
+          "clean": true
+        }
+      ]
     }
   ]
 }

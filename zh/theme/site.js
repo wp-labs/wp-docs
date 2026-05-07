@@ -77,7 +77,7 @@
     }
 
     function ensureTopbar() {
-        const menuBar = document.getElementById('mdbook-menu-bar');
+        const menuBar = document.getElementById('menu-bar');
         if (!menuBar) {
             return null;
         }
@@ -184,11 +184,11 @@
 
     function simplifyThemeMenu() {
         const labels = {
-            'mdbook-theme-default_theme': 'Auto',
-            'mdbook-theme-light': 'Light',
-            'mdbook-theme-navy': 'Dark'
+            'default_theme': 'Auto',
+            'light': 'Light',
+            'navy': 'Dark'
         };
-        const hiddenThemes = ['mdbook-theme-rust', 'mdbook-theme-coal', 'mdbook-theme-ayu'];
+        const hiddenThemes = ['rust', 'coal', 'ayu'];
 
         Object.keys(labels).forEach(id => {
             const item = document.getElementById(id);
@@ -334,6 +334,111 @@
         document.addEventListener('scroll', setActive, { passive: true });
     }
 
+    function initCollapsibleSidebar() {
+        const storageKey = 'wp-docs-sidebar-state';
+
+        function getState() {
+            try {
+                return JSON.parse(localStorage.getItem(storageKey)) || {};
+            } catch {
+                return {};
+            }
+        }
+
+        function saveState(state) {
+            try {
+                localStorage.setItem(storageKey, JSON.stringify(state));
+            } catch {
+                // Ignore storage failures.
+            }
+        }
+
+        function enhanceChapter(chapter) {
+            if (!chapter || chapter.dataset.wpSidebarEnhanced === 'true') {
+                return;
+            }
+            chapter.dataset.wpSidebarEnhanced = 'true';
+
+            const state = getState();
+            const activeLink = chapter.querySelector('a.active');
+            if (activeLink) {
+                let section = activeLink.closest('ol.section');
+                while (section) {
+                    const wrapperLi = section.parentElement;
+                    const titleLi = wrapperLi && wrapperLi.previousElementSibling;
+                    const titleLink = titleLi && titleLi.querySelector('a[href]');
+                    if (titleLink) {
+                        const key = titleLink.getAttribute('href') || titleLink.textContent.trim();
+                        state[key] = true;
+                    }
+                    section = wrapperLi && wrapperLi.parentElement
+                        ? wrapperLi.parentElement.closest('ol.section')
+                        : null;
+                }
+                saveState(state);
+            }
+
+            chapter.querySelectorAll(':scope > li.chapter-item, ol.section > li.chapter-item').forEach(titleLi => {
+                const wrapperLi = titleLi.nextElementSibling;
+                const childOl = wrapperLi && wrapperLi.querySelector(':scope > ol.section');
+                if (!childOl || titleLi.querySelector(':scope > a.toggle')) {
+                    return;
+                }
+
+                const link = titleLi.querySelector(':scope > a[href]');
+                if (!link) {
+                    return;
+                }
+
+                const key = link.getAttribute('href') || link.textContent.trim();
+                const hasActive = !!childOl.querySelector('a.active');
+
+                const toggle = document.createElement('a');
+                toggle.className = 'toggle';
+                toggle.href = '#';
+                toggle.setAttribute('aria-label', 'Toggle section');
+                toggle.innerHTML = '<div>▶</div>';
+                toggle.addEventListener('click', event => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    titleLi.classList.toggle('expanded');
+                    state[key] = titleLi.classList.contains('expanded');
+                    saveState(state);
+                });
+
+                titleLi.insertBefore(toggle, link);
+
+                let shouldExpand = hasActive;
+                if (state[key] === true) {
+                    shouldExpand = true;
+                } else if (state[key] === false) {
+                    shouldExpand = false;
+                }
+                titleLi.classList.toggle('expanded', shouldExpand);
+            });
+        }
+
+        function tryInit() {
+            const chapter = document.querySelector('.sidebar .chapter, .sidebar-scrollbox .chapter');
+            if (chapter) {
+                enhanceChapter(chapter);
+                return true;
+            }
+            return false;
+        }
+
+        if (tryInit()) {
+            return;
+        }
+
+        const observer = new MutationObserver(() => {
+            if (tryInit()) {
+                observer.disconnect();
+            }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+
     function init() {
         const parsed = parseDocPath();
         renderLangSwitcher(parsed);
@@ -341,6 +446,7 @@
         simplifyThemeMenu();
         loadVersionBanner(parsed);
         loadMermaidIfNeeded();
+        initCollapsibleSidebar();
         buildPageToc();
     }
 

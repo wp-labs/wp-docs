@@ -150,6 +150,7 @@ html.coal {
    Menu Bar / Top Navigation
    ========================================================================== */
 
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #mdbook-menu-bar,
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar,
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .menu-bar {
     display: flex;
@@ -165,11 +166,14 @@ html.coal {
     box-shadow: none;
 }
 
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #mdbook-menu-bar,
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #mdbook-menu-bar-hover-placeholder,
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar-hover-placeholder {
     margin: 0;
 }
 
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #mdbook-menu-bar > .menu-title,
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar > .menu-title,
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .menu-title {
     flex: 1 1 auto;
@@ -192,12 +196,14 @@ html.coal {
     border-radius: 6px;
 }
 
+#mdbook-menu-bar > .left-buttons,
 #menu-bar > .left-buttons,
 .left-buttons {
     flex: 0 0 auto;
     gap: 4px;
 }
 
+#mdbook-menu-bar > .right-buttons,
 #menu-bar > .right-buttons,
 .right-buttons {
     flex: 0 0 auto;
@@ -205,6 +211,7 @@ html.coal {
     gap: 4px;
 }
 
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #mdbook-menu-bar > .menu-title,
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar > .menu-title {
     display: none;
 }
@@ -832,6 +839,7 @@ html:not(.sidebar-visible) .nav-chapters.previous {
    ========================================================================== */
 
 @media (max-width: 1080px) {
+    :is(html.light, html.rust, html.ayu, html.navy, html.coal) #mdbook-menu-bar,
     :is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar,
     :is(html.light, html.rust, html.ayu, html.navy, html.coal) .menu-bar {
         gap: 8px;
@@ -855,6 +863,7 @@ html:not(.sidebar-visible) .nav-chapters.previous {
 }
 
 @media (max-width: 768px) {
+    :is(html.light, html.rust, html.ayu, html.navy, html.coal) #mdbook-menu-bar,
     :is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar,
     :is(html.light, html.rust, html.ayu, html.navy, html.coal) .menu-bar {
         height: 56px;

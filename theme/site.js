@@ -76,8 +76,18 @@
         return prefix + versionPrefix + '/wp-version.txt';
     }
 
+    function byAnyId(ids) {
+        for (const id of ids) {
+            const element = document.getElementById(id);
+            if (element) {
+                return element;
+            }
+        }
+        return null;
+    }
+
     function ensureTopbar() {
-        const menuBar = document.getElementById('menu-bar');
+        const menuBar = byAnyId(['menu-bar', 'mdbook-menu-bar']);
         if (!menuBar) {
             return null;
         }
@@ -185,10 +195,13 @@
     function simplifyThemeMenu() {
         const labels = {
             'default_theme': 'Auto',
+            'mdbook-theme-default_theme': 'Auto',
             'light': 'Light',
-            'navy': 'Dark'
+            'mdbook-theme-light': 'Light',
+            'navy': 'Dark',
+            'mdbook-theme-navy': 'Dark'
         };
-        const hiddenThemes = ['rust', 'coal', 'ayu'];
+        const hiddenThemes = ['rust', 'coal', 'ayu', 'mdbook-theme-rust', 'mdbook-theme-coal', 'mdbook-theme-ayu'];
 
         Object.keys(labels).forEach(id => {
             const item = document.getElementById(id);
@@ -214,13 +227,14 @@
 
     function bindMermaidThemeReload() {
         const wasDark = currentMermaidTheme() === 'dark';
-        ['light', 'rust', 'navy', 'coal', 'ayu'].forEach(id => {
+        ['light', 'rust', 'navy', 'coal', 'ayu', 'mdbook-theme-light', 'mdbook-theme-rust', 'mdbook-theme-navy', 'mdbook-theme-coal', 'mdbook-theme-ayu'].forEach(id => {
             const item = document.getElementById(id);
             if (!item) {
                 return;
             }
             item.addEventListener('click', function() {
-                const willBeDark = id === 'navy' || id === 'coal' || id === 'ayu';
+                const willBeDark = id === 'navy' || id === 'coal' || id === 'ayu'
+                    || id === 'mdbook-theme-navy' || id === 'mdbook-theme-coal' || id === 'mdbook-theme-ayu';
                 if (wasDark !== willBeDark) {
                     window.location.reload();
                 }

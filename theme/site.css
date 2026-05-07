@@ -150,7 +150,14 @@ html.coal {
    Menu Bar / Top Navigation
    ========================================================================== */
 
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar,
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .menu-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 12px;
+    box-sizing: border-box;
+    padding: 0 12px;
     height: var(--wp-nav-height);
     background: var(--wp-bg);
     backdrop-filter: none;
@@ -158,7 +165,16 @@ html.coal {
     box-shadow: none;
 }
 
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar-hover-placeholder {
+    margin: 0;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar > .menu-title,
 :is(html.light, html.rust, html.ayu, html.navy, html.coal) .menu-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
     font-weight: 700;
     font-size: 16px;
     letter-spacing: -0.01em;
@@ -176,12 +192,21 @@ html.coal {
     border-radius: 6px;
 }
 
+#menu-bar > .left-buttons,
 .left-buttons {
+    flex: 0 0 auto;
     gap: 4px;
 }
 
+#menu-bar > .right-buttons,
 .right-buttons {
+    flex: 0 0 auto;
+    margin-left: 0;
     gap: 4px;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar > .menu-title {
+    display: none;
 }
 
 
@@ -529,10 +554,13 @@ html:not(.sidebar-visible) .nav-chapters.previous {
 
 .wp-topbar {
     display: flex;
+    flex: 0 0 auto;
     align-items: center;
+    justify-content: flex-end;
     gap: 8px;
     margin-left: auto;
     margin-right: 12px;
+    white-space: nowrap;
 }
 
 .wp-topbar .wp-chip {
@@ -773,6 +801,12 @@ html:not(.sidebar-visible) .nav-chapters.previous {
    ========================================================================== */
 
 @media (max-width: 1080px) {
+    :is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar,
+    :is(html.light, html.rust, html.ayu, html.navy, html.coal) .menu-bar {
+        gap: 8px;
+        padding: 0 8px;
+    }
+
     .wp-topbar {
         gap: 6px;
         margin-left: 8px;
@@ -790,6 +824,7 @@ html:not(.sidebar-visible) .nav-chapters.previous {
 }
 
 @media (max-width: 768px) {
+    :is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar,
     :is(html.light, html.rust, html.ayu, html.navy, html.coal) .menu-bar {
         height: 56px;
     }

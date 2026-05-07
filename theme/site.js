@@ -77,7 +77,7 @@
     }
 
     function ensureTopbar() {
-        const menuBar = document.getElementById('mdbook-menu-bar');
+        const menuBar = document.getElementById('menu-bar');
         if (!menuBar) {
             return null;
         }
@@ -184,11 +184,11 @@
 
     function simplifyThemeMenu() {
         const labels = {
-            'mdbook-theme-default_theme': 'Auto',
-            'mdbook-theme-light': 'Light',
-            'mdbook-theme-navy': 'Dark'
+            'default_theme': 'Auto',
+            'light': 'Light',
+            'navy': 'Dark'
         };
-        const hiddenThemes = ['mdbook-theme-rust', 'mdbook-theme-coal', 'mdbook-theme-ayu'];
+        const hiddenThemes = ['rust', 'coal', 'ayu'];
 
         Object.keys(labels).forEach(id => {
             const item = document.getElementById(id);

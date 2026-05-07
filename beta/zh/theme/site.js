@@ -76,8 +76,18 @@
         return prefix + versionPrefix + '/wp-version.txt';
     }
 
+    function byAnyId(ids) {
+        for (const id of ids) {
+            const element = document.getElementById(id);
+            if (element) {
+                return element;
+            }
+        }
+        return null;
+    }
+
     function ensureTopbar() {
-        const menuBar = document.getElementById('mdbook-menu-bar');
+        const menuBar = byAnyId(['menu-bar', 'mdbook-menu-bar']);
         if (!menuBar) {
             return null;
         }
@@ -184,11 +194,14 @@
 
     function simplifyThemeMenu() {
         const labels = {
+            'default_theme': 'Auto',
             'mdbook-theme-default_theme': 'Auto',
+            'light': 'Light',
             'mdbook-theme-light': 'Light',
+            'navy': 'Dark',
             'mdbook-theme-navy': 'Dark'
         };
-        const hiddenThemes = ['mdbook-theme-rust', 'mdbook-theme-coal', 'mdbook-theme-ayu'];
+        const hiddenThemes = ['rust', 'coal', 'ayu', 'mdbook-theme-rust', 'mdbook-theme-coal', 'mdbook-theme-ayu'];
 
         Object.keys(labels).forEach(id => {
             const item = document.getElementById(id);
@@ -214,13 +227,14 @@
 
     function bindMermaidThemeReload() {
         const wasDark = currentMermaidTheme() === 'dark';
-        ['light', 'rust', 'navy', 'coal', 'ayu'].forEach(id => {
+        ['light', 'rust', 'navy', 'coal', 'ayu', 'mdbook-theme-light', 'mdbook-theme-rust', 'mdbook-theme-navy', 'mdbook-theme-coal', 'mdbook-theme-ayu'].forEach(id => {
             const item = document.getElementById(id);
             if (!item) {
                 return;
             }
             item.addEventListener('click', function() {
-                const willBeDark = id === 'navy' || id === 'coal' || id === 'ayu';
+                const willBeDark = id === 'navy' || id === 'coal' || id === 'ayu'
+                    || id === 'mdbook-theme-navy' || id === 'mdbook-theme-coal' || id === 'mdbook-theme-ayu';
                 if (wasDark !== willBeDark) {
                     window.location.reload();
                 }
@@ -334,6 +348,126 @@
         document.addEventListener('scroll', setActive, { passive: true });
     }
 
+    function initCollapsibleSidebar() {
+        const storageKey = 'wp-docs-sidebar-state';
+
+        function getState() {
+            try {
+                return JSON.parse(localStorage.getItem(storageKey)) || {};
+            } catch {
+                return {};
+            }
+        }
+
+        function saveState(state) {
+            try {
+                localStorage.setItem(storageKey, JSON.stringify(state));
+            } catch {
+                // Ignore storage failures.
+            }
+        }
+
+        function enhanceChapter(chapter) {
+            if (!chapter || chapter.dataset.wpSidebarEnhanced === 'true') {
+                return;
+            }
+            chapter.dataset.wpSidebarEnhanced = 'true';
+
+            const state = getState();
+            const activeLink = chapter.querySelector('a.active');
+            if (activeLink) {
+                let section = activeLink.closest('ol.section');
+                while (section) {
+                    const titleLi = section.parentElement;
+                    const titleLink = titleLi && titleLi.querySelector(':scope > .chapter-link-wrapper a[href], :scope > a[href]');
+                    if (titleLink) {
+                        const key = titleLink.getAttribute('href') || titleLink.textContent.trim();
+                        state[key] = true;
+                    }
+                    section = titleLi && titleLi.parentElement
+                        ? titleLi.parentElement.closest('ol.section')
+                        : null;
+                }
+                saveState(state);
+            }
+
+            chapter.querySelectorAll(':scope > li.chapter-item, ol.section > li.chapter-item').forEach(titleLi => {
+                const childOl = titleLi.querySelector(':scope > ol.section');
+                const linkWrapper = titleLi.querySelector(':scope > .chapter-link-wrapper');
+                if (!childOl) {
+                    return;
+                }
+
+                const link = titleLi.querySelector(':scope > .chapter-link-wrapper a[href], :scope > a[href]');
+                if (!link) {
+                    return;
+                }
+
+                const key = link.getAttribute('href') || link.textContent.trim();
+                const hasActive = !!childOl.querySelector('a.active');
+
+                let toggle = titleLi.querySelector(':scope > .chapter-link-wrapper .chapter-fold-toggle, :scope > .chapter-fold-toggle');
+                if (!toggle) {
+                    toggle = document.createElement('div');
+                    toggle.className = 'chapter-fold-toggle';
+                    toggle.setAttribute('role', 'button');
+                    toggle.setAttribute('tabindex', '0');
+                    toggle.setAttribute('aria-label', 'Toggle section');
+                    toggle.innerHTML = '<div class="chapter-fold-chevron" aria-hidden="true"></div>';
+
+                    const onToggle = event => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        titleLi.classList.toggle('expanded');
+                        state[key] = titleLi.classList.contains('expanded');
+                        saveState(state);
+                    };
+
+                    toggle.addEventListener('click', onToggle);
+                    toggle.addEventListener('keydown', event => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                            onToggle(event);
+                        }
+                    });
+
+                    if (linkWrapper) {
+                        linkWrapper.appendChild(toggle);
+                    } else {
+                        titleLi.appendChild(toggle);
+                    }
+                }
+
+                let shouldExpand = hasActive;
+                if (state[key] === true) {
+                    shouldExpand = true;
+                } else if (state[key] === false) {
+                    shouldExpand = false;
+                }
+                titleLi.classList.toggle('expanded', shouldExpand);
+            });
+        }
+
+        function tryInit() {
+            const chapter = document.querySelector('.sidebar .chapter, .sidebar-scrollbox .chapter');
+            if (chapter) {
+                enhanceChapter(chapter);
+                return true;
+            }
+            return false;
+        }
+
+        if (tryInit()) {
+            return;
+        }
+
+        const observer = new MutationObserver(() => {
+            if (tryInit()) {
+                observer.disconnect();
+            }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+
     function init() {
         const parsed = parseDocPath();
         renderLangSwitcher(parsed);
@@ -341,6 +475,7 @@
         simplifyThemeMenu();
         loadVersionBanner(parsed);
         loadMermaidIfNeeded();
+        initCollapsibleSidebar();
         buildPageToc();
     }
 

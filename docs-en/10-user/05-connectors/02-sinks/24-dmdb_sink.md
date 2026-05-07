@@ -1,4 +1,4 @@
-# DMDB Sink Usage and Configuration Guide
+# DMDB Sink
 
 ## 1. Prerequisites
 

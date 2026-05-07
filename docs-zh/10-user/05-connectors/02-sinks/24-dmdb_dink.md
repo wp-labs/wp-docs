@@ -1,4 +1,4 @@
-# DMDB Sink 使用配置说明
+# DMDB Sink 
 
 ## 1. 使用前准备
 

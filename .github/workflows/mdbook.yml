@@ -66,15 +66,6 @@ jobs:
       - name: Install mermaid support for English docs
         run: cd docs-en && mdbook-mermaid install .
 
-      - name: Copy theme sources
-        run: |
-          mkdir -p docs-zh/theme
-          mkdir -p docs-en/theme
-          cp theme/*.css docs-zh/theme/
-          cp theme/*.js docs-zh/theme/
-          cp theme/*.css docs-en/theme/
-          cp theme/*.js docs-en/theme/
-
       # Add version badge to title for non-main branches
       - name: Add version badge to documentation title
         if: steps.branch.outputs.name != 'main'
@@ -88,26 +79,11 @@ jobs:
           # Update English version title
           sed -i "s/title = \"Warp Parse Documentation\"/title = \"Warp Parse Documentation [$BADGE_UPPER]\"/" docs-en/book.toml
 
-      - name: Build Chinese version
-        run: cd docs-zh && mdbook build
+      - name: Build documentation
+        run: make build
 
-      - name: Build English version
-        run: cd docs-en && mdbook build
-
-      - name: Copy theme assets
-        run: |
-          mkdir -p book/zh/theme
-          mkdir -p book/en/theme
-          cp theme/*.css book/zh/theme/
-          cp theme/*.js book/zh/theme/
-          cp theme/*.css book/en/theme/
-          cp theme/*.js book/en/theme/
-
-      - name: Copy language selection page
-        run: |
-          mkdir -p book
-          cp index.html book/
-          cp wp-version.txt book/
+      - name: Copy version file
+        run: cp wp-version.txt book/
 
       # Add CNAME for custom domain (only for main branch)
       - name: Add CNAME file

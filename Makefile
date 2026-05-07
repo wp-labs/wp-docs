@@ -52,8 +52,9 @@ copy-theme-zh:
 	@mkdir -p docs-zh/theme
 	@cp theme/*.css docs-zh/theme/
 	@cp theme/*.js docs-zh/theme/
-	@cp theme/site.css docs-zh/theme/site.$(THEME_ASSET_VERSION).css
-	@cp theme/site.js docs-zh/theme/site.$(THEME_ASSET_VERSION).js
+	@rm -f docs-zh/theme/site.$(THEME_ASSET_VERSION).css docs-zh/theme/site.$(THEME_ASSET_VERSION).js
+	@ln -s site.css docs-zh/theme/site.$(THEME_ASSET_VERSION).css
+	@ln -s site.js docs-zh/theme/site.$(THEME_ASSET_VERSION).js
 
 # Build English version
 build-en: copy-theme-en
@@ -64,8 +65,9 @@ copy-theme-en:
 	@mkdir -p docs-en/theme
 	@cp theme/*.css docs-en/theme/
 	@cp theme/*.js docs-en/theme/
-	@cp theme/site.css docs-en/theme/site.$(THEME_ASSET_VERSION).css
-	@cp theme/site.js docs-en/theme/site.$(THEME_ASSET_VERSION).js
+	@rm -f docs-en/theme/site.$(THEME_ASSET_VERSION).css docs-en/theme/site.$(THEME_ASSET_VERSION).js
+	@ln -s site.css docs-en/theme/site.$(THEME_ASSET_VERSION).css
+	@ln -s site.js docs-en/theme/site.$(THEME_ASSET_VERSION).js
 
 # Copy index.html and assets
 copy-assets:

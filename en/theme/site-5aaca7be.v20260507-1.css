@@ -1,0 +1,902 @@
+/* ==========================================================================
+   wp-docs VitePress-style theme
+   Design tokens adapted from VitePress default theme
+   ========================================================================== */
+
+/* ---- Light theme variables ---- */
+:root {
+    /* Background */
+    --wp-bg: #ffffff;
+    --wp-bg-alt: #f6f6f7;
+    --wp-bg-soft: #f6f6f7;
+    --wp-bg-elv: #ffffff;
+
+    /* Border */
+    --wp-border: #c2c2c4;
+    --wp-divider: #e2e2e3;
+
+    /* Text */
+    --wp-text-1: #3c3c43;
+    --wp-text-2: #67676c;
+    --wp-text-3: #929295;
+
+    /* Brand (indigo) */
+    --wp-brand-1: #3451b2;
+    --wp-brand-2: #3a5ccc;
+    --wp-brand-3: #5672cd;
+    --wp-brand-soft: rgba(100, 108, 255, 0.14);
+
+    /* Code */
+    --wp-code-bg: #f6f6f7;
+    --wp-code-color: var(--wp-brand-1);
+    --wp-code-block-bg: #f6f6f7;
+
+    /* Shadows */
+    --wp-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --wp-shadow-2: 0 3px 12px rgba(0, 0, 0, 0.07), 0 1px 4px rgba(0, 0, 0, 0.07);
+    --wp-shadow-3: 0 12px 32px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.08);
+
+    /* Layout */
+    --wp-nav-height: 64px;
+    --sidebar-target-width: 272px;
+
+    /* Radius */
+    --wp-radius: 8px;
+
+    /* Font */
+    --wp-font-base: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    --wp-font-mono: ui-monospace, "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
+}
+
+/* ---- Map wp vars to mdBook vars (light theme) ---- */
+html.light,
+html.rust {
+    --bg: var(--wp-bg);
+    --fg: var(--wp-text-1);
+    --sidebar-bg: var(--wp-bg-alt);
+    --sidebar-fg: var(--wp-text-2);
+    --sidebar-non-existant: var(--wp-text-3);
+    --sidebar-active: var(--wp-brand-1);
+    --sidebar-spacer: transparent;
+    --scrollbar: rgba(100, 116, 139, 0.22);
+    --icons: var(--wp-text-2);
+    --icons-hover: var(--wp-brand-1);
+    --links: var(--wp-brand-1);
+    --inline-code-color: var(--wp-brand-1);
+    --theme-popup-bg: var(--wp-bg-elv);
+    --theme-popup-border: var(--wp-border);
+    --theme-hover: var(--wp-bg-soft);
+    --quote-bg: var(--wp-bg-soft);
+    --quote-border: rgba(52, 81, 178, 0.3);
+    --table-border-color: var(--wp-divider);
+    --table-header-bg: var(--wp-bg-soft);
+    --table-alternate-bg: rgba(246, 246, 247, 0.6);
+    --searchbar-border-color: var(--wp-border);
+    --searchbar-bg: var(--wp-bg-elv);
+    --searchbar-fg: var(--wp-text-1);
+    --searchbar-shadow-color: transparent;
+    --searchresults-header-fg: var(--wp-text-2);
+    --searchresults-border-color: var(--wp-divider);
+    --searchresults-li-bg: var(--wp-bg-elv);
+    --search-mark-bg: var(--wp-brand-soft);
+    --color-scheme: light;
+}
+
+/* ---- Dark theme variables ---- */
+html.ayu,
+html.navy,
+html.coal {
+    --wp-bg: #1b1b1f;
+    --wp-bg-alt: #161618;
+    --wp-bg-soft: #202127;
+    --wp-bg-elv: #202127;
+    --wp-border: #3c3c44;
+    --wp-divider: #2e2e32;
+    --wp-text-1: #e4e4e9;
+    --wp-text-2: #9898a0;
+    --wp-text-3: #6b6b75;
+    --wp-brand-1: #a8b1ff;
+    --wp-brand-2: #c0c6ff;
+    --wp-brand-3: #8b94e8;
+    --wp-brand-soft: rgba(100, 108, 255, 0.16);
+    --wp-code-bg: #161618;
+    --wp-code-color: var(--wp-brand-1);
+    --wp-code-block-bg: #161618;
+
+    --bg: var(--wp-bg);
+    --fg: var(--wp-text-1);
+    --sidebar-bg: var(--wp-bg-alt);
+    --sidebar-fg: var(--wp-text-2);
+    --sidebar-non-existant: var(--wp-text-3);
+    --sidebar-active: var(--wp-brand-1);
+    --sidebar-spacer: transparent;
+    --scrollbar: rgba(148, 163, 184, 0.24);
+    --icons: var(--wp-text-2);
+    --icons-hover: var(--wp-brand-1);
+    --links: var(--wp-brand-1);
+    --inline-code-color: var(--wp-brand-1);
+    --theme-popup-bg: var(--wp-bg-elv);
+    --theme-popup-border: var(--wp-border);
+    --theme-hover: var(--wp-bg-soft);
+    --quote-bg: var(--wp-bg-soft);
+    --quote-border: rgba(100, 108, 255, 0.3);
+    --table-border-color: var(--wp-divider);
+    --table-header-bg: var(--wp-bg-soft);
+    --table-alternate-bg: rgba(32, 33, 39, 0.5);
+    --searchbar-border-color: var(--wp-border);
+    --searchbar-bg: var(--wp-bg-elv);
+    --searchbar-fg: var(--wp-text-1);
+    --searchbar-shadow-color: transparent;
+    --searchresults-header-fg: var(--wp-text-2);
+    --searchresults-border-color: var(--wp-divider);
+    --searchresults-li-bg: var(--wp-bg-elv);
+    --search-mark-bg: var(--wp-brand-soft);
+    --color-scheme: dark;
+}
+
+
+/* ==========================================================================
+   Global
+   ========================================================================== */
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) body {
+    background: var(--wp-bg);
+    color: var(--wp-text-1);
+    font-family: var(--wp-font-base);
+}
+
+
+/* ==========================================================================
+   Menu Bar / Top Navigation
+   ========================================================================== */
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .menu-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 12px;
+    box-sizing: border-box;
+    padding: 0 12px;
+    height: var(--wp-nav-height);
+    background: var(--wp-bg);
+    backdrop-filter: none;
+    border-bottom: 1px solid var(--wp-divider);
+    box-shadow: none;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar-hover-placeholder {
+    margin: 0;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar > .menu-title,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .menu-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.01em;
+    color: var(--wp-brand-1);
+}
+
+.menu-title::before {
+    content: "";
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+    vertical-align: -5px;
+    background: var(--wp-brand-1);
+    border-radius: 6px;
+}
+
+#menu-bar > .left-buttons,
+.left-buttons {
+    flex: 0 0 auto;
+    gap: 4px;
+}
+
+#menu-bar > .right-buttons,
+.right-buttons {
+    flex: 0 0 auto;
+    margin-left: 0;
+    gap: 4px;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar > .menu-title {
+    display: none;
+}
+
+
+/* ==========================================================================
+   Icon buttons (theme toggle, search, sidebar toggle)
+   ========================================================================== */
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .icon-button,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .right-buttons a {
+    color: var(--wp-text-2);
+    border-radius: var(--wp-radius);
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s, background-color 0.15s;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .icon-button:hover,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .right-buttons a:hover {
+    color: var(--wp-brand-1);
+    background: var(--wp-bg-soft);
+}
+
+
+/* ==========================================================================
+   Sidebar
+   ========================================================================== */
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar {
+    background: var(--wp-bg-alt);
+    border-right: 1px solid var(--wp-divider);
+    box-shadow: none;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar-scrollbox {
+    padding: 16px 8px 24px 8px;
+}
+
+/* Part titles (section headers) */
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li.part-title {
+    margin: 16px 10px 4px;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--wp-text-2);
+}
+
+/* Nav links */
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li a {
+    margin: 0 6px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    color: var(--wp-text-2);
+    font-size: 13px;
+    font-weight: 450;
+    line-height: 1.4;
+    transition: color 0.15s, background-color 0.15s;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li.chapter-item {
+    display: flex;
+    align-items: center;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li > a.toggle {
+    flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    margin: 0 0 0 6px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    color: var(--wp-text-1);
+    text-decoration: none;
+    transition: color 0.15s, background-color 0.15s, transform 0.15s;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li > a.toggle:hover {
+    color: var(--wp-brand-1);
+    background: var(--wp-bg-soft);
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li > a.toggle div {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    transition: transform 0.2s ease;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li.expanded > a.toggle div {
+    transform: rotate(90deg);
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li:not(.expanded) + li > ol {
+    display: none;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li a:hover {
+    background: var(--wp-bg-soft);
+    color: var(--wp-text-1);
+    text-decoration: none;
+    transform: none;
+}
+
+/* Active nav link — VitePress style with left bar indicator */
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li a.active {
+    background: transparent;
+    color: var(--wp-brand-1);
+    font-weight: 600;
+    position: relative;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter li a.active::before {
+    content: "";
+    position: absolute;
+    left: -4px;
+    top: 6px;
+    bottom: 6px;
+    width: 3px;
+    background: var(--wp-brand-1);
+    border-radius: 0 2px 2px 0;
+}
+
+/* Nested lists */
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .sidebar .chapter ul {
+    margin-left: 12px;
+}
+
+/* ==========================================================================
+   Content area
+   ========================================================================== */
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) #mdbook-content {
+    max-width: 1180px;
+    margin-inline: auto;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .page {
+    padding-inline: 0;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .page-wrapper {
+    background: transparent;
+    transition: margin-inline-start 0.3s ease, transform 0.3s ease;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 980px;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content main {
+    box-sizing: border-box;
+    width: min(860px, calc(100% - 112px));
+    max-width: none;
+    margin: 2.5rem auto 4.5rem;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 2rem 2.5rem 3rem;
+}
+
+/* Typography */
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--wp-text-1);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--wp-divider);
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content h2 {
+    font-size: 1.45rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--wp-text-1);
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--wp-divider);
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--wp-text-1);
+    margin-top: 1.5rem;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content p,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content li {
+    line-height: 1.7;
+    color: var(--wp-text-1);
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content a {
+    color: var(--wp-brand-1);
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .content a:hover {
+    color: var(--wp-brand-2);
+    text-decoration: underline;
+}
+
+
+/* ==========================================================================
+   Inline code
+   ========================================================================== */
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) code {
+    font-family: var(--wp-font-mono);
+    font-size: 0.875em;
+    background: var(--wp-bg-soft);
+    color: var(--wp-code-color);
+    border-radius: 4px;
+    padding: 0.15em 0.4em;
+}
+
+
+/* ==========================================================================
+   Code blocks
+   ========================================================================== */
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) pre {
+    background: var(--wp-code-block-bg);
+    border: 1px solid var(--wp-divider);
+    border-radius: var(--wp-radius);
+    padding: 1.2rem 1.4rem;
+    font-family: var(--wp-font-mono);
+    font-size: 0.875em;
+    line-height: 1.7;
+    overflow-x: auto;
+}
+
+
+/* ==========================================================================
+   Blockquotes
+   ========================================================================== */
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) blockquote {
+    background: var(--wp-bg-soft);
+    border-inline-start: 4px solid var(--wp-brand-1);
+    border-radius: 0 var(--wp-radius) var(--wp-radius) 0;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+    color: var(--wp-text-2);
+}
+
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) table {
+    border-radius: var(--wp-radius);
+    overflow: hidden;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid var(--wp-divider);
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) table th,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) table td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--wp-divider);
+    font-size: 14px;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) table th {
+    background: var(--wp-bg-soft);
+    font-weight: 600;
+    color: var(--wp-text-1);
+    text-align: left;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) table tr:last-child td {
+    border-bottom: 0;
+}
+
+
+/* ==========================================================================
+   Prev / Next navigation buttons
+   ========================================================================== */
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .nav-wrapper,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .nav-wide-wrapper,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .nav-wide,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .nav-wrapper {
+    margin-top: 1.5rem;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .nav-chapters,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .mobile-nav-chapters {
+    background: var(--wp-bg-elv);
+    border: 1px solid var(--wp-divider);
+    border-radius: var(--wp-radius);
+    box-shadow: var(--wp-shadow-1);
+    color: var(--wp-text-2);
+    transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .nav-chapters {
+    top: auto;
+    bottom: 32px;
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+    height: 44px;
+    margin: 0;
+    transform: none;
+    font-size: 1.25rem;
+    backdrop-filter: none;
+}
+
+html.sidebar-visible .nav-chapters.previous {
+    left: calc(var(--sidebar-width) + var(--sidebar-resize-indicator-width) + 24px);
+}
+
+html:not(.sidebar-visible) .nav-chapters.previous {
+    left: 24px;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .nav-chapters.next {
+    right: 24px;
+}
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .nav-chapters:hover,
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .mobile-nav-chapters:hover {
+    background: var(--wp-bg-elv);
+    border-color: var(--wp-brand-1);
+    color: var(--wp-brand-1);
+    box-shadow: var(--wp-shadow-2);
+}
+
+
+/* ==========================================================================
+   Theme popup
+   ========================================================================== */
+
+:is(html.light, html.rust, html.ayu, html.navy, html.coal) .theme-popup {
+    border-radius: var(--wp-radius);
+    border: 1px solid var(--wp-border);
+    box-shadow: var(--wp-shadow-3);
+    background: var(--wp-bg-elv);
+    padding: 4px;
+}
+
+.theme-popup button {
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 13px;
+    color: var(--wp-text-2);
+    transition: color 0.15s, background-color 0.15s;
+}
+
+.theme-popup button:hover {
+    background: var(--wp-bg-soft);
+    color: var(--wp-text-1);
+}
+
+
+/* ==========================================================================
+   Custom: wp-topbar (version switch + lang switch container)
+   ========================================================================== */
+
+.wp-topbar {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-left: auto;
+    margin-right: 12px;
+    white-space: nowrap;
+}
+
+.wp-topbar .wp-chip {
+    display: none;
+}
+
+.wp-topbar .wp-sep {
+    width: 1px;
+    height: 20px;
+    background: var(--wp-divider);
+}
+
+
+/* ==========================================================================
+   Custom: Version banner / switcher
+   ========================================================================== */
+
+.version-banner {
+    position: static;
+    left: auto;
+    right: auto;
+    padding: 0;
+    box-shadow: none;
+    border: 0;
+    background: transparent;
+    color: inherit;
+}
+
+.version-banner .banner-content {
+    gap: 0;
+}
+
+.version-banner .version-info {
+    display: none;
+}
+
+.version-banner .desc-text {
+    display: none;
+}
+
+.version-banner .version-switcher {
+    display: flex;
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid var(--wp-divider);
+    border-radius: var(--wp-radius);
+    background: var(--wp-bg-soft);
+}
+
+.version-banner .version-link {
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 6px;
+    padding: 0 10px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--wp-text-2);
+    text-decoration: none;
+    transition: color 0.15s, background-color 0.15s;
+}
+
+.version-banner .version-link:hover:not(.disabled) {
+    color: var(--wp-text-1);
+}
+
+.version-banner .version-link.current {
+    background: var(--wp-bg-elv);
+    color: var(--wp-brand-1);
+    border-color: var(--wp-divider);
+    box-shadow: var(--wp-shadow-1);
+    font-weight: 600;
+}
+
+.version-banner .version-link.disabled:not(.current) {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+
+/* ==========================================================================
+   Custom: Language switcher
+   ========================================================================== */
+
+.lang-switcher {
+    position: static;
+    top: auto;
+    right: auto;
+    z-index: auto;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.lang-switcher::before {
+    content: "";
+    width: 1px;
+    height: 20px;
+    background: var(--wp-divider);
+    margin-right: 6px;
+}
+
+.lang-switcher a,
+.lang-switcher .current {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--wp-text-2);
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.15s, background-color 0.15s;
+}
+
+.lang-switcher a:hover {
+    color: var(--wp-text-1);
+    background: var(--wp-bg-soft);
+}
+
+.lang-switcher .current {
+    color: var(--wp-brand-1);
+    background: var(--wp-bg-elv);
+    border-color: var(--wp-divider);
+    box-shadow: var(--wp-shadow-1);
+    font-weight: 600;
+}
+
+.lang-switcher a[href="#"] {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+
+/* ==========================================================================
+   Custom: Page TOC (right sidebar outline)
+   ========================================================================== */
+
+.sidebar .on-this-page {
+    display: none;
+}
+
+.page-toc {
+    position: fixed;
+    top: calc(var(--wp-nav-height) + 2rem);
+    width: 240px;
+    max-height: calc(100vh - var(--wp-nav-height) - 4rem);
+    overflow: auto;
+    padding-left: 1rem;
+    border-left: 1px solid var(--wp-divider);
+    color: var(--wp-text-2);
+    z-index: 10;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.page-toc-title {
+    margin: 0 0 0.75rem 0;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--wp-text-2);
+}
+
+.page-toc ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.page-toc li {
+    margin: 2px 0;
+}
+
+.page-toc a {
+    position: relative;
+    display: block;
+    padding: 4px 0 4px 12px;
+    border-radius: 0;
+    color: var(--wp-text-2);
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.page-toc a:hover {
+    color: var(--wp-brand-1);
+}
+
+.page-toc a.active {
+    color: var(--wp-brand-1);
+    font-weight: 600;
+}
+
+.page-toc a.active::before {
+    content: "";
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: -1.03rem;
+    width: 3px;
+    background: var(--wp-brand-1);
+    border-radius: 0 2px 2px 0;
+}
+
+.page-toc-h3 {
+    padding-left: 12px;
+}
+
+
+/* ==========================================================================
+   Layout: adjust main content when TOC is visible
+   ========================================================================== */
+
+@media (min-width: 1280px) {
+    :is(html.light, html.rust, html.ayu, html.navy, html.coal) .content main {
+        margin-right: calc(240px + 48px + max(2rem, calc((100% - 1180px) / 2)));
+    }
+}
+
+@media (max-width: 1279px) {
+    .page-toc {
+        display: none;
+    }
+}
+
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 1080px) {
+    :is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar,
+    :is(html.light, html.rust, html.ayu, html.navy, html.coal) .menu-bar {
+        gap: 8px;
+        padding: 0 8px;
+    }
+
+    .wp-topbar {
+        gap: 6px;
+        margin-left: 8px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    :is(html.light, html.rust, html.ayu, html.navy, html.coal) .content main {
+        width: 100%;
+        padding: 1.5rem 1.2rem 2rem;
+        border-radius: 0;
+        border-left: 0;
+        border-right: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    :is(html.light, html.rust, html.ayu, html.navy, html.coal) #menu-bar,
+    :is(html.light, html.rust, html.ayu, html.navy, html.coal) .menu-bar {
+        height: 56px;
+    }
+
+    :is(html.light, html.rust, html.ayu, html.navy, html.coal) .content h1 {
+        font-size: 1.6rem;
+    }
+
+    .version-banner .desc-text {
+        display: none;
+    }
+}
+
+
+/* ==========================================================================
+   Version banner body offset — disabled (integrated in topbar)
+   ========================================================================== */
+
+body.has-version-banner {
+    padding-top: 0;
+}
+
+body.has-version-banner .sidebar {
+    top: 0;
+    height: 100vh;
+}
+
+body.has-version-banner .page-wrapper {
+    margin-top: 0;
+}
+
+
+/* ==========================================================================
+   Right buttons cleanup (hide unused mdBook defaults)
+   ========================================================================== */
+
+.right-buttons a {
+    display: none !important;
+}
+
+.right-buttons #mdbook-theme-toggle,
+.right-buttons #search-toggle {
+    display: inline-flex !important;
+}

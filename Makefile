@@ -53,6 +53,8 @@ copy-theme-zh:
 	@mkdir -p docs-zh/theme
 	@cp theme/*.css docs-zh/theme/
 	@cp theme/*.js docs-zh/theme/
+	@rm -f docs-zh/theme/*.hbs
+	@cp theme/*.hbs docs-zh/theme/
 	@rm -f docs-zh/theme/site.$(THEME_ASSET_VERSION).css docs-zh/theme/site.$(THEME_ASSET_VERSION).js
 	@ln -s site.css docs-zh/theme/site.$(THEME_ASSET_VERSION).css
 	@ln -s site.js docs-zh/theme/site.$(THEME_ASSET_VERSION).js
@@ -66,6 +68,8 @@ copy-theme-en:
 	@mkdir -p docs-en/theme
 	@cp theme/*.css docs-en/theme/
 	@cp theme/*.js docs-en/theme/
+	@rm -f docs-en/theme/*.hbs
+	@cp theme/*.hbs docs-en/theme/
 	@rm -f docs-en/theme/site.$(THEME_ASSET_VERSION).css docs-en/theme/site.$(THEME_ASSET_VERSION).js
 	@ln -s site.css docs-en/theme/site.$(THEME_ASSET_VERSION).css
 	@ln -s site.js docs-en/theme/site.$(THEME_ASSET_VERSION).js

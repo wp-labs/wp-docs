@@ -1,7 +1,7 @@
 # Summary
 
 - [更新说明](00-release/README.md)
-  - [0.24](00-release/0.24.md)
+  - [0.24 更新说明](00-release/0.24.md)
   - [0.22 更新说明](00-release/0.22.md)
   - [0.20 更新说明](00-release/0.20.md)
   - [Wp-Monitor 发布说明](00-release/wp-monitor/release.md)
@@ -99,19 +99,16 @@
       - [ClickHouse Sink](10-user/05-connectors/02-sinks/21-clickhouse.md)
       - [HTTP Sink](10-user/05-connectors/02-sinks/22-http.md)
       - [PostgreSQL Sink](10-user/05-connectors/02-sinks/23-postgresql_sink.md)
-      - [DMDB Sink 使用配置说明](10-user/05-connectors/02-sinks/24-dmdb_dink.md)
+      - [DMDB Sink](10-user/05-connectors/02-sinks/24-dmdb_dink.md)
   - [排障指南](10-user/09-FQA/troubleshooting.md)
   - [用户建议 Q&A](10-user/09-FQA/user_suggestions_qa.md)
   - [Wp-Monitor](10-user/10-monitor/guide.md)
   - [wp-skills](10-user/11-skills/wp-skills.md)
 
 - [BenchMark Report](20-report/benchmark.md)
-- [WarpParse vs Vector 性能基准测试报告](20-report/report_mac.md)
-- [Async Provider 性能测试与结论](20-report/knowledge/async-provider.md)
+- [性能基准测试报告](20-report/report_mac.md)
+- [Provider 性能测试与结论](20-report/knowledge/async-provider.md)
 
 - [Connector 实现指南](30-dev/connector_dev_guide.md)
 - [文档聚合自动化方案](30-dev/docs_aggregation_automation.md)
 - [WarpParse 架构总览](30-dev/warp_parse_architecture.md)
-- [wp-knowledge Provider 与 Cache 方案](30-dev/knowledge/architecture/provider-cache.md)
-- [PostgreSQL Provider 后续任务](30-dev/knowledge/tasks/postgres-provider.md)
-- [Provider / Cache 重构后续任务](30-dev/knowledge/tasks/provider-cache.md)

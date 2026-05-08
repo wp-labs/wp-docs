@@ -91,7 +91,7 @@
       - [ClickHouse Sink](10-user/05-connectors/02-sinks/21-clickhouse.md)
       - [HTTP Sink](10-user/05-connectors/02-sinks/22-http.md)
       - [PostgreSQL Sink](10-user/05-connectors/02-sinks/23-postgresql_sink.md)
-      - [DMDB Sink Usage and 配置指南](10-user/05-connectors/02-sinks/24-dmdb_sink.md)
+      - [DMDB Sink](10-user/05-connectors/02-sinks/24-dmdb_sink.md)
   - [troubleshooting.md](10-user/09-FQA/troubleshooting.md)
   - [Wp-Monitor](10-user/10-monitor/guide.md)
 
@@ -100,6 +100,3 @@
 
 - [Connector Dev Guide](30-dev/connector_dev_guide.md)
 - [Docs Sync Automation](30-dev/docs_aggregation_automation.md)
-- [wp-knowledge Provider and Cache Plan](30-dev/knowledge/architecture/provider-cache.md)
-- [PostgreSQL Provider Tasks](30-dev/knowledge/tasks/postgres-provider.md)
-- [Provider / Cache Refactor Tasks](30-dev/knowledge/tasks/provider-cache.md)

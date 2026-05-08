@@ -37,10 +37,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-7c5a091d.js";
+            window.path_to_searchindex_js = "searchindex-ea8617e2.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-6d516428.js"></script>
+        <script src="toc-d23d6517.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -231,7 +231,7 @@ wproj self update --yes
 </ul>
 <p>Related docs:</p>
 <ul>
-<li><a href="#wp-monitor">Wp-Monitor</a></li>
+<li><a href="10-user/10-monitor/Wp-Monitor.html">Wp-Monitor</a></li>
 </ul>
 <h3 id="wpl-updates"><a class="header" href="#wpl-updates">WPL Updates</a></h3>
 <p>Added guidance for combining <code>json_like</code>, <code>json</code>, and <code>bad_json</code>, making class-of-JSON input handling clearer.</p>
@@ -340,6 +340,16 @@ compression = "none"                       # Whether to enable gzip compression
 <h2 id="fixed"><a class="header" href="#fixed">Fixed</a></h2>
 <ul>
 <li>Event ID: synced with the upstream <code>wp-motor</code> fix to unify <code>wp_event_id</code> generation logic and avoid duplicate IDs caused by falling back to an in-process seed after runtime restarts.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="wp-monitor-release-notes"><a class="header" href="#wp-monitor-release-notes">Wp-Monitor Release Notes</a></h1>
+<h2 id="043"><a class="header" href="#043">0.4.3</a></h2>
+<h3 id="added-2"><a class="header" href="#added-2">Added</a></h3>
+<ul>
+<li>Visualization: Unified view of Source, Parse, and Sink processing statistics</li>
+<li>MISS data observation: Identify unmatched data and support export for analysis</li>
+<li>Time window observation: View real-time or historical data performance</li>
+<li>Trend observation: Determine whether traffic changes are transient fluctuations or sustained anomalies</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="user-guide"><a class="header" href="#user-guide">User Guide</a></h1>
@@ -12808,36 +12818,47 @@ query_timeout_secs = 15
 <h1 id="troubleshootingmd"><a class="header" href="#troubleshootingmd">troubleshooting.md</a></h1>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="wp-monitor"><a class="header" href="#wp-monitor">Wp-Monitor</a></h1>
-<p><img src="images/Wp-Monitor.jpg" alt="Wp-Monitor"></p>
-<p>Wp-Monitor is the unified observation entry for WarpParse data pipelines. It helps you check whether the pipeline is processing data normally, whether MISS data is abnormal, and whether downstream output is stable.</p>
-<h2 id="what-you-can-observe"><a class="header" href="#what-you-can-observe">What You Can Observe</a></h2>
+<p>Wp-Monitor is a unified observation entry point for the WarpParse data pipeline, used to check whether the pipeline is processing data normally, whether MISS is abnormal, and whether downstream output is stable.</p>
+<h2 id="what-you-can-see"><a class="header" href="#what-you-can-see">What You Can See</a></h2>
 <ul>
-<li>Full pipeline overview: view the runtime status of Source, Parse, Sink, and MISS in one place.</li>
-<li>Time window observation: inspect real-time or historical behavior by time range.</li>
-<li>MISS data observation: check unmatched data and export it when needed.</li>
-<li>Trend changes: help determine whether a fluctuation is temporary or persistent.</li>
+<li><strong>Full-link overview</strong>: Unified view of Source, Parse, Sink, and MISS operational status.</li>
+<li><strong>Time window observation</strong>: View real-time or historical pipeline performance within a configurable time range.</li>
+<li><strong>MISS data observation</strong>: Inspect data that didn’t match any rules and export it for analysis when needed.</li>
+<li><strong>Trend changes</strong>: Helps determine whether fluctuations are transient spikes or sustained anomalies.</li>
 </ul>
-<p>Typical use cases:</p>
+<p>Applicable scenarios:</p>
 <ul>
 <li>Daily inspection</li>
 <li>Troubleshooting</li>
 <li>Incident review</li>
 </ul>
+<p><img src="10-user/10-monitor/monitor-1.jpg" alt="Wp-Monitor"></p>
 <h2 id="prerequisites-2"><a class="header" href="#prerequisites-2">Prerequisites</a></h2>
-<p>Prepare the following components first:</p>
+<p>The following components must be prepared:</p>
 <ul>
-<li>VictoriaMetrics: stores and queries metric data</li>
-<li>VictoriaLogs: stores and queries MISS data</li>
-<li>WarpParse: the data pipeline being monitored</li>
+<li><strong>VictoriaMetrics</strong>: Stores and queries metric data</li>
+<li><strong>VictoriaLogs</strong>: Stores and queries MISS data</li>
+<li><strong>WarpParse</strong>: The data processing pipeline being monitored</li>
 </ul>
-<p>If the WarpParse pipeline has not been deployed, Wp-Monitor cannot be used.</p>
+<p>Wp-Monitor cannot be used without a deployed WarpParse pipeline.</p>
 <h2 id="setup-steps"><a class="header" href="#setup-steps">Setup Steps</a></h2>
-<h3 id="1-deploy-wp-observing"><a class="header" href="#1-deploy-wp-observing">1. Deploy <code>wp-observing</code></a></h3>
-<pre><code class="language-bash">git clone https://github.com/wp-labs/wp-compose
-cd ./wp-compose/warp-observing/setup.sh
+<h3 id="1-deploy-monitor-via-docker"><a class="header" href="#1-deploy-monitor-via-docker">1. Deploy monitor via Docker</a></h3>
+<pre><code class="language-bash">curl -sSf https://get.warpparse.ai/inst-x.sh | bash -s -- monitor-docker alpha
+</code></pre>
+<p>This command generates a Docker configuration for monitor in the current directory, which can be started directly with <code>docker-compose -f</code>. Below is the directory structure:</p>
+<pre><code class="language-bash">wp-monitor
+├── example                     # wparse examples
+├── README.md
+├── docker-compose-alpha.yml    # alpha version config
+├── docker-compose-beta.yml     # beta version config
+├── docker-compose-main.yml     # main version config
+├── start.sh                    # startup script
+└── wp-monitor                  # monitor config
+    └── config
+        └── app.toml
 </code></pre>
 <h3 id="2-configure-connectors-in-warpparse"><a class="header" href="#2-configure-connectors-in-warpparse">2. Configure connectors in WarpParse</a></h3>
-<p>If the required connectors already exist, you can skip this step.</p>
+<p>Skip this step if the corresponding connectors already exist.</p>
 <h4 id="victoriametrics-connector"><a class="header" href="#victoriametrics-connector">VictoriaMetrics connector</a></h4>
 <pre><code class="language-toml">[[connectors]]
 id = "victoriametrics_sink"
@@ -12858,7 +12879,7 @@ allow_override = ["endpoint", "insert_path", "flush_interval_secs", "create_time
 endpoint = "http://127.0.0.1:9428"
 insert_path = "/insert/jsonline"
 </code></pre>
-<h3 id="3-connect-monitoring-and-miss-output-in-sink_group"><a class="header" href="#3-connect-monitoring-and-miss-output-in-sink_group">3. Connect monitoring and MISS output in <code>sink_group</code></a></h3>
+<h3 id="3-configure-monitor-and-miss-output-in-sink_group"><a class="header" href="#3-configure-monitor-and-miss-output-in-sink_group">3. Configure monitor and MISS output in sink_group</a></h3>
 <h4 id="infradmonitortoml"><a class="header" href="#infradmonitortoml"><code>infra.d/monitor.toml</code></a></h4>
 <pre><code class="language-toml">[[sink_group.sinks]]
 name = "victoriametrics"
@@ -12870,24 +12891,35 @@ name = "victorialogs_output"
 connect = "victorialogs_sink"
 params = { endpoint = "http://127.0.0.1:9428", insert_path = "/insert/jsonline", tags = ["wp_stage:miss"] }
 </code></pre>
-<p>Notes:</p>
+<p>Note:</p>
 <ul>
 <li><code>tags</code> must include <code>wp_stage:miss</code></li>
-<li>otherwise Wp-Monitor cannot query MISS data</li>
+<li>Otherwise Wp-Monitor cannot query MISS data</li>
 </ul>
-<h3 id="4-start-warpparse"><a class="header" href="#4-start-warpparse">4. Start WarpParse</a></h3>
-<pre><code class="language-bash">wparse daemon --stat 1
+<h3 id="4-start-warpparse-example-optional"><a class="header" href="#4-start-warpparse-example-optional">4. Start WarpParse example (optional)</a></h3>
+<pre><code class="language-bash">cd wp-monitor/example
+wparse daemon --stat 1
+# Open a new terminal and run:
+cd wp-monitor/example
+./wpgen-keep-running.sh
 </code></pre>
 <p><code>--stat 1</code> enables statistics output so Wp-Monitor can observe pipeline status.</p>
 <h2 id="minimal-troubleshooting-path"><a class="header" href="#minimal-troubleshooting-path">Minimal Troubleshooting Path</a></h2>
-<p>Recommended order:</p>
+<p>It is recommended to check in the following order:</p>
 <ol>
-<li>Confirm the time window of the issue</li>
-<li>Check whether there is an obvious fluctuation in the pipeline overview</li>
-<li>Check whether MISS data increases abnormally</li>
-<li>Check whether downstream output shows loss or fluctuation</li>
+<li>First identify the problem time window</li>
+<li>Check the pipeline overview for obvious fluctuations</li>
+<li>Check if MISS has abnormally increased</li>
+<li>Check downstream output for loss or fluctuations</li>
 </ol>
-<p>If you only want a quick health check, start with the overview and MISS data in the target time window.</p>
+<p>If you only need a quick health check, reviewing the overview and MISS within the time window is usually sufficient.</p>
+<h2 id="screenshots"><a class="header" href="#screenshots">Screenshots</a></h2>
+<h3 id="source-statistics"><a class="header" href="#source-statistics">Source Statistics</a></h3>
+<p><img src="10-user/10-monitor/monitor-source.jpg" alt=""></p>
+<h3 id="parse-statistics"><a class="header" href="#parse-statistics">Parse Statistics</a></h3>
+<p><img src="10-user/10-monitor/monitor-parse.jpg" alt=""></p>
+<h3 id="sink-statistics"><a class="header" href="#sink-statistics">Sink Statistics</a></h3>
+<p><img src="10-user/10-monitor/monitor-sink.jpg" alt=""></p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="benchmark-report"><a class="header" href="#benchmark-report">Benchmark Report</a></h1>
 <p>Performance benchmarks and testing results.</p>

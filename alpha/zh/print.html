@@ -37,10 +37,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-040996f0.js";
+            window.path_to_searchindex_js = "searchindex-59a6d548.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-25fa03f5.js"></script>
+        <script src="toc-36546536.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,6 +183,8 @@
 <p>本目录收录 WarpParse 各版本更新说明。</p>
 <p>版本列表按时间与版本号倒排，优先阅读最新版本。</p>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="warpparse-024"><a class="header" href="#warpparse-024">WarpParse 0.24</a></h1>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="warpparse-022"><a class="header" href="#warpparse-022">WarpParse 0.22</a></h1>
 <p>亲爱的用户们，</p>
 <p>我们很高兴地宣布 WarpParse 0.22 版本发布！本次更新主要聚焦于 <strong>运行时可运维性、远端工程同步、知识库能力补强，以及监控与规则体验增强</strong>。</p>
@@ -231,7 +233,7 @@ wproj self update --yes
 </ul>
 <p>相关文档：</p>
 <ul>
-<li><a href="#wp-monitor">Wp-Monitor</a></li>
+<li><a href="10-user/10-monitor/Wp-Monitor.html">Wp-Monitor</a></li>
 </ul>
 <h3 id="wpl更新"><a class="header" href="#wpl更新">WPL更新</a></h3>
 <p>补充了 <code>json_like</code>、<code>json</code>、<code>bad_json</code> 的配合说明，便于处理类 JSON 输入。</p>
@@ -300,6 +302,16 @@ batch_size = 1_0000    # 单批次写入记录数
 <p>感谢您一直以来对 WarpParse 的支持！我们将持续努力，为您带来更多创新和实用的功能。</p>
 <p>WarpParse 团队</p>
 <p><code>2026年3月20日</code></p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="wp-monitor-发布说明"><a class="header" href="#wp-monitor-发布说明">Wp-Monitor 发布说明</a></h1>
+<h2 id="043"><a class="header" href="#043">0.4.3</a></h2>
+<h3 id="added-1"><a class="header" href="#added-1">Added</a></h3>
+<ul>
+<li>可视化：统一查看 Source、Parse、Sink 处理统计数据</li>
+<li>MISS 数据观察：识别未命中规则的数据，并支持导出分析。</li>
+<li>时间窗口观察：查看实时或历史时间段内的数据表现。</li>
+<li>趋势观察：判断流量变化是瞬时波动还是持续异常。</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="使用指南"><a class="header" href="#使用指南">使用指南</a></h1>
 <p>本目录是 Warp Parse 聚合文档入口。</p>
@@ -17322,6 +17334,9 @@ encode = "hex"
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="kafka-源配置-1"><a class="header" href="#kafka-源配置-1">Kafka 源配置</a></h1>
+<blockquote>
+<p><strong>⚠️ 注意</strong>：Kafka 源当前<strong>暂未实现</strong>。本文档为计划功能的设计文档，实际使用时请以代码实现为准。</p>
+</blockquote>
 <p>本文档详细介绍如何配置和使用 Warp Parse 系统的 Kafka 数据源。</p>
 <h2 id="概述-13"><a class="header" href="#概述-13">概述</a></h2>
 <p>Kafka 源用于从 Apache Kafka 消息队列消费数据，支持消费单个主题和灵活的配置选项。</p>
@@ -19743,7 +19758,6 @@ query_timeout_secs = 15
 <p>我们会持续在“简单场景易用性”和“复杂场景可治理性”之间做平衡。</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="wp-monitor"><a class="header" href="#wp-monitor">Wp-Monitor</a></h1>
-<p><img src="images/Wp-Monitor.jpg" alt="Wp-Monitor"></p>
 <p>Wp-Monitor 是面向 WarpParse 数据链路的统一观察入口，用于查看链路是否正常处理数据、MISS 是否异常、下游输出是否稳定。</p>
 <h2 id="能看什么"><a class="header" href="#能看什么">能看什么</a></h2>
 <ul>
@@ -19758,6 +19772,7 @@ query_timeout_secs = 15
 <li>问题排查</li>
 <li>故障复盘</li>
 </ul>
+<p><img src="10-user/10-monitor/monitor-1.jpg" alt="Wp-Monitor"></p>
 <h2 id="使用前提"><a class="header" href="#使用前提">使用前提</a></h2>
 <p>需要先准备以下组件：</p>
 <ul>
@@ -19835,8 +19850,6 @@ cd wp-monitor/example
 ./wpgen-keep-running.sh
 </code></pre>
 <p><code>--stat 1</code> 用于开启统计输出，便于 Wp-Monitor 观察链路状态。</p>
-<p>效果展示：
-<img src="images/monitor-2.png" alt="alt text"></p>
 <h2 id="最小排查路径"><a class="header" href="#最小排查路径">最小排查路径</a></h2>
 <p>建议按以下顺序查看：</p>
 <ol>
@@ -19846,6 +19859,13 @@ cd wp-monitor/example
 <li>查看下游输出是否有损耗或波动</li>
 </ol>
 <p>如果只是想快速判断链路是否正常，通常先看时间窗口内的总览和 MISS 即可。</p>
+<h2 id="效果展示"><a class="header" href="#效果展示">效果展示：</a></h2>
+<h3 id="来源统计数据"><a class="header" href="#来源统计数据">来源统计数据</a></h3>
+<p><img src="10-user/10-monitor/monitor-source.jpg" alt=""></p>
+<h3 id="解析统计数据"><a class="header" href="#解析统计数据">解析统计数据</a></h3>
+<p><img src="10-user/10-monitor/monitor-parse.jpg" alt=""></p>
+<h3 id="输出统计数据"><a class="header" href="#输出统计数据">输出统计数据</a></h3>
+<p><img src="10-user/10-monitor/monitor-sink.jpg" alt=""></p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="wp-skills"><a class="header" href="#wp-skills">wp-skills</a></h1>
 <p><code>wp-skills</code> 是面向 WarpParse 的 AI 技能集合，在使用skills之前，您需要具备使用AI agent的基础知识，并且已经安装了支持skills的AI工具（如Claude、Codex等）。<code>wp-skills</code> 目前包含以下技能：</p>
@@ -22178,6 +22198,429 @@ cargo test --manifest-path ../wp-motor/Cargo.toml -p wp-oml \
 </ol>
 <h2 id="为什么这套方案比现状更合适"><a class="header" href="#为什么这套方案比现状更合适">为什么这套方案比现状更合适</a></h2>
 <p>现有方案的问题是：同步逻辑只覆盖一个项目、依赖本地目录结构、没有统一配置入口、没有自动 PR。新方案把“来源声明”“同步执行”“变更入库”拆开后，后续扩展更多仓库不会继续放大维护成本。</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="warpparse-架构总览"><a class="header" href="#warpparse-架构总览">WarpParse 架构总览</a></h1>
+<!-- 角色：架构师 / 开发者 / 方案设计者 | 最近整理：2026-03-26 -->
+<p>本文整理 WarpParse 的整体架构，目标是回答 4 个问题：</p>
+<ol>
+<li>WarpParse 的核心链路是什么。</li>
+<li>配置、规则、运行时分别承担什么职责。</li>
+<li>高吞吐设计主要落在哪些模块。</li>
+<li>做工程落地时，应该把注意力放在哪些边界上。</li>
+</ol>
+<p>本文不展开 WPL/OML 语法细节；如果任务进入规则编写或校验，应转到对应规则文档和验证流程。</p>
+<h2 id="一句话概括"><a class="header" href="#一句话概括">一句话概括</a></h2>
+<p>WarpParse 是一套围绕日志 ETL 构建的高性能运行时：</p>
+<ul>
+<li>用 <strong>Source/Connector</strong> 负责接入数据。</li>
+<li>用 <strong>WPL</strong> 负责把原始日志解析成结构化字段。</li>
+<li>用 <strong>OML</strong> 负责把字段组装成目标对象。</li>
+<li>用 <strong>Sink/Route</strong> 负责把结果发送到文件、数据库、消息系统或搜索系统。</li>
+<li>用 <strong>KnowDB / Rescue / Monitor</strong> 提供富化、容灾和可观测能力。</li>
+</ul>
+<h2 id="核心特征摘要"><a class="header" href="#核心特征摘要">核心特征摘要</a></h2>
+<p>从技术选型和系统能力上看，WarpParse 可以概括为 5 个关键点：</p>
+<ol>
+<li><strong>基于 Rust 构建</strong>：以高性能、内存安全和较强并发可控性为基础。</li>
+<li><strong>全异步 I/O 模式</strong>：通过异步运行时、批处理和背压调度充分利用 CPU 与 I/O 资源。</li>
+<li><strong>自有 DSL 体系</strong>：通过 WPL 和 OML 把“解析”和“组装”从通用脚本逻辑中抽离出来。</li>
+<li><strong>基于接口的 Source/Sink 扩展机制</strong>：通过统一工厂和运行时接口扩展接入与输出能力。</li>
+<li><strong>基于接口的知识库富化机制</strong>：通过 KnowDB 的查询门面和 Provider 形态支持运行时富化。</li>
+</ol>
+<h2 id="架构分层"><a class="header" href="#架构分层">架构分层</a></h2>
+<pre class="mermaid">flowchart LR
+    A[外部数据源&lt;br/&gt;file / tcp / syslog / kafka] --&gt; B[Source Connector]
+    B --&gt; C[ActPicker / Collector]
+    C --&gt; D[ActParser]
+    D --&gt; E[WPL Parser]
+    E --&gt; F[OML Transformer]
+    F --&gt; G[Sink Runtime / Router]
+    G --&gt; H[文件 / DB / ES / Kafka / HTTP]
+
+    I[KnowDB] -. 查询富化 .-&gt; F
+    J[Monitor / Stat] -. 指标 .-&gt; C
+    J -. 指标 .-&gt; D
+    J -. 指标 .-&gt; G
+    K[Rescue] -. 失败回放 .-&gt; G
+</pre>
+
+<p>从运行时看，主链路是：</p>
+<p><code>Source -&gt; Collector(Picker) -&gt; Parser -&gt; WPL -&gt; OML -&gt; Sink</code></p>
+<p>从工程视角看，配置和模型分为三层：</p>
+<ul>
+<li><code>conf/</code>：运行时主配置，例如 <code>wparse.toml</code></li>
+<li><code>connectors/</code>：连接器模板，定义某类 source/sink 的默认参数</li>
+<li><code>models/</code> + <code>topology/</code>：规则、知识库、路由和实例化配置</li>
+</ul>
+<h2 id="工程目录与职责"><a class="header" href="#工程目录与职责">工程目录与职责</a></h2>
+<p>典型工程目录如下：</p>
+<pre><code class="language-text">work-root/
+├── conf/
+│   ├── wparse.toml
+│   └── wpgen.toml
+├── connectors/
+│   ├── source.d/
+│   └── sink.d/
+├── models/
+│   ├── wpl/
+│   ├── oml/
+│   └── knowledge/
+├── topology/
+│   ├── sources/
+│   └── sinks/
+└── data/
+    ├── in_dat/
+    ├── out_dat/
+    ├── logs/
+    └── rescue/
+</code></pre>
+<p>可以把这些目录理解成 4 个层次：</p>
+<ol>
+<li><code>conf/</code> 决定进程怎么运行。</li>
+<li><code>connectors/</code> 定义“如何连接某类系统”。</li>
+<li><code>models/</code> 定义“如何解析、转换、富化数据”。</li>
+<li><code>topology/</code> 定义“哪些 source 和 sink 被启用，以及如何路由”。</li>
+</ol>
+<p>这套拆分的好处是：</p>
+<ul>
+<li>连接参数可复用，避免在每条链路上重复写一遍。</li>
+<li>规则模型和接入拓扑分离，便于多人协作。</li>
+<li>配置可以做白名单覆盖，降低误改连接器默认参数的风险。</li>
+</ul>
+<h2 id="主数据流"><a class="header" href="#主数据流">主数据流</a></h2>
+<h3 id="1-source-与-connector"><a class="header" href="#1-source-与-connector">1. Source 与 Connector</a></h3>
+<p>Source 负责把外部数据带入 WarpParse。当前文档中常见的输入包括：</p>
+<ul>
+<li><code>file</code></li>
+<li><code>tcp</code></li>
+<li><code>syslog</code></li>
+<li><code>kafka</code>（是否可用以当前实现和 feature 为准）</li>
+</ul>
+<p>WarpParse 采用“<strong>连接器定义</strong> + <strong>实例配置</strong>”两段式模型：</p>
+<ul>
+<li><code>connectors/source.d/*.toml</code>：定义连接器模板</li>
+<li><code>topology/sources/wpsrc.toml</code>：定义具体 source 实例</li>
+</ul>
+<p>实例只允许覆盖 <code>allow_override</code> 白名单中的参数。这样既保留灵活性，也防止实例层随意改掉底层协议参数。</p>
+<h3 id="2-collector--picker"><a class="header" href="#2-collector--picker">2. Collector / Picker</a></h3>
+<p>Source 读到的数据不会直接扔给解析器，而是先进入采集调度层。</p>
+<p>这一层的核心是 <code>ActPicker</code>：</p>
+<ul>
+<li>管理 <code>pending</code> 缓冲队列</li>
+<li>决定本轮先发多少数据给下游</li>
+<li>根据水位决定是否继续从 source 拉取</li>
+<li>在下游阻塞时通过轮次退避避免 CPU 自旋</li>
+</ul>
+<p>它的设计原则是：</p>
+<ul>
+<li>优先发已有缓存，再决定是否继续拉取</li>
+<li>使用固定 burst、水位和轮次退避，而不是在热路径上引入复杂时间控制</li>
+<li>让背压沿着有界队列自然传递</li>
+</ul>
+<p>这意味着 WarpParse 的高吞吐不是“无限拉取”，而是“可控拉取 + 可解释调度”。</p>
+<h3 id="3-sourceevent-与预处理下沉"><a class="header" href="#3-sourceevent-与预处理下沉">3. SourceEvent 与预处理下沉</a></h3>
+<p>新的运行时设计把 Source 的职责压到最小：</p>
+<ul>
+<li>Source 只负责取帧、附带最小标签和上游 IP 等元信息</li>
+<li>协议级预处理不再尽量堆在 <code>recv</code> 热路径里</li>
+<li>预处理通过 <code>SourceEvent.preproc</code> 挂载，转移到 parse worker 中执行</li>
+</ul>
+<p>这样做的意义很直接：</p>
+<ul>
+<li>syslog header normalize/strip/tag 注入不再卡死在单一接入线程</li>
+<li>预处理随着 parse worker 并行数一起扩展</li>
+<li>Source 端只做“接入”，Parser 端负责“消化”</li>
+</ul>
+<p>这是 WarpParse 运行时设计里非常关键的一条边界。</p>
+<h2 id="解析与转换层"><a class="header" href="#解析与转换层">解析与转换层</a></h2>
+<h3 id="1-wpl解析层"><a class="header" href="#1-wpl解析层">1. WPL：解析层</a></h3>
+<p>WPL 负责从原始日志里抽取字段，定位是“解析规则语言”。</p>
+<p>它主要解决：</p>
+<ul>
+<li>文本字段提取</li>
+<li>JSON/KV/数组等结构化内容拆解</li>
+<li>IP、时间、端口、HTTP 等类型识别</li>
+<li>预处理和字段级 pipe</li>
+<li>可选、择一、重复扫描等复杂匹配场景</li>
+</ul>
+<p>WPL 的产出不是最终对象，而是“结构化中间结果 + 命中的 rule 标识”。</p>
+<h3 id="2-oml对象建模层"><a class="header" href="#2-oml对象建模层">2. OML：对象建模层</a></h3>
+<p>OML 接在 WPL 后面，定位是“对象组装与转换语言”。</p>
+<p>它主要负责：</p>
+<ul>
+<li>字段重命名和重组</li>
+<li>条件判断和类型转换</li>
+<li>对象、数组等输出结构构造</li>
+<li>数值计算</li>
+<li>通过 SQL/KnowDB 进行富化</li>
+</ul>
+<p>运行时通常先命中 WPL 规则，再根据 <code>rule = /package/rule</code> 去匹配 OML 配置。</p>
+<p>可以把它理解成：</p>
+<ul>
+<li>WPL 关注“从哪里抽出什么”</li>
+<li>OML 关注“最终要交付成什么”</li>
+</ul>
+<h3 id="3-knowdb富化层"><a class="header" href="#3-knowdb富化层">3. KnowDB：富化层</a></h3>
+<p>KnowDB 负责为 OML 或其他组件提供查询能力，典型场景包括：</p>
+<ul>
+<li>地域、资产、组织等信息映射</li>
+<li>静态知识表查找</li>
+<li>运行时轻量 SQL 富化</li>
+</ul>
+<p>当前设计文档里，KnowDB 默认保留“权威库”形态，再根据数据规模选择两种模式：</p>
+<ul>
+<li>小数据、低延迟优先：线程克隆到内存</li>
+<li>中大数据、内存敏感：WAL + 只读连接池</li>
+</ul>
+<p>这说明 KnowDB 的定位不是在线事务数据库，而是“<strong>运行时只读知识快照</strong>”。</p>
+<h2 id="输出与路由层"><a class="header" href="#输出与路由层">输出与路由层</a></h2>
+<h3 id="1-sink-connector"><a class="header" href="#1-sink-connector">1. Sink Connector</a></h3>
+<p>Sink 负责把结果发往目标系统，常见目标包括：</p>
+<ul>
+<li>file</li>
+<li>syslog</li>
+<li>tcp</li>
+<li>arrow-ipc</li>
+<li>kafka</li>
+<li>mysql / postgresql</li>
+<li>doris / clickhouse</li>
+<li>elasticsearch</li>
+<li>http</li>
+</ul>
+<p>和 Source 一样，Sink 也分成两层：</p>
+<ul>
+<li><code>connectors/sink.d/*.toml</code>：连接器模板</li>
+<li><code>topology/sinks/business.d|infra.d/**/*.toml</code>：业务路由和基础路由</li>
+</ul>
+<h3 id="2-路由模型"><a class="header" href="#2-路由模型">2. 路由模型</a></h3>
+<p>WarpParse 的 sink 路由分为两类：</p>
+<ul>
+<li><code>business.d/</code>：面向具体业务场景的输出</li>
+<li><code>infra.d/</code>：系统级输出，例如 <code>default</code>、<code>miss</code>、<code>residue</code>、<code>error</code>、<code>monitor</code></li>
+</ul>
+<p>这里的关键思路是：</p>
+<ul>
+<li>业务输出和系统兜底输出分开治理</li>
+<li>路由可以按 <code>oml</code> 或 <code>rule</code> 进行匹配</li>
+<li>每个 sink 可以单独配置 <code>filter</code> 和 <code>expect</code></li>
+</ul>
+<p>其中：</p>
+<ul>
+<li><code>filter</code> 是拦截条件，命中后不写该 sink，而是进入 <code>intercept</code></li>
+<li><code>expect</code> 用于做比例或范围校验，帮助发现规则漂移、路由异常或输出丢失</li>
+</ul>
+<h2 id="高吞吐设计落点"><a class="header" href="#高吞吐设计落点">高吞吐设计落点</a></h2>
+<p>如果只看用户文档，很容易把 WarpParse 理解成“WPL 很强”。但从架构上看，它的性能优势不只来自规则语言，还来自运行时设计。</p>
+<h3 id="0-rust-与异步运行时基础"><a class="header" href="#0-rust-与异步运行时基础">0. Rust 与异步运行时基础</a></h3>
+<p>WarpParse 的底层基础是 Rust。</p>
+<p>这带来几层直接收益：</p>
+<ul>
+<li>在系统级语言里保持较高性能上限</li>
+<li>借助所有权和借用模型降低内存安全风险</li>
+<li>更适合构建长时间运行的并发数据处理链路</li>
+</ul>
+<p>在此基础上，运行时采用异步 I/O 模式来组织网络接入、批处理和任务协作：</p>
+<ul>
+<li>网络 Source 和部分 Sink 使用异步接口</li>
+<li>通过有界通道、任务组和异步调度组织上下游</li>
+<li>让 CPU 密集的解析工作与 I/O 密集的接入/发送更好地并行</li>
+</ul>
+<p>最终目标不是“所有代码都异步”，而是让 I/O 等待、批处理和解析并发各自落在合适的位置上。</p>
+<h3 id="1-source-最小化"><a class="header" href="#1-source-最小化">1. Source 最小化</a></h3>
+<ul>
+<li>Source 负责接入，不负责做过多逻辑处理</li>
+<li>协议预处理被后移到 parse worker</li>
+<li>有助于减少接入线程热点</li>
+</ul>
+<h3 id="2-有界队列与背压"><a class="header" href="#2-有界队列与背压">2. 有界队列与背压</a></h3>
+<ul>
+<li>Source 内部和 Collector 之间使用 bounded channel</li>
+<li>Picker 不盲目拉取，按 burst 和水位控制节奏</li>
+<li>下游阻塞时，上游可以自然感知而不是无限堆内存</li>
+</ul>
+<h3 id="3-zero-copy"><a class="header" href="#3-zero-copy">3. Zero-Copy</a></h3>
+<p>TCP 路径上引入 <code>Arc&lt;Vec&lt;u8&gt;&gt;</code> / <code>RawData::ArcBytes</code>：</p>
+<ul>
+<li>降低 Source -&gt; Parser -&gt; Sink 之间的重复拷贝</li>
+<li>对高吞吐、小包密集场景更有价值</li>
+<li>配合批处理和缓冲 shrink，控制内存峰值</li>
+</ul>
+<h3 id="4-批处理"><a class="header" href="#4-批处理">4. 批处理</a></h3>
+<p>批处理不是附加优化，而是运行时基线能力的一部分：</p>
+<ul>
+<li>源端按事件数和字节上限构批</li>
+<li>Picker 在高水位时做小批合并</li>
+<li>Sink 侧也可按目标协议做批量发送</li>
+</ul>
+<h3 id="5-工具链与运行模式分离"><a class="header" href="#5-工具链与运行模式分离">5. 工具链与运行模式分离</a></h3>
+<p>WarpParse 把“开发、验证、运行、恢复”拆成了独立工具：</p>
+<ul>
+<li><code>wproj</code>：初始化、检查、统计</li>
+<li><code>wpgen</code>：生成测试数据</li>
+<li><code>wparse</code>：批处理或 daemon 运行</li>
+<li><code>wprescue</code>：回放 rescue 数据</li>
+</ul>
+<p>这意味着日常工程操作不需要把所有事情都塞进主进程。</p>
+<h2 id="可用性容灾与可观测"><a class="header" href="#可用性容灾与可观测">可用性、容灾与可观测</a></h2>
+<h3 id="1-运行模式"><a class="header" href="#1-运行模式">1. 运行模式</a></h3>
+<p><code>wparse</code> 支持两种核心模式：</p>
+<ul>
+<li><code>batch</code>：读完即退，适合离线验证、回归和文件处理</li>
+<li><code>daemon</code>：常驻运行，适合网络接入和在线链路</li>
+</ul>
+<p>架构上的重要差异是：</p>
+<ul>
+<li><code>batch</code> 不启动 acceptor，目标是源结束后优雅退出</li>
+<li><code>daemon</code> 才启动监听类组件并常驻等待连接</li>
+</ul>
+<h3 id="2-rescue"><a class="header" href="#2-rescue">2. Rescue</a></h3>
+<p>当 sink 侧需要兜底时，WarpParse 使用 rescue 目录保存失败数据。</p>
+<p>当前设计不是简单地把格式化文本备份下来，而是记录结构化 JSON 行：</p>
+<ul>
+<li><code>Record</code>：可还原成结构化记录</li>
+<li><code>Raw</code>：保留原始字符串</li>
+</ul>
+<p>恢复时通过 <code>wprescue</code> 或运行时恢复链路重新走 <code>send_record/send_raw</code>，尽量保证“恢复后的行为和实时发送一致”。</p>
+<h3 id="3-monitor--stat"><a class="header" href="#3-monitor--stat">3. Monitor / Stat</a></h3>
+<p>统计配置允许分别观察：</p>
+<ul>
+<li>pick 阶段</li>
+<li>parse 阶段</li>
+<li>sink 阶段</li>
+</ul>
+<p>这比只看一条总 TPS 更有价值，因为它能帮助判断瓶颈是在：</p>
+<ul>
+<li>接入</li>
+<li>解析</li>
+<li>富化/转换</li>
+<li>下游输出</li>
+</ul>
+<h2 id="扩展点"><a class="header" href="#扩展点">扩展点</a></h2>
+<p>WarpParse 的扩展主要落在两类地方。</p>
+<h3 id="1-connector-扩展"><a class="header" href="#1-connector-扩展">1. Connector 扩展</a></h3>
+<p>通过实现 <code>SourceFactory</code> / <code>SinkFactory</code>，可以引入新的 source 或 sink 类型。</p>
+<p>核心约束是：</p>
+<ul>
+<li>先把动态参数收敛成静态 <code>Spec</code></li>
+<li><code>validate_spec</code> 只做校验和转换</li>
+<li><code>build</code> 只消费已经校验过的 <code>Spec</code></li>
+<li>统一在 registry/startup 中注册</li>
+</ul>
+<p>这意味着 WarpParse 的接入与输出体系本质上是“<strong>基于接口的扩展架构</strong>”：</p>
+<ul>
+<li>新增一种 Source，不需要改写整条主链路</li>
+<li>新增一种 Sink，不需要侵入 WPL/OML 层</li>
+<li>运行时只依赖统一 trait 和 build 结果，而不依赖某个具体实现</li>
+</ul>
+<h3 id="2-pipeprocessor-扩展"><a class="header" href="#2-pipeprocessor-扩展">2. PipeProcessor 扩展</a></h3>
+<p>如果内置 WPL pipe 不够，可以通过 <code>PipeProcessor</code> 注册自定义处理器：</p>
+<ul>
+<li>适合做解码、格式化、验证等局部能力扩展</li>
+<li>不需要改动整条运行时主链路</li>
+<li>仍然保持 WPL 的声明式调用方式</li>
+</ul>
+<p>这类扩展应当优先用于“局部数据处理能力补充”，而不是把整套业务逻辑塞回通用脚本运行时。</p>
+<h3 id="3-知识库富化扩展"><a class="header" href="#3-知识库富化扩展">3. 知识库富化扩展</a></h3>
+<p>知识库富化同样是接口化设计，而不是把查询逻辑写死在规则层。</p>
+<p>当前设计文档中可以看到：</p>
+<ul>
+<li>KnowDB 通过统一的 <code>QueryFacade</code> 暴露查询能力</li>
+<li>底层 Provider 可以是线程克隆内存模式、WAL + 连接池模式，或纯内存模式</li>
+<li>OML 和运行时消费的是统一查询能力，而不是直接绑定某个 SQLite 连接实现</li>
+</ul>
+<p>这使得知识库富化具备两个工程价值：</p>
+<ul>
+<li>富化能力可以独立演进，而不破坏主链路</li>
+<li>运行时可以按数据规模和资源模型切换具体承载方式</li>
+</ul>
+<h2 id="设计边界"><a class="header" href="#设计边界">设计边界</a></h2>
+<p>在工程落地时，最容易混淆的是下面几组边界。</p>
+<h3 id="1-wproj-check-通过不等于链路已跑通"><a class="header" href="#1-wproj-check-通过不等于链路已跑通">1. <code>wproj check</code> 通过，不等于链路已跑通</a></h3>
+<p><code>wproj check</code> 主要验证：</p>
+<ul>
+<li>配置是否可解析</li>
+<li>connectors / routes / rules / models 是否存在明显问题</li>
+</ul>
+<p>但这并不等于：</p>
+<ul>
+<li>真实数据一定命中目标 WPL</li>
+<li>OML 一定按预期匹配</li>
+<li>Sink 已经正确连接目标系统</li>
+</ul>
+<p>真正的落地验证仍然要看：</p>
+<ul>
+<li><code>wparse batch</code></li>
+<li><code>wproj data stat</code></li>
+<li><code>miss.dat</code></li>
+<li><code>error.dat</code></li>
+<li>业务目标 sink 的实际输出</li>
+</ul>
+<h3 id="2-wploml-是模型不是部署系统"><a class="header" href="#2-wploml-是模型不是部署系统">2. WPL/OML 是模型，不是部署系统</a></h3>
+<p>规则和模型解决的是“怎么解析、怎么组装”，不负责：</p>
+<ul>
+<li>source/sink 生命周期管理</li>
+<li>背压调度</li>
+<li>故障回放</li>
+<li>监控与统计</li>
+</ul>
+<p>这些问题属于运行时架构，而不是规则语言本身。</p>
+<h3 id="3-knowdb-是只读富化组件不是主业务数据库"><a class="header" href="#3-knowdb-是只读富化组件不是主业务数据库">3. KnowDB 是只读富化组件，不是主业务数据库</a></h3>
+<p>它适合承载：</p>
+<ul>
+<li>快照化知识表</li>
+<li>查表富化</li>
+<li>轻量查询</li>
+</ul>
+<p>不适合承载：</p>
+<ul>
+<li>高频写入</li>
+<li>联机事务处理</li>
+<li>复杂跨系统一致性场景</li>
+</ul>
+<h2 id="典型落地路径"><a class="header" href="#典型落地路径">典型落地路径</a></h2>
+<p>如果要从零开始接入一条日志链路，推荐顺序是：</p>
+<ol>
+<li><code>wproj init --mode full</code> 初始化标准工程目录。</li>
+<li>配置 <code>conf/wparse.toml</code>、<code>connectors/</code> 和 <code>topology/sources</code>。</li>
+<li>准备代表性样本，完成 WPL/OML。</li>
+<li>用 <code>wparse batch</code> 跑样本，观察 <code>miss/error/default</code> 等输出。</li>
+<li>配置业务 sink 与 infra sink。</li>
+<li>在 batch 模式完成回归后，再切换到 daemon/在线接入。</li>
+<li>为目标链路补齐 <code>expect</code>、monitor、rescue 和恢复策略。</li>
+</ol>
+<p>这条路径体现了 WarpParse 的正确使用方式：</p>
+<ul>
+<li>先做可复现的离线验证</li>
+<li>再做在线接入</li>
+<li>最后补齐容灾、观测和治理</li>
+</ul>
+<h2 id="总结-2"><a class="header" href="#总结-2">总结</a></h2>
+<p>WarpParse 的核心不是单一规则语言，而是一个围绕日志 ETL 构建的分层系统：</p>
+<ul>
+<li><strong>Connector 层</strong>负责接入和输出。</li>
+<li><strong>Collector/Picker 层</strong>负责背压与调度。</li>
+<li><strong>WPL/OML 层</strong>负责解析、转换和富化。</li>
+<li><strong>KnowDB/Rescue/Monitor 层</strong>负责运行时增强能力。</li>
+</ul>
+<p>如果从工程角度理解它，可以把 WarpParse 看成：</p>
+<p><strong>一套“规则驱动 + 连接器驱动 + 背压友好”的日志处理运行时。</strong></p>
+<p>如果从系统能力角度压缩总结，则是：</p>
+<ul>
+<li><strong>Rust</strong> 提供性能与内存安全基础。</li>
+<li><strong>全异步 I/O + 批处理 + 背压</strong> 提供高吞吐运行时。</li>
+<li><strong>WPL / OML DSL</strong> 提供语义化规则建模能力。</li>
+<li><strong>Source / Sink trait</strong> 提供可扩展的接入与输出体系。</li>
+<li><strong>KnowDB QueryFacade</strong> 提供可扩展的知识富化机制。</li>
+</ul>
+<h2 id="延伸阅读"><a class="header" href="#延伸阅读">延伸阅读</a></h2>
+<ul>
+<li><a href="#wparse配置">Wparse 运行配置规范</a></li>
+<li><a href="#sources配置">Sources 配置总览</a></li>
+<li><a href="#sink-配置">Sink 配置</a></li>
+<li>深入设计文档位于仓库 <code>wp-core-docs/30-design/</code>：
+<code>01-architecture.md</code>、<code>02-event_prehook.md</code>、<code>03-pick_policy.md</code>、
+<code>06-zero_copy.md</code>、<code>08-knowledge_db.md</code>、<code>09-rescue.md</code></li>
+</ul>
 
                     </main>
 

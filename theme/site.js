@@ -495,8 +495,29 @@
         observer.observe(document.body, { childList: true, subtree: true });
     }
 
+    function initSidebarWidthPersistence() {
+        const storageKey = 'wp-docs-sidebar-width';
+        const root = document.documentElement;
+        let lastWidth = root.style.getPropertyValue('--sidebar-target-width');
+        const observer = new MutationObserver(() => {
+            const width = root.style.getPropertyValue('--sidebar-target-width').trim();
+            if (!width || width === lastWidth || !/^\d+px$/.test(width)) {
+                return;
+            }
+            lastWidth = width;
+            try {
+                localStorage.setItem(storageKey, width);
+            } catch {
+                // Ignore storage failures.
+            }
+        });
+
+        observer.observe(root, { attributes: true, attributeFilter: ['style'] });
+    }
+
     function init() {
         const parsed = parseDocPath();
+        initSidebarWidthPersistence();
         renderLangSwitcher(parsed);
         refreshTopbar();
         simplifyThemeMenu();

@@ -15,6 +15,16 @@
         <meta charset="UTF-8">
         <meta name="robots" content="noindex">
         <!-- Custom HTML head -->
+        <script>
+        (() => {
+            try {
+                const savedWidth = localStorage.getItem('wp-docs-sidebar-width');
+                if (savedWidth && /^\d+px$/.test(savedWidth)) {
+                    document.documentElement.style.setProperty('--sidebar-target-width', savedWidth);
+                }
+            } catch (_) {}
+        })();
+        </script>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
         <link rel="stylesheet" href="css/variables-8adf115d.css">

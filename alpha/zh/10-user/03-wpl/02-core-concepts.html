@@ -7,6 +7,16 @@
 
 
         <!-- Custom HTML head -->
+        <script>
+        (() => {
+            try {
+                const savedWidth = localStorage.getItem('wp-docs-sidebar-width');
+                if (savedWidth && /^\d+px$/.test(savedWidth)) {
+                    document.documentElement.style.setProperty('--sidebar-target-width', savedWidth);
+                }
+            } catch (_) {}
+        })();
+        </script>
 
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -698,7 +708,7 @@ alt(ip:addr, digit:id)    # 择一分组
         <script src="../../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
-        <script src="../../theme/site-dc2f96ef.v20260507-1.js"></script>
+        <script src="../../theme/site-d6afa85a.v20260507-1.js"></script>
         <script src="../../mermaid-eefea253.min.js"></script>
         <script src="../../mermaid-init-ccf746f1.js"></script>
 

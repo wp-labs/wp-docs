@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Provider 性能测试与结论 - Warp Parse 文档 [BETA]</title>
+        <title>Async Provider 性能测试与结论 - Warp Parse 文档 [BETA]</title>
 
 
         <!-- Custom HTML head -->
@@ -46,10 +46,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-253f8552.js";
+            window.path_to_searchindex_js = "../../searchindex-4bf0fb9a.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-72b7c040.js"></script>
+        <script src="../../toc-7f03924c.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -188,7 +188,8 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="provider-性能测试与结论"><a class="header" href="#provider-性能测试与结论">Provider 性能测试与结论</a></h1>
+                        <h1 id="async-provider-性能测试与结论"><a class="header" href="#async-provider-性能测试与结论">Async Provider 性能测试与结论</a></h1>
+<h1 id="async-provider-性能结论"><a class="header" href="#async-provider-性能结论">Async Provider 性能结论</a></h1>
 <h2 id="结论先看"><a class="header" href="#结论先看">结论先看</a></h2>
 <ul>
 <li>provider 层 <code>sync</code> 和 <code>async</code> 基本持平，<code>async</code> 只略优</li>
@@ -295,11 +296,13 @@
 </ul>
 <h2 id="复现命令"><a class="header" href="#复现命令">复现命令</a></h2>
 <p>PostgreSQL provider 层：</p>
-<pre><code class="language-bash">KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-postgres-provider.sh
+<pre><code class="language-bash">KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-postgres-provider-perf.sh
 </code></pre>
 <p>MySQL provider 层：</p>
-<pre><code class="language-bash">KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-mysql-provider.sh
+<pre><code class="language-bash">KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-mysql-provider-perf.sh
 </code></pre>
+<p>如果你只想跑 correctness 回归，可以使用 <code>tests/test-postgres-provider-correctness.sh</code> 和 <code>tests/test-mysql-provider-correctness.sh</code>。
+如果你需要并行运行多个 provider 脚本，给每次执行设置不同的 <code>COMPOSE_PROJECT_NAME</code> 即可。</p>
 <p>PostgreSQL OML 层：</p>
 <pre><code class="language-bash">WP_KDB_TEST_POSTGRES_URL='postgres://postgres:demo@127.0.0.1:5432/postgres' \
 WP_KDB_PERF_ROWS=10000 \

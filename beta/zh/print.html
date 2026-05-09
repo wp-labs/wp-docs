@@ -47,10 +47,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-253f8552.js";
+            window.path_to_searchindex_js = "searchindex-4bf0fb9a.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-72b7c040.js"></script>
+        <script src="toc-7f03924c.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -193,16 +193,85 @@
 <p>本目录收录 WarpParse 各版本更新说明。</p>
 <p>版本列表按时间与版本号倒排，优先阅读最新版本。</p>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="warpparse-024"><a class="header" href="#warpparse-024">WarpParse 0.24</a></h1>
+<p>亲爱的用户们，</p>
+<p>我们很高兴地宣布 WarpParse 0.24 版本发布！本次更新主要聚焦于 <strong>HTTP 接入能力、远端工程组织方式、错误治理体验，以及 OML/SQL 解析细节修复</strong>。</p>
+<h2 id="本次更新亮点"><a class="header" href="#本次更新亮点">本次更新亮点</a></h2>
+<ul>
+<li>新增 HTTP Source，补齐通过 HTTP 接口接收外部数据推送的接入路径。</li>
+<li>远端工程支持双仓库模式，可分别同步 <code>models/</code> 与 <code>infra/</code>。</li>
+<li>错误治理体系升级，CLI 报错更完整、更易读。</li>
+<li>OML <code>take(...)</code> 与 SQL 参数解析行为进一步修正，规则执行更稳定。</li>
+</ul>
+<h2 id="added"><a class="header" href="#added">Added</a></h2>
+<h3 id="http-source"><a class="header" href="#http-source">HTTP Source</a></h3>
+<p>新增通用 <code>HTTP Source</code>，支持通过 HTTP 接口接收外部推送数据。</p>
+<p>当前支持：</p>
+<ul>
+<li><code>json</code> / <code>ndjson</code> 两种输入格式</li>
+<li><code>Content-Type</code> 与 <code>fmt</code> 参数协同指定格式</li>
+<li><code>gzip</code> 压缩请求体</li>
+<li>基于 <code>port</code> + <code>path</code> 的接入配置</li>
+</ul>
+<p>相关文档：</p>
+<ul>
+<li><a href="#http-源配置">HTTP 源配置</a></li>
+</ul>
+<h3 id="双仓库远端工程模式"><a class="header" href="#双仓库远端工程模式">双仓库远端工程模式</a></h3>
+<p>远端工程同步能力新增双仓库模式，支持将：</p>
+<ul>
+<li><code>models/</code></li>
+<li><code>infra/</code></li>
+</ul>
+<p>分别从两个独立的 Git 仓库同步。</p>
+<p>这使得规则内容与基础设施配置可以分开维护，适合更正式的团队协作与发布流程。</p>
+<p>相关文档：</p>
+<ul>
+<li><a href="#远程工程拉取与规则热更新-sop">远程工程拉取与规则热更新 SOP</a></li>
+</ul>
+<h3 id="postgres-source-兼容性增强"><a class="header" href="#postgres-source-兼容性增强">Postgres Source 兼容性增强</a></h3>
+<p>补充 <code>Postgres Source</code> 的特性继承支持，并增强对低版本场景的兼容性适配。</p>
+<p>这一项更新主要面向已有工程升级时的平滑过渡，减少因配置差异导致的接入调整成本。</p>
+<h2 id="changed"><a class="header" href="#changed">Changed</a></h2>
+<h3 id="错误治理体系升级"><a class="header" href="#错误治理体系升级">错误治理体系升级</a></h3>
+<p>本版本全面升级错误治理体系，<code>orion-error</code> 升级到 <code>0.8</code> 主线。</p>
+<p>这带来的直接变化包括：</p>
+<ul>
+<li>错误信息附带更完整的路径上下文</li>
+<li>CLI 报错信息更集中、更易读</li>
+<li>日常排障时更容易定位具体配置或规则位置</li>
+</ul>
+<h2 id="fixed"><a class="header" href="#fixed">Fixed</a></h2>
+<h3 id="oml-take-行为修复"><a class="header" href="#oml-take-行为修复">OML <code>take(...)</code> 行为修复</a></h3>
+<p>同步上游修复后，<code>take(...)</code> 在目标记录中已生成字段的消费行为更加正确，并修正了同名字段场景下的取值顺序。</p>
+<h3 id="oml--sql-参数解析增强"><a class="header" href="#oml--sql-参数解析增强">OML / SQL 参数解析增强</a></h3>
+<p>同步上游修复，增强以下 SQL 相关场景的解析稳定性：</p>
+<ul>
+<li><code>group_concat(...)</code></li>
+<li><code>string_agg(...)</code></li>
+<li><code>IN (...)</code></li>
+<li><code>take(field)</code></li>
+<li><code>__temp_var</code></li>
+</ul>
+<h3 id="运行时稳定性修复"><a class="header" href="#运行时稳定性修复">运行时稳定性修复</a></h3>
+<p>修复了部分场景下的运行时稳定性问题。</p>
+<h2 id="相关文档"><a class="header" href="#相关文档">相关文档</a></h2>
+<ul>
+<li><a href="#http-源配置">HTTP 源配置</a></li>
+<li><a href="#远程工程拉取与规则热更新-sop">远程工程拉取与规则热更新 SOP</a></li>
+<li><a href="10-user/01-cli/README.html">CLI 使用手册</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="warpparse-022"><a class="header" href="#warpparse-022">WarpParse 0.22</a></h1>
 <p>亲爱的用户们，</p>
 <p>我们很高兴地宣布 WarpParse 0.22 版本发布！本次更新主要聚焦于 <strong>运行时可运维性、远端工程同步、知识库能力补强，以及监控与规则体验增强</strong>。</p>
-<h2 id="本次更新亮点"><a class="header" href="#本次更新亮点">本次更新亮点</a></h2>
+<h2 id="本次更新亮点-1"><a class="header" href="#本次更新亮点-1">本次更新亮点</a></h2>
 <ul>
 <li>运行时管理面能力补齐，支持标准化状态查询与重载。</li>
 <li>远端工程初始化、更新、热重载路径进一步统一。</li>
 <li>知识库、WPL 与监控链路文档更加完整，正式使用路径更清晰。</li>
 </ul>
-<h2 id="added"><a class="header" href="#added">Added</a></h2>
+<h2 id="added-1"><a class="header" href="#added-1">Added</a></h2>
 <h3 id="运行时管理面"><a class="header" href="#运行时管理面">运行时管理面</a></h3>
 <p>新增围绕在线实例的标准化运维入口：</p>
 <ul>
@@ -231,7 +300,7 @@ wproj self update --yes
 <li>支持通过 <code>connection_uri</code> 接入 PostgreSQL / MySQL</li>
 <li><code>[cache]</code> 统一用于结果缓存配置</li>
 </ul>
-<p><a href="#knowdb-配置">KnowDB 配置说明</a></p>
+<p><a href="#knowdb-配置说明">KnowDB 配置说明</a></p>
 <h3 id="监控与链路观察"><a class="header" href="#监控与链路观察">监控与链路观察</a></h3>
 <p>配合 VictoriaMetrics、VictoriaLogs 与 Wp-Monitor，当前已经形成更完整的链路观察入口，可用于查看：</p>
 <ul>
@@ -241,7 +310,7 @@ wproj self update --yes
 </ul>
 <p>相关文档：</p>
 <ul>
-<li><a href="#wp-monitor">Wp-Monitor</a></li>
+<li><a href="10-user/10-monitor/Wp-Monitor.html">Wp-Monitor</a></li>
 </ul>
 <h3 id="wpl更新"><a class="header" href="#wpl更新">WPL更新</a></h3>
 <p>补充了 <code>json_like</code>、<code>json</code>、<code>bad_json</code> 的配合说明，便于处理类 JSON 输入。</p>
@@ -249,7 +318,7 @@ wproj self update --yes
 <ul>
 <li><a href="#wpl-语言参考">WPL 语言参考</a></li>
 </ul>
-<h2 id="changed"><a class="header" href="#changed">Changed</a></h2>
+<h2 id="changed-1"><a class="header" href="#changed-1">Changed</a></h2>
 <h3 id="cli-手册结构收敛"><a class="header" href="#cli-手册结构收敛">CLI 手册结构收敛</a></h3>
 <p>产品概览、CLI 使用、运行时管理面、远端同步 SOP 已收拢到统一入口。
 相关文档：</p>
@@ -267,7 +336,7 @@ wproj self update --yes
 <h1 id="warpparse-020"><a class="header" href="#warpparse-020">WarpParse 0.20</a></h1>
 <p>亲爱的用户们，</p>
 <p>我们很高兴地宣布 WarpParse 0.20-beta 版本发布！本次更新主要聚焦于 <strong>数据集成能力的全面增强</strong>，引入了多项全新的 Sink 连接器，旨在为您提供更灵活、更高效的数据处理体验。无论您是需要将数据写入 ElasticSearch 进行实时分析，还是导入 Doris、ClickHouse 进行大数据处理，亦或是通过 HTTP/HTTPS 与各类服务进行集成，0.20 版本都能满足您的需求。</p>
-<h2 id="本次更新亮点-1"><a class="header" href="#本次更新亮点-1">本次更新亮点</a></h2>
+<h2 id="本次更新亮点-2"><a class="header" href="#本次更新亮点-2">本次更新亮点</a></h2>
 <h3 id="新增多款高性能数据-sink"><a class="header" href="#新增多款高性能数据-sink">新增多款高性能数据 Sink</a></h3>
 <p>为了更好地支持多样化的数据存储和分析场景，0.20 版本新增了以下强大的数据 Sink：</p>
 <ul>
@@ -311,12 +380,34 @@ batch_size = 1_0000    # 单批次写入记录数
 <p>WarpParse 团队</p>
 <p><code>2026年3月20日</code></p>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="wp-monitor-发布说明"><a class="header" href="#wp-monitor-发布说明">Wp-Monitor 发布说明</a></h1>
+<h2 id="下载"><a class="header" href="#下载">下载</a></h2>
+<pre><code>curl -sSf https://get.warpparse.ai/inst-x.sh | bash -s -- monitor-docker alpha
+curl -sSf https://get.warpparse.ai/inst-x.sh | bash -s -- monitor-docker beta
+</code></pre>
+<p>体验</p>
+<pre><code>git clone https://github.com/wp-labs/wp-examples.git
+cd  wp-examples/long-demo
+run.sh 
+
+</code></pre>
+<p>打开 http://localhost:10428/</p>
+<h2 id="060"><a class="header" href="#060">0.6.0</a></h2>
+<h3 id="added-2"><a class="header" href="#added-2">Added</a></h3>
+<ul>
+<li>可视化：统一查看 Source、Parse、Sink 处理统计数据</li>
+<li>MISS 数据观察：识别未命中规则的数据，并支持导出分析。</li>
+<li>时间窗口观察：查看实时或历史时间段内的数据表现。</li>
+<li>趋势观察：判断流量变化是瞬时波动还是持续异常。</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="使用指南"><a class="header" href="#使用指南">使用指南</a></h1>
 <p>本目录是 Warp Parse 聚合文档入口。</p>
 <p>如果你是首次接触 Warp Parse，建议按下面顺序阅读：</p>
 <ol>
 <li><a href="#快速开始">快速开始</a></li>
 <li><a href="#warpparse-核心概念速查">WarpParse 核心概念速查</a></li>
+<li><a href="#warpparse-与-vector-对比">WarpParse 与 Vector 对比</a></li>
 <li><a href="10-user/01-cli/README.html">CLI 使用手册</a></li>
 <li>再按需进入 WPL、OML、配置和连接器文档</li>
 </ol>
@@ -324,6 +415,7 @@ batch_size = 1_0000    # 单批次写入记录数
 <ul>
 <li><a href="#快速开始">快速开始</a></li>
 <li><a href="#warpparse-核心概念速查">WarpParse 核心概念速查</a></li>
+<li><a href="#warpparse-与-vector-对比">WarpParse 与 Vector 对比</a></li>
 <li><a href="10-user/01-cli/README.html">CLI 使用手册</a></li>
 <li><a href="10-user/02-config/README.html">配置指南</a></li>
 <li><a href="10-user/03-wpl/README.html">WPL 规则语言</a></li>
@@ -521,7 +613,7 @@ batch_size = 1_0000    # 单批次写入记录数
 <li><strong><a href="10-user/04-oml/README.html">OML 语言基础</a></strong>：学习数据组装规则</li>
 </ol>
 <hr>
-<h2 id="相关文档"><a class="header" href="#相关文档">相关文档</a></h2>
+<h2 id="相关文档-1"><a class="header" href="#相关文档-1">相关文档</a></h2>
 <ul>
 <li><a href="#快速开始">快速开始</a></li>
 <li><a href="10-user/01-cli/README.html">CLI 使用手册</a></li>
@@ -582,6 +674,186 @@ wproj data stat
 <li>想先建立产品与术语认知：看 <a href="#warpparse-核心概念速查">WarpParse 核心概念速查</a></li>
 <li>想看完整 CLI、运行时和运维手册：看 <a href="10-user/01-cli/README.html">CLI 使用手册</a></li>
 <li>想深入语言与规则：看 <a href="10-user/03-wpl/README.html">WPL 规则语言</a> 和 <a href="10-user/04-oml/README.html">OML 对象模型语言</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="warpparse-与-vector-对比"><a class="header" href="#warpparse-与-vector-对比">WarpParse 与 Vector 对比</a></h1>
+<p>这篇文档面向正在选型或替换方案的用户，帮助你快速判断：</p>
+<ul>
+<li>什么时候更适合选择 WarpParse</li>
+<li>什么时候继续使用 Vector 更合适</li>
+<li>两者在解析模型、性能和维护方式上的核心差异</li>
+</ul>
+<h2 id="一句话结论"><a class="header" href="#一句话结论">一句话结论</a></h2>
+<ul>
+<li>如果你的核心目标是 <strong>高吞吐日志解析、复杂字段提取、规则工程化维护</strong>，WarpParse 更合适。</li>
+<li>如果你的核心目标是 <strong>通用数据采集、生态连接器覆盖、快速拼装观测链路</strong>，Vector 更合适。</li>
+</ul>
+<p>两者都能做日志处理，但产品重心不同：</p>
+<ul>
+<li><strong>WarpParse</strong> 更偏向“高性能解析引擎 + 规则工程体系”</li>
+<li><strong>Vector</strong> 更偏向“通用可观测性数据管道”</li>
+</ul>
+<h2 id="核心定位对比"><a class="header" href="#核心定位对比">核心定位对比</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>维度</th><th>WarpParse</th><th>Vector</th></tr>
+</thead>
+<tbody>
+<tr><td>产品定位</td><td>面向日志解析与安全数据处理的 ETL 引擎</td><td>面向日志、指标、追踪的通用数据管道</td></tr>
+<tr><td>强项</td><td>高性能解析、复杂文本结构提取、规则治理</td><td>连接器生态、通用采集转发、社区成熟度</td></tr>
+<tr><td>主要建模方式</td><td>WPL + OML</td><td>TOML + VRL / 内建 transform</td></tr>
+<tr><td>典型使用场景</td><td>安全日志标准化、复杂异构日志解析、解析规则平台化</td><td>统一采集、路由转发、可观测性链路接入</td></tr>
+<tr><td>更关注的问题</td><td>解析精度、规则表达力、吞吐与延迟</td><td>数据接入广度、部署便捷性、生态兼容性</td></tr>
+<tr><td>国产信创支持</td><td>更有针对性，兼容性更强</td><td>不是主要优势方向</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="解析模型差异"><a class="header" href="#解析模型差异">解析模型差异</a></h2>
+<h3 id="warpparse"><a class="header" href="#warpparse">WarpParse</a></h3>
+<p>WarpParse 把处理过程拆成两个主要阶段：</p>
+<ul>
+<li><strong>WPL</strong>：负责原始日志解析与字段提取</li>
+<li><strong>OML</strong>：负责对象组装、字段映射、转换与输出模型整理</li>
+</ul>
+<p>这种拆分的好处是：</p>
+<ul>
+<li>解析规则和对象建模职责分离</li>
+<li>复杂日志的可维护性更好</li>
+<li>团队可以按“解析规则”和“输出模型”分工协作</li>
+</ul>
+<h3 id="vector"><a class="header" href="#vector">Vector</a></h3>
+<ul>
+<li>VRL 或内建 transform 负责字段提取、变换、路由</li>
+</ul>
+<h2 id="规则维护方式对比"><a class="header" href="#规则维护方式对比">规则维护方式对比</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>维度</th><th>WarpParse</th><th>Vector</th></tr>
+</thead>
+<tbody>
+<tr><td>解析与转换职责</td><td>拆分明确</td><td>常在同一条处理链上完成</td></tr>
+<tr><td>复杂文本日志</td><td>更适合</td><td>可以做，但规则容易膨胀</td></tr>
+<tr><td>规则复用</td><td>更适合做规则工程化管理</td><td></td></tr>
+<tr><td>调试关注点</td><td>命中哪条 WPL、如何映射 OML</td><td></td></tr>
+</tbody>
+</table>
+</div>
+<p>如果你的场景里有下面这些特征，WarpParse 的优势会更明显：</p>
+<ul>
+<li>日志格式很多，而且经常变化</li>
+<li>需要从非结构化文本中稳定提取大量字段</li>
+<li>需要把解析规则交给专门团队长期维护</li>
+<li>需要同时兼顾吞吐、精度和规则可测试性</li>
+</ul>
+<p>如果你的场景更接近下面这些情况，Vector 往往更顺手：</p>
+<ul>
+<li>主要目标是采集并转发，而不是深度解析</li>
+<li>已经大量使用 Vector 生态或周边模板</li>
+<li>日志格式相对稳定，解析逻辑不复杂</li>
+<li>需要快速接入多种 source / sink</li>
+</ul>
+<h2 id="性能差异"><a class="header" href="#性能差异">性能差异</a></h2>
+<p>从当前仓库内的基准测试结果看，WarpParse 在“解析为主”的场景下，整体吞吐通常明显高于 Vector，尤其在以下场景更明显：</p>
+<ul>
+<li>小包高并发日志</li>
+<li>大字段、长文本日志</li>
+<li>解析后还需要继续做字段转换</li>
+<li>TCP 输入到文件输出这类端到端路径</li>
+</ul>
+<p>例如在 <code>Mac M4 Mini</code> 基准中：</p>
+<ul>
+<li>Nginx <code>File -&gt; BlackHole</code>，WarpParse 为 <code>2,789,800 EPS</code>，Vector-VRL 为 <code>572,076 EPS</code></li>
+<li>APT <code>File -&gt; BlackHole</code>，WarpParse 为 <code>328,000 EPS</code>，Vector-VRL 为 <code>37,777 EPS</code></li>
+</ul>
+<p>详细数据可参考：</p>
+<ul>
+<li><a href="#benchmark-report">BenchMark Report</a></li>
+<li><a href="#性能基准测试报告">性能基准测试报告</a></li>
+</ul>
+<p>不建议把一组基准数字直接外推到所有生产环境，实际结果仍会受日志结构、I/O 拓扑、规则复杂度和下游 sink 影响。</p>
+<h2 id="生态与接入方式对比"><a class="header" href="#生态与接入方式对比">生态与接入方式对比</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>维度</th><th>WarpParse</th><th>Vector</th></tr>
+</thead>
+<tbody>
+<tr><td>Source / Sink 覆盖</td><td>当前Source <code>5</code> 个、Sink <code>15</code> 个</td><td>更广，更成熟</td></tr>
+<tr><td>社区生态</td><td>偏产品与项目工程实践</td><td>开源生态更大</td></tr>
+<tr><td>可观测性场景</td><td>可承接，但不是唯一重心</td><td>覆盖日志/指标/追踪</td></tr>
+<tr><td>安全日志工程</td><td>更强</td><td>可以做，但通常不是最佳表达方式</td></tr>
+<tr><td>国产信创兼容性</td><td>更强，适合国产化环境落地</td><td>不是主要卖点</td></tr>
+</tbody>
+</table>
+</div>
+<p>按当前中文文档入口统计，WarpParse 已文档化的连接器数量为：</p>
+<ul>
+<li><code>Source 5</code> 个：<code>file</code>、<code>kafka</code>、<code>syslog</code>、<code>http</code>、<code>tcp</code></li>
+<li><code>Sink 15</code> 个：<code>file</code>、<code>syslog</code>、<code>prometheus</code>、<code>tcp</code>、<code>victorialogs</code>、<code>doris</code>、<code>kafka</code>、<code>mysql</code>、<code>arrow-ipc</code>、<code>elasticsearch</code>、<code>arrow-file</code>、<code>clickhouse</code>、<code>http</code>、<code>postgresql</code>、<code>dmdb</code></li>
+</ul>
+<p>这说明 WarpParse 在社区版里并不只是“解析引擎”，而是已经具备一套可独立落地的连接器能力。</p>
+<h2 id="国产信创支持"><a class="header" href="#国产信创支持">国产信创支持</a></h2>
+<p>对很多政企和安全场景来说，是否能更顺利地落地在国产化基础设施上，是一个单独的重要维度。</p>
+<p>在这一点上，WarpParse 的优势可以单独拎出来看：</p>
+<ul>
+<li>对国产信创环境支持更有针对性</li>
+<li>在国产化部署场景下兼容性更强</li>
+<li>更适合作为需要兼顾性能、解析能力和国产化适配的方案</li>
+</ul>
+<p>如果你的项目明确要求：</p>
+<ul>
+<li>国产操作系统兼容</li>
+<li>国产软硬件环境适配</li>
+<li>信创场景下的稳定部署与交付</li>
+</ul>
+<p>那么这会是 WarpParse 相比 Vector 的一个明确优势。</p>
+<h2 id="社区版完整度对比"><a class="header" href="#社区版完整度对比">社区版完整度对比</a></h2>
+<p>这里的“完整度”主要是指：用户拿到社区版后，能否较完整地完成下载、阅读、学习、试用、规则编写、运行观察等工作。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>维度</th><th>WarpParse 社区版</th><th>Vector 社区版</th></tr>
+</thead>
+<tbody>
+<tr><td>程序</td><td>可直接运行核心解析链路</td><td>可直接运行完整数据管道</td></tr>
+<tr><td>文档</td><td>文档体系已经较完整，覆盖产品、规则、配置、连接器、教程与基准报告</td><td>文档成熟，覆盖通用 pipeline 与生态集成</td></tr>
+<tr><td>示例</td><td>有专门的 <code>wp-example</code> 项目，下载后即可运行</td><td>分散在官方文档、仓库和社区内容中</td></tr>
+<tr><td>规则编辑器</td><td>提供专门的 <code>wp-editor</code></td><td>无</td></tr>
+<tr><td>处理监视器</td><td>提供专门的 <code>wp-monitor</code></td><td>第三方</td></tr>
+<tr><td>兼容性</td><td>主流系统平台+国产信创，兼容性更强</td><td>主流系统平台</td></tr>
+</tbody>
+</table>
+</div>
+<p>如果从社区版完整度来判断，WarpParse 的优势更直接：</p>
+<ul>
+<li>有完整程序可运行</li>
+<li>有成体系文档可阅读</li>
+<li>有 <code>wp-example</code> 可直接下载试用</li>
+<li>有 <code>wp-editor</code> 支撑规则开发</li>
+<li>有 <code>wp-monitor</code> 支撑处理监视与观察</li>
+<li>有更强的国产信创兼容性</li>
+</ul>
+<p>因此在“拿到社区版后，是否能独立完成学习、试用、规则开发和运行观察”这个维度上：</p>
+<ul>
+<li><strong>WarpParse 的完整度明显优于 Vector</strong></li>
+</ul>
+<h2 id="常见判断"><a class="header" href="#常见判断">常见判断</a></h2>
+<h3 id="我已经在用-vector是否需要迁移到-warpparse"><a class="header" href="#我已经在用-vector是否需要迁移到-warpparse">我已经在用 Vector，是否需要迁移到 WarpParse？</a></h3>
+<p>如果你当前主要痛点是：</p>
+<ul>
+<li>VRL 规则越来越长</li>
+<li>正则难维护</li>
+<li>解析吞吐不足</li>
+<li>安全日志标准化成本高</li>
+</ul>
+<p>那么值得评估迁移一部分“解析密集型链路”到 WarpParse，而不是一开始就全量替换。</p>
+<h2 id="下一步-2"><a class="header" href="#下一步-2">下一步</a></h2>
+<ul>
+<li>想快速理解 WarpParse 基础概念：看 <a href="#warpparse-核心概念速查">WarpParse 核心概念速查</a></li>
+<li>想直接跑通本地示例：看 <a href="#快速开始">快速开始</a></li>
+<li>想看更详细性能数据：看 <a href="#benchmark-report">BenchMark Report</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="wpl-学习目标与练习"><a class="header" href="#wpl-学习目标与练习">WPL 学习目标与练习</a></h1>
@@ -691,7 +963,7 @@ wproj data stat
 <li>执行 <code>wpgen rule</code> 或 <code>wpgen sample</code></li>
 <li>用 <code>wparse batch</code> 或 <code>wproj</code> 相关命令验证结果</li>
 </ol>
-<h2 id="相关文档-1"><a class="header" href="#相关文档-1">相关文档</a></h2>
+<h2 id="相关文档-2"><a class="header" href="#相关文档-2">相关文档</a></h2>
 <ul>
 <li>功能与 CLI 使用指南: <a href="#warp-parse-功能与-cli-使用指南">index.md</a></li>
 <li><code>wparse</code> 运行时使用指南: <a href="#wparse-运行时使用指南">runtime.md</a></li>
@@ -755,7 +1027,7 @@ wprescue --help
 <li><code>wproj rule</code> 目前实际暴露的是 <code>parse</code> 能力，尚不是完整的规则工作台</li>
 <li>更细的配置字段说明，仍应以对应配置文件和专项文档为准</li>
 </ul>
-<h2 id="相关文档-2"><a class="header" href="#相关文档-2">相关文档</a></h2>
+<h2 id="相关文档-3"><a class="header" href="#相关文档-3">相关文档</a></h2>
 <ul>
 <li>产品概览: <a href="#warp-parse-产品概览">../overview/product.md</a></li>
 <li>运行时管理面使用说明: <a href="#warp-parse-运行时管理面使用说明">../operations/admin.md</a></li>
@@ -933,7 +1205,7 @@ wprescue --help
 <li><code>wproj rule</code> 目前实际暴露的是 <code>parse</code> 能力，尚不是完整的规则工作台</li>
 <li>更细的配置字段语义仍应以专项文档和对应配置说明为准</li>
 </ul>
-<h2 id="相关文档-3"><a class="header" href="#相关文档-3">相关文档</a></h2>
+<h2 id="相关文档-4"><a class="header" href="#相关文档-4">相关文档</a></h2>
 <ul>
 <li>功能与 CLI 使用指南: <a href="#warp-parse-功能与-cli-使用指南">index.md</a></li>
 <li>运行时管理面使用说明: <a href="#warp-parse-运行时管理面使用说明">../operations/admin.md</a></li>
@@ -999,7 +1271,7 @@ wprescue --help
 <li>需要看单文件分布时，加 <code>--detail</code></li>
 <li>真正要处理 rescue 数据时，再执行 <code>wprescue batch</code></li>
 </ol>
-<h2 id="相关文档-4"><a class="header" href="#相关文档-4">相关文档</a></h2>
+<h2 id="相关文档-5"><a class="header" href="#相关文档-5">相关文档</a></h2>
 <ul>
 <li>功能与 CLI 使用指南: <a href="#warp-parse-功能与-cli-使用指南">index.md</a></li>
 <li>项目工具使用指南: <a href="#wproj-项目工具使用指南">project.md</a></li>
@@ -1074,7 +1346,7 @@ wprescue --help
 <li>使用 <code>wproj engine status</code> 检查状态</li>
 <li>需要变更模型时，使用 <code>wproj engine reload</code></li>
 </ol>
-<h2 id="相关文档-5"><a class="header" href="#相关文档-5">相关文档</a></h2>
+<h2 id="相关文档-6"><a class="header" href="#相关文档-6">相关文档</a></h2>
 <ul>
 <li>功能与 CLI 使用指南: <a href="#warp-parse-功能与-cli-使用指南">index.md</a></li>
 <li>运行时管理面使用说明: <a href="#warp-parse-运行时管理面使用说明">../operations/admin.md</a></li>
@@ -1179,7 +1451,7 @@ chmod 600 "${HOME}/.warp_parse/admin_api.token"
   --token-file /path/to/admin_api.token \
   --insecure
 </code></pre>
-<h2 id="相关文档-6"><a class="header" href="#相关文档-6">相关文档</a></h2>
+<h2 id="相关文档-7"><a class="header" href="#相关文档-7">相关文档</a></h2>
 <ul>
 <li>远程工程拉取与规则热更新 SOP: <a href="#远程工程拉取与规则热更新-sop">project-sync.md</a></li>
 <li>对应英文版: <a href="../docs-en/10-user/01-cli/operations/admin.html">../../en/operations/admin.md</a></li>
@@ -1260,10 +1532,210 @@ wproj engine reload \
   --admin-url http://127.0.0.1:19090 \
   --token-file "${HOME}/.warp_parse/admin_api.token"
 </code></pre>
-<h2 id="相关文档-7"><a class="header" href="#相关文档-7">相关文档</a></h2>
+<h2 id="相关文档-8"><a class="header" href="#相关文档-8">相关文档</a></h2>
 <ul>
 <li>运行时管理面使用说明: <a href="#warp-parse-运行时管理面使用说明">admin.md</a></li>
 <li>对应英文版: <a href="../docs-en/10-user/01-cli/operations/project-sync.html">../../en/operations/project-sync.md</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="wproj-check-配置检查项"><a class="header" href="#wproj-check-配置检查项">wproj check 配置检查项</a></h1>
+<p><code>wproj check</code> 共 8 项检查，按依赖顺序执行。前 4 项必须通过，后 4 项允许目标文件缺失（缺失视为通过）。</p>
+<h2 id="检查项总览"><a class="header" href="#检查项总览">检查项总览</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>#</th><th>检查组件</th><th>配置文件</th><th>必须存在</th><th>允许缺失</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>Engine</td><td><code>conf/wparse.toml</code></td><td>是</td><td>否</td></tr>
+<tr><td>2</td><td>Sources</td><td><code>conf/wpsrc.toml</code></td><td>是</td><td>否</td></tr>
+<tr><td>3</td><td>Connectors</td><td><code>connectors/source.d/*.toml</code>, <code>connectors/sink.d/*.toml</code></td><td>是</td><td>否</td></tr>
+<tr><td>4</td><td>Sinks</td><td><code>usecase/*/sink/**/*.toml</code>, <code>models/sinks/**/*.toml</code></td><td>是</td><td>否</td></tr>
+<tr><td>5</td><td>WPL</td><td><code>{rule_root}/*.wpl</code></td><td>否</td><td>是（Miss = 通过）</td></tr>
+<tr><td>6</td><td>OML</td><td><code>{oml_root}/**/model.oml</code></td><td>否</td><td>是（Miss = 通过）</td></tr>
+<tr><td>7</td><td>SemanticDict</td><td><code>{knowledge_root}/semantic_dict.toml</code></td><td>否</td><td>是（使用内置词典）</td></tr>
+<tr><td>8</td><td>Wpgen</td><td><code>conf/wpgen.toml</code></td><td>否</td><td>是（optional）</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="1-engine--confwparsetoml"><a class="header" href="#1-engine--confwparsetoml">1. Engine — <code>conf/wparse.toml</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>检查项</th><th>说明</th><th>级别</th></tr>
+</thead>
+<tbody>
+<tr><td>文件存在</td><td>读取 <code>{work_root}/conf/wparse.toml</code></td><td>Error</td></tr>
+<tr><td>TOML 解析</td><td>反序列化为 <code>EngineConfig</code>，<code>#[serde(deny_unknown_fields)]</code> 拒绝未知字段</td><td>Error</td></tr>
+<tr><td>环境变量展开</td><td>所有支持 <code>${VAR}</code> 的字段通过 EnvDict 展开</td><td>Error</td></tr>
+<tr><td>路径绝对化</td><td>models.wpl、models.oml、topology.sources/sinks、rescue.path、admin_api TLS 等相对路径转绝对路径</td><td>Error</td></tr>
+<tr><td>工作目录切换</td><td>进程工作目录切换到 work_root</td><td>Error</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="2-sources--confwpsrctoml"><a class="header" href="#2-sources--confwpsrctoml">2. Sources — <code>conf/wpsrc.toml</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>检查项</th><th>说明</th><th>级别</th></tr>
+</thead>
+<tbody>
+<tr><td>文件存在</td><td>检查 <code>{work_root}/conf/wpsrc.toml</code></td><td>Error</td></tr>
+<tr><td>TOML 解析 + env eval</td><td><code>WarpSources::env_load_toml()</code> 加载并展开环境变量</td><td>Error</td></tr>
+<tr><td>结构校验</td><td>序列化回 TOML 后调用 <code>parse_and_validate_only()</code> 验证结构正确性</td><td>Error</td></tr>
+<tr><td>Source 实例构建</td><td><code>load_source_instances_from_file()</code> 验证所有 source 定义可解析为有效实例</td><td>Error</td></tr>
+<tr><td><strong>File 路径存在性</strong></td><td><code>base</code> 目录存在 + <code>file</code> 路径/glob 有匹配文件</td><td>Warning</td></tr>
+<tr><td><strong>Syslog/TCP 端口范围</strong> ★P0</td><td><code>port</code> ∈ [1, 65535]</td><td>Error</td></tr>
+<tr><td><strong>Syslog/TCP 协议校验</strong> ★P0</td><td><code>protocol</code> ∈ {tcp, udp}</td><td>Error</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="3-connectors--connectorssourced-connectorssinkd"><a class="header" href="#3-connectors--connectorssourced-connectorssinkd">3. Connectors — <code>connectors/source.d/</code>, <code>connectors/sink.d/</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>检查项</th><th>说明</th><th>级别</th></tr>
+</thead>
+<tbody>
+<tr><td>目录解析</td><td>从 Engine config 获取目录，回退到 <code>{work_root}/connectors/source.d</code>、<code>sink.d</code></td><td>Error</td></tr>
+<tr><td>TOML 解析</td><td>逐个加载目录下 <code>*.toml</code> 文件为 <code>ConnectorDef</code>，含 env eval</td><td>Error</td></tr>
+<tr><td>ID 字符校验</td><td>ID 只能包含 <code>[a-z0-9_]</code></td><td>Error</td></tr>
+<tr><td>Source ID 后缀</td><td>Source connector ID 必须以 <code>_src</code> 结尾</td><td>Error</td></tr>
+<tr><td>Sink ID 后缀</td><td>非 file 类型的 sink connector ID 必须以 <code>_sink</code> 结尾</td><td>Error</td></tr>
+<tr><td>File 前缀建议</td><td>file source/sink ID 建议以 <code>file_</code> 开头</td><td>Warning</td></tr>
+<tr><td>Kind 一致性</td><td>文件名 kind 提示与声明 type 匹配</td><td>Warning</td></tr>
+<tr><td><strong>Warning 输出</strong> ★P2</td><td>Warning 级别的 lint 问题现在会输出到控制台（之前被静默丢弃）</td><td>Warning</td></tr>
+<tr><td><strong>死连接器检测</strong> ★P2</td><td>检测 source connector 的 <code>refs == 0</code>（定义但未被引用）和 sink connector 未被任何路由使用</td><td>Warning</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="4-sinks--usecasesink-modelssinks"><a class="header" href="#4-sinks--usecasesink-modelssinks">4. Sinks — <code>usecase/*/sink/</code>, <code>models/sinks/</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>检查项</th><th>说明</th><th>级别</th></tr>
+</thead>
+<tbody>
+<tr><td>路由发现</td><td>扫描 <code>usecase/*/{case}/sink/{business.d,infra.d}</code> 和 <code>models/sinks/{business.d,infra.d}</code></td><td>Error</td></tr>
+<tr><td>TOML 解析 + env eval</td><td>每个路由文件 <code>env_load_toml</code> + <code>env_eval</code></td><td>Error</td></tr>
+<tr><td>Connector 解析</td><td>为每个路由目录加载 sink connectors</td><td>Error</td></tr>
+<tr><td>默认值合并</td><td>加载并合并 default sink config</td><td>Error</td></tr>
+<tr><td>路由构建</td><td><code>build_route_conf_from()</code> 解析路由配置</td><td>Error</td></tr>
+<tr><td>FlexGroup OML/RULE 互斥</td><td>同一 FlexGroup 中不能同时使用 OML 和 RULE</td><td>Error</td></tr>
+<tr><td>Rule pattern 校验</td><td>空 pattern 拒绝；以 <code>/</code> 开头的 pattern 需额外校验</td><td>Error</td></tr>
+<tr><td><strong>File sink 输出路径</strong> ★P1</td><td>file/test_rescue 类型 sink 的 <code>base</code> 目录和输出父目录存在性</td><td>Error</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="5-wpl--rule_rootwpl"><a class="header" href="#5-wpl--rule_rootwpl">5. WPL — <code>{rule_root}/*.wpl</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>检查项</th><th>说明</th><th>级别</th></tr>
+</thead>
+<tbody>
+<tr><td>文件发现</td><td><code>find_conf_files()</code> 找 <code>rule.wpl</code>，回退 <code>glob("*.wpl")</code></td><td>—</td></tr>
+<tr><td>文件缺失</td><td>无 WPL 文件 → <code>CheckStatus::Miss</code>，视为通过</td><td>—</td></tr>
+<tr><td><strong>文件读取错误</strong> ★P2</td><td>文件读取失败（如 UTF-8 编码错误）现在报告具体错误，不再静默降级为空内容</td><td>Error</td></tr>
+<tr><td>非空检查</td><td>每个文件不能为空</td><td>Error</td></tr>
+<tr><td>语法解析</td><td><code>WplCode::build()</code> 解析语法</td><td>Error</td></tr>
+<tr><td>包结构解析</td><td><code>code.parse_pkg()</code> 验证 package 结构</td><td>Error</td></tr>
+<tr><td><strong>重复包名检测</strong> ★P2</td><td>多个 WPL 文件定义同名 package 时输出 Warning</td><td>Warning</td></tr>
+<tr><td><strong>重复规则名检测</strong> ★P2</td><td>同一规则名（<code>包名::规则名</code>）在多个文件中重复定义时输出 Warning</td><td>Warning</td></tr>
+<tr><td><strong>空包检测</strong> ★P2</td><td>package 中没有任何 rule 时输出 Warning</td><td>Warning</td></tr>
+<tr><td><strong>空规则体检测</strong> ★P3</td><td>rule 中没有任何 field 时输出 Warning</td><td>Warning</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="6-oml--oml_rootmodeloml"><a class="header" href="#6-oml--oml_rootmodeloml">6. OML — <code>{oml_root}/**/model.oml</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>检查项</th><th>说明</th><th>级别</th></tr>
+</thead>
+<tbody>
+<tr><td>目录存在</td><td>检查 <code>{oml_root}/</code> 目录是否存在</td><td>—</td></tr>
+<tr><td>文件发现</td><td><code>find_conf_files()</code> 找 <code>model.oml</code></td><td>—</td></tr>
+<tr><td>目录/文件缺失</td><td>无 OML 目录或无 <code>.oml</code> 文件 → “OML 文件缺失”，视为通过</td><td>—</td></tr>
+<tr><td>非空检查</td><td><code>ErrorHandler::check_file_not_empty()</code></td><td>Error</td></tr>
+<tr><td>结构解析</td><td><code>fetch_oml_data()</code> 解析所有 OML 文件</td><td>Error</td></tr>
+<tr><td><strong>模型名唯一性</strong> ★P2</td><td>检测多个 OML 文件中重复的 <code>name : &lt;model-name&gt;</code></td><td>Warning</td></tr>
+<tr><td><strong>空 rule pattern</strong> ★P3</td><td>检测空的 <code>rule :</code> 声明</td><td>Warning</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="7-semanticdict--knowledge_rootsemantic_dicttoml"><a class="header" href="#7-semanticdict--knowledge_rootsemantic_dicttoml">7. SemanticDict — <code>{knowledge_root}/semantic_dict.toml</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>检查项</th><th>说明</th><th>级别</th></tr>
+</thead>
+<tbody>
+<tr><td>Engine config 加载</td><td>先加载 Engine config 获取 <code>knowledge_root()</code> 路径</td><td>Error</td></tr>
+<tr><td>主路径探测</td><td>检查 <code>{knowledge_root}/semantic_dict.toml</code></td><td>—</td></tr>
+<tr><td>回退路径探测</td><td>主路径不存在则检查 <code>{work_root}/knowledge/semantic_dict.toml</code></td><td>—</td></tr>
+<tr><td>文件缺失</td><td>两个路径都不存在 → “使用内置词典”，视为通过</td><td>—</td></tr>
+<tr><td>启用状态</td><td><code>conf.enabled == false</code> → 视为未配置，通过</td><td>—</td></tr>
+<tr><td>TOML 解析</td><td><code>load_semantic_dict()</code> 反序列化</td><td>Error</td></tr>
+<tr><td>模式报告</td><td>报告 <code>ADD</code>（扩展内置词典）或 <code>REPLACE</code>（替换内置词典）</td><td>Info</td></tr>
+<tr><td>词汇统计</td><td>统计 stop_words、domain_words、status_words、action_verbs、entity_nouns 总数</td><td>Info</td></tr>
+<tr><td><strong>空字符串检测</strong> ★P1</td><td>检测各词汇列表中的空字符串词条，报告数量</td><td>Warning</td></tr>
+<tr><td><strong>重复词检测</strong> ★P1</td><td>检测同类别内的重复词汇，报告重复次数</td><td>Warning</td></tr>
+<tr><td><strong>空类别检测</strong> ★P1</td><td>检测 <code>chinese = []</code> / <code>english = []</code> 等空列表类别</td><td>Warning</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="8-wpgen--confwpgentoml"><a class="header" href="#8-wpgen--confwpgentoml">8. Wpgen — <code>conf/wpgen.toml</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>检查项</th><th>说明</th><th>级别</th></tr>
+</thead>
+<tbody>
+<tr><td>文件存在</td><td>检查 <code>{work_root}/conf/wpgen.toml</code></td><td>—</td></tr>
+<tr><td>文件缺失</td><td>不存在 → <code>"wpgen.toml not found (optional)"</code>，视为通过</td><td>—</td></tr>
+<tr><td>TOML 解析 + env eval</td><td><code>WpGenConfig::load_from_path()</code> 调用 <code>env_load_toml</code></td><td>Error</td></tr>
+<tr><td>未知字段拒绝</td><td><code>WpGenConfig</code>、<code>GeneratorConfig</code>、<code>OutputConfig</code> 均标注 <code>#[serde(deny_unknown_fields)]</code></td><td>Error</td></tr>
+<tr><td><strong>version 非空</strong> ★P0</td><td><code>version</code> 字段不能为空字符串</td><td>Error</td></tr>
+<tr><td><strong>generator.count &gt; 0</strong> ★P0</td><td>若配置 <code>count</code>，必须 &gt; 0（=0 报错）</td><td>Error</td></tr>
+<tr><td><strong>generator.speed = 0</strong> ★P0</td><td><code>0</code> 表示 unlimited，合法值，不报错</td><td>Info</td></tr>
+<tr><td><strong>generator.parallel &gt; 0</strong> ★P0</td><td><code>parallel</code> 必须 &gt; 0</td><td>Error</td></tr>
+<tr><td><strong>speed_profile 参数</strong> ★P0</td><td>各变体的 rate/base/amplitude &gt; 0、period_secs/duration_secs &gt; 0、burst_probability/variance ∈ [0,1]、steps 非空</td><td>Error</td></tr>
+<tr><td><strong>logging.level</strong> ★P0</td><td>每一段（逗号分隔）的级别部分必须是 trace/debug/info/warn/error，支持 <code>module=level</code> 对格式（如 <code>info,ctrl=info</code>）</td><td>Error</td></tr>
+<tr><td><strong>logging.output</strong> ★P0</td><td>必须是已知类型：stdout/console/file/both</td><td>Error</td></tr>
+<tr><td><strong>rule_root 路径</strong> ★P0</td><td><code>rule_root</code> 指定的目录必须存在（相对于 work_root 解析）</td><td>Error</td></tr>
+<tr><td><strong>sample_pattern glob</strong> ★P0</td><td><code>sample_pattern</code> 必须是合法的 glob pattern</td><td>Error</td></tr>
+<tr><td><strong>output.connect 引用</strong> ★P0</td><td><code>output.connect</code> 引用的 sink connector 必须存在于 <code>connectors/sink.d/</code></td><td>Error</td></tr>
+<tr><td><strong>logging.file_path 父目录</strong></td><td><code>logging.file_path</code> 的父目录存在性（运行时自动创建，仅警告）</td><td>Warning</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="fail-fast-机制"><a class="header" href="#fail-fast-机制">Fail-Fast 机制</a></h2>
+<p>当 <code>--fail-fast</code> 开启时，任意组件检查失败立即中止该 target 的后续检查。检查顺序为 1→8，Engine 失败则后续全部跳过。</p>
+<hr>
+<h2 id="p4-高风险项记录规划中暂不实现"><a class="header" href="#p4-高风险项记录规划中暂不实现">P4 高风险项记录（规划中，暂不实现）</a></h2>
+<p>以下项目因技术风险较高，记录在此供后续参考：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>#</th><th>项目</th><th>风险说明</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td><strong>WPL 字段类型语义校验</strong></td><td><code>WplField::validate()</code> 使用 <code>panic!</code> 而非返回错误，在 check 路径调用可能导致进程崩溃</td></tr>
+<tr><td>2</td><td><strong>WPL Sample 数据校验</strong></td><td>需要运行时引擎（<code>WplEngine</code>）加载管道上下文，涉及 tokio 异步运行时和完整的 pipeline 初始化</td></tr>
+<tr><td>3</td><td><strong>OML 结构解析（oml_parse_raw）</strong></td><td>核心解析函数 <code>oml_parse_raw</code> 是 <code>async</code> 的，check 路径是同步的，需要引入 tokio runtime 或重构解析层</td></tr>
+<tr><td>4</td><td><strong>WPL-OML 规则交叉引用</strong></td><td>OML 模型的 <code>rule : /path/*</code> 与 WPL 规则路径的匹配发生在运行时（<code>SinkDispatcher::get_match_oml</code>），check 时需要同时加载两套完整的规则体系并执行匹配逻辑</td></tr>
+<tr><td>5</td><td><strong>Connectors 反向交叉引用</strong></td><td>需要修改 <code>Connectors::check()</code> 签名以接受 Engine config，并在 check 路径中加载 source 配置和 sink 路由配置来验证 connector 引用有效性。涉及跨组件依赖注入</td></tr>
+<tr><td>6</td><td><strong>Sink OML pattern 存在性验证</strong></td><td>Sink 路由中的 <code>oml = ["pattern"]</code> 需要匹配已加载的 OML 模型名，当前匹配逻辑在运行时 dispatcher 中，迁移到 check 需要加载完整的 OML 模型和路由配置</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="改进优先级建议"><a class="header" href="#改进优先级建议">改进优先级建议</a></h3>
+<ul>
+<li><strong>P2（建议下阶段实现）</strong>: #5 Connectors 反向交叉引用 — 风险可控，build 层已有解析逻辑，只需整合到 check 流程</li>
+<li><strong>P3（需设计评审）</strong>: #3 OML 结构解析 — 可考虑将 <code>oml_parse_raw</code> 改为同步或提供同步包装函数</li>
+<li><strong>P4（需架构变更）</strong>: #1 #2 #4 #6 — 需要在 check 路径中引入运行时组件或重构核心解析 API</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="warp-parse-产品概览"><a class="header" href="#warp-parse-产品概览">Warp Parse 产品概览</a></h1>
@@ -1312,7 +1784,7 @@ wpgen --help
 wproj --help
 wprescue --help
 </code></pre>
-<h2 id="相关文档-8"><a class="header" href="#相关文档-8">相关文档</a></h2>
+<h2 id="相关文档-9"><a class="header" href="#相关文档-9">相关文档</a></h2>
 <ul>
 <li>运行时管理面使用说明: <a href="#warp-parse-运行时管理面使用说明">../operations/admin.md</a></li>
 <li>远程工程拉取与规则热更新 SOP: <a href="#远程工程拉取与规则热更新-sop">../operations/project-sync.md</a></li>
@@ -1383,6 +1855,7 @@ sinks   = "./topology/sinks"
 rate_limit_rps = 10000        # 限速（records/second）
 parse_workers  = 2            # 解析并发 worker 数
 reload_timeout_ms = 10000     # reload 兜底超时（毫秒）；覆盖 graceful drain 与旧 processing 尾部清理
+fetch_timeout_ms = 300 # realtime picker 每轮阻塞拉取的超时（毫秒）
 
 [rescue]
 path = "./data/rescue"        
@@ -1414,6 +1887,7 @@ target = "*"
 <li><code>semantic_dict.toml</code> 默认读取 <code>${models.knowledge}/semantic_dict.toml</code></li>
 <li><code>knowdb.toml</code> 默认读取 <code>${models.knowledge}/knowdb.toml</code>
 &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</li>
+<li><code>fetch_timeout_ms</code> 默认 <code>300</code>；用于控制 realtime picker 单轮阻塞拉取的最长等待时间</li>
 <li><code>reload_timeout_ms</code> 默认 <code>10000</code>；CLI <code>--reload-timeout-ms</code> 优先于配置文件
 =======</li>
 </ul>
@@ -2260,7 +2734,7 @@ grep "version" ${models.knowledge}/semantic_dict.toml
 </tbody>
 </table>
 </div>
-<h2 id="相关文档-9"><a class="header" href="#相关文档-9">相关文档</a></h2>
+<h2 id="相关文档-10"><a class="header" href="#相关文档-10">相关文档</a></h2>
 <ul>
 <li><a href="#extract_main_word-pipefun-使用指南">extract_main_word 使用指南</a></li>
 <li><a href="#extract_subject_object-pipefun-使用指南">extract_subject_object 使用指南</a></li>
@@ -2276,186 +2750,272 @@ grep "version" ${models.knowledge}/semantic_dict.toml
 <hr>
 <p>更新时间：2026-02-08</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="knowdb-配置"><a class="header" href="#knowdb-配置">KnowDB 配置</a></h1>
-<p>本指南描述知识库（KnowDB）的目录式配置与装载规范。</p>
-<p>适用范围</p>
+<h1 id="knowdb-配置说明"><a class="header" href="#knowdb-配置说明">KnowDB 配置说明</a></h1>
+<p>只记三件事：</p>
+<ol>
+<li>当前只支持 <code>version = 2</code></li>
+<li>只能二选一：目录式 SQLite authority，或外部 PostgreSQL / MySQL</li>
+<li><code>[cache]</code> 只控制 <code>result cache</code></li>
+</ol>
+<h2 id="两种模式"><a class="header" href="#两种模式">两种模式</a></h2>
 <ul>
-<li>初始化权威库（CSV → SQLite），用于 wparse/wproj 等工具在启动时装载</li>
+<li>静态 CSV 随包分发：用目录式 SQLite authority</li>
+<li>数据已经在 PostgreSQL / MySQL：用外部 provider</li>
 </ul>
-<p>核心原则</p>
+<h2 id="最小示例-1"><a class="header" href="#最小示例-1">最小示例</a></h2>
+<h3 id="目录式-sqlite-authority"><a class="header" href="#目录式-sqlite-authority">目录式 SQLite authority</a></h3>
+<pre><code class="language-toml">version = 2
+base_dir = "."
+
+[default]
+transaction = true
+batch_size = 2000
+on_error = "fail"
+
+[csv]
+has_header = true
+delimiter = ","
+encoding = "utf-8"
+trim = true
+
+[cache]
+enabled = true
+capacity = 1024
+ttl_ms = 30000
+
+[[tables]]
+name = "example"
+dir = "example"
+enabled = true
+columns.by_header = ["name", "pinying"]
+
+[tables.expected_rows]
+min = 5
+max = 100
+</code></pre>
+<h3 id="外部-postgresql--mysql"><a class="header" href="#外部-postgresql--mysql">外部 PostgreSQL / MySQL</a></h3>
+<pre><code class="language-toml">version = 2
+
+[cache]
+enabled = true
+capacity = 1024
+ttl_ms = 30000
+
+[provider]
+kind = "postgres"
+connection_uri = "postgres://user:${DB_PASSWORD}@127.0.0.1:5432/demo"
+pool_size = 8
+</code></pre>
+<p>把 <code>kind = "postgres"</code> 换成 <code>kind = "mysql"</code>，连接串换成 MySQL 格式即可。</p>
+<h2 id="哪些配置会生效"><a class="header" href="#哪些配置会生效">哪些配置会生效</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>模式</th><th>会生效</th><th>不参与主流程</th></tr>
+</thead>
+<tbody>
+<tr><td>目录式 SQLite authority</td><td><code>version</code> <code>base_dir</code> <code>[default]</code> <code>[csv]</code> <code>[cache]</code> <code>[[tables]]</code></td><td><code>authority_uri</code> 不从 <code>knowdb.toml</code> 读取</td></tr>
+<tr><td>外部 PostgreSQL / MySQL</td><td><code>version</code> <code>[provider]</code> <code>[cache]</code></td><td><code>base_dir</code> <code>[default]</code> <code>[csv]</code> <code>[[tables]]</code></td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="关键字段速查"><a class="header" href="#关键字段速查">关键字段速查</a></h2>
+<h3 id="顶层"><a class="header" href="#顶层">顶层</a></h3>
 <ul>
-<li>SQL 外置：每张表的 DDL/DML 均放在对应目录下的 .sql 文件中</li>
-<li>安全：运行期只允许访问配置里声明过的表名；SQL 仅支持 {table} 占位符</li>
-<li>默认可用：多数字段可省略，内置默认值与自动探测能满足常见场景</li>
+<li><code>version</code>
+<ul>
+<li>必填，只能是 <code>2</code></li>
 </ul>
-<p>目录布局（推荐，默认位于 <code>${models.knowledge}</code>）</p>
-<pre><code>${models.knowledge}/
-  knowdb.toml                     # 本配置
+</li>
+<li><code>base_dir</code>
+<ul>
+<li>表目录根路径，相对 <code>knowdb.toml</code> 所在目录解析</li>
+</ul>
+</li>
+<li><code>[provider]</code>
+<ul>
+<li>只在外部 provider 模式下使用</li>
+</ul>
+</li>
+<li><code>[[tables]]</code>
+<ul>
+<li>只在目录式 SQLite authority 模式下使用</li>
+</ul>
+</li>
+</ul>
+<h3 id="default"><a class="header" href="#default"><code>[default]</code></a></h3>
+<ul>
+<li><code>transaction</code>
+<ul>
+<li>默认 <code>true</code></li>
+</ul>
+</li>
+<li><code>batch_size</code>
+<ul>
+<li>默认 <code>2000</code></li>
+</ul>
+</li>
+<li><code>on_error</code>
+<ul>
+<li><code>fail</code> 直接失败</li>
+<li><code>skip</code> 跳过坏行</li>
+</ul>
+</li>
+</ul>
+<h3 id="csv"><a class="header" href="#csv"><code>[csv]</code></a></h3>
+<ul>
+<li><code>has_header</code>
+<ul>
+<li>默认 <code>true</code></li>
+</ul>
+</li>
+<li><code>delimiter</code>
+<ul>
+<li>建议单字符</li>
+</ul>
+</li>
+<li><code>encoding</code>
+<ul>
+<li>目前只支持 <code>utf-8</code></li>
+</ul>
+</li>
+<li><code>trim</code>
+<ul>
+<li>默认 <code>true</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="cache"><a class="header" href="#cache"><code>[cache]</code></a></h3>
+<ul>
+<li><code>enabled</code>
+<ul>
+<li>默认 <code>true</code></li>
+</ul>
+</li>
+<li><code>capacity</code>
+<ul>
+<li>默认 <code>1024</code>，单位是条目数</li>
+</ul>
+</li>
+<li><code>ttl_ms</code>
+<ul>
+<li>默认 <code>30000</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="provider"><a class="header" href="#provider"><code>[provider]</code></a></h3>
+<ul>
+<li><code>kind</code>
+<ul>
+<li>必填，<code>postgres</code> 或 <code>mysql</code></li>
+</ul>
+</li>
+<li><code>connection_uri</code>
+<ul>
+<li>必填，支持 <code>${VAR}</code></li>
+</ul>
+</li>
+<li><code>pool_size</code>
+<ul>
+<li>可选，默认 <code>8</code></li>
+</ul>
+</li>
+</ul>
+<p>不要写 <code>kind = "sqlite_authority"</code>。目录式模式下直接省略 <code>[provider]</code>。</p>
+<h3 id="tables"><a class="header" href="#tables"><code>[[tables]]</code></a></h3>
+<ul>
+<li><code>name</code>
+<ul>
+<li>必填</li>
+</ul>
+</li>
+<li><code>dir</code>
+<ul>
+<li>默认等于 <code>name</code></li>
+</ul>
+</li>
+<li><code>data_file</code>
+<ul>
+<li>默认 <code>data.csv</code></li>
+</ul>
+</li>
+<li><code>enabled</code>
+<ul>
+<li>默认 <code>true</code></li>
+</ul>
+</li>
+<li>列映射至少配置一组：
+<ul>
+<li><code>columns.by_header</code></li>
+<li><code>columns.by_index</code></li>
+</ul>
+</li>
+<li>优先级：
+<ul>
+<li><code>by_header</code> 优先</li>
+<li><code>by_header</code> 为空时才用 <code>by_index</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="表目录约定"><a class="header" href="#表目录约定">表目录约定</a></h2>
+<p>每个表目录通常长这样：</p>
+<pre><code class="language-text">knowdb/
+  knowdb.toml
   example/
     create.sql
     insert.sql
-    data.csv                     # 单一数据文件（表目录根）
-  address/
+    data.csv
+  zone/
     create.sql
     insert.sql
-    data.csv
+    clean.sql
+    data.scv
 </code></pre>
-<p>顶层配置（<code>${models.knowledge}/knowdb.toml</code>）</p>
-<pre><code class="language-toml">version = 2
-
-[[tables]]
-name = "example"
-# dir 省略时等于 name；此示例即使用目录 ${models.knowledge}/example
-# data_file 省略时使用表目录下的 data.csv
-columns.by_header = ["name", "pinying"]
-
-# 如需更多表，追加 [[tables]] 段落
+<p>规则：</p>
+<ul>
+<li><code>create.sql</code> 必需</li>
+<li><code>insert.sql</code> 必需</li>
+<li><code>data.csv</code> 是默认数据文件</li>
+<li><code>clean.sql</code> 可选；缺省时默认执行 <code>DELETE FROM {table}</code></li>
+<li>SQL 文件中的 <code>{table}</code> 会被当前表名替换</li>
+</ul>
+<h2 id="路径和环境变量"><a class="header" href="#路径和环境变量">路径和环境变量</a></h2>
+<ul>
+<li><code>${VAR}</code> 会在 TOML 反序列化前展开，例如：</li>
+</ul>
+<pre><code class="language-toml">[provider]
+kind = "mysql"
+connection_uri = "mysql://root:${MYSQL_PASSWORD}@127.0.0.1:3306/demo"
 </code></pre>
-<p>SQL 文件规范</p>
 <ul>
-<li>create.sql：建表语句，必须存在；可使用占位符 <code>{table}</code>；允许包含多条语句（如 <code>CREATE INDEX</code>）</li>
-<li>insert.sql：插入语句，必须存在；参数位置用 <code>?1..?N</code>；允许 <code>{table}</code></li>
-<li>clean.sql：可选；若不存在，装载前默认执行 <code>DELETE FROM {table}</code></li>
+<li>值来自 <code>init_thread_cloned_from_knowdb(..., dict)</code> 传入的 <code>EnvDict</code></li>
+<li>不是 <code>wp-knowledge</code> 直接读进程环境变量</li>
 </ul>
-<p>列映射（columns）</p>
-<ul>
-<li>推荐 <code>by_header=[..]</code>，按 CSV 表头名映射到 <code>insert.sql</code> 中的列</li>
-<li>若 <code>has_header=false</code>，必须提供 <code>by_index=[..]</code></li>
-<li>可选增强（实现层）：若未配置 columns，且 <code>insert.sql</code> 显式了列清单，可解析 insert 的列名作为 <code>by_header</code></li>
-</ul>
-<p>装载策略（默认可省略）</p>
-<ul>
-<li>默认：<code>transaction=true</code>、<code>batch_size=2000</code>、<code>on_error="fail"</code></li>
-<li>on_error:
-<ul>
-<li>fail：遇到坏行（缺列/解析失败）即失败回滚</li>
-<li>skip：跳过坏行并计数告警</li>
-</ul>
-</li>
-</ul>
-<p>自动探测（当 data_file 未配置）</p>
-<ul>
-<li>使用 <code>{base_dir}/{tables.dir}/data.csv</code></li>
-<li>不存在则报错</li>
-</ul>
-<p>安全约束</p>
-<ul>
-<li>运行时（facade / SQL 评估）仅允许使用 <code>[[tables]].name</code> 中声明的表名</li>
-<li>SQL 模板仅允许 <code>{table}</code> 占位符；禁止其它动态拼接</li>
-</ul>
-<p>最小可运行示例</p>
+<p>路径解析顺序：</p>
 <ol>
-<li>目录</li>
+<li><code>knowdb_conf</code> 是相对路径时，先相对调用方传入的 <code>root</code> 解析</li>
+<li><code>base_dir</code> 再相对 <code>knowdb.toml</code> 所在目录解析</li>
+<li><code>tables[n].dir</code> 再相对 <code>base_dir</code> 解析</li>
+<li><code>tables[n].data_file</code> 再相对表目录解析</li>
 </ol>
-<pre><code>${models.knowledge}/knowdb.toml
-models/knowledge/example/{create.sql, insert.sql, data.csv}
-</code></pre>
-<ol start="2">
-<li>create.sql</li>
-</ol>
-<pre><code class="language-sql">CREATE TABLE IF NOT EXISTS {table} (
-  id      INTEGER PRIMARY KEY,
-  name    TEXT NOT NULL,
-  pinying TEXT NOT NULL
-);
-</code></pre>
-<ol start="3">
-<li>insert.sql</li>
-</ol>
-<pre><code class="language-sql">INSERT INTO {table} (name, pinying) VALUES (?1, ?2);
-</code></pre>
-<ol start="4">
-<li>data.csv</li>
-</ol>
-<pre><code>name,pinying
-令狐冲,linghuchong
-任盈盈,renyingying
-</code></pre>
-<ol start="5">
-<li>knowdb.toml（最小化）</li>
-</ol>
-<pre><code class="language-toml">version = 2
-base_dir = "./models/knowledge"
-[[tables]]
-name = "example"
-dir  = "example"
-columns.by_header = ["name", "pinying"]
-[tables.expected_rows]
-min = 1
-max = 100
-</code></pre>
-<p>常见错误与排障</p>
+<h2 id="常见失败原因"><a class="header" href="#常见失败原因">常见失败原因</a></h2>
 <ul>
-<li>缺少 create.sql / insert.sql：启动时失败并指向缺失文件</li>
-<li><code>has_header=false</code> 但未提供 <code>by_index</code>：装载报错</li>
-<li><code>expected_rows.min</code> 未满足：数据不足，装载失败</li>
-<li>数据源未找到：既未配置 <code>data_file</code>，也不存在默认路径 <code>data.csv</code></li>
-<li>运行期 SQL 访问未声明的表：安全校验失败</li>
+<li><code>version</code> 不是 <code>2</code></li>
+<li><code>create.sql</code>、<code>insert.sql</code> 或数据文件不存在</li>
+<li><code>columns.by_header</code> 和 <code>columns.by_index</code> 都没配置</li>
+<li><code>columns.by_header</code> 指向了不存在的表头</li>
+<li><code>encoding</code> 不是 <code>utf-8</code></li>
+<li>CSV 行解析失败且 <code>on_error = "fail"</code></li>
+<li>实际导入行数小于 <code>expected_rows.min</code></li>
+<li>PostgreSQL / MySQL 初始化连接失败</li>
 </ul>
-<p>与应用的关系</p>
+<h2 id="建议写法"><a class="header" href="#建议写法">建议写法</a></h2>
 <ul>
-<li>wparse/wproj 等会在启动处加载 knowdb：创建权威库并设置 Query Provider</li>
-</ul>
-<p>内置 SQL 函数（UDF）</p>
-<ul>
-<li>运行时注册：
-<ul>
-<li>导入阶段（权威库写连接）与查询阶段（线程克隆的只读连接）均自动注册。</li>
-<li>可在 <code>INSERT/SELECT/WHERE</code> 中直接使用（DDL 不涉及）。</li>
-</ul>
-</li>
-<li>签名与语义：
-<ul>
-<li><code>ip4_int(text) -&gt; integer</code>：点分 IPv4 转 32 位整数；容忍空白/引号；非法返回 <code>0</code>。</li>
-<li><code>ip4_between(ip_text, start_text, end_text) -&gt; integer</code>：是否在闭区间 <code>[start,end]</code> 内（1/0）。</li>
-<li><code>cidr4_min(text) -&gt; integer</code>：CIDR 起始地址（含），如 <code>10.0.0.0/8</code>。</li>
-<li><code>cidr4_max(text) -&gt; integer</code>：CIDR 结束地址（含）。</li>
-<li><code>cidr4_contains(ip_text, cidr_text) -&gt; integer</code>：IP 是否落在 CIDR 段内（1/0）。</li>
-<li><code>ip4_text(integer|string) -&gt; text</code>：32 位整数转点分 IPv4（便于调试/展示）。</li>
-<li><code>trim_quotes(text) -&gt; text</code>：去除两端成对引号（’ 或 “），容忍前后空白；未成对则原样返回（去掉空白）。</li>
-</ul>
-</li>
-<li>导入示例（insert.sql）：
-<pre><code class="language-sql">INSERT INTO {table} (ip_start_int, ip_end_int, zone)
-VALUES (ip4_int(?1), ip4_int(?2), trim_quotes(?3));
-</code></pre>
-</li>
-<li>查询示例（普通 SQL）：
-<pre><code class="language-sql">-- 区间命中（推荐整数比较写法，避免在 WHERE 中直接比较函数返回）
-SELECT zone FROM zone
-WHERE ip_start_int &lt;= ip4_int(:ip)
-  AND ip_end_int   &gt;= ip4_int(:ip)
-LIMIT 1;
-
--- CIDR 命中
-SELECT zone FROM zone
-WHERE cidr4_contains(:ip, :cidr) = 1;
-
--- 调试回显
-SELECT ip4_text(ip_start_int) AS ip_start, ip4_text(ip_end_int) AS ip_end, zone
-FROM zone
-LIMIT 5;
-</code></pre>
-</li>
-<li>OML 中的 SQL 精确求值：
-<ul>
-<li>OML 的 <code>select … from … where …;</code> 语法对列段做了标识符白名单限制，不建议在列段直接写函数。</li>
-<li>推荐在上游产出数值型 IP（如 <code>src_ip_int</code>），在 OML 的 where 中用整数比较：
-<pre><code class="language-sql">from_zone: chars = sql(
-  select zone from zone
-  where ip_start_int &lt;= read(src_ip_int)
-    and ip_end_int   &gt;= read(src_ip_int);
-)
-</code></pre>
-</li>
-</ul>
-</li>
-<li>注意事项：
-<ul>
-<li>目前非法 IPv4/CIDR 输入返回 <code>0</code>（或匹配失败），为提高导入韧性；如需严格行为可定制。</li>
-<li>SQLite 原生已提供 <code>lower/upper/trim</code> 等字符串函数，可与上述 UDF 组合使用。</li>
-</ul>
-</li>
+<li>目录式 SQLite authority 模式下，不要写 <code>[provider]</code></li>
+<li><code>enabled</code> 写在 <code>[[tables]]</code> 层，不要写到 <code>[tables.expected_rows]</code> 下面</li>
+<li><code>delimiter</code> 用单字符</li>
+<li>使用 <code>columns.by_header</code> 时，保持 <code>csv.has_header = true</code></li>
+<li>外部 PostgreSQL / MySQL 场景下，把 <code>[cache]</code> 理解为 <code>result cache</code> 配置</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="日志配置-1"><a class="header" href="#日志配置-1">日志配置</a></h1>
@@ -3077,7 +3637,7 @@ digit\,, ip\;, chars\s
 规则：(digit, ip, chars)\,
 </code></pre>
 <hr>
-<h2 id="下一步-2"><a class="header" href="#下一步-2">下一步</a></h2>
+<h2 id="下一步-3"><a class="header" href="#下一步-3">下一步</a></h2>
 <h3 id="理解概念"><a class="header" href="#理解概念">理解概念</a></h3>
 <p>→ <a href="#wpl-核心概念">02-core-concepts.md</a> - 理解 WPL 的设计理念</p>
 <p><strong>你将学到：</strong></p>
@@ -3191,7 +3751,7 @@ digit\,, ip\;, chars\s
 <p>本文档介绍 <code>wp-lang</code> 中的 WPL 规则语言基础元素与常用写法，内容与当前解析实现保持一致。</p>
 <p>WPL 用于定义“规则（rule）”，每条规则由一个或多个“分组（group）”构成，分组内包含若干“字段（field）”抽取项。</p>
 <p>提示：完整的形式化语法见《WPL 语法（EBNF）》：<code>./06-grammar-reference.md</code>。</p>
-<h2 id="最小示例-1"><a class="header" href="#最小示例-1">最小示例</a></h2>
+<h2 id="最小示例-2"><a class="header" href="#最小示例-2">最小示例</a></h2>
 <pre><code class="language-wpl">package net {
   rule nginx_access {
     (
@@ -3965,7 +4525,7 @@ kvarr                     # 自动解析 KV
 alt(ip:addr, digit:id)    # 择一分组
 </code></pre>
 <hr>
-<h2 id="下一步-3"><a class="header" href="#下一步-3">下一步</a></h2>
+<h2 id="下一步-4"><a class="header" href="#下一步-4">下一步</a></h2>
 <h3 id="实战应用"><a class="header" href="#实战应用">实战应用</a></h3>
 <p>→ <a href="#wpl-实战指南">03-practical-guide.md</a> - 按任务查找解决方案</p>
 <p><strong>你将学到：</strong></p>
@@ -5460,7 +6020,7 @@ some_of(ip, digit, kvarr)
 # 逐步确定哪个分组导致失败
 </code></pre>
 <hr>
-<h2 id="下一步-4"><a class="header" href="#下一步-4">下一步</a></h2>
+<h2 id="下一步-5"><a class="header" href="#下一步-5">下一步</a></h2>
 <h3 id="查阅参考-1"><a class="header" href="#查阅参考-1">查阅参考</a></h3>
 <p>→ <a href="#wpl-语言参考">04-language-reference.md</a> - 完整类型和语法
 → <a href="#wpl-函数参考对齐-srcparserwpl_funrs-与-srcevalbuiltins">05-functions-reference.md</a> - 所有函数详解</p>
@@ -6061,7 +6621,7 @@ rule decode_with_take {
 }
 </code></pre>
 <hr>
-<h2 id="相关文档-10"><a class="header" href="#相关文档-10">相关文档</a></h2>
+<h2 id="相关文档-11"><a class="header" href="#相关文档-11">相关文档</a></h2>
 <ul>
 <li>语法定义：<a href="#wpl-语法参考对齐-srcparser">WPL 语法（EBNF）</a></li>
 <li>实现代码：<code>src/parser/wpl_fun.rs</code></li>
@@ -6414,7 +6974,7 @@ kvarr(digit@port)      # KV 字段
 @path/to/field         # 嵌套路径
 </code></pre>
 <hr>
-<h2 id="相关文档-11"><a class="header" href="#相关文档-11">相关文档</a></h2>
+<h2 id="相关文档-12"><a class="header" href="#相关文档-12">相关文档</a></h2>
 <ul>
 <li>快速入门：<a href="#wpl-快速入门">01-quickstart.md</a></li>
 <li>核心概念：<a href="#wpl-核心概念">02-core-concepts.md</a></li>
@@ -10007,7 +10567,7 @@ wp-motor --debug rule.wpl &lt; test.log
 # 目标字段函数（更简洁）
 | f_digit_has(status, 200)
 </code></pre>
-<h2 id="相关文档-12"><a class="header" href="#相关文档-12">相关文档</a></h2>
+<h2 id="相关文档-13"><a class="header" href="#相关文档-13">相关文档</a></h2>
 <ul>
 <li><strong>开发指南</strong>: <a href="10-user/guide/wpl_field_func_development_guide.html">WPL Field Function 开发指南</a></li>
 <li><strong>字段引用</strong>: <a href="#wpl-字段引用使用指南">Field Reference</a></li>
@@ -10377,7 +10937,7 @@ not(chars:status)                        # ❌ 错误（这是组级）
 </ul>
 </li>
 </ul>
-<h2 id="相关文档-13"><a class="header" href="#相关文档-13">相关文档</a></h2>
+<h2 id="相关文档-14"><a class="header" href="#相关文档-14">相关文档</a></h2>
 <ul>
 <li><a href="#字段存在性检查-field-existence">字段存在性检查函数</a></li>
 <li><a href="#字符串匹配函数-string-matching">字符串匹配函数</a></li>
@@ -11685,7 +12245,7 @@ event_time : time = Now::time() ;
 </thead>
 <tbody>
 <tr><td><a href="#什么是-oml">什么是 OML</a></td><td>OML 简介</td></tr>
-<tr><td><a href="#最小示例-2">最小示例</a></td><td>5 行代码上手</td></tr>
+<tr><td><a href="#最小示例-3">最小示例</a></td><td>5 行代码上手</td></tr>
 <tr><td><a href="#基本语法-6">基本语法</a></td><td>配置结构、WPL 关联、语法规则</td></tr>
 <tr><td><a href="#三个最常用操作">三个最常用操作</a></td><td>读取字段、类型转换、数据聚合</td></tr>
 <tr><td><a href="#常见数值计算">常见数值计算</a></td><td><code>calc(...)</code> 算术表达式</td></tr>
@@ -11699,7 +12259,7 @@ event_time : time = Now::time() ;
 <hr>
 <h2 id="什么是-oml"><a class="header" href="#什么是-oml">什么是 OML</a></h2>
 <p>OML 是一种声明式的数据转换语言，用于将解析后的结构化数据转换为目标格式。它提供了简洁的语法来完成字段提取、类型转换、数据聚合等常见操作。</p>
-<h2 id="最小示例-2"><a class="header" href="#最小示例-2">最小示例</a></h2>
+<h2 id="最小示例-3"><a class="header" href="#最小示例-3">最小示例</a></h2>
 <pre><code class="language-oml">name : my_first_oml
 rule : /nginx/access_log
 ---
@@ -12513,7 +13073,7 @@ cpu_metrics = collect read(keys:[cpu_*]) ;
 # 避免：过于宽泛的通配符
 all = collect read(keys:[*]) ;  # 可能包含不需要的字段
 </code></pre>
-<h2 id="下一步-5"><a class="header" href="#下一步-5">下一步</a></h2>
+<h2 id="下一步-6"><a class="header" href="#下一步-6">下一步</a></h2>
 <ul>
 <li><a href="#oml-实战指南">实战指南</a> - 按任务查找解决方案</li>
 <li><a href="#oml-函数参考">函数参考</a> - 查阅所有可用函数</li>
@@ -13143,7 +13703,7 @@ metrics : obj = object {
 </code></pre>
 <hr>
 <hr>
-<h2 id="下一步-6"><a class="header" href="#下一步-6">下一步</a></h2>
+<h2 id="下一步-7"><a class="header" href="#下一步-7">下一步</a></h2>
 <ul>
 <li><strong><a href="#oml-完整功能示例">🌟 完整功能示例</a></strong> - 查看所有 OML 功能的完整演示</li>
 <li><a href="#oml-函数参考">函数参考</a> - 查阅所有可用函数</li>
@@ -13426,7 +13986,7 @@ local_s = read(event_time) | Time::to_ts_zone(8, s) ;
 <pre><code class="language-oml">summary = read(message) | extract_subject_object ;
 </code></pre>
 <hr>
-<h2 id="相关文档-14"><a class="header" href="#相关文档-14">相关文档</a></h2>
+<h2 id="相关文档-15"><a class="header" href="#相关文档-15">相关文档</a></h2>
 <ul>
 <li><a href="#oml-语法参考">06-grammar-reference.md</a></li>
 <li><a href="#oml-函数与专题索引">functions/function_index.md</a></li>
@@ -13981,7 +14541,7 @@ user_id = read(user_id) { _ : chars(unknown) } ;
 <li>查看错误日志</li>
 </ol>
 <hr>
-<h2 id="下一步-7"><a class="header" href="#下一步-7">下一步</a></h2>
+<h2 id="下一步-8"><a class="header" href="#下一步-8">下一步</a></h2>
 <ul>
 <li><a href="#oml-实战指南">实战指南</a> - 查看 OML 转换示例</li>
 <li><a href="#oml-函数参考">函数参考</a> - 查阅可用函数</li>
@@ -14822,7 +15382,7 @@ wildcard_items : array = collect take(keys:[details[*]/process_name]);
 <li>✅ 对象与数组：聚合、收集</li>
 </ul>
 <hr>
-<h2 id="下一步-8"><a class="header" href="#下一步-8">下一步</a></h2>
+<h2 id="下一步-9"><a class="header" href="#下一步-9">下一步</a></h2>
 <ul>
 <li><a href="#oml-快速入门">快速入门</a> - 学习基础语法</li>
 <li><a href="#oml-核心概念">核心概念</a> - 理解设计理念</li>
@@ -16574,7 +17134,7 @@ tier = match read(city) {
 };
 </code></pre>
 <p><strong>特点</strong>: 基于模式或条件匹配</p>
-<h2 id="相关文档-15"><a class="header" href="#相关文档-15">相关文档</a></h2>
+<h2 id="相关文档-16"><a class="header" href="#相关文档-16">相关文档</a></h2>
 <ul>
 <li><a href="#oml-函数与专题索引">OML Pipe Functions 索引</a> - Pipe 函数完整列表</li>
 <li><a href="#starts_with-函数使用指南-1">starts_with Pipe 函数</a> - Pipe 版本的 starts_with 详细说明</li>
@@ -17030,7 +17590,7 @@ addr = "127.0.0.1"    # 安全的默认地址
 port = 1514           # 非特权端口
 protocol = "tcp"      # 可靠的协议
 </code></pre>
-<h2 id="相关文档-16"><a class="header" href="#相关文档-16">相关文档</a></h2>
+<h2 id="相关文档-17"><a class="header" href="#相关文档-17">相关文档</a></h2>
 <ul>
 <li><a href="#source-基础">源配置基础</a></li>
 <li><a href="#file-source">文件源配置</a></li>
@@ -17072,7 +17632,7 @@ protocol = "tcp"      # 可靠的协议
 </tbody>
 </table>
 </div>
-<h2 id="相关文档-17"><a class="header" href="#相关文档-17">相关文档</a></h2>
+<h2 id="相关文档-18"><a class="header" href="#相关文档-18">相关文档</a></h2>
 <ul>
 <li><a href="10-user/05-connectors/README.html">连接器管理</a></li>
 <li><a href="10-user/05-connectors/02-sinks/README.html">Sinks 配置指南</a></li>
@@ -17180,7 +17740,7 @@ addr = "127.0.0.1"
 port = 1514
 protocol = "tcp"
 </code></pre>
-<h2 id="相关文档-18"><a class="header" href="#相关文档-18">相关文档</a></h2>
+<h2 id="相关文档-19"><a class="header" href="#相关文档-19">相关文档</a></h2>
 <ul>
 <li><a href="10-user/05-connectors/README.html">连接器管理</a></li>
 <li><a href="#file-source">文件源配置</a></li>
@@ -17325,7 +17885,7 @@ encode = "hex"
   }
 }
 </code></pre>
-<h2 id="相关文档-19"><a class="header" href="#相关文档-19">相关文档</a></h2>
+<h2 id="相关文档-20"><a class="header" href="#相关文档-20">相关文档</a></h2>
 <ul>
 <li><a href="#source-基础">源配置基础</a></li>
 <li><a href="10-user/05-connectors/README.html">连接器管理</a></li>
@@ -17506,7 +18066,7 @@ config = [
     "max_poll_interval_ms=600000"
 ]
 </code></pre>
-<h2 id="相关文档-20"><a class="header" href="#相关文档-20">相关文档</a></h2>
+<h2 id="相关文档-21"><a class="header" href="#相关文档-21">相关文档</a></h2>
 <ul>
 <li><a href="#source-基础">源配置基础</a></li>
 <li><a href="10-user/05-connectors/README.html">连接器管理</a></li>
@@ -17670,7 +18230,7 @@ fast_strip = true             # 启用快速剥离
 # 分析场景：
 header_mode = "parse"         # 解析并注入协议相关元信息
 </code></pre>
-<h2 id="相关文档-21"><a class="header" href="#相关文档-21">相关文档</a></h2>
+<h2 id="相关文档-22"><a class="header" href="#相关文档-22">相关文档</a></h2>
 <ul>
 <li><a href="#source-基础">源配置基础</a></li>
 <li><a href="10-user/05-connectors/README.html">连接器管理</a></li>
@@ -17793,7 +18353,7 @@ OK
 
 parse body failed: invalid ndjson line 2
 </code></pre>
-<h2 id="相关文档-22"><a class="header" href="#相关文档-22">相关文档</a></h2>
+<h2 id="相关文档-23"><a class="header" href="#相关文档-23">相关文档</a></h2>
 <ul>
 <li><a href="#source-基础">源配置基础</a></li>
 <li><a href="10-user/05-connectors/02-sinks/06-http_sink.html">HTTP Sink 配置</a></li>
@@ -17900,7 +18460,7 @@ framing = "line"  # 或 "len"
 <li>多行/二进制：<code>framing="len"</code>（或 <code>auto</code> 默认）</li>
 <li>快速联调：<code>framing="line"</code>，配合 <code>nc -lk &lt;port&gt;</code></li>
 </ul>
-<h2 id="相关文档-23"><a class="header" href="#相关文档-23">相关文档</a></h2>
+<h2 id="相关文档-24"><a class="header" href="#相关文档-24">相关文档</a></h2>
 <ul>
 <li><a href="#source-基础">源配置基础</a></li>
 <li><a href="#tcp-sink">TCP Sink 配置</a></li>
@@ -17951,6 +18511,11 @@ framing = "line"  # 或 "len"
 <tr><td><code>mysql</code></td><td>输出到 MySQL</td><td><a href="#mysql-sink">MySQL Sink 配置</a></td></tr>
 <tr><td><code>doris</code></td><td>输出到 Doris</td><td><a href="#doris-sink">Doris Sink 配置</a></td></tr>
 <tr><td><code>prometheus</code></td><td>Prometheus 指标暴露</td><td><a href="#prometheus-sink">Prometheus Sink 配置</a></td></tr>
+<tr><td><code>victorialogs</code></td><td>输出到 VictoriaLogs</td><td><a href="#victorialogs">VictoriaLogs Sink 配置</a></td></tr>
+<tr><td><code>dmdb</code></td><td>输出到 DMDB</td><td><a href="10-user/05-connectors/02-sinks/24_dmdb_dink.html">DMDB Sink 配置</a></td></tr>
+<tr><td><code>elasticsearch</code></td><td>输出到 Elasticsearch</td><td><a href="10-user/05-connectors/02-sinks/25_elasticsearch.html">Elasticsearch Sink 配置</a></td></tr>
+<tr><td><code>http</code></td><td>输出到 HTTP 服务器</td><td><a href="10-user/05-connectors/02-sinks/26_http.html">HTTP Sink 配置</a></td></tr>
+<tr><td><code>clickhouse</code></td><td>输出到 ClickHouse 数据库</td><td><a href="10-user/05-connectors/02-sinks/27-clickhouse.html">ClickHouse Sink 配置</a></td></tr>
 </tbody>
 </table>
 </div>
@@ -19475,6 +20040,215 @@ batch_size = 1024
 <li>PostgreSQL 的配置项与 MySQL 完全一致，仅连接器 <code>type</code>、端口与连接信息不同。</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="dmdb-sink"><a class="header" href="#dmdb-sink">DMDB Sink</a></h1>
+<h2 id="1-使用前准备"><a class="header" href="#1-使用前准备">1. 使用前准备</a></h2>
+<p>在使用 <code>dmdb</code> sink 之前，请先完成 ODBC 驱动安装。之后再根据实际接入方式，分别执行 <code>connection_string</code>/<code>endpoint</code> 或 <code>dsn</code> 对应的配置与验证步骤。</p>
+<h3 id="11-通用准备安装-odbc-环境与达梦驱动"><a class="header" href="#11-通用准备安装-odbc-环境与达梦驱动">1.1 通用准备：安装 ODBC 环境与达梦驱动</a></h3>
+<h4 id="安装系统依赖ubuntu-示例"><a class="header" href="#安装系统依赖ubuntu-示例">安装系统依赖（Ubuntu 示例）</a></h4>
+<pre><code class="language-bash">apt-get update
+apt-get install -y unixodbc unixodbc-dev odbcinst
+</code></pre>
+<p>执行以下命令验证安装结果：</p>
+<pre><code class="language-bash">root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# which isql
+/usr/bin/isql
+root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# isql --version
+unixODBC 2.3.12
+root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# odbcinst -j
+unixODBC 2.3.12
+DRIVERS............: /etc/odbcinst.ini
+SYSTEM DATA SOURCES: /etc/odbc.ini
+FILE DATA SOURCES..: /etc/ODBCDataSources
+USER DATA SOURCES..: /root/.odbc.ini
+SQLULEN Size.......: 8
+SQLLEN Size........: 8
+SQLSETPOSIROW Size.: 8
+</code></pre>
+<h4 id="安装达梦-odbc-驱动"><a class="header" href="#安装达梦-odbc-驱动">安装达梦 ODBC 驱动</a></h4>
+<ul>
+<li>Windows 版：<a href="https://dn.navicat.com/drivers/dameng_odbc_win.zip">https://dn.navicat.com/drivers/dameng_odbc_win.zip</a></li>
+<li>Linux 版：<a href="https://dn.navicat.com/drivers/dameng_odbc_linux.tar.gz">https://dn.navicat.com/drivers/dameng_odbc_linux.tar.gz</a></li>
+</ul>
+<p>以下示例假设压缩包下载到 <code>/root/wp</code> 目录：</p>
+<h4 id="配置动态库路径"><a class="header" href="#配置动态库路径">配置动态库路径</a></h4>
+<pre><code class="language-bash">echo "/root/wp/dameng_odbc_linux/libdodbc.so" &gt; /etc/ld.so.conf.d/dameng.conf
+ldconfig
+</code></pre>
+<p>执行以下命令验证动态库是否加载成功：</p>
+<pre><code class="language-bash">root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# ldconfig -p | grep libdodbc
+        libdodbc.so (libc6,x86-64) =&gt; /root/wp/dameng_odbc_linux/libdodbc.so
+</code></pre>
+<h3 id="12-通用准备注册-odbc-驱动"><a class="header" href="#12-通用准备注册-odbc-驱动">1.2 通用准备：注册 ODBC 驱动</a></h3>
+<p>编辑 <code>/etc/odbcinst.ini</code>。如果文件已存在，直接追加下面内容即可；如果文件不存在，可以直接创建后写入：</p>
+<pre><code class="language-ini">[DM8 ODBC DRIVER]
+Description = DM8 ODBC DRIVER for DM8
+Driver = /root/wp/dameng_odbc_linux/libdodbc.so
+FileUsage = 1
+</code></pre>
+<p>配置完成后，执行以下命令验证驱动对比输出是否注册成功：</p>
+<pre><code class="language-bash">root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# odbcinst -q -d -n "DM8 ODBC DRIVER"
+[DM8 ODBC DRIVER]
+Description=ODBC DRIVER FOR DM8
+Driver=/root/wp/dameng_odbc_linux/libdodbc.so
+Setup=/root/wp/dameng_odbc_linux/libdodbc.so
+</code></pre>
+<p>完成以上步骤后，表示宿主机已经具备达梦 ODBC 驱动能力。接下来请根据实际连接方式，选择下面两条路径之一继续配置。</p>
+<h3 id="13-connection_string--endpoint-模式配置过程"><a class="header" href="#13-connection_string--endpoint-模式配置过程">1.3 <code>connection_string</code> / <code>endpoint</code> 模式配置过程</a></h3>
+<p>这两种模式都不依赖 <code>/etc/odbc.ini</code> 中的 DSN 名称，只要求前面的 ODBC 驱动已经安装并注册成功。</p>
+<ul>
+<li><code>connection_string</code> 模式：直接提供完整 ODBC 连接串。</li>
+<li><code>endpoint</code> 模式：由 <code>endpoint + driver + username + password</code> 自动拼接连接串。</li>
+</ul>
+<p>可以直接在 <code>wparse</code> 运行机器上执行以下命令验证驱动与直连参数是否可用，并将其中的地址、端口、用户名和密码替换为实际值：</p>
+<pre><code class="language-bash">root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# isql -v -k "Driver={DM8 ODBC DRIVER};Server=127.0.0.1;Port=5236;UID=SYSDBA;PWD=SYSDBA"
++---------------------------------------+
+| Connected!                            |
+|                                       |
+| sql-statement                         |
+| help [tablename]                      |
+| echo [string]                         |
+| quit                                  |
+|                                       |
++---------------------------------------+
+SQL&gt;
+</code></pre>
+<p>如果上述命令可以正常连接，说明 <code>connection_string</code> 或 <code>endpoint</code> 方式所需的宿主机准备已完成。</p>
+<h3 id="14-dsn-模式配置过程"><a class="header" href="#14-dsn-模式配置过程">1.4 <code>dsn</code> 模式配置过程</a></h3>
+<p><code>dsn</code> 模式除了要求 ODBC 驱动已经安装并注册外，还需要在 <code>/etc/odbc.ini</code> 中额外配置一个数据源名称，且该名称必须与 sink 配置中的 <code>dsn</code> 参数保持一致。</p>
+<p>例如，可以在 <code>/etc/odbc.ini</code> 中补充一个达梦数据源：</p>
+<pre><code class="language-ini">[DM_DSN]
+Description = DM8 Database
+Driver = /root/wp/dameng_odbc_linux/libdodbc.so
+Server = 159.75.175.212
+Port = 5236
+User = SYSDBA
+Password = &lt;请替换为实际密码&gt;
+</code></pre>
+<p>配置完成后，可执行以下命令验证 DSN 是否可用（其中的地址、用户名、密码需要替换为实际值）：</p>
+<pre><code class="language-bash">root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# cat /etc/odbc.ini
+[DM_DSN]                          ; DSN 名称
+Description = DM8 Database
+Driver = /root/wp/dameng_odbc_linux/libdodbc.so
+Server = 127.0.0.1
+Port = 5236
+User = SYSDBA
+Password = Dayu@1234
+root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# isql DM_DSN SYSDBA SYSDBA
++---------------------------------------+
+| Connected!                            |
+|                                       |
+| sql-statement                         |
+| help [tablename]                      |
+| echo [string]                         |
+| quit                                  |
+|                                       |
++---------------------------------------+
+SQL&gt; 
+</code></pre>
+<p>如果上述命令可以正常连接，说明 <code>dsn = "DM_DSN"</code> 对应的系统级数据源已经配置完成。</p>
+<h3 id="15-准备目标表"><a class="header" href="#15-准备目标表">1.5 准备目标表</a></h3>
+<ul>
+<li>目标表需要预先存在。</li>
+<li><code>table</code> 和 <code>columns</code> 必须与目标表实际结构匹配，包括列名、列类型等。</li>
+</ul>
+<h2 id="2-连接方式"><a class="header" href="#2-连接方式">2. 连接方式</a></h2>
+<h3 id="21-connection_string-模式"><a class="header" href="#21-connection_string-模式">2.1 <code>connection_string</code> 模式</a></h3>
+<p>适合已经有完整 ODBC 连接串的场景。</p>
+<ul>
+<li>必填参数：<code>connection_string</code>、<code>table</code>、<code>columns</code></li>
+<li>可选参数：<code>schema</code>、<code>batch_size</code>、<code>connect_timeout_secs</code>、<code>query_timeout_secs</code></li>
+<li>不要求额外提供：<code>dsn</code>、<code>endpoint</code>、<code>driver</code>、<code>username</code>、<code>password</code></li>
+</ul>
+<p>示例：</p>
+<pre><code class="language-toml">[sink_group]
+name = "database"
+rule = ["/*"]
+parallel = 8
+[[sink_group.sinks]]
+name = "dmdb_sink"
+connect = "dmdb_connect_string"
+[sink_group.sinks.params]
+connection_string = "Driver={DM8 ODBC DRIVER};SERVER=127.0.0.1;TCP_PORT=5236;UID=SYSDBA;PWD=Dayu@1234;"
+table = "nginx_logs"
+columns = ["sip", "timestamp", "http/request", "status", "size", "referer", "http/agent"]
+batch_size = 2000
+query_timeout_secs = 15
+</code></pre>
+<h3 id="22-endpoint-模式"><a class="header" href="#22-endpoint-模式">2.2 <code>endpoint</code> 模式</a></h3>
+<p>适合不想预先配置 DSN，而是直接通过地址建连的场景。</p>
+<ul>
+<li>必填参数：<code>endpoint</code>、<code>driver</code>、<code>username</code>、<code>password</code>、<code>table</code>、<code>columns</code></li>
+<li>可选参数：<code>schema</code>、<code>batch_size</code>、<code>connect_timeout_secs</code>、<code>query_timeout_secs</code></li>
+<li><code>endpoint</code> 必须是 <code>host:port</code> 格式，且 <code>port</code> 必须能解析为合法 <code>u16</code></li>
+</ul>
+<p>示例：</p>
+<pre><code class="language-toml">[sink_group]
+name = "database"
+rule = ["/*"]
+parallel = 8
+[[sink_group.sinks]]
+name = "dmdb_sink"
+connect = "dmdb_endpoint"
+[sink_group.sinks.params]
+endpoint = "127.0.0.1:5236"
+driver = "DM8 ODBC DRIVER"
+username = "SYSDBA"
+password = "SYSDBA"
+schema = "WP_DATA"
+table = "EVENTS"
+columns = ["event_id", "event_time", "source", "payload"]
+batch_size = 2000
+connect_timeout_secs = 8
+query_timeout_secs = 15
+</code></pre>
+<h3 id="23-dsn-模式"><a class="header" href="#23-dsn-模式">2.3 <code>dsn</code> 模式</a></h3>
+<p>适合宿主机已经配置好 ODBC DSN，且没有传入 <code>connection_string</code> 或 <code>endpoint</code> 的场景。</p>
+<ul>
+<li>必填参数：<code>dsn</code>、<code>username</code>、<code>password</code>、<code>table</code>、<code>columns</code></li>
+<li>可选参数：<code>schema</code>、<code>batch_size</code>、<code>connect_timeout_secs</code>、<code>query_timeout_secs</code></li>
+<li>不要求额外提供：<code>endpoint</code>、<code>driver</code></li>
+</ul>
+<p>示例：</p>
+<pre><code class="language-toml">[sink_group]
+name = "database"
+rule = ["/*"]
+parallel = 8
+[[sink_group.sinks]]
+name = "dmdb_sink"
+connect = "dmdb_dsn"
+[sink_group.sinks.params]
+dsn = "DM_DSN"
+username = "SYSDBA"
+password = "SYSDBA"
+schema = "WP_DATA"
+table = "EVENTS"
+columns = ["event_id", "event_time", "source", "payload"]
+batch_size = 2000
+connect_timeout_secs = 8
+query_timeout_secs = 15
+</code></pre>
+<h2 id="3-参数说明"><a class="header" href="#3-参数说明">3. 参数说明</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>参数</th><th>类型</th><th>是否必填</th><th>适用模式</th><th>说明</th></tr>
+</thead>
+<tbody>
+<tr><td><code>connection_string</code></td><td><code>string</code></td><td><code>connection_string</code> 模式必填</td><td>全部</td><td>完整 ODBC 连接串，优先级最高。</td></tr>
+<tr><td><code>endpoint</code></td><td><code>string</code></td><td><code>endpoint</code> 模式必填</td><td>全部</td><td>达梦地址，格式必须为 <code>host:port</code>；优先级高于 <code>dsn</code>。</td></tr>
+<tr><td><code>dsn</code></td><td><code>string</code></td><td><code>dsn</code> 模式必填</td><td>全部</td><td>ODBC 数据源名称；仅在未配置 <code>connection_string</code> 和 <code>endpoint</code> 时使用。</td></tr>
+<tr><td><code>driver</code></td><td><code>string</code></td><td><code>endpoint</code> 模式必填</td><td>全部</td><td>达梦 ODBC 驱动名称，例如 <code>DM8 ODBC DRIVER</code>。</td></tr>
+<tr><td><code>username</code></td><td><code>string</code></td><td><code>dsn</code>、<code>endpoint</code> 模式必填</td><td>全部</td><td>达梦用户名。<code>connection_string</code> 模式不要求单独传入。</td></tr>
+<tr><td><code>password</code></td><td><code>string</code></td><td><code>dsn</code>、<code>endpoint</code> 模式必填</td><td>全部</td><td>达梦密码。<code>connection_string</code> 模式不要求单独传入。</td></tr>
+<tr><td><code>schema</code></td><td><code>string</code></td><td>否</td><td>全部</td><td>用于拼接目标表的限定名；在 <code>endpoint</code> 模式下还会被附加进生成的连接串。</td></tr>
+<tr><td><code>table</code></td><td><code>string</code></td><td>是</td><td>全部</td><td>目标表名，不能为空。</td></tr>
+<tr><td><code>columns</code></td><td><code>string[]</code></td><td>是</td><td>全部</td><td>目标列名列表。必须是字符串数组，且每一项都不能为空字符串。</td></tr>
+<tr><td><code>batch_size</code></td><td><code>integer</code></td><td>否</td><td>全部</td><td>单次 SQL 最多写入的记录数，必须大于 <code>0</code>。未配置时 sink 内部回落为 <code>1024</code>。</td></tr>
+<tr><td><code>connect_timeout_secs</code></td><td><code>integer</code></td><td>否</td><td>全部</td><td>ODBC 登录超时秒数，必须大于 <code>0</code>。配置后会传给 <code>ConnectionOptions.login_timeout_sec</code>；未配置时不显式设置。</td></tr>
+<tr><td><code>query_timeout_secs</code></td><td><code>integer</code></td><td>否</td><td>全部</td><td>每批 SQL 的执行超时秒数，必须大于 <code>0</code>。未配置时不显式设置。</td></tr>
+</tbody>
+</table>
+</div>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="排障指南troubleshooting"><a class="header" href="#排障指南troubleshooting">排障指南（Troubleshooting）</a></h1>
 <!-- 角色：使用配置者 | 最近验证：2025-12-11 -->
 <p>常见问题</p>
@@ -19542,7 +20316,6 @@ batch_size = 1024
 <p>我们会持续在“简单场景易用性”和“复杂场景可治理性”之间做平衡。</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="wp-monitor"><a class="header" href="#wp-monitor">Wp-Monitor</a></h1>
-<p><img src="images/Wp-Monitor.jpg" alt="Wp-Monitor"></p>
 <p>Wp-Monitor 是面向 WarpParse 数据链路的统一观察入口，用于查看链路是否正常处理数据、MISS 是否异常、下游输出是否稳定。</p>
 <h2 id="能看什么"><a class="header" href="#能看什么">能看什么</a></h2>
 <ul>
@@ -19557,6 +20330,7 @@ batch_size = 1024
 <li>问题排查</li>
 <li>故障复盘</li>
 </ul>
+<p><img src="10-user/10-monitor/monitor-1.jpg" alt="Wp-Monitor"></p>
 <h2 id="使用前提"><a class="header" href="#使用前提">使用前提</a></h2>
 <p>需要先准备以下组件：</p>
 <ul>
@@ -19566,9 +20340,20 @@ batch_size = 1024
 </ul>
 <p>如果 WarpParse 链路尚未部署，Wp-Monitor 无法使用。</p>
 <h2 id="接入步骤"><a class="header" href="#接入步骤">接入步骤</a></h2>
-<h3 id="1-部署--wp-observing"><a class="header" href="#1-部署--wp-observing">1. 部署  wp-observing</a></h3>
-<pre><code class="language-bash">git clone https://github.com/wp-labs/wp-compose
-cd ./wp-compose/warp-observing/setup.sh
+<h3 id="1-docker部署--monitor"><a class="header" href="#1-docker部署--monitor">1. docker部署  monitor</a></h3>
+<pre><code class="language-bash">curl -sSf https://get.warpparse.ai/inst-x.sh | bash -s -- monitor-docker alpha
+</code></pre>
+<p>该命令会在当前目录提供一个monitor的docker配置，这个配置可以直接使用 <code>docker-compose -f</code> 启动。下面是monitor的docker目录结构：</p>
+<pre><code class="language-bash">wp-monitor
+├── example                     # wparse示例
+├── README.md
+├── docker-compose-alpha.yml    # alpha版本配置
+├── docker-compose-beta.yml     # beta版本配置
+├── docker-compose-main.yml     # main版本配置
+├── start.sh                    # 启动脚本
+└── wp-monitor                  # monitor配置
+    └── config
+        └── app.toml
 </code></pre>
 <h3 id="2-在-warpparse-中配置-connector"><a class="header" href="#2-在-warpparse-中配置-connector">2. 在 WarpParse 中配置 connector</a></h3>
 <p>如果已有对应 connector，可跳过。</p>
@@ -19609,8 +20394,12 @@ params = { endpoint = "http://127.0.0.1:9428", insert_path = "/insert/jsonline",
 <li><code>tags</code> 必须包含 <code>wp_stage:miss</code></li>
 <li>否则 Wp-Monitor 无法查询到 MISS 数据</li>
 </ul>
-<h3 id="4-启动-warpparse"><a class="header" href="#4-启动-warpparse">4. 启动 WarpParse</a></h3>
-<pre><code class="language-bash">wparse daemon --stat 1
+<h3 id="4-启动-warpparse示例非必须"><a class="header" href="#4-启动-warpparse示例非必须">4. 启动 WarpParse示例（非必须）</a></h3>
+<pre><code class="language-bash">cd wp-monitor/example
+wparse daemon --stat 1
+# 开一个新终端，执行
+cd wp-monitor/example
+./wpgen-keep-running.sh
 </code></pre>
 <p><code>--stat 1</code> 用于开启统计输出，便于 Wp-Monitor 观察链路状态。</p>
 <h2 id="最小排查路径"><a class="header" href="#最小排查路径">最小排查路径</a></h2>
@@ -19622,6 +20411,73 @@ params = { endpoint = "http://127.0.0.1:9428", insert_path = "/insert/jsonline",
 <li>查看下游输出是否有损耗或波动</li>
 </ol>
 <p>如果只是想快速判断链路是否正常，通常先看时间窗口内的总览和 MISS 即可。</p>
+<h2 id="效果展示"><a class="header" href="#效果展示">效果展示：</a></h2>
+<h3 id="来源统计数据"><a class="header" href="#来源统计数据">来源统计数据</a></h3>
+<p><img src="10-user/10-monitor/monitor-source.jpg" alt=""></p>
+<h3 id="解析统计数据"><a class="header" href="#解析统计数据">解析统计数据</a></h3>
+<p><img src="10-user/10-monitor/monitor-parse.jpg" alt=""></p>
+<h3 id="输出统计数据"><a class="header" href="#输出统计数据">输出统计数据</a></h3>
+<p><img src="10-user/10-monitor/monitor-sink.jpg" alt=""></p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="wp-skills"><a class="header" href="#wp-skills">wp-skills</a></h1>
+<p><code>wp-skills</code> 是面向 WarpParse 的 AI 技能集合，在使用skills之前，您需要具备使用AI agent的基础知识，并且已经安装了支持skills的AI工具（如Claude、Codex等）。<code>wp-skills</code> 目前包含以下技能：</p>
+<h3 id="wp-deploy"><a class="header" href="#wp-deploy"><code>wp-deploy</code></a></h3>
+<p>用于 WarpParse 的部署和配置指导，主要处理：</p>
+<ul>
+<li><code>connectors/source.d</code> / <code>connectors/sink.d</code></li>
+<li><code>topology/sources</code> / <code>topology/sinks</code></li>
+<li><code>conf/wparse.toml</code></li>
+<li><code>conf/wpgen.toml</code></li>
+<li><code>wp-monitor/config/app.toml</code></li>
+<li>联调接线、部署说明、观察链路是否跑通</li>
+</ul>
+<p>适合这样的问题：</p>
+<ul>
+<li>帮我加一个 <code>file source</code></li>
+<li>帮我把 <code>source</code> 和 <code>sink</code> 接起来</li>
+<li>帮我补一个 <code>wpgen</code> 做回放</li>
+<li>帮我接上 <code>wp-monitor</code> 看指标和 MISS</li>
+</ul>
+<h3 id="wpl-rule-check"><a class="header" href="#wpl-rule-check"><code>wpl-rule-check</code></a></h3>
+<p>用于根据日志样本编写和验证 <code>WPL</code> / <code>OML</code>，主要处理：</p>
+<ul>
+<li>分析原始日志样本</li>
+<li>编写 <code>parse.wpl</code></li>
+<li>编写 <code>.oml</code></li>
+<li>使用 <code>wpl-check</code> 验证规则</li>
+<li>排查规则为什么匹配不上</li>
+</ul>
+<p>适合这样的问题：</p>
+<ul>
+<li>这条日志帮我写规则</li>
+<li>这个字段怎么提取</li>
+<li>帮我写 <code>OML</code></li>
+<li>这条规则为什么匹配失败</li>
+</ul>
+<h2 id="安装命令"><a class="header" href="#安装命令">安装命令</a></h2>
+<p>安装 <code>wp-skills alpha</code>：</p>
+<pre><code class="language-bash">curl -sSf https://get.warpparse.ai/inst-x.sh | bash -s -- wp-skills alpha
+</code></pre>
+<p>该命令会提示你选择需要的skill，选择后，会安装到如下目录中:</p>
+<ul>
+<li><code>~/.claude/skills</code></li>
+<li><code>~/.codex/skills</code></li>
+</ul>
+<h2 id="怎么使用"><a class="header" href="#怎么使用">怎么使用</a></h2>
+<p>安装完成后，就可以在支持 skills 的 AI 工具(codex、claude、opencode)中直接描述你的目标。</p>
+<p>例如：</p>
+<ul>
+<li>帮我配一个 <code>file source</code>，把样本跑进 WarpParse</li>
+<li>帮我增加一个 <code>file sink</code>，把结果输出成 JSON</li>
+<li>帮我接一个 <code>wpgen</code>，往 <code>tcp source</code> 发送测试数据</li>
+<li>帮我给链路接上 <code>wp-monitor</code></li>
+<li>这条日志帮我写 <code>WPL</code> 和 <code>OML</code>，并验证一下</li>
+</ul>
+<p>建议：</p>
+<ul>
+<li>配置和部署问题优先使用 <code>wp-deploy</code></li>
+<li>规则编写和验证问题优先使用 <code>wpl-rule-check</code></li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="benchmark-report"><a class="header" href="#benchmark-report">BenchMark Report</a></h1>
 <p>4 种日志 * 3 种拓扑 * 2 种能力 * 2 种平台 * 2 种引擎。</p>
@@ -19652,7 +20508,7 @@ params = { endpoint = "http://127.0.0.1:9428", insert_path = "/insert/jsonline",
 <h2 id="日志解析测试"><a class="header" href="#日志解析测试">日志解析测试</a></h2>
 <h3 id="mac-m4-mini"><a class="header" href="#mac-m4-mini">Mac M4 Mini</a></h3>
 <h4 id="nginx239b"><a class="header" href="#nginx239b">Nginx（239B）</a></h4>
-<h5 id="warpparse"><a class="header" href="#warpparse">WarpParse</a></h5>
+<h5 id="warpparse-1"><a class="header" href="#warpparse-1">WarpParse</a></h5>
 <h6 id="wpl"><a class="header" href="#wpl">WPL</a></h6>
 <pre><code class="language-bash">package /nginx/ {
    rule nginx {
@@ -19674,7 +20530,7 @@ params = { endpoint = "http://127.0.0.1:9428", insert_path = "/insert/jsonline",
 	"wp_src_ip": "127.0.0.1"
 }
 </code></pre>
-<h5 id="vector"><a class="header" href="#vector">Vector</a></h5>
+<h5 id="vector-1"><a class="header" href="#vector-1">Vector</a></h5>
 <h6 id="vrl"><a class="header" href="#vrl">VRL</a></h6>
 <pre><code class="language- bash">source = '''
   parsed = parse_regex!(.message, r'^(?P&lt;client&gt;\S+) \S+ \S+ \[(?P&lt;time&gt;[^\]]+)\] "(?P&lt;request&gt;[^"]*)" (?P&lt;status&gt;\d{3}) (?P&lt;size&gt;\d+) "(?P&lt;referer&gt;[^"]*)" "(?P&lt;agent&gt;[^"]*)" "(?P&lt;extra&gt;[^"]*)"')
@@ -19721,7 +20577,7 @@ params = { endpoint = "http://127.0.0.1:9428", insert_path = "/insert/jsonline",
 <p>https://github.com/vectordotdev/vector/issues/20739?utm_source=chatgpt.com</p>
 </blockquote>
 <h4 id="aws411b"><a class="header" href="#aws411b">AWS（411B)</a></h4>
-<h5 id="warpparse-1"><a class="header" href="#warpparse-1">WarpParse</a></h5>
+<h5 id="warpparse-1-1"><a class="header" href="#warpparse-1-1">WarpParse</a></h5>
 <h6 id="wpl-1"><a class="header" href="#wpl-1">WPL</a></h6>
 <pre><code class="language-bash">package /aws/ {
    rule aws {
@@ -19799,7 +20655,7 @@ params = { endpoint = "http://127.0.0.1:9428", insert_path = "/insert/jsonline",
 	"wp_src_ip": "127.0.0.1"
 }
 </code></pre>
-<h5 id="vector-1"><a class="header" href="#vector-1">Vector</a></h5>
+<h5 id="vector-1-1"><a class="header" href="#vector-1-1">Vector</a></h5>
 <h6 id="vrl-1"><a class="header" href="#vrl-1">VRL</a></h6>
 <pre><code class="language-bash">source = '''
   parsed = parse_regex!(.message, r'^(?P&lt;type&gt;\S+) (?P&lt;timestamp&gt;\S+) (?P&lt;elb&gt;\S+) (?P&lt;client_host&gt;\S+) (?P&lt;target_host&gt;\S+) (?P&lt;request_processing_time&gt;[-\d\.]+) (?P&lt;target_processing_time&gt;[-\d\.]+) (?P&lt;response_processing_time&gt;[-\d\.]+) (?P&lt;elb_status_code&gt;\S+) (?P&lt;target_status_code&gt;\S+) (?P&lt;received_bytes&gt;\d+) (?P&lt;sent_bytes&gt;\d+) "(?P&lt;request_method&gt;\S+) (?P&lt;request_url&gt;[^ ]+) (?P&lt;request_protocol&gt;[^"]+)" "(?P&lt;user_agent&gt;[^"]*)" "(?P&lt;ssl_cipher&gt;[^"]*)" "(?P&lt;ssl_protocol&gt;[^"]*)" (?P&lt;target_group_arn&gt;\S+) "(?P&lt;trace_id&gt;[^"]*)" "(?P&lt;domain_name&gt;[^"]*)" "(?P&lt;chosen_cert_arn&gt;[^"]*)" (?P&lt;matched_rule_priority&gt;\S+) (?P&lt;request_creation_time&gt;\S+) "(?P&lt;actions_executed&gt;[^"]*)" "(?P&lt;redirect_url&gt;[^"]*)" "(?P&lt;error_reason&gt;[^"]*)" "(?P&lt;target_port_list&gt;[^"]*)" "(?P&lt;target_status_code_list&gt;[^"]*)" "(?P&lt;classification&gt;[^"]*)" "(?P&lt;classification_reason&gt;[^"]*)" (?P&lt;traceability_id&gt;\S+)$')
@@ -21525,7 +22381,8 @@ if .type == "l" {
 <p><strong>结论</strong>:
 对于专注于日志分析、安全事件处理（SIEM/SOC）、以及对实时性有苛刻要求的 ETL 场景，<strong>WarpParse 是优于 Vector 的选择</strong>。它通过更高效的 Rust 实现和专用的 WPL/OML 语言，成功打破了通用 ETL 工具的性能天花板。</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="provider-性能测试与结论"><a class="header" href="#provider-性能测试与结论">Provider 性能测试与结论</a></h1>
+<h1 id="async-provider-性能测试与结论"><a class="header" href="#async-provider-性能测试与结论">Async Provider 性能测试与结论</a></h1>
+<h1 id="async-provider-性能结论"><a class="header" href="#async-provider-性能结论">Async Provider 性能结论</a></h1>
 <h2 id="结论先看"><a class="header" href="#结论先看">结论先看</a></h2>
 <ul>
 <li>provider 层 <code>sync</code> 和 <code>async</code> 基本持平，<code>async</code> 只略优</li>
@@ -21632,11 +22489,13 @@ if .type == "l" {
 </ul>
 <h2 id="复现命令"><a class="header" href="#复现命令">复现命令</a></h2>
 <p>PostgreSQL provider 层：</p>
-<pre><code class="language-bash">KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-postgres-provider.sh
+<pre><code class="language-bash">KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-postgres-provider-perf.sh
 </code></pre>
 <p>MySQL provider 层：</p>
-<pre><code class="language-bash">KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-mysql-provider.sh
+<pre><code class="language-bash">KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-mysql-provider-perf.sh
 </code></pre>
+<p>如果你只想跑 correctness 回归，可以使用 <code>tests/test-postgres-provider-correctness.sh</code> 和 <code>tests/test-mysql-provider-correctness.sh</code>。
+如果你需要并行运行多个 provider 脚本，给每次执行设置不同的 <code>COMPOSE_PROJECT_NAME</code> 即可。</p>
 <p>PostgreSQL OML 层：</p>
 <pre><code class="language-bash">WP_KDB_TEST_POSTGRES_URL='postgres://postgres:demo@127.0.0.1:5432/postgres' \
 WP_KDB_PERF_ROWS=10000 \
@@ -21894,6 +22753,782 @@ cargo test --manifest-path ../wp-motor/Cargo.toml -p wp-oml \
 </ol>
 <h2 id="为什么这套方案比现状更合适"><a class="header" href="#为什么这套方案比现状更合适">为什么这套方案比现状更合适</a></h2>
 <p>现有方案的问题是：同步逻辑只覆盖一个项目、依赖本地目录结构、没有统一配置入口、没有自动 PR。新方案把“来源声明”“同步执行”“变更入库”拆开后，后续扩展更多仓库不会继续放大维护成本。</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="warpparse-架构总览"><a class="header" href="#warpparse-架构总览">WarpParse 架构总览</a></h1>
+<!-- 角色：架构师 / 开发者 / 方案设计者 | 最近整理：2026-03-26 -->
+<p>本文整理 WarpParse 的整体架构，目标是回答 4 个问题：</p>
+<ol>
+<li>WarpParse 的核心链路是什么。</li>
+<li>配置、规则、运行时分别承担什么职责。</li>
+<li>高吞吐设计主要落在哪些模块。</li>
+<li>做工程落地时，应该把注意力放在哪些边界上。</li>
+</ol>
+<p>本文不展开 WPL/OML 语法细节；如果任务进入规则编写或校验，应转到对应规则文档和验证流程。</p>
+<h2 id="一句话概括"><a class="header" href="#一句话概括">一句话概括</a></h2>
+<p>WarpParse 是一套围绕日志 ETL 构建的高性能运行时：</p>
+<ul>
+<li>用 <strong>Source/Connector</strong> 负责接入数据。</li>
+<li>用 <strong>WPL</strong> 负责把原始日志解析成结构化字段。</li>
+<li>用 <strong>OML</strong> 负责把字段组装成目标对象。</li>
+<li>用 <strong>Sink/Route</strong> 负责把结果发送到文件、数据库、消息系统或搜索系统。</li>
+<li>用 <strong>KnowDB / Rescue / Monitor</strong> 提供富化、容灾和可观测能力。</li>
+</ul>
+<h2 id="核心特征摘要"><a class="header" href="#核心特征摘要">核心特征摘要</a></h2>
+<p>从技术选型和系统能力上看，WarpParse 可以概括为 5 个关键点：</p>
+<ol>
+<li><strong>基于 Rust 构建</strong>：以高性能、内存安全和较强并发可控性为基础。</li>
+<li><strong>全异步 I/O 模式</strong>：通过异步运行时、批处理和背压调度充分利用 CPU 与 I/O 资源。</li>
+<li><strong>自有 DSL 体系</strong>：通过 WPL 和 OML 把“解析”和“组装”从通用脚本逻辑中抽离出来。</li>
+<li><strong>基于接口的 Source/Sink 扩展机制</strong>：通过统一工厂和运行时接口扩展接入与输出能力。</li>
+<li><strong>基于接口的知识库富化机制</strong>：通过 KnowDB 的查询门面和 Provider 形态支持运行时富化。</li>
+</ol>
+<h2 id="架构分层"><a class="header" href="#架构分层">架构分层</a></h2>
+<pre class="mermaid">flowchart LR
+    A[外部数据源&lt;br/&gt;file / tcp / syslog / kafka] --&gt; B[Source Connector]
+    B --&gt; C[ActPicker / Collector]
+    C --&gt; D[ActParser]
+    D --&gt; E[WPL Parser]
+    E --&gt; F[OML Transformer]
+    F --&gt; G[Sink Runtime / Router]
+    G --&gt; H[文件 / DB / ES / Kafka / HTTP]
+
+    I[KnowDB] -. 查询富化 .-&gt; F
+    J[Monitor / Stat] -. 指标 .-&gt; C
+    J -. 指标 .-&gt; D
+    J -. 指标 .-&gt; G
+    K[Rescue] -. 失败回放 .-&gt; G
+</pre>
+
+<p>从运行时看，主链路是：</p>
+<p><code>Source -&gt; Collector(Picker) -&gt; Parser -&gt; WPL -&gt; OML -&gt; Sink</code></p>
+<p>从工程视角看，配置和模型分为三层：</p>
+<ul>
+<li><code>conf/</code>：运行时主配置，例如 <code>wparse.toml</code></li>
+<li><code>connectors/</code>：连接器模板，定义某类 source/sink 的默认参数</li>
+<li><code>models/</code> + <code>topology/</code>：规则、知识库、路由和实例化配置</li>
+</ul>
+<h2 id="工程目录与职责"><a class="header" href="#工程目录与职责">工程目录与职责</a></h2>
+<p>典型工程目录如下：</p>
+<pre><code class="language-text">work-root/
+├── conf/
+│   ├── wparse.toml
+│   └── wpgen.toml
+├── connectors/
+│   ├── source.d/
+│   └── sink.d/
+├── models/
+│   ├── wpl/
+│   ├── oml/
+│   └── knowledge/
+├── topology/
+│   ├── sources/
+│   └── sinks/
+└── data/
+    ├── in_dat/
+    ├── out_dat/
+    ├── logs/
+    └── rescue/
+</code></pre>
+<p>可以把这些目录理解成 4 个层次：</p>
+<ol>
+<li><code>conf/</code> 决定进程怎么运行。</li>
+<li><code>connectors/</code> 定义“如何连接某类系统”。</li>
+<li><code>models/</code> 定义“如何解析、转换、富化数据”。</li>
+<li><code>topology/</code> 定义“哪些 source 和 sink 被启用，以及如何路由”。</li>
+</ol>
+<p>这套拆分的好处是：</p>
+<ul>
+<li>连接参数可复用，避免在每条链路上重复写一遍。</li>
+<li>规则模型和接入拓扑分离，便于多人协作。</li>
+<li>配置可以做白名单覆盖，降低误改连接器默认参数的风险。</li>
+</ul>
+<h2 id="主数据流"><a class="header" href="#主数据流">主数据流</a></h2>
+<h3 id="1-source-与-connector"><a class="header" href="#1-source-与-connector">1. Source 与 Connector</a></h3>
+<p>Source 负责把外部数据带入 WarpParse。当前文档中常见的输入包括：</p>
+<ul>
+<li><code>file</code></li>
+<li><code>tcp</code></li>
+<li><code>syslog</code></li>
+<li><code>kafka</code>（是否可用以当前实现和 feature 为准）</li>
+</ul>
+<p>WarpParse 采用“<strong>连接器定义</strong> + <strong>实例配置</strong>”两段式模型：</p>
+<ul>
+<li><code>connectors/source.d/*.toml</code>：定义连接器模板</li>
+<li><code>topology/sources/wpsrc.toml</code>：定义具体 source 实例</li>
+</ul>
+<p>实例只允许覆盖 <code>allow_override</code> 白名单中的参数。这样既保留灵活性，也防止实例层随意改掉底层协议参数。</p>
+<h3 id="2-collector--picker"><a class="header" href="#2-collector--picker">2. Collector / Picker</a></h3>
+<p>Source 读到的数据不会直接扔给解析器，而是先进入采集调度层。</p>
+<p>这一层的核心是 <code>ActPicker</code>：</p>
+<ul>
+<li>管理 <code>pending</code> 缓冲队列</li>
+<li>决定本轮先发多少数据给下游</li>
+<li>根据水位决定是否继续从 source 拉取</li>
+<li>在下游阻塞时通过轮次退避避免 CPU 自旋</li>
+</ul>
+<p>它的设计原则是：</p>
+<ul>
+<li>优先发已有缓存，再决定是否继续拉取</li>
+<li>使用固定 burst、水位和轮次退避，而不是在热路径上引入复杂时间控制</li>
+<li>让背压沿着有界队列自然传递</li>
+</ul>
+<p>这意味着 WarpParse 的高吞吐不是“无限拉取”，而是“可控拉取 + 可解释调度”。</p>
+<h3 id="3-sourceevent-与预处理下沉"><a class="header" href="#3-sourceevent-与预处理下沉">3. SourceEvent 与预处理下沉</a></h3>
+<p>新的运行时设计把 Source 的职责压到最小：</p>
+<ul>
+<li>Source 只负责取帧、附带最小标签和上游 IP 等元信息</li>
+<li>协议级预处理不再尽量堆在 <code>recv</code> 热路径里</li>
+<li>预处理通过 <code>SourceEvent.preproc</code> 挂载，转移到 parse worker 中执行</li>
+</ul>
+<p>这样做的意义很直接：</p>
+<ul>
+<li>syslog header normalize/strip/tag 注入不再卡死在单一接入线程</li>
+<li>预处理随着 parse worker 并行数一起扩展</li>
+<li>Source 端只做“接入”，Parser 端负责“消化”</li>
+</ul>
+<p>这是 WarpParse 运行时设计里非常关键的一条边界。</p>
+<h2 id="解析与转换层"><a class="header" href="#解析与转换层">解析与转换层</a></h2>
+<h3 id="1-wpl解析层"><a class="header" href="#1-wpl解析层">1. WPL：解析层</a></h3>
+<p>WPL 负责从原始日志里抽取字段，定位是“解析规则语言”。</p>
+<p>它主要解决：</p>
+<ul>
+<li>文本字段提取</li>
+<li>JSON/KV/数组等结构化内容拆解</li>
+<li>IP、时间、端口、HTTP 等类型识别</li>
+<li>预处理和字段级 pipe</li>
+<li>可选、择一、重复扫描等复杂匹配场景</li>
+</ul>
+<p>WPL 的产出不是最终对象，而是“结构化中间结果 + 命中的 rule 标识”。</p>
+<h3 id="2-oml对象建模层"><a class="header" href="#2-oml对象建模层">2. OML：对象建模层</a></h3>
+<p>OML 接在 WPL 后面，定位是“对象组装与转换语言”。</p>
+<p>它主要负责：</p>
+<ul>
+<li>字段重命名和重组</li>
+<li>条件判断和类型转换</li>
+<li>对象、数组等输出结构构造</li>
+<li>数值计算</li>
+<li>通过 SQL/KnowDB 进行富化</li>
+</ul>
+<p>运行时通常先命中 WPL 规则，再根据 <code>rule = /package/rule</code> 去匹配 OML 配置。</p>
+<p>可以把它理解成：</p>
+<ul>
+<li>WPL 关注“从哪里抽出什么”</li>
+<li>OML 关注“最终要交付成什么”</li>
+</ul>
+<h3 id="3-knowdb富化层"><a class="header" href="#3-knowdb富化层">3. KnowDB：富化层</a></h3>
+<p>KnowDB 负责为 OML 或其他组件提供查询能力，典型场景包括：</p>
+<ul>
+<li>地域、资产、组织等信息映射</li>
+<li>静态知识表查找</li>
+<li>运行时轻量 SQL 富化</li>
+</ul>
+<p>当前设计文档里，KnowDB 默认保留“权威库”形态，再根据数据规模选择两种模式：</p>
+<ul>
+<li>小数据、低延迟优先：线程克隆到内存</li>
+<li>中大数据、内存敏感：WAL + 只读连接池</li>
+</ul>
+<p>这说明 KnowDB 的定位不是在线事务数据库，而是“<strong>运行时只读知识快照</strong>”。</p>
+<h2 id="输出与路由层"><a class="header" href="#输出与路由层">输出与路由层</a></h2>
+<h3 id="1-sink-connector"><a class="header" href="#1-sink-connector">1. Sink Connector</a></h3>
+<p>Sink 负责把结果发往目标系统，常见目标包括：</p>
+<ul>
+<li>file</li>
+<li>syslog</li>
+<li>tcp</li>
+<li>arrow-ipc</li>
+<li>kafka</li>
+<li>mysql / postgresql</li>
+<li>doris / clickhouse</li>
+<li>elasticsearch</li>
+<li>http</li>
+</ul>
+<p>和 Source 一样，Sink 也分成两层：</p>
+<ul>
+<li><code>connectors/sink.d/*.toml</code>：连接器模板</li>
+<li><code>topology/sinks/business.d|infra.d/**/*.toml</code>：业务路由和基础路由</li>
+</ul>
+<h3 id="2-路由模型"><a class="header" href="#2-路由模型">2. 路由模型</a></h3>
+<p>WarpParse 的 sink 路由分为两类：</p>
+<ul>
+<li><code>business.d/</code>：面向具体业务场景的输出</li>
+<li><code>infra.d/</code>：系统级输出，例如 <code>default</code>、<code>miss</code>、<code>residue</code>、<code>error</code>、<code>monitor</code></li>
+</ul>
+<p>这里的关键思路是：</p>
+<ul>
+<li>业务输出和系统兜底输出分开治理</li>
+<li>路由可以按 <code>oml</code> 或 <code>rule</code> 进行匹配</li>
+<li>每个 sink 可以单独配置 <code>filter</code> 和 <code>expect</code></li>
+</ul>
+<p>其中：</p>
+<ul>
+<li><code>filter</code> 是拦截条件，命中后不写该 sink，而是进入 <code>intercept</code></li>
+<li><code>expect</code> 用于做比例或范围校验，帮助发现规则漂移、路由异常或输出丢失</li>
+</ul>
+<h2 id="高吞吐设计落点"><a class="header" href="#高吞吐设计落点">高吞吐设计落点</a></h2>
+<p>如果只看用户文档，很容易把 WarpParse 理解成“WPL 很强”。但从架构上看，它的性能优势不只来自规则语言，还来自运行时设计。</p>
+<h3 id="0-rust-与异步运行时基础"><a class="header" href="#0-rust-与异步运行时基础">0. Rust 与异步运行时基础</a></h3>
+<p>WarpParse 的底层基础是 Rust。</p>
+<p>这带来几层直接收益：</p>
+<ul>
+<li>在系统级语言里保持较高性能上限</li>
+<li>借助所有权和借用模型降低内存安全风险</li>
+<li>更适合构建长时间运行的并发数据处理链路</li>
+</ul>
+<p>在此基础上，运行时采用异步 I/O 模式来组织网络接入、批处理和任务协作：</p>
+<ul>
+<li>网络 Source 和部分 Sink 使用异步接口</li>
+<li>通过有界通道、任务组和异步调度组织上下游</li>
+<li>让 CPU 密集的解析工作与 I/O 密集的接入/发送更好地并行</li>
+</ul>
+<p>最终目标不是“所有代码都异步”，而是让 I/O 等待、批处理和解析并发各自落在合适的位置上。</p>
+<h3 id="1-source-最小化"><a class="header" href="#1-source-最小化">1. Source 最小化</a></h3>
+<ul>
+<li>Source 负责接入，不负责做过多逻辑处理</li>
+<li>协议预处理被后移到 parse worker</li>
+<li>有助于减少接入线程热点</li>
+</ul>
+<h3 id="2-有界队列与背压"><a class="header" href="#2-有界队列与背压">2. 有界队列与背压</a></h3>
+<ul>
+<li>Source 内部和 Collector 之间使用 bounded channel</li>
+<li>Picker 不盲目拉取，按 burst 和水位控制节奏</li>
+<li>下游阻塞时，上游可以自然感知而不是无限堆内存</li>
+</ul>
+<h3 id="3-zero-copy"><a class="header" href="#3-zero-copy">3. Zero-Copy</a></h3>
+<p>TCP 路径上引入 <code>Arc&lt;Vec&lt;u8&gt;&gt;</code> / <code>RawData::ArcBytes</code>：</p>
+<ul>
+<li>降低 Source -&gt; Parser -&gt; Sink 之间的重复拷贝</li>
+<li>对高吞吐、小包密集场景更有价值</li>
+<li>配合批处理和缓冲 shrink，控制内存峰值</li>
+</ul>
+<h3 id="4-批处理"><a class="header" href="#4-批处理">4. 批处理</a></h3>
+<p>批处理不是附加优化，而是运行时基线能力的一部分：</p>
+<ul>
+<li>源端按事件数和字节上限构批</li>
+<li>Picker 在高水位时做小批合并</li>
+<li>Sink 侧也可按目标协议做批量发送</li>
+</ul>
+<h3 id="5-工具链与运行模式分离"><a class="header" href="#5-工具链与运行模式分离">5. 工具链与运行模式分离</a></h3>
+<p>WarpParse 把“开发、验证、运行、恢复”拆成了独立工具：</p>
+<ul>
+<li><code>wproj</code>：初始化、检查、统计</li>
+<li><code>wpgen</code>：生成测试数据</li>
+<li><code>wparse</code>：批处理或 daemon 运行</li>
+<li><code>wprescue</code>：回放 rescue 数据</li>
+</ul>
+<p>这意味着日常工程操作不需要把所有事情都塞进主进程。</p>
+<h2 id="可用性容灾与可观测"><a class="header" href="#可用性容灾与可观测">可用性、容灾与可观测</a></h2>
+<h3 id="1-运行模式"><a class="header" href="#1-运行模式">1. 运行模式</a></h3>
+<p><code>wparse</code> 支持两种核心模式：</p>
+<ul>
+<li><code>batch</code>：读完即退，适合离线验证、回归和文件处理</li>
+<li><code>daemon</code>：常驻运行，适合网络接入和在线链路</li>
+</ul>
+<p>架构上的重要差异是：</p>
+<ul>
+<li><code>batch</code> 不启动 acceptor，目标是源结束后优雅退出</li>
+<li><code>daemon</code> 才启动监听类组件并常驻等待连接</li>
+</ul>
+<h3 id="2-rescue"><a class="header" href="#2-rescue">2. Rescue</a></h3>
+<p>当 sink 侧需要兜底时，WarpParse 使用 rescue 目录保存失败数据。</p>
+<p>当前设计不是简单地把格式化文本备份下来，而是记录结构化 JSON 行：</p>
+<ul>
+<li><code>Record</code>：可还原成结构化记录</li>
+<li><code>Raw</code>：保留原始字符串</li>
+</ul>
+<p>恢复时通过 <code>wprescue</code> 或运行时恢复链路重新走 <code>send_record/send_raw</code>，尽量保证“恢复后的行为和实时发送一致”。</p>
+<h3 id="3-monitor--stat"><a class="header" href="#3-monitor--stat">3. Monitor / Stat</a></h3>
+<p>统计配置允许分别观察：</p>
+<ul>
+<li>pick 阶段</li>
+<li>parse 阶段</li>
+<li>sink 阶段</li>
+</ul>
+<p>这比只看一条总 TPS 更有价值，因为它能帮助判断瓶颈是在：</p>
+<ul>
+<li>接入</li>
+<li>解析</li>
+<li>富化/转换</li>
+<li>下游输出</li>
+</ul>
+<h2 id="扩展点"><a class="header" href="#扩展点">扩展点</a></h2>
+<p>WarpParse 的扩展主要落在两类地方。</p>
+<h3 id="1-connector-扩展"><a class="header" href="#1-connector-扩展">1. Connector 扩展</a></h3>
+<p>通过实现 <code>SourceFactory</code> / <code>SinkFactory</code>，可以引入新的 source 或 sink 类型。</p>
+<p>核心约束是：</p>
+<ul>
+<li>先把动态参数收敛成静态 <code>Spec</code></li>
+<li><code>validate_spec</code> 只做校验和转换</li>
+<li><code>build</code> 只消费已经校验过的 <code>Spec</code></li>
+<li>统一在 registry/startup 中注册</li>
+</ul>
+<p>这意味着 WarpParse 的接入与输出体系本质上是“<strong>基于接口的扩展架构</strong>”：</p>
+<ul>
+<li>新增一种 Source，不需要改写整条主链路</li>
+<li>新增一种 Sink，不需要侵入 WPL/OML 层</li>
+<li>运行时只依赖统一 trait 和 build 结果，而不依赖某个具体实现</li>
+</ul>
+<h3 id="2-pipeprocessor-扩展"><a class="header" href="#2-pipeprocessor-扩展">2. PipeProcessor 扩展</a></h3>
+<p>如果内置 WPL pipe 不够，可以通过 <code>PipeProcessor</code> 注册自定义处理器：</p>
+<ul>
+<li>适合做解码、格式化、验证等局部能力扩展</li>
+<li>不需要改动整条运行时主链路</li>
+<li>仍然保持 WPL 的声明式调用方式</li>
+</ul>
+<p>这类扩展应当优先用于“局部数据处理能力补充”，而不是把整套业务逻辑塞回通用脚本运行时。</p>
+<h3 id="3-知识库富化扩展"><a class="header" href="#3-知识库富化扩展">3. 知识库富化扩展</a></h3>
+<p>知识库富化同样是接口化设计，而不是把查询逻辑写死在规则层。</p>
+<p>当前设计文档中可以看到：</p>
+<ul>
+<li>KnowDB 通过统一的 <code>QueryFacade</code> 暴露查询能力</li>
+<li>底层 Provider 可以是线程克隆内存模式、WAL + 连接池模式，或纯内存模式</li>
+<li>OML 和运行时消费的是统一查询能力，而不是直接绑定某个 SQLite 连接实现</li>
+</ul>
+<p>这使得知识库富化具备两个工程价值：</p>
+<ul>
+<li>富化能力可以独立演进，而不破坏主链路</li>
+<li>运行时可以按数据规模和资源模型切换具体承载方式</li>
+</ul>
+<h2 id="设计边界"><a class="header" href="#设计边界">设计边界</a></h2>
+<p>在工程落地时，最容易混淆的是下面几组边界。</p>
+<h3 id="1-wproj-check-通过不等于链路已跑通"><a class="header" href="#1-wproj-check-通过不等于链路已跑通">1. <code>wproj check</code> 通过，不等于链路已跑通</a></h3>
+<p><code>wproj check</code> 主要验证：</p>
+<ul>
+<li>配置是否可解析</li>
+<li>connectors / routes / rules / models 是否存在明显问题</li>
+</ul>
+<p>但这并不等于：</p>
+<ul>
+<li>真实数据一定命中目标 WPL</li>
+<li>OML 一定按预期匹配</li>
+<li>Sink 已经正确连接目标系统</li>
+</ul>
+<p>真正的落地验证仍然要看：</p>
+<ul>
+<li><code>wparse batch</code></li>
+<li><code>wproj data stat</code></li>
+<li><code>miss.dat</code></li>
+<li><code>error.dat</code></li>
+<li>业务目标 sink 的实际输出</li>
+</ul>
+<h3 id="2-wploml-是模型不是部署系统"><a class="header" href="#2-wploml-是模型不是部署系统">2. WPL/OML 是模型，不是部署系统</a></h3>
+<p>规则和模型解决的是“怎么解析、怎么组装”，不负责：</p>
+<ul>
+<li>source/sink 生命周期管理</li>
+<li>背压调度</li>
+<li>故障回放</li>
+<li>监控与统计</li>
+</ul>
+<p>这些问题属于运行时架构，而不是规则语言本身。</p>
+<h3 id="3-knowdb-是只读富化组件不是主业务数据库"><a class="header" href="#3-knowdb-是只读富化组件不是主业务数据库">3. KnowDB 是只读富化组件，不是主业务数据库</a></h3>
+<p>它适合承载：</p>
+<ul>
+<li>快照化知识表</li>
+<li>查表富化</li>
+<li>轻量查询</li>
+</ul>
+<p>不适合承载：</p>
+<ul>
+<li>高频写入</li>
+<li>联机事务处理</li>
+<li>复杂跨系统一致性场景</li>
+</ul>
+<h2 id="典型落地路径"><a class="header" href="#典型落地路径">典型落地路径</a></h2>
+<p>如果要从零开始接入一条日志链路，推荐顺序是：</p>
+<ol>
+<li><code>wproj init --mode full</code> 初始化标准工程目录。</li>
+<li>配置 <code>conf/wparse.toml</code>、<code>connectors/</code> 和 <code>topology/sources</code>。</li>
+<li>准备代表性样本，完成 WPL/OML。</li>
+<li>用 <code>wparse batch</code> 跑样本，观察 <code>miss/error/default</code> 等输出。</li>
+<li>配置业务 sink 与 infra sink。</li>
+<li>在 batch 模式完成回归后，再切换到 daemon/在线接入。</li>
+<li>为目标链路补齐 <code>expect</code>、monitor、rescue 和恢复策略。</li>
+</ol>
+<p>这条路径体现了 WarpParse 的正确使用方式：</p>
+<ul>
+<li>先做可复现的离线验证</li>
+<li>再做在线接入</li>
+<li>最后补齐容灾、观测和治理</li>
+</ul>
+<h2 id="总结-2"><a class="header" href="#总结-2">总结</a></h2>
+<p>WarpParse 的核心不是单一规则语言，而是一个围绕日志 ETL 构建的分层系统：</p>
+<ul>
+<li><strong>Connector 层</strong>负责接入和输出。</li>
+<li><strong>Collector/Picker 层</strong>负责背压与调度。</li>
+<li><strong>WPL/OML 层</strong>负责解析、转换和富化。</li>
+<li><strong>KnowDB/Rescue/Monitor 层</strong>负责运行时增强能力。</li>
+</ul>
+<p>如果从工程角度理解它，可以把 WarpParse 看成：</p>
+<p><strong>一套“规则驱动 + 连接器驱动 + 背压友好”的日志处理运行时。</strong></p>
+<p>如果从系统能力角度压缩总结，则是：</p>
+<ul>
+<li><strong>Rust</strong> 提供性能与内存安全基础。</li>
+<li><strong>全异步 I/O + 批处理 + 背压</strong> 提供高吞吐运行时。</li>
+<li><strong>WPL / OML DSL</strong> 提供语义化规则建模能力。</li>
+<li><strong>Source / Sink trait</strong> 提供可扩展的接入与输出体系。</li>
+<li><strong>KnowDB QueryFacade</strong> 提供可扩展的知识富化机制。</li>
+</ul>
+<h2 id="延伸阅读"><a class="header" href="#延伸阅读">延伸阅读</a></h2>
+<ul>
+<li><a href="#wparse配置">Wparse 运行配置规范</a></li>
+<li><a href="#sources配置">Sources 配置总览</a></li>
+<li><a href="#sink-配置">Sink 配置</a></li>
+<li>深入设计文档位于仓库 <code>wp-core-docs/30-design/</code>：
+<code>01-architecture.md</code>、<code>02-event_prehook.md</code>、<code>03-pick_policy.md</code>、
+<code>06-zero_copy.md</code>、<code>08-knowledge_db.md</code>、<code>09-rescue.md</code></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="wp-knowledge-provider-与-cache-方案"><a class="header" href="#wp-knowledge-provider-与-cache-方案">wp-knowledge Provider 与 Cache 方案</a></h1>
+<p>配套任务见：</p>
+<ul>
+<li><a href="#provider--cache-重构后续任务">Provider / Cache 重构后续任务</a></li>
+</ul>
+<h2 id="一句话结论-1"><a class="header" href="#一句话结论-1">一句话结论</a></h2>
+<p>目标架构很简单：</p>
+<ul>
+<li>provider 可替换</li>
+<li>cache 分层明确</li>
+<li>reload 有统一失效语义</li>
+<li>旧 facade 继续可用，但内部只走统一 runtime</li>
+</ul>
+<p>正确性的核心只有两个值：</p>
+<ul>
+<li><code>datasource_id</code></li>
+<li><code>generation</code></li>
+</ul>
+<p>所有 cache 和线程本地快照都必须绑定这两个值。</p>
+<h2 id="为什么要改"><a class="header" href="#为什么要改">为什么要改</a></h2>
+<p>旧实现主要为 <code>SQLite + 单进程 + 单次计算内缓存</code> 设计。现在同时支持 SQLite / PostgreSQL / MySQL 后，问题会直接暴露为正确性和维护成本：</p>
+<ul>
+<li>provider 生命周期过静态</li>
+<li>调用方自带 cache key，语义不统一</li>
+<li>元数据缓存没有边界</li>
+<li><code>ThreadClonedMDB</code> 缺少版本感知</li>
+</ul>
+<h2 id="目标模型"><a class="header" href="#目标模型">目标模型</a></h2>
+<p>内部只保留四层：</p>
+<ol>
+<li><code>DatasourceRegistry</code>
+<ul>
+<li>持有当前激活 provider</li>
+<li>管理 <code>datasource_id</code></li>
+<li>管理 <code>generation</code></li>
+<li>处理 replace / reload</li>
+</ul>
+</li>
+<li><code>KnowledgeProvider</code>
+<ul>
+<li>只负责执行查询</li>
+<li>不负责缓存策略</li>
+</ul>
+</li>
+<li><code>QueryRuntime</code>
+<ul>
+<li>负责 cache key、cache 判定和执行路径</li>
+<li>持有 result cache 与 metadata cache</li>
+</ul>
+</li>
+<li><code>Facade Compatibility Layer</code>
+<ul>
+<li>保留 <code>query/query_row/query_named/cache_query</code></li>
+<li>只做兼容，不承载核心语义</li>
+</ul>
+</li>
+</ol>
+<h2 id="核心契约"><a class="header" href="#核心契约">核心契约</a></h2>
+<h3 id="datasourceid"><a class="header" href="#datasourceid"><code>DatasourceId</code></a></h3>
+<ul>
+<li>表示当前数据源身份</li>
+<li>可来自配置 hash 或 authority 路径 hash</li>
+<li>只用于区分来源，不暴露凭据</li>
+</ul>
+<h3 id="generation"><a class="header" href="#generation"><code>Generation</code></a></h3>
+<ul>
+<li>表示当前数据源版本</li>
+<li>只要 reload、provider 切换、authority 重建、schema refresh，就必须递增</li>
+<li>它是主失效机制；TTL 只是兜底</li>
+</ul>
+<h3 id="queryrequest"><a class="header" href="#queryrequest"><code>QueryRequest</code></a></h3>
+<p>内部统一查询模型，至少包含：</p>
+<ul>
+<li><code>sql</code></li>
+<li><code>params</code></li>
+<li><code>mode</code></li>
+<li><code>cache_policy</code></li>
+</ul>
+<p>provider 内部各自完成参数绑定，runtime 不再直接依赖 <code>rusqlite::ToSql</code>。</p>
+<h3 id="cachepolicy"><a class="header" href="#cachepolicy"><code>CachePolicy</code></a></h3>
+<p>只保留三种语义：</p>
+<ul>
+<li><code>Bypass</code>
+<ul>
+<li>不走缓存</li>
+</ul>
+</li>
+<li><code>UseGlobal</code>
+<ul>
+<li>走共享结果缓存</li>
+</ul>
+</li>
+<li><code>UseCallScope</code>
+<ul>
+<li>走单次调用期缓存，主要为兼容旧路径</li>
+</ul>
+</li>
+</ul>
+<h2 id="cache-分层"><a class="header" href="#cache-分层">Cache 分层</a></h2>
+<p>缓存只保留三层，职责不能混。</p>
+<h3 id="1-result-cache"><a class="header" href="#1-result-cache">1. Result Cache</a></h3>
+<ul>
+<li>面向跨调用复用</li>
+<li>key 必须包含：
+<ul>
+<li><code>datasource_id</code></li>
+<li><code>generation</code></li>
+<li><code>query_hash</code></li>
+<li><code>params_hash</code></li>
+<li><code>mode</code></li>
+</ul>
+</li>
+<li>只适合显式允许缓存的热点查询</li>
+</ul>
+<h3 id="2-local-cache"><a class="header" href="#2-local-cache">2. Local Cache</a></h3>
+<ul>
+<li>面向单次计算内去重</li>
+<li>不承担全局一致性责任</li>
+<li><code>FieldQueryCache</code> 在语义上应视为这一层</li>
+</ul>
+<h3 id="3-metadata-cache"><a class="header" href="#3-metadata-cache">3. Metadata Cache</a></h3>
+<ul>
+<li>用于列名、schema 片段等元数据</li>
+<li>key 至少包含：
+<ul>
+<li><code>datasource_id</code></li>
+<li><code>generation</code></li>
+<li><code>query_hash</code></li>
+</ul>
+</li>
+<li>必须有容量上限</li>
+</ul>
+<h2 id="reload-契约"><a class="header" href="#reload-契约">Reload 契约</a></h2>
+<p>reload 只遵守一条规则：</p>
+<ul>
+<li>旧 provider 是否还能用，不由时间判断，而由 <code>generation</code> 判断</li>
+</ul>
+<p>因此：</p>
+<ul>
+<li>generation 变化后，result cache 自然失效</li>
+<li>generation 变化后，metadata cache 自然失效</li>
+<li>generation 变化后，<code>ThreadClonedMDB</code> 必须丢弃旧快照并重建</li>
+<li>reload 失败时，应保留旧 provider，不能把 runtime 切到半初始化状态</li>
+</ul>
+<h2 id="当前落地状态"><a class="header" href="#当前落地状态">当前落地状态</a></h2>
+<p>按 2026-03-25 代码基线，核心结构已基本落地：</p>
+<ul>
+<li><code>KnowledgeRuntime</code> 已存在，provider 可替换安装</li>
+<li><code>QueryRequest / QueryParam / CachePolicy</code> 已统一</li>
+<li>全局结果缓存已存在，key 已带 <code>datasource_id + generation</code></li>
+<li><code>FieldQueryCache</code> 已具备 generation 失效语义</li>
+<li><code>ThreadClonedMDB</code> 已具备 generation-aware 重建能力</li>
+<li>SQLite metadata cache 已改为 bounded <code>LruCache</code></li>
+</ul>
+<p>主要剩余工作还有两类：</p>
+<ul>
+<li>宿主侧 telemetry / metrics adapter</li>
+<li>兼容接口的收缩与弃用策略</li>
+</ul>
+<h2 id="迁移顺序"><a class="header" href="#迁移顺序">迁移顺序</a></h2>
+<p>建议继续按下面顺序推进：</p>
+<ol>
+<li>完成 reload 与 observability 对外契约</li>
+<li>收敛 provider-neutral API 为默认入口</li>
+<li>缩减 <code>query_named(...)</code> / <code>cache_query(...)</code> 的历史角色</li>
+<li>只在必要处保留 local cache 兼容层</li>
+</ol>
+<h2 id="最终判断"><a class="header" href="#最终判断">最终判断</a></h2>
+<p>这个方向已经验证成立，后续重点不是“重新设计”，而是把剩余兼容层和宿主接入收尾做干净。</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="postgresql-provider-后续任务"><a class="header" href="#postgresql-provider-后续任务">PostgreSQL Provider 后续任务</a></h1>
+<h2 id="当前基线"><a class="header" href="#当前基线">当前基线</a></h2>
+<p>已经具备：</p>
+<ul>
+<li><code>[provider] kind = "postgres"</code> 基础接入</li>
+<li><code>query_fields(...)</code> / <code>cache_query_fields(...)</code> 作为推荐入口</li>
+<li>基础查询、命名参数重写和手工验证脚本</li>
+</ul>
+<p>还不算“长期稳定可运营”的 PostgreSQL 支持。</p>
+<h2 id="剩余任务"><a class="header" href="#剩余任务">剩余任务</a></h2>
+<h3 id="1-连接池"><a class="header" href="#1-连接池">1. 连接池</a></h3>
+<ul>
+<li>现状：<code>src/postgres.rs</code> 仍以单连接串行查询为主</li>
+<li>目标：
+<ul>
+<li>接入连接池</li>
+<li>定义连接失败、断开和重试行为</li>
+<li>让并发查询不再依赖单连接串行执行</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-初始化自检"><a class="header" href="#2-初始化自检">2. 初始化自检</a></h3>
+<ul>
+<li>现状：初始化阶段主要只验证“能不能连上”</li>
+<li>目标：
+<ul>
+<li>启动时检查库、schema、权限和关键对象</li>
+<li>在初始化阶段直接暴露错库、错权限、错 schema</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-sql--udf-能力边界"><a class="header" href="#3-sql--udf-能力边界">3. SQL / UDF 能力边界</a></h3>
+<ul>
+<li>现状：基础 SQL 可用，但 SQLite UDF 体系没有完整迁移</li>
+<li>目标：
+<ul>
+<li>明确哪些 SQL 可直接迁移</li>
+<li>明确哪些 SQL 需要改写</li>
+<li>明确哪些函数需要用户自行在 PostgreSQL 中提供</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-类型覆盖"><a class="header" href="#4-类型覆盖">4. 类型覆盖</a></h3>
+<ul>
+<li>现状：返回列类型和参数绑定仍不完整</li>
+<li>目标：
+<ul>
+<li>补齐常用数值、时间、JSON、网络类型</li>
+<li>对不支持类型给出清晰错误</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-自动化验证"><a class="header" href="#5-自动化验证">5. 自动化验证</a></h3>
+<ul>
+<li>现状：仍偏手工验证</li>
+<li>目标：
+<ul>
+<li>补齐 CI 验证路径</li>
+<li>在 Compose / <code>testcontainers</code> 中选定一种主路径</li>
+<li>失败时输出足够的连接与 SQL 诊断信息</li>
+</ul>
+</li>
+</ul>
+<h3 id="6-消费侧端到端示例"><a class="header" href="#6-消费侧端到端示例">6. 消费侧端到端示例</a></h3>
+<ul>
+<li>现状：<code>wp-knowledge</code> 内可测，消费侧链路不完整</li>
+<li>目标：
+<ul>
+<li>在消费仓库补 PostgreSQL 示例</li>
+<li>用真实 schema 跑通 <code>wp-oml</code></li>
+<li>给出可复用的运行说明</li>
+</ul>
+</li>
+</ul>
+<h3 id="7-兼容接口收尾"><a class="header" href="#7-兼容接口收尾">7. 兼容接口收尾</a></h3>
+<ul>
+<li>现状：<code>query_named(...)</code> / <code>cache_query(...)</code> 仍在兼容旧 SQLite 风格</li>
+<li>目标：
+<ul>
+<li>新代码默认走 provider-neutral API</li>
+<li>明确兼容接口的保留范围和弃用策略</li>
+</ul>
+</li>
+</ul>
+<h2 id="建议顺序"><a class="header" href="#建议顺序">建议顺序</a></h2>
+<ol>
+<li>连接池</li>
+<li>初始化自检</li>
+<li>SQL / UDF 边界</li>
+<li>类型覆盖</li>
+<li>自动化验证</li>
+<li>端到端示例</li>
+<li>兼容接口收尾</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="provider--cache-重构后续任务"><a class="header" href="#provider--cache-重构后续任务">Provider / Cache 重构后续任务</a></h1>
+<h2 id="工作规则"><a class="header" href="#工作规则">工作规则</a></h2>
+<p>每次开工前先做三件事：</p>
+<ol>
+<li>重新阅读当前代码，不直接按旧文档开工</li>
+<li>先标记已完成 / 部分完成 / 未开始</li>
+<li>只做当前基线下仍然有价值的最小任务</li>
+</ol>
+<p>每次收尾也固定做三件事：</p>
+<ol>
+<li>测试 / 验证</li>
+<li>review</li>
+<li>修复 review 问题后再关闭任务</li>
+</ol>
+<h2 id="当前状态"><a class="header" href="#当前状态">当前状态</a></h2>
+<h3 id="已完成"><a class="header" href="#已完成">已完成</a></h3>
+<ul>
+<li><code>KnowledgeRuntime</code></li>
+<li>可替换 provider handle</li>
+<li><code>datasource_id + generation</code></li>
+<li>统一 <code>QueryRequest / QueryParam / CachePolicy</code></li>
+<li>bounded global result cache</li>
+<li>generation-aware <code>FieldQueryCache</code></li>
+<li>generation-aware <code>ThreadClonedMDB</code></li>
+<li>bounded SQLite metadata cache</li>
+</ul>
+<h3 id="部分完成"><a class="header" href="#部分完成">部分完成</a></h3>
+<ul>
+<li>reload / observability
+<ul>
+<li>已有基础日志、snapshot、计数器和失败回退</li>
+<li>还缺宿主侧 exporter / adapter</li>
+</ul>
+</li>
+<li>compatibility layer
+<ul>
+<li><code>query_named(...)</code> / <code>cache_query(...)</code> 仍保留</li>
+<li>provider-neutral 迁移尚未完全结束</li>
+</ul>
+</li>
+</ul>
+<h3 id="主要剩余项"><a class="header" href="#主要剩余项">主要剩余项</a></h3>
+<ul>
+<li>宿主侧 metrics / telemetry adapter</li>
+<li>compatibility surface 的弃用策略</li>
+</ul>
+<h2 id="剩余任务-1"><a class="header" href="#剩余任务-1">剩余任务</a></h2>
+<h3 id="1-reload-与观测性对外契约"><a class="header" href="#1-reload-与观测性对外契约">1. Reload 与观测性对外契约</a></h3>
+<ul>
+<li>目标：
+<ul>
+<li>让宿主能稳定接入 metrics / telemetry</li>
+<li>统一 reload 成功、失败和回退的诊断出口</li>
+<li>让人能回答“当前命中了哪个 provider / 哪层 cache / 哪个 generation”</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-兼容层收缩"><a class="header" href="#2-兼容层收缩">2. 兼容层收缩</a></h3>
+<ul>
+<li>目标：
+<ul>
+<li>新代码默认走 provider-neutral API</li>
+<li>明确 <code>query_named(...)</code> / <code>cache_query(...)</code> 的长期定位</li>
+<li>视情况为 SQLite-shaped 接口加 <code>deprecated</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="3-local-cache-继续降级为兼容层"><a class="header" href="#3-local-cache-继续降级为兼容层">3. Local cache 继续降级为兼容层</a></h3>
+<ul>
+<li>目标：
+<ul>
+<li>保持 <code>FieldQueryCache</code> 只承担单次计算内去重</li>
+<li>不再让它承担全局一致性语义</li>
+</ul>
+</li>
+</ul>
+<h2 id="建议顺序-1"><a class="header" href="#建议顺序-1">建议顺序</a></h2>
+<ol>
+<li>reload / observability 对外契约</li>
+<li>compatibility layer 收缩</li>
+<li>local cache 语义继续收紧</li>
+</ol>
+<h2 id="备注"><a class="header" href="#备注">备注</a></h2>
+<ul>
+<li>这项重构的核心结构已经落地，当前重点不是“重做一遍”，而是把剩余边界收尾做干净</li>
+<li>如当前实现与文档有偏移，先更新文档，再继续编码</li>
+</ul>
 
                     </main>
 

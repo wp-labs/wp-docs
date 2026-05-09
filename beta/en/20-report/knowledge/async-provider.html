@@ -46,10 +46,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-a1ae6b27.js";
+            window.path_to_searchindex_js = "../../searchindex-a4bbb337.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-041b2dad.js"></script>
+        <script src="../../toc-520e27d3.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -295,11 +295,13 @@
 </ul>
 <h2 id="reproduction-commands"><a class="header" href="#reproduction-commands">Reproduction commands</a></h2>
 <p>PostgreSQL provider layer:</p>
-<pre><code class="language-bash">KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-postgres-provider.sh
+<pre><code class="language-bash">KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-postgres-provider-perf.sh
 </code></pre>
 <p>MySQL provider layer:</p>
-<pre><code class="language-bash">KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-mysql-provider.sh
+<pre><code class="language-bash">KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-mysql-provider-perf.sh
 </code></pre>
+<p>If you want correctness-only provider checks, use <code>tests/test-postgres-provider-correctness.sh</code> and <code>tests/test-mysql-provider-correctness.sh</code>.
+If you need to run multiple provider scripts in parallel, set a different <code>COMPOSE_PROJECT_NAME</code> for each run.</p>
 <p>PostgreSQL OML layer:</p>
 <pre><code class="language-bash">WP_KDB_TEST_POSTGRES_URL='postgres://postgres:demo@127.0.0.1:5432/postgres' \
 WP_KDB_PERF_ROWS=10000 \

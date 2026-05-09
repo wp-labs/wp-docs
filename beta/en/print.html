@@ -47,10 +47,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-a1ae6b27.js";
+            window.path_to_searchindex_js = "searchindex-a4bbb337.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-041b2dad.js"></script>
+        <script src="toc-520e27d3.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -193,16 +193,85 @@
 <p>This directory contains WarpParse release notes.</p>
 <p>Entries are listed in reverse version order, with the newest release first.</p>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="warpparse-024"><a class="header" href="#warpparse-024">WarpParse 0.24</a></h1>
+<p>Dear users,</p>
+<p>We are pleased to announce the release of WarpParse 0.24. This update focuses on <strong>HTTP ingestion, remote project layout, error-governance improvements, and fixes around OML / SQL parsing details</strong>.</p>
+<h2 id="highlights"><a class="header" href="#highlights">Highlights</a></h2>
+<ul>
+<li>Added HTTP Source to complete the HTTP push-based ingestion path.</li>
+<li>Added dual-repository support for remote projects, allowing <code>models/</code> and <code>infra/</code> to be synced separately.</li>
+<li>Upgraded the error-governance stack to make CLI failures more complete and easier to read.</li>
+<li>Fixed OML <code>take(...)</code> behavior and improved SQL parameter parsing stability.</li>
+</ul>
+<h2 id="added"><a class="header" href="#added">Added</a></h2>
+<h3 id="http-source"><a class="header" href="#http-source">HTTP Source</a></h3>
+<p>Added a general-purpose <code>HTTP Source</code> for receiving externally pushed data over HTTP.</p>
+<p>Current capabilities include:</p>
+<ul>
+<li><code>json</code> and <code>ndjson</code> input formats</li>
+<li>Coordinated format selection through <code>Content-Type</code> and the <code>fmt</code> query parameter</li>
+<li><code>gzip</code>-compressed request bodies</li>
+<li>Ingestion routing based on <code>port</code> + <code>path</code></li>
+</ul>
+<p>Related docs:</p>
+<ul>
+<li><a href="#http-source-configuration">HTTP Source configuration</a></li>
+</ul>
+<h3 id="dual-repository-remote-project-mode"><a class="header" href="#dual-repository-remote-project-mode">Dual-Repository Remote Project Mode</a></h3>
+<p>Remote project sync now supports a dual-repository mode, allowing:</p>
+<ul>
+<li><code>models/</code></li>
+<li><code>infra/</code></li>
+</ul>
+<p>to be synchronized from two separate Git repositories.</p>
+<p>This makes it easier to maintain rule content and infrastructure configuration independently, which fits more formal team workflows and release processes.</p>
+<p>Related docs:</p>
+<ul>
+<li><a href="#remote-project-sync-and-rule-reload-sop">Remote project bootstrap and rule hot-reload SOP</a></li>
+</ul>
+<h3 id="postgres-source-compatibility-enhancements"><a class="header" href="#postgres-source-compatibility-enhancements">Postgres Source Compatibility Enhancements</a></h3>
+<p>Added feature-inheritance support for <code>Postgres Source</code> and improved compatibility handling for lower-version scenarios.</p>
+<p>This change is mainly intended to make upgrades smoother for existing projects and reduce the amount of connector rework caused by configuration differences.</p>
+<h2 id="changed"><a class="header" href="#changed">Changed</a></h2>
+<h3 id="error-governance-upgrade"><a class="header" href="#error-governance-upgrade">Error Governance Upgrade</a></h3>
+<p>This release upgrades the error-governance stack end to end, with <code>orion-error</code> moved to the <code>0.8</code> line.</p>
+<p>The direct improvements include:</p>
+<ul>
+<li>Error messages now carry more complete path context</li>
+<li>CLI error output is more concentrated and easier to read</li>
+<li>Day-to-day troubleshooting is easier because specific config or rule locations are clearer</li>
+</ul>
+<h2 id="fixed"><a class="header" href="#fixed">Fixed</a></h2>
+<h3 id="oml-take-behavior"><a class="header" href="#oml-take-behavior">OML <code>take(...)</code> Behavior</a></h3>
+<p>Synced the upstream fix so that <code>take(...)</code> now consumes fields that were already generated in the target record more correctly, and fixed the value-resolution order in same-name field scenarios.</p>
+<h3 id="oml--sql-parameter-parsing"><a class="header" href="#oml--sql-parameter-parsing">OML / SQL Parameter Parsing</a></h3>
+<p>Synced upstream fixes to improve parsing stability for the following SQL-related cases:</p>
+<ul>
+<li><code>group_concat(...)</code></li>
+<li><code>string_agg(...)</code></li>
+<li><code>IN (...)</code></li>
+<li><code>take(field)</code></li>
+<li><code>__temp_var</code></li>
+</ul>
+<h3 id="runtime-stability"><a class="header" href="#runtime-stability">Runtime Stability</a></h3>
+<p>Fixed runtime stability issues in some scenarios.</p>
+<h2 id="related-docs"><a class="header" href="#related-docs">Related Docs</a></h2>
+<ul>
+<li><a href="#http-source-configuration">HTTP Source configuration</a></li>
+<li><a href="#remote-project-sync-and-rule-reload-sop">Remote project bootstrap and rule hot-reload SOP</a></li>
+<li><a href="10-user/01-cli/README.html">CLI guide</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="warpparse-022"><a class="header" href="#warpparse-022">WarpParse 0.22</a></h1>
 <p>Dear users,</p>
 <p>We are pleased to announce the release of WarpParse 0.22. This update focuses on <strong>runtime operability, remote project synchronization, KnowDB capability enhancements, and better observability and rule authoring workflows</strong>.</p>
-<h2 id="highlights"><a class="header" href="#highlights">Highlights</a></h2>
+<h2 id="highlights-1"><a class="header" href="#highlights-1">Highlights</a></h2>
 <ul>
 <li>Completed the runtime admin surface with standardized status query and reload entry points.</li>
 <li>Further unified the remote project bootstrap, update, and hot-reload workflow.</li>
 <li>Expanded KnowDB, WPL, and monitoring documentation to make the recommended usage path clearer.</li>
 </ul>
-<h2 id="added"><a class="header" href="#added">Added</a></h2>
+<h2 id="added-1"><a class="header" href="#added-1">Added</a></h2>
 <h3 id="runtime-admin-surface"><a class="header" href="#runtime-admin-surface">Runtime Admin Surface</a></h3>
 <p>Added standardized operational entry points for online instances:</p>
 <ul>
@@ -241,7 +310,7 @@ wproj self update --yes
 </ul>
 <p>Related docs:</p>
 <ul>
-<li><a href="#wp-monitor">Wp-Monitor</a></li>
+<li><a href="10-user/10-monitor/Wp-Monitor.html">Wp-Monitor</a></li>
 </ul>
 <h3 id="wpl-updates"><a class="header" href="#wpl-updates">WPL Updates</a></h3>
 <p>Added guidance for combining <code>json_like</code>, <code>json</code>, and <code>bad_json</code>, making class-of-JSON input handling clearer.</p>
@@ -249,7 +318,7 @@ wproj self update --yes
 <ul>
 <li><a href="#wpl-language-reference">WPL language reference</a></li>
 </ul>
-<h2 id="changed"><a class="header" href="#changed">Changed</a></h2>
+<h2 id="changed-1"><a class="header" href="#changed-1">Changed</a></h2>
 <h3 id="cli-manual-structure"><a class="header" href="#cli-manual-structure">CLI Manual Structure</a></h3>
 <p>The product overview, CLI usage, runtime admin surface, and remote sync SOP have been consolidated into a more unified entry point.</p>
 <p>Related docs:</p>
@@ -265,7 +334,7 @@ wproj self update --yes
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="020-release-notes"><a class="header" href="#020-release-notes">0.20 Release Notes</a></h1>
-<h2 id="added-1"><a class="header" href="#added-1">Added</a></h2>
+<h2 id="added-2"><a class="header" href="#added-2">Added</a></h2>
 <h3 id="added-elasticsearch-sink"><a class="header" href="#added-elasticsearch-sink">Added Elasticsearch Sink.</a></h3>
 <p>Supports batch writing parsed records to the Elasticsearch <code>/_bulk</code> API over HTTP/HTTPS, with timeout, retry, and password authentication support.
 Example:</p>
@@ -343,13 +412,33 @@ compression = "none"                       # Whether to enable gzip compression
 <li>Usage doc: <a href="#http-sink">HTTP Sink</a></li>
 <li>Example index: <a href="https://github.com/wp-labs/wp-examples/blob/main/extensions/http/README.md">wp-examples/extensions/http/README.md</a></li>
 </ul>
-<h2 id="changed-1"><a class="header" href="#changed-1">Changed</a></h2>
+<h2 id="changed-2"><a class="header" href="#changed-2">Changed</a></h2>
 <ul>
 <li>Upgraded <code>wp-connector-api</code> to <code>0.8</code> to reduce unnecessary dependencies.</li>
 </ul>
-<h2 id="fixed"><a class="header" href="#fixed">Fixed</a></h2>
+<h2 id="fixed-1"><a class="header" href="#fixed-1">Fixed</a></h2>
 <ul>
 <li>Event ID: synced with the upstream <code>wp-motor</code> fix to unify <code>wp_event_id</code> generation logic and avoid duplicate IDs caused by falling back to an in-process seed after runtime restarts.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="wp-monitor-release-notes"><a class="header" href="#wp-monitor-release-notes">Wp-Monitor Release Notes</a></h1>
+<h2 id="download"><a class="header" href="#download">Download</a></h2>
+<pre><code>curl -sSf https://get.warpparse.ai/inst-x.sh | bash -s -- monitor-docker alpha
+curl -sSf https://get.warpparse.ai/inst-x.sh | bash -s -- monitor-docker beta
+</code></pre>
+<p>Quick start</p>
+<pre><code>git clone https://github.com/wp-labs/wp-examples.git
+cd wp-examples/long-demo
+./run.sh
+</code></pre>
+<p>Open http://localhost:10428/</p>
+<h2 id="060"><a class="header" href="#060">0.6.0</a></h2>
+<h3 id="added-3"><a class="header" href="#added-3">Added</a></h3>
+<ul>
+<li>Visualization: Unified view of Source, Parse, and Sink processing statistics</li>
+<li>MISS data observation: Identify unmatched data and support export for analysis</li>
+<li>Time window observation: View real-time or historical data performance</li>
+<li>Trend observation: Determine whether traffic changes are transient fluctuations or sustained anomalies</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="user-guide"><a class="header" href="#user-guide">User Guide</a></h1>
@@ -361,6 +450,7 @@ compression = "none"                       # Whether to enable gzip compression
 <ol>
 <li><a href="#getting-started">Getting Started</a> - Quick start guide</li>
 <li><a href="#warpparse-core-concepts-quick-reference">WarpParse Core Concepts Quick Reference</a> - key concepts and terminology</li>
+<li><a href="#warpparse-vs-vector">WarpParse vs Vector</a> - product comparison and selection guidance</li>
 <li><a href="10-user/01-cli/README.html">CLI Usage Guide</a> - full product, CLI, and operations manual</li>
 <li><a href="10-user/02-config/README.html">Configuration</a> - Basic configuration</li>
 <li><a href="10-user/03-wpl/README.html">WPL Language</a> - WPL rule language</li>
@@ -375,6 +465,7 @@ compression = "none"                       # Whether to enable gzip compression
 <tbody>
 <tr><td><a href="#getting-started">Getting Started</a></td><td>First-run walkthrough</td></tr>
 <tr><td><a href="#warpparse-core-concepts-quick-reference">Core Concepts</a></td><td>Warp Parse concepts and terminology</td></tr>
+<tr><td><a href="#warpparse-vs-vector">WarpParse vs Vector</a></td><td>Comparison and selection guidance</td></tr>
 <tr><td><a href="10-user/01-cli/README.html">CLI Usage Guide</a></td><td>Synced upstream usage and operations docs</td></tr>
 <tr><td><a href="10-user/02-config/README.html">Configuration</a></td><td>Configuration files and options</td></tr>
 <tr><td><a href="10-user/03-wpl/README.html">WPL Language</a></td><td>Warp Parse Language guide</td></tr>
@@ -647,6 +738,197 @@ wproj data stat
 <li>For language details: read <a href="10-user/03-wpl/README.html">WPL Rule Language</a> and <a href="10-user/04-oml/README.html">OML Object Model Language</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="warpparse-vs-vector"><a class="header" href="#warpparse-vs-vector">WarpParse vs Vector</a></h1>
+<p>This page is for users evaluating tooling choices or planning a replacement. It helps answer three practical questions:</p>
+<ul>
+<li>When WarpParse is the better fit</li>
+<li>When Vector may still be a reasonable option</li>
+<li>Where the two differ in parsing model, performance, maintainability, and product completeness</li>
+</ul>
+<h2 id="short-conclusion"><a class="header" href="#short-conclusion">Short Conclusion</a></h2>
+<ul>
+<li>If your core goal is <strong>high-throughput log parsing, complex field extraction, and long-term rule engineering</strong>, WarpParse is the stronger fit.</li>
+<li>If your core goal is <strong>general-purpose data collection and broad off-the-shelf pipeline components</strong>, Vector can still be an option.</li>
+</ul>
+<p>Both can process logs, but their product centers are different:</p>
+<ul>
+<li><strong>WarpParse</strong> is centered on a high-performance parsing engine plus a rule-engineering workflow</li>
+<li><strong>Vector</strong> is centered on a general observability data pipeline</li>
+</ul>
+<h2 id="core-positioning"><a class="header" href="#core-positioning">Core Positioning</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Dimension</th><th>WarpParse</th><th>Vector</th></tr>
+</thead>
+<tbody>
+<tr><td>Product position</td><td>An ETL engine focused on log parsing and security-data processing</td><td>A general data pipeline for logs, metrics, and traces</td></tr>
+<tr><td>Main strengths</td><td>High-performance parsing, complex text extraction, rule governance</td><td>Broad connector ecosystem, general collection and forwarding, strong community reach</td></tr>
+<tr><td>Main modeling approach</td><td>WPL + OML</td><td>TOML + VRL / built-in transforms</td></tr>
+<tr><td>Typical scenarios</td><td>Security log normalization, heterogeneous log parsing, rule-platform workflows</td><td>Unified collection, routing, and observability-pipeline integration</td></tr>
+<tr><td>Main concerns</td><td>Parsing accuracy, rule expressiveness, throughput, latency</td><td>Breadth of integrations, deployment convenience, ecosystem compatibility</td></tr>
+<tr><td>Xinchuang support</td><td>More targeted, stronger compatibility</td><td>Not a primary strength</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="parsing-model-differences"><a class="header" href="#parsing-model-differences">Parsing Model Differences</a></h2>
+<h3 id="warpparse"><a class="header" href="#warpparse">WarpParse</a></h3>
+<p>WarpParse separates processing into two main stages:</p>
+<ul>
+<li><strong>WPL</strong> for raw log parsing and field extraction</li>
+<li><strong>OML</strong> for object assembly, field mapping, transformation, and output shaping</li>
+</ul>
+<p>The practical benefits are:</p>
+<ul>
+<li>Parsing rules and output modeling are clearly separated</li>
+<li>Complex log formats remain easier to maintain</li>
+<li>Teams can split work between parsing-rule ownership and output-model ownership</li>
+</ul>
+<h3 id="vector"><a class="header" href="#vector">Vector</a></h3>
+<p>Vector usually uses:</p>
+<ul>
+<li>sources for input</li>
+<li>transforms for processing</li>
+<li>VRL or built-in transforms for extraction, routing, and mutation</li>
+<li>sinks for output</li>
+</ul>
+<p>The upside is:</p>
+<ul>
+<li>fast to start</li>
+<li>a unified pipeline model</li>
+<li>convenient for collection, transformation, and forwarding in one config</li>
+</ul>
+<p>The tradeoff is that once parsing logic becomes complex, rules tend to collapse into large regex blocks plus transformation scripts, which raises maintenance cost over time.</p>
+<h2 id="rule-maintenance"><a class="header" href="#rule-maintenance">Rule Maintenance</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Dimension</th><th>WarpParse</th><th>Vector</th></tr>
+</thead>
+<tbody>
+<tr><td>Parse vs transform responsibilities</td><td>Clearly separated</td><td>Often completed along the same event-processing chain</td></tr>
+<tr><td>Complex text logs</td><td>Better fit</td><td>Possible, but rules tend to bloat</td></tr>
+<tr><td>Rule reuse</td><td>Better suited to rule engineering and governance</td><td>Better suited to pipeline-level config reuse</td></tr>
+<tr><td>Debugging focus</td><td>Which WPL rule matched and how OML mapped it</td><td>How the event changes across the transform chain</td></tr>
+</tbody>
+</table>
+</div>
+<p>WarpParse becomes more advantageous when:</p>
+<ul>
+<li>log formats are numerous and change often</li>
+<li>you need stable extraction from unstructured text</li>
+<li>parsing rules are maintained by a dedicated team</li>
+<li>throughput, accuracy, and rule testability all matter</li>
+</ul>
+<p>Vector remains easier when:</p>
+<ul>
+<li>the main goal is collection and forwarding, not deep parsing</li>
+<li>you already depend heavily on the Vector ecosystem</li>
+<li>log formats are relatively stable and parsing is simple</li>
+<li>you need quick access to many ready-made components</li>
+</ul>
+<h2 id="performance"><a class="header" href="#performance">Performance</a></h2>
+<p>Based on the benchmark data already included in this repository, WarpParse is usually much faster than Vector in parsing-heavy scenarios, especially for:</p>
+<ul>
+<li>small-message high-concurrency logs</li>
+<li>long-text or large-field logs</li>
+<li>workloads that still need field transformation after parsing</li>
+<li>end-to-end paths such as TCP input to file output</li>
+</ul>
+<p>For example, in the <code>Mac M4 Mini</code> benchmark:</p>
+<ul>
+<li>Nginx <code>File -&gt; BlackHole</code>: WarpParse <code>2,789,800 EPS</code>, Vector-VRL <code>572,076 EPS</code></li>
+<li>APT <code>File -&gt; BlackHole</code>: WarpParse <code>328,000 EPS</code>, Vector-VRL <code>37,777 EPS</code></li>
+</ul>
+<p>See the detailed benchmark pages for full data:</p>
+<ul>
+<li><a href="#benchmark-report">Benchmark Report</a></li>
+<li><a href="20-report/report_mac.html">Performance Benchmark Report</a></li>
+</ul>
+<p>These numbers should not be blindly generalized to every production environment. Actual results still depend on log structure, I/O topology, rule complexity, and downstream sink behavior.</p>
+<h2 id="ecosystem-and-integration"><a class="header" href="#ecosystem-and-integration">Ecosystem and Integration</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Dimension</th><th>WarpParse</th><th>Vector</th></tr>
+</thead>
+<tbody>
+<tr><td>Source / Sink coverage</td><td>Under the current Chinese-doc inventory: <code>5</code> sources and <code>15</code> sinks</td><td>Broader and more mature</td></tr>
+<tr><td>Community ecosystem</td><td>More product- and project-practice-oriented</td><td>Larger open-source ecosystem</td></tr>
+<tr><td>Observability scenarios</td><td>Supported, but not the only center of gravity</td><td>Covers logs / metrics / traces</td></tr>
+<tr><td>Security log engineering</td><td>Stronger fit</td><td>Possible, but usually not the best expression model</td></tr>
+<tr><td>Xinchuang compatibility</td><td>Stronger; better aligned with domestic deployment requirements</td><td>Not a primary selling point</td></tr>
+</tbody>
+</table>
+</div>
+<p>Under the current documented inventory, WarpParse has:</p>
+<ul>
+<li><code>Source 5</code>: <code>file</code>, <code>kafka</code>, <code>syslog</code>, <code>http</code>, <code>tcp</code></li>
+<li><code>Sink 15</code>: <code>file</code>, <code>syslog</code>, <code>prometheus</code>, <code>tcp</code>, <code>victorialogs</code>, <code>doris</code>, <code>kafka</code>, <code>mysql</code>, <code>arrow-ipc</code>, <code>elasticsearch</code>, <code>arrow-file</code>, <code>clickhouse</code>, <code>http</code>, <code>postgresql</code>, <code>dmdb</code></li>
+</ul>
+<p>That means WarpParse community edition is not just a parsing engine. It already has a standalone connector layer that can support real deployment.</p>
+<h2 id="xinchuang-support"><a class="header" href="#xinchuang-support">Xinchuang Support</a></h2>
+<p>For many public-sector, enterprise, and security-focused projects, the ability to land cleanly on domestic infrastructure is a separate decision factor.</p>
+<p>WarpParse has a clearer advantage here:</p>
+<ul>
+<li>more targeted support for Xinchuang environments</li>
+<li>stronger compatibility in domestic deployment scenarios</li>
+<li>a better fit when performance, parsing capability, and domestic-platform adaptation all matter</li>
+</ul>
+<p>If your project explicitly requires:</p>
+<ul>
+<li>compatibility with domestic operating systems</li>
+<li>adaptation to domestic hardware and software stacks</li>
+<li>stable rollout in Xinchuang environments</li>
+</ul>
+<p>then this is a concrete advantage of WarpParse over Vector.</p>
+<h2 id="community-edition-completeness"><a class="header" href="#community-edition-completeness">Community Edition Completeness</a></h2>
+<p>Here, “completeness” means whether a user can independently download, learn, try, develop rules, and observe runtime behavior using the community edition.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Dimension</th><th>WarpParse Community Edition</th><th>Vector Community Edition</th></tr>
+</thead>
+<tbody>
+<tr><td>Program</td><td>Can directly run the core parsing pipeline</td><td>Can directly run a full data pipeline</td></tr>
+<tr><td>Documentation</td><td>Documentation is already fairly complete, covering product usage, rules, configuration, connectors, tutorials, and benchmark reports</td><td>Mature documentation covering general pipeline usage and ecosystem integration</td></tr>
+<tr><td>Examples</td><td>Has a dedicated <code>wp-example</code> project that can be downloaded and run directly</td><td>Spread across official docs, repositories, and community content</td></tr>
+<tr><td>Rule editor</td><td>Provides a dedicated <code>wp-editor</code></td><td>No equivalent official rule editor</td></tr>
+<tr><td>Processing monitor</td><td>Provides a dedicated <code>wp-monitor</code></td><td>Mostly depends on third-party tooling</td></tr>
+<tr><td>Compatibility</td><td>Mainstream platforms plus stronger Xinchuang compatibility</td><td>Mainstream platforms</td></tr>
+</tbody>
+</table>
+</div>
+<p>From a community-edition completeness perspective, WarpParse has a more direct advantage:</p>
+<ul>
+<li>a complete runnable program</li>
+<li>a structured documentation system</li>
+<li><code>wp-example</code> for direct hands-on use</li>
+<li><code>wp-editor</code> for rule development</li>
+<li><code>wp-monitor</code> for runtime observation</li>
+<li>stronger Xinchuang compatibility</li>
+</ul>
+<p>So for the question “can a user independently learn, try, build rules, and observe processing with the community edition”, the conclusion is:</p>
+<ul>
+<li><strong>WarpParse is clearly more complete than Vector</strong></li>
+</ul>
+<h2 id="common-judgment"><a class="header" href="#common-judgment">Common Judgment</a></h2>
+<h3 id="we-already-use-vector-do-we-need-to-migrate"><a class="header" href="#we-already-use-vector-do-we-need-to-migrate">We already use Vector. Do we need to migrate?</a></h3>
+<p>If your main pain points are:</p>
+<ul>
+<li>VRL rules are getting longer and harder to maintain</li>
+<li>regex-based parsing is becoming fragile</li>
+<li>parsing throughput is insufficient</li>
+<li>security-log normalization is expensive</li>
+</ul>
+<p>then it is worth evaluating a migration of the parsing-intensive parts first, rather than replacing everything at once.</p>
+<h2 id="next-steps-2"><a class="header" href="#next-steps-2">Next Steps</a></h2>
+<ul>
+<li>Want the basic concepts first: see <a href="#warpparse-core-concepts-quick-reference">WarpParse Core Concepts Quick Reference</a></li>
+<li>Want to run a local example quickly: see <a href="#getting-started">Getting Started</a></li>
+<li>Want the full benchmark data: see <a href="#benchmark-report">Benchmark Report</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="cli-usage-guide"><a class="header" href="#cli-usage-guide">CLI Usage Guide</a></h1>
 <p>This directory contains operator-facing and integration-facing documentation.</p>
 <h2 id="documents"><a class="header" href="#documents">Documents</a></h2>
@@ -699,7 +981,7 @@ wpgen conf check --work-root .
 <h2 id="clean-generated-data"><a class="header" href="#clean-generated-data">Clean Generated Data</a></h2>
 <pre><code class="language-bash">wpgen data clean --work-root . -c wpgen.toml
 </code></pre>
-<h2 id="related-docs"><a class="header" href="#related-docs">Related Docs</a></h2>
+<h2 id="related-docs-1"><a class="header" href="#related-docs-1">Related Docs</a></h2>
 <ul>
 <li>CLI usage guide: <a href="#warp-parse-cli-usage-guide">index.md</a></li>
 <li>Runtime usage: <a href="#wparse-runtime-usage">runtime.md</a></li>
@@ -810,7 +1092,7 @@ wproj rescue stat --work-root . --detail
 <pre><code class="language-bash">wproj self check
 wproj self update --yes
 </code></pre>
-<h2 id="related-docs-1"><a class="header" href="#related-docs-1">Related Docs</a></h2>
+<h2 id="related-docs-2"><a class="header" href="#related-docs-2">Related Docs</a></h2>
 <ul>
 <li>CLI usage guide: <a href="#warp-parse-cli-usage-guide">index.md</a></li>
 <li>Runtime admin usage: <a href="#warp-parse-runtime-admin-usage">../operations/admin.md</a></li>
@@ -837,7 +1119,7 @@ wprescue batch --work-root .
 wproj rescue stat --work-root . --detail
 wproj rescue stat --work-root . --json
 </code></pre>
-<h2 id="related-docs-2"><a class="header" href="#related-docs-2">Related Docs</a></h2>
+<h2 id="related-docs-3"><a class="header" href="#related-docs-3">Related Docs</a></h2>
 <ul>
 <li>CLI usage guide: <a href="#warp-parse-cli-usage-guide">index.md</a></li>
 <li>Project tool usage: <a href="#wproj-project-tool-usage">project.md</a></li>
@@ -899,7 +1181,7 @@ wproj rescue stat --work-root . --json
 <li><code>batch</code> is for offline workflows, not online reload</li>
 <li>there is no separate <code>work</code> subcommand at the moment</li>
 </ul>
-<h2 id="related-docs-3"><a class="header" href="#related-docs-3">Related Docs</a></h2>
+<h2 id="related-docs-4"><a class="header" href="#related-docs-4">Related Docs</a></h2>
 <ul>
 <li>CLI usage guide: <a href="#warp-parse-cli-usage-guide">index.md</a></li>
 <li>Runtime admin usage: <a href="#warp-parse-runtime-admin-usage">../operations/admin.md</a></li>
@@ -1364,6 +1646,206 @@ wproj engine reload \
   --token-file "${HOME}/.warp_parse/admin_api.token"
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="wproj-check--configuration-validation-reference"><a class="header" href="#wproj-check--configuration-validation-reference">wproj check — Configuration Validation Reference</a></h1>
+<p><code>wproj check</code> performs 8 validation categories in dependency order. The first 4 are required; the last 4 allow the target file to be absent (absence = pass).</p>
+<h2 id="validation-overview"><a class="header" href="#validation-overview">Validation Overview</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>#</th><th>Component</th><th>Config Files</th><th>Required</th><th>Tolerates Absence</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>Engine</td><td><code>conf/wparse.toml</code></td><td>Yes</td><td>No</td></tr>
+<tr><td>2</td><td>Sources</td><td><code>conf/wpsrc.toml</code></td><td>Yes</td><td>No</td></tr>
+<tr><td>3</td><td>Connectors</td><td><code>connectors/source.d/*.toml</code>, <code>connectors/sink.d/*.toml</code></td><td>Yes</td><td>No</td></tr>
+<tr><td>4</td><td>Sinks</td><td><code>usecase/*/sink/**/*.toml</code>, <code>models/sinks/**/*.toml</code></td><td>Yes</td><td>No</td></tr>
+<tr><td>5</td><td>WPL</td><td><code>{rule_root}/*.wpl</code></td><td>No</td><td>Yes (Miss = pass)</td></tr>
+<tr><td>6</td><td>OML</td><td><code>{oml_root}/**/model.oml</code></td><td>No</td><td>Yes (Miss = pass)</td></tr>
+<tr><td>7</td><td>SemanticDict</td><td><code>{knowledge_root}/semantic_dict.toml</code></td><td>No</td><td>Yes (uses built-in)</td></tr>
+<tr><td>8</td><td>Wpgen</td><td><code>conf/wpgen.toml</code></td><td>No</td><td>Yes (optional)</td></tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="1-engine--confwparsetoml"><a class="header" href="#1-engine--confwparsetoml">1. Engine — <code>conf/wparse.toml</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Check</th><th>Description</th><th>Level</th></tr>
+</thead>
+<tbody>
+<tr><td>File exists</td><td>Reads <code>{work_root}/conf/wparse.toml</code></td><td>Error</td></tr>
+<tr><td>TOML parse</td><td>Deserializes to <code>EngineConfig</code>; <code>#[serde(deny_unknown_fields)]</code> rejects unknown fields</td><td>Error</td></tr>
+<tr><td>Env expansion</td><td>All <code>${VAR}</code> fields expanded via EnvDict</td><td>Error</td></tr>
+<tr><td>Path absolutization</td><td>Relative paths for models.wpl, models.oml, topology.sources/sinks, rescue.path, admin_api TLS resolved to absolute</td><td>Error</td></tr>
+<tr><td>CWD switch</td><td>Process working directory changed to work_root</td><td>Error</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="2-sources--confwpsrctoml"><a class="header" href="#2-sources--confwpsrctoml">2. Sources — <code>conf/wpsrc.toml</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Check</th><th>Description</th><th>Level</th></tr>
+</thead>
+<tbody>
+<tr><td>File exists</td><td>Checks <code>{work_root}/conf/wpsrc.toml</code></td><td>Error</td></tr>
+<tr><td>TOML parse + env eval</td><td><code>WarpSources::env_load_toml()</code> loads and expands environment variables</td><td>Error</td></tr>
+<tr><td>Structure validation</td><td>Serializes back to TOML and calls <code>parse_and_validate_only()</code></td><td>Error</td></tr>
+<tr><td>Source instance build</td><td><code>load_source_instances_from_file()</code> validates all source definitions</td><td>Error</td></tr>
+<tr><td><strong>File path existence</strong></td><td><code>base</code> directory exists + <code>file</code> path/glob has matching files</td><td>Warning</td></tr>
+<tr><td><strong>Syslog/TCP port range</strong> ★P0</td><td><code>port</code> ∈ [1, 65535]</td><td>Error</td></tr>
+<tr><td><strong>Syslog/TCP protocol</strong> ★P0</td><td><code>protocol</code> ∈ {tcp, udp}</td><td>Error</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="3-connectors--connectorssourced-connectorssinkd"><a class="header" href="#3-connectors--connectorssourced-connectorssinkd">3. Connectors — <code>connectors/source.d/</code>, <code>connectors/sink.d/</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Check</th><th>Description</th><th>Level</th></tr>
+</thead>
+<tbody>
+<tr><td>Directory resolution</td><td>Reads dirs from Engine config, falls back to <code>{work_root}/connectors/source.d</code>, <code>sink.d</code></td><td>Error</td></tr>
+<tr><td>TOML parse</td><td>Loads each <code>*.toml</code> as <code>ConnectorDef</code> with env eval</td><td>Error</td></tr>
+<tr><td>ID characters</td><td>IDs must match <code>[a-z0-9_]</code></td><td>Error</td></tr>
+<tr><td>Source ID suffix</td><td>Source connector IDs must end with <code>_src</code></td><td>Error</td></tr>
+<tr><td>Sink ID suffix</td><td>Non-file sink connector IDs must end with <code>_sink</code></td><td>Error</td></tr>
+<tr><td>File prefix suggestion</td><td>File source/sink IDs should start with <code>file_</code></td><td>Warning</td></tr>
+<tr><td>Kind consistency</td><td>Filename kind hint matches declared type</td><td>Warning</td></tr>
+<tr><td><strong>Warning output</strong> ★P2</td><td>Warning-level lint issues now printed to console (previously silently discarded)</td><td>Warning</td></tr>
+<tr><td><strong>Dead connector detection</strong> ★P2</td><td>Detects source connectors with <code>refs == 0</code> and sink connectors unused by any route</td><td>Warning</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="4-sinks--usecasesink-modelssinks"><a class="header" href="#4-sinks--usecasesink-modelssinks">4. Sinks — <code>usecase/*/sink/</code>, <code>models/sinks/</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Check</th><th>Description</th><th>Level</th></tr>
+</thead>
+<tbody>
+<tr><td>Route discovery</td><td>Scans <code>usecase/*/{case}/sink/{business.d,infra.d}</code> and <code>models/sinks/{business.d,infra.d}</code></td><td>Error</td></tr>
+<tr><td>TOML parse + env eval</td><td>Each route file <code>env_load_toml</code> + <code>env_eval</code></td><td>Error</td></tr>
+<tr><td>Connector resolution</td><td>Loads sink connectors for each route directory</td><td>Error</td></tr>
+<tr><td>Default merge</td><td>Loads and merges default sink config</td><td>Error</td></tr>
+<tr><td>Route build</td><td><code>build_route_conf_from()</code> parses route configuration</td><td>Error</td></tr>
+<tr><td>FlexGroup OML/RULE mutual exclusion</td><td>Same FlexGroup cannot use both OML and RULE</td><td>Error</td></tr>
+<tr><td>Rule pattern validation</td><td>Empty patterns rejected; patterns starting with <code>/</code> require additional validation</td><td>Error</td></tr>
+<tr><td><strong>File sink output path</strong> ★P1</td><td><code>base</code> directory and output parent dir existence for file/test_rescue sinks</td><td>Error</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="5-wpl--rule_rootwpl"><a class="header" href="#5-wpl--rule_rootwpl">5. WPL — <code>{rule_root}/*.wpl</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Check</th><th>Description</th><th>Level</th></tr>
+</thead>
+<tbody>
+<tr><td>File discovery</td><td><code>find_conf_files()</code> for <code>rule.wpl</code>, fallback <code>glob("*.wpl")</code></td><td>—</td></tr>
+<tr><td>File absence</td><td>No WPL files → <code>CheckStatus::Miss</code>, treated as pass</td><td>—</td></tr>
+<tr><td><strong>File read errors</strong> ★P2</td><td>File read failures (e.g., UTF-8 encoding) now report specific errors instead of silently degrading to empty content</td><td>Error</td></tr>
+<tr><td>Non-empty check</td><td>Each file must be non-empty</td><td>Error</td></tr>
+<tr><td>Syntax parse</td><td><code>WplCode::build()</code> parses syntax</td><td>Error</td></tr>
+<tr><td>Package structure</td><td><code>code.parse_pkg()</code> validates package structure</td><td>Error</td></tr>
+<tr><td><strong>Duplicate package names</strong> ★P2</td><td>Multiple WPL files defining the same package name produce a Warning</td><td>Warning</td></tr>
+<tr><td><strong>Duplicate rule names</strong> ★P2</td><td>Same rule name (<code>package::rule</code>) defined in multiple files produces a Warning</td><td>Warning</td></tr>
+<tr><td><strong>Empty package</strong> ★P2</td><td>Package with no rules produces a Warning</td><td>Warning</td></tr>
+<tr><td><strong>Empty rule body</strong> ★P3</td><td>Rule with no fields produces a Warning</td><td>Warning</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="6-oml--oml_rootmodeloml"><a class="header" href="#6-oml--oml_rootmodeloml">6. OML — <code>{oml_root}/**/model.oml</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Check</th><th>Description</th><th>Level</th></tr>
+</thead>
+<tbody>
+<tr><td>Directory exists</td><td>Checks if <code>{oml_root}/</code> exists</td><td>—</td></tr>
+<tr><td>File discovery</td><td><code>find_conf_files()</code> for <code>model.oml</code></td><td>—</td></tr>
+<tr><td>Dir/file absence</td><td>No OML dir or no <code>.oml</code> files → “OML files missing”, treated as pass</td><td>—</td></tr>
+<tr><td>Non-empty check</td><td><code>ErrorHandler::check_file_not_empty()</code></td><td>Error</td></tr>
+<tr><td>Structure parse</td><td><code>fetch_oml_data()</code> parses all OML files</td><td>Error</td></tr>
+<tr><td><strong>Model name uniqueness</strong> ★P2</td><td>Detects duplicate <code>name : &lt;model-name&gt;</code> across OML files</td><td>Warning</td></tr>
+<tr><td><strong>Empty rule pattern</strong> ★P3</td><td>Detects empty <code>rule :</code> declarations</td><td>Warning</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="7-semanticdict--knowledge_rootsemantic_dicttoml"><a class="header" href="#7-semanticdict--knowledge_rootsemantic_dicttoml">7. SemanticDict — <code>{knowledge_root}/semantic_dict.toml</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Check</th><th>Description</th><th>Level</th></tr>
+</thead>
+<tbody>
+<tr><td>Engine config load</td><td>Loads Engine config first to get <code>knowledge_root()</code> path</td><td>Error</td></tr>
+<tr><td>Primary path probe</td><td>Checks <code>{knowledge_root}/semantic_dict.toml</code></td><td>—</td></tr>
+<tr><td>Fallback path probe</td><td>If primary missing, checks <code>{work_root}/knowledge/semantic_dict.toml</code></td><td>—</td></tr>
+<tr><td>File absence</td><td>Both paths missing → “using built-in dictionary”, treated as pass</td><td>—</td></tr>
+<tr><td>Enabled state</td><td><code>conf.enabled == false</code> → treated as unconfigured, pass</td><td>—</td></tr>
+<tr><td>TOML parse</td><td><code>load_semantic_dict()</code> deserialization</td><td>Error</td></tr>
+<tr><td>Mode report</td><td>Reports <code>ADD</code> (extends built-in) or <code>REPLACE</code> (replaces built-in)</td><td>Info</td></tr>
+<tr><td>Word count</td><td>Counts total entries across stop_words, domain_words, status_words, action_verbs, entity_nouns</td><td>Info</td></tr>
+<tr><td><strong>Empty string detection</strong> ★P1</td><td>Detects empty string entries in word lists, reports count</td><td>Warning</td></tr>
+<tr><td><strong>Duplicate word detection</strong> ★P1</td><td>Detects duplicate words within the same category, reports count</td><td>Warning</td></tr>
+<tr><td><strong>Empty category detection</strong> ★P1</td><td>Detects <code>chinese = []</code> / <code>english = []</code> empty list categories</td><td>Warning</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="8-wpgen--confwpgentoml"><a class="header" href="#8-wpgen--confwpgentoml">8. Wpgen — <code>conf/wpgen.toml</code></a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Check</th><th>Description</th><th>Level</th></tr>
+</thead>
+<tbody>
+<tr><td>File exists</td><td>Checks <code>{work_root}/conf/wpgen.toml</code></td><td>—</td></tr>
+<tr><td>File absence</td><td>Not present → <code>"wpgen.toml not found (optional)"</code>, treated as pass</td><td>—</td></tr>
+<tr><td>TOML parse + env eval</td><td><code>WpGenConfig::load_from_path()</code> calls <code>env_load_toml</code></td><td>Error</td></tr>
+<tr><td>Unknown field rejection</td><td><code>WpGenConfig</code>, <code>GeneratorConfig</code>, <code>OutputConfig</code> all use <code>#[serde(deny_unknown_fields)]</code></td><td>Error</td></tr>
+<tr><td><strong>version non-empty</strong> ★P0</td><td><code>version</code> must not be empty</td><td>Error</td></tr>
+<tr><td><strong>generator.count &gt; 0</strong> ★P0</td><td>If <code>count</code> is set, must be &gt; 0</td><td>Error</td></tr>
+<tr><td><strong>generator.speed = 0</strong> ★P0</td><td><code>0</code> means unlimited, valid value</td><td>Info</td></tr>
+<tr><td><strong>generator.parallel &gt; 0</strong> ★P0</td><td><code>parallel</code> must be &gt; 0</td><td>Error</td></tr>
+<tr><td><strong>speed_profile params</strong> ★P0</td><td>Each variant: rate/base/amplitude &gt; 0, period_secs/duration_secs &gt; 0, burst_probability/variance ∈ [0,1], steps non-empty</td><td>Error</td></tr>
+<tr><td><strong>logging.level</strong> ★P0</td><td>Each comma-separated segment’s level part must be trace/debug/info/warn/error; supports <code>module=level</code> format (e.g., <code>info,ctrl=info</code>)</td><td>Error</td></tr>
+<tr><td><strong>logging.output</strong> ★P0</td><td>Must be stdout/console/file/both</td><td>Error</td></tr>
+<tr><td><strong>rule_root path</strong> ★P0</td><td>Directory specified by <code>rule_root</code> must exist (resolved relative to work_root)</td><td>Error</td></tr>
+<tr><td><strong>sample_pattern glob</strong> ★P0</td><td><code>sample_pattern</code> must be a valid glob pattern</td><td>Error</td></tr>
+<tr><td><strong>output.connect reference</strong> ★P0</td><td><code>output.connect</code> must reference an existing sink connector in <code>connectors/sink.d/</code></td><td>Error</td></tr>
+<tr><td><strong>logging.file_path parent dir</strong></td><td>Parent directory existence (created at runtime; warning only)</td><td>Warning</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="fail-fast-mechanism"><a class="header" href="#fail-fast-mechanism">Fail-Fast Mechanism</a></h2>
+<p>When <code>--fail-fast</code> is enabled, any component check failure immediately stops subsequent checks for that target. Checks run in order 1→8; Engine failure skips all remaining checks.</p>
+<hr>
+<h2 id="p4-high-risk-items-planned-not-yet-implemented"><a class="header" href="#p4-high-risk-items-planned-not-yet-implemented">P4 High-Risk Items (Planned, not yet implemented)</a></h2>
+<p>The following items carry higher technical risk and are documented for future reference:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>#</th><th>Item</th><th>Risk</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td><strong>WPL field type semantic validation</strong></td><td><code>WplField::validate()</code> uses <code>panic!</code> instead of returning errors; calling it from the check path could crash the process</td></tr>
+<tr><td>2</td><td><strong>WPL Sample data validation</strong></td><td>Requires the runtime engine (<code>WplEngine</code>) to load pipeline context, involving tokio async runtime and full pipeline initialization</td></tr>
+<tr><td>3</td><td><strong>OML structure parsing (oml_parse_raw)</strong></td><td>Core parser <code>oml_parse_raw</code> is async; the check path is sync. Requires introducing a tokio runtime or refactoring the parser layer</td></tr>
+<tr><td>4</td><td><strong>WPL-OML rule cross-references</strong></td><td>OML <code>rule : /path/*</code> matching against WPL rule paths happens at runtime (<code>SinkDispatcher::get_match_oml</code>); check would need both full rule sets loaded and match logic executed</td></tr>
+<tr><td>5</td><td><strong>Connectors reverse cross-references</strong></td><td>Requires modifying <code>Connectors::check()</code> signature to accept Engine config, and loading source config + sink route config in the check path to verify connector reference validity. Involves cross-component dependency injection</td></tr>
+<tr><td>6</td><td><strong>Sink OML pattern existence validation</strong></td><td>Sink route <code>oml = ["pattern"]</code> entries must match loaded OML model names; current matching logic lives in the runtime dispatcher. Migrating to check requires loading full OML models and route configs</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="priority-recommendations"><a class="header" href="#priority-recommendations">Priority Recommendations</a></h3>
+<ul>
+<li><strong>P2 (recommended next phase)</strong>: #5 Connectors reverse cross-references — risk is manageable; build layer already has parsing logic, only needs integration into the check flow</li>
+<li><strong>P3 (design review needed)</strong>: #3 OML structure parsing — consider making <code>oml_parse_raw</code> synchronous or providing a sync wrapper</li>
+<li><strong>P4 (architecture change needed)</strong>: #1 #2 #4 #6 — require introducing runtime components into the check path or refactoring core parsing APIs</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="warp-parse-product-overview"><a class="header" href="#warp-parse-product-overview">Warp Parse Product Overview</a></h1>
 <h2 id="positioning"><a class="header" href="#positioning">Positioning</a></h2>
 <p>Warp Parse is a high-performance Rust engine for log, event, and security data ingestion. It focuses on:</p>
@@ -1410,7 +1892,7 @@ wpgen --help
 wproj --help
 wprescue --help
 </code></pre>
-<h2 id="related-docs-4"><a class="header" href="#related-docs-4">Related Docs</a></h2>
+<h2 id="related-docs-5"><a class="header" href="#related-docs-5">Related Docs</a></h2>
 <ul>
 <li>Runtime admin usage: <a href="#warp-parse-runtime-admin-usage">../operations/admin.md</a></li>
 <li>Chinese counterpart: <a href="../docs-zh/10-user/01-cli/overview/product.html">../zh/overview/product.md</a></li>
@@ -1479,6 +1961,7 @@ sinks   = "./topology/sinks"
 rate_limit_rps = 10000        # Rate limit (records/second)
 parse_workers  = 2            # Number of concurrent parsing workers
 reload_timeout_ms = 10000     # Reload fallback timeout in milliseconds; shared by graceful drain and old-processing tail cleanup
+fetch_timeout_ms = 300 # Blocking source fetch timeout in milliseconds for each picker round
 
 [rescue]
 path = "./data/rescue"
@@ -1510,6 +1993,7 @@ target = "*"
 <li><code>semantic_dict.toml</code> is loaded from <code>${models.knowledge}/semantic_dict.toml</code> by default</li>
 <li><code>knowdb.toml</code> is loaded from <code>${models.knowledge}/knowdb.toml</code> by default</li>
 <li><code>reload_timeout_ms</code> defaults to <code>10000</code>; CLI <code>--reload-timeout-ms</code> overrides the config value</li>
+<li><code>fetch_timeout_ms</code> defaults to <code>300</code>; it controls how long a realtime picker waits for one blocking fetch round</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="sources-configuration"><a class="header" href="#sources-configuration">Sources Configuration</a></h1>
@@ -2285,185 +2769,271 @@ grep "version" ${models.knowledge}/semantic_dict.toml
 <p>Last Updated: 2026-02-08</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="knowdb-configuration"><a class="header" href="#knowdb-configuration">KnowDB Configuration</a></h1>
-<p>This guide describes the directory-based configuration and loading specification for the Knowledge Database (KnowDB).</p>
-<p>Applicable Scope</p>
+<p>Remember only three things:</p>
+<ol>
+<li>only <code>version = 2</code> is supported</li>
+<li>choose one mode only: directory-based SQLite authority, or external PostgreSQL / MySQL</li>
+<li><code>[cache]</code> controls <code>result cache</code> only</li>
+</ol>
+<h2 id="two-modes"><a class="header" href="#two-modes">Two modes</a></h2>
 <ul>
-<li>Initialize authoritative database (CSV -&gt; SQLite), used for loading by wparse/wproj and other tools at startup</li>
+<li>Static CSV assets: use directory-based SQLite authority</li>
+<li>Data already in PostgreSQL / MySQL: use external provider</li>
 </ul>
-<p>Core Principles</p>
+<h2 id="minimal-examples"><a class="header" href="#minimal-examples">Minimal examples</a></h2>
+<h3 id="directory-based-sqlite-authority"><a class="header" href="#directory-based-sqlite-authority">Directory-based SQLite authority</a></h3>
+<pre><code class="language-toml">version = 2
+base_dir = "."
+
+[default]
+transaction = true
+batch_size = 2000
+on_error = "fail"
+
+[csv]
+has_header = true
+delimiter = ","
+encoding = "utf-8"
+trim = true
+
+[cache]
+enabled = true
+capacity = 1024
+ttl_ms = 30000
+
+[[tables]]
+name = "example"
+dir = "example"
+enabled = true
+columns.by_header = ["name", "pinying"]
+
+[tables.expected_rows]
+min = 5
+max = 100
+</code></pre>
+<h3 id="external-postgresql--mysql"><a class="header" href="#external-postgresql--mysql">External PostgreSQL / MySQL</a></h3>
+<pre><code class="language-toml">version = 2
+
+[cache]
+enabled = true
+capacity = 1024
+ttl_ms = 30000
+
+[provider]
+kind = "postgres"
+connection_uri = "postgres://user:${DB_PASSWORD}@127.0.0.1:5432/demo"
+pool_size = 8
+</code></pre>
+<p>Replace <code>kind = "postgres"</code> with <code>kind = "mysql"</code> and switch the connection URI to MySQL format if needed.</p>
+<h2 id="which-settings-take-effect"><a class="header" href="#which-settings-take-effect">Which settings take effect</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Mode</th><th>Active settings</th><th>Not part of the main flow</th></tr>
+</thead>
+<tbody>
+<tr><td>Directory-based SQLite authority</td><td><code>version</code> <code>base_dir</code> <code>[default]</code> <code>[csv]</code> <code>[cache]</code> <code>[[tables]]</code></td><td><code>authority_uri</code> is not read from <code>knowdb.toml</code></td></tr>
+<tr><td>External PostgreSQL / MySQL</td><td><code>version</code> <code>[provider]</code> <code>[cache]</code></td><td><code>base_dir</code> <code>[default]</code> <code>[csv]</code> <code>[[tables]]</code></td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="key-fields"><a class="header" href="#key-fields">Key fields</a></h2>
+<h3 id="top-level"><a class="header" href="#top-level">Top level</a></h3>
 <ul>
-<li>External SQL: DDL/DML for each table is placed in .sql files in the corresponding directory</li>
-<li>Security: Runtime only allows access to table names declared in configuration; SQL only supports {table} placeholder</li>
-<li>Ready to use by default: Most fields can be omitted; built-in defaults and auto-detection satisfy common scenarios</li>
+<li><code>version</code>
+<ul>
+<li>required, must be <code>2</code></li>
 </ul>
-<p>Directory Layout (Recommended, default under <code>${models.knowledge}</code>)</p>
-<pre><code>${models.knowledge}/
-  knowdb.toml                     # This configuration
+</li>
+<li><code>base_dir</code>
+<ul>
+<li>root for table directories</li>
+</ul>
+</li>
+<li><code>[provider]</code>
+<ul>
+<li>only for external provider mode</li>
+</ul>
+</li>
+<li><code>[[tables]]</code>
+<ul>
+<li>only for directory-based SQLite authority mode</li>
+</ul>
+</li>
+</ul>
+<h3 id="default"><a class="header" href="#default"><code>[default]</code></a></h3>
+<ul>
+<li><code>transaction</code>
+<ul>
+<li>default <code>true</code></li>
+</ul>
+</li>
+<li><code>batch_size</code>
+<ul>
+<li>default <code>2000</code></li>
+</ul>
+</li>
+<li><code>on_error</code>
+<ul>
+<li><code>fail</code> stops</li>
+<li><code>skip</code> ignores bad rows</li>
+</ul>
+</li>
+</ul>
+<h3 id="csv"><a class="header" href="#csv"><code>[csv]</code></a></h3>
+<ul>
+<li><code>has_header</code>
+<ul>
+<li>default <code>true</code></li>
+</ul>
+</li>
+<li><code>delimiter</code>
+<ul>
+<li>keep it to one character</li>
+</ul>
+</li>
+<li><code>encoding</code>
+<ul>
+<li>only <code>utf-8</code> is supported</li>
+</ul>
+</li>
+<li><code>trim</code>
+<ul>
+<li>default <code>true</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="cache"><a class="header" href="#cache"><code>[cache]</code></a></h3>
+<ul>
+<li><code>enabled</code>
+<ul>
+<li>default <code>true</code></li>
+</ul>
+</li>
+<li><code>capacity</code>
+<ul>
+<li>default <code>1024</code>, in entries</li>
+</ul>
+</li>
+<li><code>ttl_ms</code>
+<ul>
+<li>default <code>30000</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="provider"><a class="header" href="#provider"><code>[provider]</code></a></h3>
+<ul>
+<li><code>kind</code>
+<ul>
+<li>required, <code>postgres</code> or <code>mysql</code></li>
+</ul>
+</li>
+<li><code>connection_uri</code>
+<ul>
+<li>required, <code>${VAR}</code> expansion supported</li>
+</ul>
+</li>
+<li><code>pool_size</code>
+<ul>
+<li>optional, default <code>8</code></li>
+</ul>
+</li>
+</ul>
+<p>Do not write <code>kind = "sqlite_authority"</code>. In directory-based mode, omit <code>[provider]</code> completely.</p>
+<h3 id="tables"><a class="header" href="#tables"><code>[[tables]]</code></a></h3>
+<ul>
+<li><code>name</code>
+<ul>
+<li>required</li>
+</ul>
+</li>
+<li><code>dir</code>
+<ul>
+<li>defaults to <code>name</code></li>
+</ul>
+</li>
+<li><code>data_file</code>
+<ul>
+<li>defaults to <code>data.csv</code></li>
+</ul>
+</li>
+<li><code>enabled</code>
+<ul>
+<li>defaults to <code>true</code></li>
+</ul>
+</li>
+<li>configure at least one column mapping:
+<ul>
+<li><code>columns.by_header</code></li>
+<li><code>columns.by_index</code></li>
+</ul>
+</li>
+<li>priority:
+<ul>
+<li><code>by_header</code> first</li>
+<li><code>by_index</code> only when <code>by_header</code> is empty</li>
+</ul>
+</li>
+</ul>
+<h2 id="table-directory-convention"><a class="header" href="#table-directory-convention">Table directory convention</a></h2>
+<p>A typical table directory looks like this:</p>
+<pre><code class="language-text">knowdb/
+  knowdb.toml
   example/
     create.sql
     insert.sql
-    data.csv                     # Single data file (table directory root)
-  address/
+    data.csv
+  zone/
     create.sql
     insert.sql
-    data.csv
+    clean.sql
+    data.scv
 </code></pre>
-<p>Top-level Configuration (<code>${models.knowledge}/knowdb.toml</code>)</p>
-<pre><code class="language-toml">version = 2
-
-[[tables]]
-name = "example"
-# dir defaults to name when omitted; this example uses directory ${models.knowledge}/example
-# data_file defaults to data.csv in table directory when omitted
-columns.by_header = ["name", "pinying"]
-
-# To add more tables, append [[tables]] sections
+<p>Rules:</p>
+<ul>
+<li><code>create.sql</code> is required.</li>
+<li><code>insert.sql</code> is required.</li>
+<li><code>data.csv</code> is the default data file.</li>
+<li><code>clean.sql</code> is optional; if omitted, the default cleanup statement is <code>DELETE FROM {table}</code>.</li>
+<li><code>{table}</code> inside SQL files is replaced with the current table name.</li>
+</ul>
+<h2 id="paths-and-environment-variables"><a class="header" href="#paths-and-environment-variables">Paths and environment variables</a></h2>
+<ul>
+<li><code>${VAR}</code> is expanded before TOML deserialization. Example:</li>
+</ul>
+<pre><code class="language-toml">[provider]
+kind = "mysql"
+connection_uri = "mysql://root:${MYSQL_PASSWORD}@127.0.0.1:3306/demo"
 </code></pre>
-<p>SQL File Specifications</p>
 <ul>
-<li>create.sql: Table creation statement, must exist; can use placeholder <code>{table}</code>; allows multiple statements (e.g., <code>CREATE INDEX</code>)</li>
-<li>insert.sql: Insert statement, must exist; parameter positions use <code>?1..?N</code>; allows <code>{table}</code></li>
-<li>clean.sql: Optional; if not present, <code>DELETE FROM {table}</code> is executed by default before loading</li>
+<li>Values come from the <code>EnvDict</code> passed into <code>init_thread_cloned_from_knowdb(..., dict)</code>.</li>
+<li><code>wp-knowledge</code> does not read process environment variables directly.</li>
 </ul>
-<p>Column Mapping (columns)</p>
-<ul>
-<li>Recommended <code>by_header=[..]</code>, maps CSV header names to columns in <code>insert.sql</code></li>
-<li>If <code>has_header=false</code>, must provide <code>by_index=[..]</code></li>
-<li>Optional enhancement (implementation layer): If columns not configured and <code>insert.sql</code> explicitly lists columns, can parse insert column names as <code>by_header</code></li>
-</ul>
-<p>Loading Strategy (defaults can be omitted)</p>
-<ul>
-<li>Defaults: <code>transaction=true</code>, <code>batch_size=2000</code>, <code>on_error="fail"</code></li>
-<li>on_error:
-<ul>
-<li>fail: Fails and rolls back on bad row (missing columns/parse failure)</li>
-<li>skip: Skips bad rows and counts warnings</li>
-</ul>
-</li>
-</ul>
-<p>Auto-detection (when data_file is not configured)</p>
-<ul>
-<li>Uses <code>{base_dir}/{tables.dir}/data.csv</code></li>
-<li>Reports error if not exists</li>
-</ul>
-<p>Security Constraints</p>
-<ul>
-<li>Runtime (facade / SQL evaluation) only allows table names declared in <code>[[tables]].name</code></li>
-<li>SQL templates only allow <code>{table}</code> placeholder; other dynamic concatenation is prohibited</li>
-</ul>
-<p>Minimal Runnable Example</p>
+<p>Path resolution order:</p>
 <ol>
-<li>Directory</li>
+<li>If <code>knowdb_conf</code> is relative, resolve it against the caller-provided <code>root</code>.</li>
+<li>Resolve <code>base_dir</code> relative to the directory that contains <code>knowdb.toml</code>.</li>
+<li>Resolve <code>tables[n].dir</code> relative to <code>base_dir</code>.</li>
+<li>Resolve <code>tables[n].data_file</code> relative to the table directory.</li>
 </ol>
-<pre><code>${models.knowledge}/knowdb.toml
-models/knowledge/example/{create.sql, insert.sql, data.csv}
-</code></pre>
-<ol start="2">
-<li>create.sql</li>
-</ol>
-<pre><code class="language-sql">CREATE TABLE IF NOT EXISTS {table} (
-  id      INTEGER PRIMARY KEY,
-  name    TEXT NOT NULL,
-  pinying TEXT NOT NULL
-);
-</code></pre>
-<ol start="3">
-<li>insert.sql</li>
-</ol>
-<pre><code class="language-sql">INSERT INTO {table} (name, pinying) VALUES (?1, ?2);
-</code></pre>
-<ol start="4">
-<li>data.csv</li>
-</ol>
-<pre><code>name,pinying
-令狐冲,linghuchong
-任盈盈,renyingying
-</code></pre>
-<ol start="5">
-<li>knowdb.toml (minimal)</li>
-</ol>
-<pre><code class="language-toml">version = 2
-base_dir = "./models/knowledge"
-[[tables]]
-name = "example"
-dir  = "example"
-columns.by_header = ["name", "pinying"]
-[tables.expected_rows]
-min = 1
-max = 100
-</code></pre>
-<p>Common Errors and Troubleshooting</p>
+<h2 id="common-failures"><a class="header" href="#common-failures">Common failures</a></h2>
 <ul>
-<li>Missing create.sql / insert.sql: Fails at startup and points to missing file</li>
-<li><code>has_header=false</code> but <code>by_index</code> not provided: Loading error</li>
-<li><code>expected_rows.min</code> not satisfied: Insufficient data, loading fails</li>
-<li>Data source not found: Neither <code>data_file</code> configured nor default path <code>data.csv</code> exists</li>
-<li>Runtime SQL accesses undeclared table: Security validation fails</li>
+<li><code>version</code> is not <code>2</code></li>
+<li><code>create.sql</code>, <code>insert.sql</code>, or the data file is missing</li>
+<li>neither <code>columns.by_header</code> nor <code>columns.by_index</code> is configured</li>
+<li><code>columns.by_header</code> refers to a missing CSV header</li>
+<li><code>encoding</code> is not <code>utf-8</code></li>
+<li>CSV row parsing fails and <code>on_error = "fail"</code></li>
+<li>imported rows are below <code>expected_rows.min</code></li>
+<li>PostgreSQL / MySQL initialization fails to connect</li>
 </ul>
-<p>Relationship with Applications</p>
+<h2 id="recommended-patterns"><a class="header" href="#recommended-patterns">Recommended patterns</a></h2>
 <ul>
-<li>wparse/wproj etc. load knowdb at startup: Create authoritative database and set up Query Provider</li>
-</ul>
-<p>Built-in SQL Functions (UDF)</p>
-<ul>
-<li>Runtime registration:
-<ul>
-<li>Both import phase (authoritative database write connection) and query phase (thread-cloned read-only connection) automatically register.</li>
-<li>Can be used directly in <code>INSERT/SELECT/WHERE</code> (not involved in DDL).</li>
-</ul>
-</li>
-<li>Signatures and Semantics:
-<ul>
-<li><code>ip4_int(text) -&gt; integer</code>: Dotted IPv4 to 32-bit integer; tolerates whitespace/quotes; returns <code>0</code> on invalid input.</li>
-<li><code>ip4_between(ip_text, start_text, end_text) -&gt; integer</code>: Whether in closed interval <code>[start,end]</code> (1/0).</li>
-<li><code>cidr4_min(text) -&gt; integer</code>: CIDR start address (inclusive), e.g., <code>10.0.0.0/8</code>.</li>
-<li><code>cidr4_max(text) -&gt; integer</code>: CIDR end address (inclusive).</li>
-<li><code>cidr4_contains(ip_text, cidr_text) -&gt; integer</code>: Whether IP falls within CIDR range (1/0).</li>
-<li><code>ip4_text(integer|string) -&gt; text</code>: 32-bit integer to dotted IPv4 (useful for debugging/display).</li>
-<li><code>trim_quotes(text) -&gt; text</code>: Removes paired quotes (’ or “) at both ends, tolerates surrounding whitespace; returns original (whitespace trimmed) if not paired.</li>
-</ul>
-</li>
-<li>Import Example (insert.sql):
-<pre><code class="language-sql">INSERT INTO {table} (ip_start_int, ip_end_int, zone)
-VALUES (ip4_int(?1), ip4_int(?2), trim_quotes(?3));
-</code></pre>
-</li>
-<li>Query Example (regular SQL):
-<pre><code class="language-sql">-- Range match (recommended integer comparison, avoid directly comparing function returns in WHERE)
-SELECT zone FROM zone
-WHERE ip_start_int &lt;= ip4_int(:ip)
-  AND ip_end_int   &gt;= ip4_int(:ip)
-LIMIT 1;
-
--- CIDR match
-SELECT zone FROM zone
-WHERE cidr4_contains(:ip, :cidr) = 1;
-
--- Debug output
-SELECT ip4_text(ip_start_int) AS ip_start, ip4_text(ip_end_int) AS ip_end, zone
-FROM zone
-LIMIT 5;
-</code></pre>
-</li>
-<li>OML SQL Exact Evaluation:
-<ul>
-<li>OML’s <code>select ... from ... where ...;</code> syntax has identifier whitelist restrictions on column segments, not recommended to write functions directly in column segments.</li>
-<li>Recommended to produce numeric IP upstream (e.g., <code>src_ip_int</code>) and use integer comparison in OML where:
-<pre><code class="language-sql">from_zone: chars = sql(
-  select zone from zone
-  where ip_start_int &lt;= read(src_ip_int)
-    and ip_end_int   &gt;= read(src_ip_int);
-)
-</code></pre>
-</li>
-</ul>
-</li>
-<li>Notes:
-<ul>
-<li>Currently invalid IPv4/CIDR input returns <code>0</code> (or match failure) for import resilience; customize if strict behavior needed.</li>
-<li>SQLite natively provides <code>lower/upper/trim</code> and other string functions, can be combined with above UDFs.</li>
-</ul>
-</li>
+<li>In the directory-based SQLite authority mode, do not add a <code>[provider]</code> block.</li>
+<li>Put <code>enabled</code> under <code>[[tables]]</code>, not under <code>[tables.expected_rows]</code>.</li>
+<li>Keep <code>delimiter</code> to a single character.</li>
+<li>If you use <code>columns.by_header</code>, keep <code>csv.has_header = true</code>.</li>
+<li>In external PostgreSQL / MySQL mode, treat <code>[cache]</code> strictly as <code>result cache</code> configuration.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="logging-configuration-1"><a class="header" href="#logging-configuration-1">Logging Configuration</a></h1>
@@ -11399,6 +11969,10 @@ framing = "line"  # or "len"
 <tr><td><code>kafka</code></td><td>Output to Kafka</td><td>-</td></tr>
 <tr><td><code>prometheus</code></td><td>Prometheus metrics exposure</td><td><a href="#prometheus-sink">Prometheus Sink Configuration</a></td></tr>
 <tr><td><code>victorialogs</code></td><td>Output to VictoriaLogs</td><td><a href="#victorialogs">VictoriaLogs Sink Configuration</a></td></tr>
+<tr><td><code>dmdb</code></td><td>Output to DMDB</td><td><a href="#dmdb-sink">DMDB Sink Configuration</a></td></tr>
+<tr><td><code>elasticsearch</code></td><td>Output to Elasticsearch</td><td><a href="#elasticsearch-sink">Elasticsearch Sink Configuration</a></td></tr>
+<tr><td><code>http</code></td><td>Output to HTTP server</td><td><a href="#http-sink">HTTP Sink Configuration</a></td></tr>
+<tr><td><code>clickhouse</code></td><td>Output to ClickHouse database</td><td><a href="#clickhouse-sink">ClickHouse Sink Configuration</a></td></tr>
 </tbody>
 </table>
 </div>
@@ -12602,39 +13176,259 @@ batch_size = 1024
 <li>PostgreSQL uses the same configuration keys as MySQL. Only connector <code>type</code>, port, and connection details differ.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="dmdb-sink"><a class="header" href="#dmdb-sink">DMDB Sink</a></h1>
+<h2 id="1-prerequisites"><a class="header" href="#1-prerequisites">1. Prerequisites</a></h2>
+<p>Before using the <code>dmdb</code> sink, first install the ODBC driver. Then follow the setup and verification steps for either <code>connection_string</code> / <code>endpoint</code> mode or <code>dsn</code> mode, depending on how you plan to connect.</p>
+<h3 id="11-common-preparation-install-the-odbc-environment-and-the-dm-driver"><a class="header" href="#11-common-preparation-install-the-odbc-environment-and-the-dm-driver">1.1 Common Preparation: Install the ODBC Environment and the DM Driver</a></h3>
+<h4 id="install-system-dependencies-ubuntu-example"><a class="header" href="#install-system-dependencies-ubuntu-example">Install System Dependencies (Ubuntu Example)</a></h4>
+<pre><code class="language-bash">apt-get update
+apt-get install -y unixodbc unixodbc-dev odbcinst
+</code></pre>
+<p>Run the following commands to verify the installation:</p>
+<pre><code class="language-bash">root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# which isql
+/usr/bin/isql
+root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# isql --version
+unixODBC 2.3.12
+root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# odbcinst -j
+unixODBC 2.3.12
+DRIVERS............: /etc/odbcinst.ini
+SYSTEM DATA SOURCES: /etc/odbc.ini
+FILE DATA SOURCES..: /etc/ODBCDataSources
+USER DATA SOURCES..: /root/.odbc.ini
+SQLULEN Size.......: 8
+SQLLEN Size........: 8
+SQLSETPOSIROW Size.: 8
+</code></pre>
+<h4 id="install-the-dm-odbc-driver"><a class="header" href="#install-the-dm-odbc-driver">Install the DM ODBC Driver</a></h4>
+<ul>
+<li>Windows version: <a href="https://dn.navicat.com/drivers/dameng_odbc_win.zip">https://dn.navicat.com/drivers/dameng_odbc_win.zip</a></li>
+<li>Linux version: <a href="https://dn.navicat.com/drivers/dameng_odbc_linux.tar.gz">https://dn.navicat.com/drivers/dameng_odbc_linux.tar.gz</a></li>
+</ul>
+<p>The following example assumes the archive is downloaded to <code>/root/wp</code>:</p>
+<h4 id="configure-the-dynamic-library-path"><a class="header" href="#configure-the-dynamic-library-path">Configure the Dynamic Library Path</a></h4>
+<pre><code class="language-bash">echo "/root/wp/dameng_odbc_linux/libdodbc.so" &gt; /etc/ld.so.conf.d/dameng.conf
+ldconfig
+</code></pre>
+<p>Run the following command to verify that the dynamic library has been loaded successfully:</p>
+<pre><code class="language-bash">root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# ldconfig -p | grep libdodbc
+        libdodbc.so (libc6,x86-64) =&gt; /root/wp/dameng_odbc_linux/libdodbc.so
+</code></pre>
+<h3 id="12-common-preparation-register-the-odbc-driver"><a class="header" href="#12-common-preparation-register-the-odbc-driver">1.2 Common Preparation: Register the ODBC Driver</a></h3>
+<p>Edit <code>/etc/odbcinst.ini</code>. If the file already exists, append the following content. If it does not exist, create it and write the content below:</p>
+<pre><code class="language-ini">[DM8 ODBC DRIVER]
+Description = DM8 ODBC DRIVER for DM8
+Driver = /root/wp/dameng_odbc_linux/libdodbc.so
+FileUsage = 1
+</code></pre>
+<p>After the configuration is complete, run the following command to verify that the driver registration output is correct:</p>
+<pre><code class="language-bash">root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# odbcinst -q -d -n "DM8 ODBC DRIVER"
+[DM8 ODBC DRIVER]
+Description=ODBC DRIVER FOR DM8
+Driver=/root/wp/dameng_odbc_linux/libdodbc.so
+Setup=/root/wp/dameng_odbc_linux/libdodbc.so
+</code></pre>
+<p>After these steps are complete, the host machine is ready to use the DM ODBC driver. Next, continue with one of the following paths based on your connection mode.</p>
+<h3 id="13-connection_string--endpoint-mode-setup"><a class="header" href="#13-connection_string--endpoint-mode-setup">1.3 <code>connection_string</code> / <code>endpoint</code> Mode Setup</a></h3>
+<p>These two modes do not depend on a DSN entry in <code>/etc/odbc.ini</code>. They only require the ODBC driver to be installed and registered successfully.</p>
+<ul>
+<li><code>connection_string</code> mode: provide the full ODBC connection string directly.</li>
+<li><code>endpoint</code> mode: build the connection string automatically from <code>endpoint + driver + username + password</code>.</li>
+</ul>
+<p>You can run the following command on the machine where <code>wparse</code> is running to verify that the driver and direct connection parameters are valid. Replace the host, port, username, and password with actual values:</p>
+<pre><code class="language-bash">root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# isql -v -k "Driver={DM8 ODBC DRIVER};Server=127.0.0.1;Port=5236;UID=SYSDBA;PWD=SYSDBA"
++---------------------------------------+
+| Connected!                            |
+|                                       |
+| sql-statement                         |
+| help [tablename]                      |
+| echo [string]                         |
+| quit                                  |
+|                                       |
++---------------------------------------+
+SQL&gt;
+</code></pre>
+<p>If the command above connects successfully, the host-side preparation required for <code>connection_string</code> or <code>endpoint</code> mode is complete.</p>
+<h3 id="14-dsn-mode-setup"><a class="header" href="#14-dsn-mode-setup">1.4 <code>dsn</code> Mode Setup</a></h3>
+<p>In addition to installing and registering the ODBC driver, <code>dsn</code> mode also requires a data source name to be configured in <code>/etc/odbc.ini</code>. That name must match the <code>dsn</code> parameter in the sink configuration.</p>
+<p>For example, you can add a DM data source to <code>/etc/odbc.ini</code>:</p>
+<pre><code class="language-ini">[DM_DSN]
+Description = DM8 Database
+Driver = /root/wp/dameng_odbc_linux/libdodbc.so
+Server = 159.75.175.212
+Port = 5236
+User = SYSDBA
+Password = &lt;replace with the actual password&gt;
+</code></pre>
+<p>After the configuration is complete, run the following commands to verify that the DSN is available. Replace the host, username, and password with actual values:</p>
+<pre><code class="language-bash">root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# cat /etc/odbc.ini
+[DM_DSN]                          ; DSN name
+Description = DM8 Database
+Driver = /root/wp/dameng_odbc_linux/libdodbc.so
+Server = 127.0.0.1
+Port = 5236
+User = SYSDBA
+Password = Dayu@1234
+root@ent-rdd-WarpParse-01:~/wp/dameng_odbc_linux# isql DM_DSN SYSDBA SYSDBA
++---------------------------------------+
+| Connected!                            |
+|                                       |
+| sql-statement                         |
+| help [tablename]                      |
+| echo [string]                         |
+| quit                                  |
+|                                       |
++---------------------------------------+
+SQL&gt;
+</code></pre>
+<p>If the command above connects successfully, the system-level data source for <code>dsn = "DM_DSN"</code> has been configured correctly.</p>
+<h3 id="15-prepare-the-target-table"><a class="header" href="#15-prepare-the-target-table">1.5 Prepare the Target Table</a></h3>
+<ul>
+<li>The target table must already exist.</li>
+<li><code>table</code> and <code>columns</code> must match the actual target table schema, including column names and column types.</li>
+</ul>
+<h2 id="2-connection-modes"><a class="header" href="#2-connection-modes">2. Connection Modes</a></h2>
+<h3 id="21-connection_string-mode"><a class="header" href="#21-connection_string-mode">2.1 <code>connection_string</code> Mode</a></h3>
+<p>Suitable when you already have a complete ODBC connection string.</p>
+<ul>
+<li>Required parameters: <code>connection_string</code>, <code>table</code>, <code>columns</code></li>
+<li>Optional parameters: <code>schema</code>, <code>batch_size</code>, <code>connect_timeout_secs</code>, <code>query_timeout_secs</code></li>
+<li>Not additionally required: <code>dsn</code>, <code>endpoint</code>, <code>driver</code>, <code>username</code>, <code>password</code></li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-toml">[sink_group]
+name = "database"
+rule = ["/*"]
+parallel = 8
+[[sink_group.sinks]]
+name = "dmdb_sink"
+connect = "dmdb_connect_string"
+[sink_group.sinks.params]
+connection_string = "Driver={DM8 ODBC DRIVER};SERVER=127.0.0.1;TCP_PORT=5236;UID=SYSDBA;PWD=Dayu@1234;"
+table = "nginx_logs"
+columns = ["sip", "timestamp", "http/request", "status", "size", "referer", "http/agent"]
+batch_size = 2000
+query_timeout_secs = 15
+</code></pre>
+<h3 id="22-endpoint-mode"><a class="header" href="#22-endpoint-mode">2.2 <code>endpoint</code> Mode</a></h3>
+<p>Suitable when you do not want to preconfigure a DSN and prefer to connect directly by host and port.</p>
+<ul>
+<li>Required parameters: <code>endpoint</code>, <code>driver</code>, <code>username</code>, <code>password</code>, <code>table</code>, <code>columns</code></li>
+<li>Optional parameters: <code>schema</code>, <code>batch_size</code>, <code>connect_timeout_secs</code>, <code>query_timeout_secs</code></li>
+<li><code>endpoint</code> must be in <code>host:port</code> format, and <code>port</code> must be parseable as a valid <code>u16</code></li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-toml">[sink_group]
+name = "database"
+rule = ["/*"]
+parallel = 8
+[[sink_group.sinks]]
+name = "dmdb_sink"
+connect = "dmdb_endpoint"
+[sink_group.sinks.params]
+endpoint = "127.0.0.1:5236"
+driver = "DM8 ODBC DRIVER"
+username = "SYSDBA"
+password = "SYSDBA"
+schema = "WP_DATA"
+table = "EVENTS"
+columns = ["event_id", "event_time", "source", "payload"]
+batch_size = 2000
+connect_timeout_secs = 8
+query_timeout_secs = 15
+</code></pre>
+<h3 id="23-dsn-mode"><a class="header" href="#23-dsn-mode">2.3 <code>dsn</code> Mode</a></h3>
+<p>Suitable when the host machine has already configured an ODBC DSN and neither <code>connection_string</code> nor <code>endpoint</code> is provided.</p>
+<ul>
+<li>Required parameters: <code>dsn</code>, <code>username</code>, <code>password</code>, <code>table</code>, <code>columns</code></li>
+<li>Optional parameters: <code>schema</code>, <code>batch_size</code>, <code>connect_timeout_secs</code>, <code>query_timeout_secs</code></li>
+<li>Not additionally required: <code>endpoint</code>, <code>driver</code></li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-toml">[sink_group]
+name = "database"
+rule = ["/*"]
+parallel = 8
+[[sink_group.sinks]]
+name = "dmdb_sink"
+connect = "dmdb_dsn"
+[sink_group.sinks.params]
+dsn = "DM_DSN"
+username = "SYSDBA"
+password = "SYSDBA"
+schema = "WP_DATA"
+table = "EVENTS"
+columns = ["event_id", "event_time", "source", "payload"]
+batch_size = 2000
+connect_timeout_secs = 8
+query_timeout_secs = 15
+</code></pre>
+<h2 id="3-parameter-reference"><a class="header" href="#3-parameter-reference">3. Parameter Reference</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Parameter</th><th>Type</th><th>Required</th><th>Applicable Modes</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>connection_string</code></td><td><code>string</code></td><td>Required in <code>connection_string</code> mode</td><td>All</td><td>A complete ODBC connection string. This has the highest priority.</td></tr>
+<tr><td><code>endpoint</code></td><td><code>string</code></td><td>Required in <code>endpoint</code> mode</td><td>All</td><td>The DM database address. The format must be <code>host:port</code>; it has higher priority than <code>dsn</code>.</td></tr>
+<tr><td><code>dsn</code></td><td><code>string</code></td><td>Required in <code>dsn</code> mode</td><td>All</td><td>The ODBC data source name. It is used only when neither <code>connection_string</code> nor <code>endpoint</code> is configured.</td></tr>
+<tr><td><code>driver</code></td><td><code>string</code></td><td>Required in <code>endpoint</code> mode</td><td>All</td><td>The DM ODBC driver name, for example <code>DM8 ODBC DRIVER</code>.</td></tr>
+<tr><td><code>username</code></td><td><code>string</code></td><td>Required in <code>dsn</code> and <code>endpoint</code> modes</td><td>All</td><td>The DM username. It does not need to be provided separately in <code>connection_string</code> mode.</td></tr>
+<tr><td><code>password</code></td><td><code>string</code></td><td>Required in <code>dsn</code> and <code>endpoint</code> modes</td><td>All</td><td>The DM password. It does not need to be provided separately in <code>connection_string</code> mode.</td></tr>
+<tr><td><code>schema</code></td><td><code>string</code></td><td>No</td><td>All</td><td>Used to build the qualified target table name. In <code>endpoint</code> mode, it is also appended to the generated connection string.</td></tr>
+<tr><td><code>table</code></td><td><code>string</code></td><td>Yes</td><td>All</td><td>The target table name. It cannot be empty.</td></tr>
+<tr><td><code>columns</code></td><td><code>string[]</code></td><td>Yes</td><td>All</td><td>The list of target column names. It must be a string array, and each item must be a non-empty string.</td></tr>
+<tr><td><code>batch_size</code></td><td><code>integer</code></td><td>No</td><td>All</td><td>The maximum number of records written in a single SQL statement. It must be greater than <code>0</code>. If not configured, the sink falls back to <code>1024</code>.</td></tr>
+<tr><td><code>connect_timeout_secs</code></td><td><code>integer</code></td><td>No</td><td>All</td><td>The ODBC login timeout in seconds. It must be greater than <code>0</code>. When configured, it is passed to <code>ConnectionOptions.login_timeout_sec</code>; otherwise, it is not explicitly set.</td></tr>
+<tr><td><code>query_timeout_secs</code></td><td><code>integer</code></td><td>No</td><td>All</td><td>The execution timeout in seconds for each SQL batch. It must be greater than <code>0</code>. If not configured, it is not explicitly set.</td></tr>
+</tbody>
+</table>
+</div>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="troubleshootingmd"><a class="header" href="#troubleshootingmd">troubleshooting.md</a></h1>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="wp-monitor"><a class="header" href="#wp-monitor">Wp-Monitor</a></h1>
-<p><img src="images/Wp-Monitor.jpg" alt="Wp-Monitor"></p>
-<p>Wp-Monitor is the unified observation entry for WarpParse data pipelines. It helps you check whether the pipeline is processing data normally, whether MISS data is abnormal, and whether downstream output is stable.</p>
-<h2 id="what-you-can-observe"><a class="header" href="#what-you-can-observe">What You Can Observe</a></h2>
+<p>Wp-Monitor is a unified observation entry point for the WarpParse data pipeline, used to check whether the pipeline is processing data normally, whether MISS is abnormal, and whether downstream output is stable.</p>
+<h2 id="what-you-can-see"><a class="header" href="#what-you-can-see">What You Can See</a></h2>
 <ul>
-<li>Full pipeline overview: view the runtime status of Source, Parse, Sink, and MISS in one place.</li>
-<li>Time window observation: inspect real-time or historical behavior by time range.</li>
-<li>MISS data observation: check unmatched data and export it when needed.</li>
-<li>Trend changes: help determine whether a fluctuation is temporary or persistent.</li>
+<li><strong>Full-link overview</strong>: Unified view of Source, Parse, Sink, and MISS operational status.</li>
+<li><strong>Time window observation</strong>: View real-time or historical pipeline performance within a configurable time range.</li>
+<li><strong>MISS data observation</strong>: Inspect data that didn’t match any rules and export it for analysis when needed.</li>
+<li><strong>Trend changes</strong>: Helps determine whether fluctuations are transient spikes or sustained anomalies.</li>
 </ul>
-<p>Typical use cases:</p>
+<p>Applicable scenarios:</p>
 <ul>
 <li>Daily inspection</li>
 <li>Troubleshooting</li>
 <li>Incident review</li>
 </ul>
+<p><img src="10-user/10-monitor/monitor-1.jpg" alt="Wp-Monitor"></p>
 <h2 id="prerequisites-2"><a class="header" href="#prerequisites-2">Prerequisites</a></h2>
-<p>Prepare the following components first:</p>
+<p>The following components must be prepared:</p>
 <ul>
-<li>VictoriaMetrics: stores and queries metric data</li>
-<li>VictoriaLogs: stores and queries MISS data</li>
-<li>WarpParse: the data pipeline being monitored</li>
+<li><strong>VictoriaMetrics</strong>: Stores and queries metric data</li>
+<li><strong>VictoriaLogs</strong>: Stores and queries MISS data</li>
+<li><strong>WarpParse</strong>: The data processing pipeline being monitored</li>
 </ul>
-<p>If the WarpParse pipeline has not been deployed, Wp-Monitor cannot be used.</p>
+<p>Wp-Monitor cannot be used without a deployed WarpParse pipeline.</p>
 <h2 id="setup-steps"><a class="header" href="#setup-steps">Setup Steps</a></h2>
-<h3 id="1-deploy-wp-observing"><a class="header" href="#1-deploy-wp-observing">1. Deploy <code>wp-observing</code></a></h3>
-<pre><code class="language-bash">git clone https://github.com/wp-labs/wp-compose
-cd ./wp-compose/warp-observing/setup.sh
+<h3 id="1-deploy-monitor-via-docker"><a class="header" href="#1-deploy-monitor-via-docker">1. Deploy monitor via Docker</a></h3>
+<pre><code class="language-bash">curl -sSf https://get.warpparse.ai/inst-x.sh | bash -s -- monitor-docker alpha
+</code></pre>
+<p>This command generates a Docker configuration for monitor in the current directory, which can be started directly with <code>docker-compose -f</code>. Below is the directory structure:</p>
+<pre><code class="language-bash">wp-monitor
+├── example                     # wparse examples
+├── README.md
+├── docker-compose-alpha.yml    # alpha version config
+├── docker-compose-beta.yml     # beta version config
+├── docker-compose-main.yml     # main version config
+├── start.sh                    # startup script
+└── wp-monitor                  # monitor config
+    └── config
+        └── app.toml
 </code></pre>
 <h3 id="2-configure-connectors-in-warpparse"><a class="header" href="#2-configure-connectors-in-warpparse">2. Configure connectors in WarpParse</a></h3>
-<p>If the required connectors already exist, you can skip this step.</p>
+<p>Skip this step if the corresponding connectors already exist.</p>
 <h4 id="victoriametrics-connector"><a class="header" href="#victoriametrics-connector">VictoriaMetrics connector</a></h4>
 <pre><code class="language-toml">[[connectors]]
 id = "victoriametrics_sink"
@@ -12655,7 +13449,7 @@ allow_override = ["endpoint", "insert_path", "flush_interval_secs", "create_time
 endpoint = "http://127.0.0.1:9428"
 insert_path = "/insert/jsonline"
 </code></pre>
-<h3 id="3-connect-monitoring-and-miss-output-in-sink_group"><a class="header" href="#3-connect-monitoring-and-miss-output-in-sink_group">3. Connect monitoring and MISS output in <code>sink_group</code></a></h3>
+<h3 id="3-configure-monitor-and-miss-output-in-sink_group"><a class="header" href="#3-configure-monitor-and-miss-output-in-sink_group">3. Configure monitor and MISS output in sink_group</a></h3>
 <h4 id="infradmonitortoml"><a class="header" href="#infradmonitortoml"><code>infra.d/monitor.toml</code></a></h4>
 <pre><code class="language-toml">[[sink_group.sinks]]
 name = "victoriametrics"
@@ -12667,24 +13461,35 @@ name = "victorialogs_output"
 connect = "victorialogs_sink"
 params = { endpoint = "http://127.0.0.1:9428", insert_path = "/insert/jsonline", tags = ["wp_stage:miss"] }
 </code></pre>
-<p>Notes:</p>
+<p>Note:</p>
 <ul>
 <li><code>tags</code> must include <code>wp_stage:miss</code></li>
-<li>otherwise Wp-Monitor cannot query MISS data</li>
+<li>Otherwise Wp-Monitor cannot query MISS data</li>
 </ul>
-<h3 id="4-start-warpparse"><a class="header" href="#4-start-warpparse">4. Start WarpParse</a></h3>
-<pre><code class="language-bash">wparse daemon --stat 1
+<h3 id="4-start-warpparse-example-optional"><a class="header" href="#4-start-warpparse-example-optional">4. Start WarpParse example (optional)</a></h3>
+<pre><code class="language-bash">cd wp-monitor/example
+wparse daemon --stat 1
+# Open a new terminal and run:
+cd wp-monitor/example
+./wpgen-keep-running.sh
 </code></pre>
 <p><code>--stat 1</code> enables statistics output so Wp-Monitor can observe pipeline status.</p>
 <h2 id="minimal-troubleshooting-path"><a class="header" href="#minimal-troubleshooting-path">Minimal Troubleshooting Path</a></h2>
-<p>Recommended order:</p>
+<p>It is recommended to check in the following order:</p>
 <ol>
-<li>Confirm the time window of the issue</li>
-<li>Check whether there is an obvious fluctuation in the pipeline overview</li>
-<li>Check whether MISS data increases abnormally</li>
-<li>Check whether downstream output shows loss or fluctuation</li>
+<li>First identify the problem time window</li>
+<li>Check the pipeline overview for obvious fluctuations</li>
+<li>Check if MISS has abnormally increased</li>
+<li>Check downstream output for loss or fluctuations</li>
 </ol>
-<p>If you only want a quick health check, start with the overview and MISS data in the target time window.</p>
+<p>If you only need a quick health check, reviewing the overview and MISS within the time window is usually sufficient.</p>
+<h2 id="screenshots"><a class="header" href="#screenshots">Screenshots</a></h2>
+<h3 id="source-statistics"><a class="header" href="#source-statistics">Source Statistics</a></h3>
+<p><img src="10-user/10-monitor/monitor-source.jpg" alt=""></p>
+<h3 id="parse-statistics"><a class="header" href="#parse-statistics">Parse Statistics</a></h3>
+<p><img src="10-user/10-monitor/monitor-parse.jpg" alt=""></p>
+<h3 id="sink-statistics"><a class="header" href="#sink-statistics">Sink Statistics</a></h3>
+<p><img src="10-user/10-monitor/monitor-sink.jpg" alt=""></p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="benchmark-report"><a class="header" href="#benchmark-report">Benchmark Report</a></h1>
 <p>Performance benchmarks and testing results.</p>
@@ -12797,11 +13602,13 @@ params = { endpoint = "http://127.0.0.1:9428", insert_path = "/insert/jsonline",
 </ul>
 <h2 id="reproduction-commands"><a class="header" href="#reproduction-commands">Reproduction commands</a></h2>
 <p>PostgreSQL provider layer:</p>
-<pre><code class="language-bash">KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-postgres-provider.sh
+<pre><code class="language-bash">KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-postgres-provider-perf.sh
 </code></pre>
 <p>MySQL provider layer:</p>
-<pre><code class="language-bash">KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-mysql-provider.sh
+<pre><code class="language-bash">KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-mysql-provider-perf.sh
 </code></pre>
+<p>If you want correctness-only provider checks, use <code>tests/test-postgres-provider-correctness.sh</code> and <code>tests/test-mysql-provider-correctness.sh</code>.
+If you need to run multiple provider scripts in parallel, set a different <code>COMPOSE_PROJECT_NAME</code> for each run.</p>
 <p>PostgreSQL OML layer:</p>
 <pre><code class="language-bash">WP_KDB_TEST_POSTGRES_URL='postgres://postgres:demo@127.0.0.1:5432/postgres' \
 WP_KDB_PERF_ROWS=10000 \
@@ -12963,7 +13770,7 @@ cargo test --manifest-path ../wp-motor/Cargo.toml -p wp-oml \
 <p>Each upstream repo can add a lightweight workflow that emits <code>repository_dispatch</code> when its docs path changes. The resulting chain becomes:</p>
 <p><code>upstream docs change -&gt; notify wp-docs -&gt; wp-docs pulls latest docs -&gt; automated PR</code></p>
 <p>This is preferable to pushing directly into the aggregation repo because the sync logic stays centralized and every aggregated change remains reviewable.</p>
-<h2 id="next-steps-2"><a class="header" href="#next-steps-2">Next Steps</a></h2>
+<h2 id="next-steps-3"><a class="header" href="#next-steps-3">Next Steps</a></h2>
 <p>As the number of sources grows, the next practical improvements are:</p>
 <ol>
 <li>Add explicit <code>delete = true/false</code> behavior per source.</li>
@@ -12971,6 +13778,360 @@ cargo test --manifest-path ../wp-motor/Cargo.toml -p wp-oml \
 <li>Run Markdown validation and mdBook build after sync.</li>
 <li>Record upstream commit SHAs in the generated PR description.</li>
 </ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="wp-knowledge-provider-and-cache-plan"><a class="header" href="#wp-knowledge-provider-and-cache-plan">wp-knowledge Provider and Cache Plan</a></h1>
+<p>Companion tasks:</p>
+<ul>
+<li><a href="#provider--cache-refactor-tasks">Provider / Cache Follow-up Tasks</a></li>
+</ul>
+<h2 id="one-line-summary"><a class="header" href="#one-line-summary">One-line summary</a></h2>
+<p>The target architecture is simple:</p>
+<ul>
+<li>providers are replaceable</li>
+<li>cache layers are explicit</li>
+<li>reload has one invalidation contract</li>
+<li>legacy facade APIs still exist, but only as wrappers over one runtime</li>
+</ul>
+<p>Correctness depends on two values:</p>
+<ul>
+<li><code>datasource_id</code></li>
+<li><code>generation</code></li>
+</ul>
+<p>Every cache entry and every thread-local snapshot must be tied to them.</p>
+<h2 id="why-this-exists"><a class="header" href="#why-this-exists">Why this exists</a></h2>
+<p>The old implementation was built for <code>SQLite + single process + per-call cache</code>. Once SQLite, PostgreSQL, and MySQL all coexist, the old assumptions become correctness and maintenance problems:</p>
+<ul>
+<li>provider lifecycle is too static</li>
+<li>caller-owned cache keys are too weak</li>
+<li>metadata cache has no clear bound</li>
+<li><code>ThreadClonedMDB</code> is not version-aware</li>
+</ul>
+<h2 id="target-model"><a class="header" href="#target-model">Target model</a></h2>
+<p>Keep only four layers:</p>
+<ol>
+<li><code>DatasourceRegistry</code>
+<ul>
+<li>owns the active provider</li>
+<li>manages <code>datasource_id</code></li>
+<li>manages <code>generation</code></li>
+<li>handles replace / reload</li>
+</ul>
+</li>
+<li><code>KnowledgeProvider</code>
+<ul>
+<li>executes queries only</li>
+<li>does not own cache policy</li>
+</ul>
+</li>
+<li><code>QueryRuntime</code>
+<ul>
+<li>decides cache usage</li>
+<li>builds cache keys</li>
+<li>owns result cache and metadata cache</li>
+</ul>
+</li>
+<li><code>Facade Compatibility Layer</code>
+<ul>
+<li>keeps <code>query/query_row/query_named/cache_query</code></li>
+<li>serves only as compatibility glue</li>
+</ul>
+</li>
+</ol>
+<h2 id="core-contracts"><a class="header" href="#core-contracts">Core contracts</a></h2>
+<h3 id="datasourceid"><a class="header" href="#datasourceid"><code>DatasourceId</code></a></h3>
+<ul>
+<li>identifies the current data source</li>
+<li>can come from config hash or authority-path hash</li>
+<li>must not expose secrets</li>
+</ul>
+<h3 id="generation"><a class="header" href="#generation"><code>Generation</code></a></h3>
+<ul>
+<li>identifies the current runtime version</li>
+<li>must advance on reload, provider switch, authority rebuild, or schema refresh</li>
+<li>is the main invalidation mechanism; TTL is only fallback</li>
+</ul>
+<h3 id="queryrequest"><a class="header" href="#queryrequest"><code>QueryRequest</code></a></h3>
+<p>Use one internal request model that carries at least:</p>
+<ul>
+<li><code>sql</code></li>
+<li><code>params</code></li>
+<li><code>mode</code></li>
+<li><code>cache_policy</code></li>
+</ul>
+<p>Providers perform their own binding internally. Runtime code should not depend on <code>rusqlite::ToSql</code>.</p>
+<h3 id="cachepolicy"><a class="header" href="#cachepolicy"><code>CachePolicy</code></a></h3>
+<p>Only three meanings are needed:</p>
+<ul>
+<li><code>Bypass</code>
+<ul>
+<li>no cache</li>
+</ul>
+</li>
+<li><code>UseGlobal</code>
+<ul>
+<li>shared result cache</li>
+</ul>
+</li>
+<li><code>UseCallScope</code>
+<ul>
+<li>per-call cache, mainly for compatibility</li>
+</ul>
+</li>
+</ul>
+<h2 id="cache-layers"><a class="header" href="#cache-layers">Cache layers</a></h2>
+<p>Keep only three layers, with separate responsibilities.</p>
+<h3 id="1-result-cache"><a class="header" href="#1-result-cache">1. Result Cache</a></h3>
+<ul>
+<li>for reuse across calls</li>
+<li>key must include:
+<ul>
+<li><code>datasource_id</code></li>
+<li><code>generation</code></li>
+<li><code>query_hash</code></li>
+<li><code>params_hash</code></li>
+<li><code>mode</code></li>
+</ul>
+</li>
+<li>only for explicitly cacheable hotspot queries</li>
+</ul>
+<h3 id="2-local-cache"><a class="header" href="#2-local-cache">2. Local Cache</a></h3>
+<ul>
+<li>for deduplication inside one evaluation</li>
+<li>does not provide global consistency</li>
+<li><code>FieldQueryCache</code> should be treated as this layer</li>
+</ul>
+<h3 id="3-metadata-cache"><a class="header" href="#3-metadata-cache">3. Metadata Cache</a></h3>
+<ul>
+<li>for column names and schema fragments</li>
+<li>key must include at least:
+<ul>
+<li><code>datasource_id</code></li>
+<li><code>generation</code></li>
+<li><code>query_hash</code></li>
+</ul>
+</li>
+<li>must be bounded</li>
+</ul>
+<h2 id="reload-contract"><a class="header" href="#reload-contract">Reload contract</a></h2>
+<p>Reload follows one simple rule:</p>
+<ul>
+<li>whether old state is still valid is decided by <code>generation</code>, not by time</li>
+</ul>
+<p>That means:</p>
+<ul>
+<li>result cache invalidates naturally when generation changes</li>
+<li>metadata cache invalidates naturally when generation changes</li>
+<li><code>ThreadClonedMDB</code> must rebuild snapshots when generation changes</li>
+<li>reload failure must keep the old provider alive; runtime must not enter a half-initialized state</li>
+</ul>
+<h2 id="current-landing-status"><a class="header" href="#current-landing-status">Current landing status</a></h2>
+<p>On the 2026-03-25 baseline, most core pieces already exist:</p>
+<ul>
+<li><code>KnowledgeRuntime</code></li>
+<li>unified <code>QueryRequest / QueryParam / CachePolicy</code></li>
+<li>bounded global result cache keyed by <code>datasource_id + generation</code></li>
+<li>generation-aware <code>FieldQueryCache</code></li>
+<li>generation-aware <code>ThreadClonedMDB</code></li>
+<li>bounded SQLite metadata cache</li>
+</ul>
+<p>The main unfinished areas are now:</p>
+<ul>
+<li>host-side telemetry / metrics adapters</li>
+<li>shrinking and deprecating the old compatibility surface</li>
+</ul>
+<h2 id="migration-order"><a class="header" href="#migration-order">Migration order</a></h2>
+<p>The remaining work should stay in this order:</p>
+<ol>
+<li>finish the external reload / observability contract</li>
+<li>make provider-neutral APIs the default path</li>
+<li>shrink the role of <code>query_named(...)</code> and <code>cache_query(...)</code></li>
+<li>keep local cache only where compatibility still needs it</li>
+</ol>
+<h2 id="final-judgment"><a class="header" href="#final-judgment">Final judgment</a></h2>
+<p>This direction is already validated. The remaining job is cleanup, not another redesign.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="postgresql-provider-tasks"><a class="header" href="#postgresql-provider-tasks">PostgreSQL Provider Tasks</a></h1>
+<h2 id="current-baseline"><a class="header" href="#current-baseline">Current baseline</a></h2>
+<p>Already available:</p>
+<ul>
+<li><code>[provider] kind = "postgres"</code> support</li>
+<li><code>query_fields(...)</code> / <code>cache_query_fields(...)</code> as the recommended path</li>
+<li>baseline queries, named-parameter rewriting, and manual verification scripts</li>
+</ul>
+<p>This is enough to validate the main flow, but not yet enough for long-term production-grade PostgreSQL support.</p>
+<h2 id="remaining-work"><a class="header" href="#remaining-work">Remaining work</a></h2>
+<h3 id="1-connection-pool"><a class="header" href="#1-connection-pool">1. Connection pool</a></h3>
+<ul>
+<li>Current: <code>src/postgres.rs</code> still behaves like a serialized single-client path</li>
+<li>Goal:
+<ul>
+<li>integrate a connection pool</li>
+<li>define connect/disconnect/retry behavior</li>
+<li>remove dependence on one serialized client</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-startup-validation"><a class="header" href="#2-startup-validation">2. Startup validation</a></h3>
+<ul>
+<li>Current: startup mostly checks only basic connectivity</li>
+<li>Goal:
+<ul>
+<li>validate database, schema, permissions, and key objects at startup</li>
+<li>fail early on wrong DB, wrong schema, or wrong permissions</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-sql--udf-boundary"><a class="header" href="#3-sql--udf-boundary">3. SQL / UDF boundary</a></h3>
+<ul>
+<li>Current: baseline SQL works, but SQLite UDF assumptions are still incomplete</li>
+<li>Goal:
+<ul>
+<li>list SQL that can move directly</li>
+<li>list SQL that must be rewritten</li>
+<li>list functions users must provide in PostgreSQL themselves</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-type-coverage"><a class="header" href="#4-type-coverage">4. Type coverage</a></h3>
+<ul>
+<li>Current: result-type support and bind behavior are still incomplete</li>
+<li>Goal:
+<ul>
+<li>cover common numeric, temporal, JSON, and network types</li>
+<li>return clearer errors for unsupported types</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-automated-verification"><a class="header" href="#5-automated-verification">5. Automated verification</a></h3>
+<ul>
+<li>Current: verification is still too manual</li>
+<li>Goal:
+<ul>
+<li>add a stable CI path</li>
+<li>choose one main path between Compose and <code>testcontainers</code></li>
+<li>emit enough diagnostics on failure</li>
+</ul>
+</li>
+</ul>
+<h3 id="6-end-to-end-example-in-a-consuming-repo"><a class="header" href="#6-end-to-end-example-in-a-consuming-repo">6. End-to-end example in a consuming repo</a></h3>
+<ul>
+<li>Current: <code>wp-knowledge</code> can validate itself, but the consuming-repo chain is incomplete</li>
+<li>Goal:
+<ul>
+<li>add a PostgreSQL example in a consumer repo</li>
+<li>validate <code>wp-oml</code> with a real schema</li>
+<li>provide reusable run instructions</li>
+</ul>
+</li>
+</ul>
+<h3 id="7-compatibility-cleanup"><a class="header" href="#7-compatibility-cleanup">7. Compatibility cleanup</a></h3>
+<ul>
+<li>Current: <code>query_named(...)</code> / <code>cache_query(...)</code> still preserve older SQLite-shaped behavior</li>
+<li>Goal:
+<ul>
+<li>make provider-neutral APIs the default for new code</li>
+<li>define the retention and deprecation strategy for compatibility APIs</li>
+</ul>
+</li>
+</ul>
+<h2 id="suggested-order"><a class="header" href="#suggested-order">Suggested order</a></h2>
+<ol>
+<li>connection pool</li>
+<li>startup validation</li>
+<li>SQL / UDF boundary</li>
+<li>type coverage</li>
+<li>automated verification</li>
+<li>end-to-end example</li>
+<li>compatibility cleanup</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="provider--cache-refactor-tasks"><a class="header" href="#provider--cache-refactor-tasks">Provider / Cache Refactor Tasks</a></h1>
+<h2 id="work-rules"><a class="header" href="#work-rules">Work rules</a></h2>
+<p>Before each task:</p>
+<ol>
+<li>reread the current code</li>
+<li>mark done / partial / not started</li>
+<li>keep only the smallest still-useful scope</li>
+</ol>
+<p>After each task:</p>
+<ol>
+<li>test / verify</li>
+<li>review</li>
+<li>fix review findings before closing</li>
+</ol>
+<h2 id="current-status"><a class="header" href="#current-status">Current status</a></h2>
+<h3 id="completed"><a class="header" href="#completed">Completed</a></h3>
+<ul>
+<li><code>KnowledgeRuntime</code></li>
+<li>replaceable provider handle</li>
+<li><code>datasource_id + generation</code></li>
+<li>unified <code>QueryRequest / QueryParam / CachePolicy</code></li>
+<li>bounded global result cache</li>
+<li>generation-aware <code>FieldQueryCache</code></li>
+<li>generation-aware <code>ThreadClonedMDB</code></li>
+<li>bounded SQLite metadata cache</li>
+</ul>
+<h3 id="partially-completed"><a class="header" href="#partially-completed">Partially completed</a></h3>
+<ul>
+<li>reload / observability
+<ul>
+<li>baseline logs, snapshots, counters, and rollback already exist</li>
+<li>host-side exporters / adapters are still missing</li>
+</ul>
+</li>
+<li>compatibility layer
+<ul>
+<li><code>query_named(...)</code> / <code>cache_query(...)</code> still exist</li>
+<li>provider-neutral migration is still incomplete</li>
+</ul>
+</li>
+</ul>
+<h3 id="main-remaining-items"><a class="header" href="#main-remaining-items">Main remaining items</a></h3>
+<ul>
+<li>host-side metrics / telemetry adapters</li>
+<li>deprecation strategy for the compatibility surface</li>
+</ul>
+<h2 id="remaining-work-1"><a class="header" href="#remaining-work-1">Remaining work</a></h2>
+<h3 id="1-external-reload--observability-contract"><a class="header" href="#1-external-reload--observability-contract">1. External reload / observability contract</a></h3>
+<ul>
+<li>Goal:
+<ul>
+<li>let hosts wire metrics / telemetry cleanly</li>
+<li>unify diagnostics for reload success, failure, and rollback</li>
+<li>make it easy to answer which provider, which cache layer, and which generation served a query</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-compatibility-cleanup"><a class="header" href="#2-compatibility-cleanup">2. Compatibility cleanup</a></h3>
+<ul>
+<li>Goal:
+<ul>
+<li>make provider-neutral APIs the default for new code</li>
+<li>define the long-term role of <code>query_named(...)</code> and <code>cache_query(...)</code></li>
+<li>add <code>deprecated</code> where SQLite-shaped APIs should start shrinking</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-keep-local-cache-as-compatibility-only"><a class="header" href="#3-keep-local-cache-as-compatibility-only">3. Keep local cache as compatibility only</a></h3>
+<ul>
+<li>Goal:
+<ul>
+<li>keep <code>FieldQueryCache</code> only for per-call deduplication</li>
+<li>stop treating it as a global-consistency mechanism</li>
+</ul>
+</li>
+</ul>
+<h2 id="suggested-order-1"><a class="header" href="#suggested-order-1">Suggested order</a></h2>
+<ol>
+<li>external reload / observability contract</li>
+<li>compatibility cleanup</li>
+<li>further narrowing of local-cache semantics</li>
+</ol>
+<h2 id="notes-11"><a class="header" href="#notes-11">Notes</a></h2>
+<ul>
+<li>the core refactor is already in place; the current job is cleanup, not another full redesign</li>
+<li>if implementation and docs drift, update docs first, then code</li>
+</ul>
 
                     </main>
 

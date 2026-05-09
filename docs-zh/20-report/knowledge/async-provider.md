@@ -1,4 +1,7 @@
-# Provider 性能测试与结论
+# Async Provider 性能测试与结论
+
+
+# Async Provider 性能结论
 
 
 ## 结论先看
@@ -87,14 +90,17 @@
 PostgreSQL provider 层：
 
 ```bash
-KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-postgres-provider.sh
+KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-postgres-provider-perf.sh
 ```
 
 MySQL provider 层：
 
 ```bash
-KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-mysql-provider.sh
+KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-mysql-provider-perf.sh
 ```
+
+如果你只想跑 correctness 回归，可以使用 `tests/test-postgres-provider-correctness.sh` 和 `tests/test-mysql-provider-correctness.sh`。
+如果你需要并行运行多个 provider 脚本，给每次执行设置不同的 `COMPOSE_PROJECT_NAME` 即可。
 
 PostgreSQL OML 层：
 

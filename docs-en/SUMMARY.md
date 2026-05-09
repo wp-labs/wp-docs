@@ -18,6 +18,7 @@
     - [`wparse` Runtime](10-user/01-cli/cli/runtime.md)
     - [Warp Parse Runtime Admin Usage](10-user/01-cli/operations/admin.md)
     - [Project Sync SOP](10-user/01-cli/operations/project-sync.md)
+    - [wproj check — Configuration Validation Reference](10-user/01-cli/operations/wproj-check.md)
     - [Warp Parse 产品概览](10-user/01-cli/overview/product.md)
   - [Configuration Guide](10-user/02-config/README.md)
     - [Wparse Configuration](10-user/02-config/01-wparse.md)
@@ -102,3 +103,6 @@
 
 - [Connector Dev Guide](30-dev/connector_dev_guide.md)
 - [Docs Sync Automation](30-dev/docs_aggregation_automation.md)
+- [wp-knowledge Provider and Cache Plan](30-dev/knowledge/architecture/provider-cache.md)
+- [PostgreSQL Provider Tasks](30-dev/knowledge/tasks/postgres-provider.md)
+- [Provider / Cache Refactor Tasks](30-dev/knowledge/tasks/provider-cache.md)

@@ -1,6 +1,22 @@
 # Wp-Monitor Release Notes
 
-## 0.4.3
+## Download
+
+```
+curl -sSf https://get.warpparse.ai/inst-x.sh | bash -s -- monitor-docker alpha
+curl -sSf https://get.warpparse.ai/inst-x.sh | bash -s -- monitor-docker beta
+```
+
+Quick start
+```
+git clone https://github.com/wp-labs/wp-examples.git
+cd wp-examples/long-demo
+./run.sh
+```
+
+Open http://localhost:10428/
+
+## 0.6.0
 
 ### Added
 - Visualization: Unified view of Source, Parse, and Sink processing statistics

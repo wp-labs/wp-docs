@@ -87,14 +87,17 @@ Notes:
 PostgreSQL provider layer:
 
 ```bash
-KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-postgres-provider.sh
+KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-postgres-provider-perf.sh
 ```
 
 MySQL provider layer:
 
 ```bash
-KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-mysql-provider.sh
+KEEP_DB=1 RUSTC_WRAPPER= bash tests/test-mysql-provider-perf.sh
 ```
+
+If you want correctness-only provider checks, use `tests/test-postgres-provider-correctness.sh` and `tests/test-mysql-provider-correctness.sh`.
+If you need to run multiple provider scripts in parallel, set a different `COMPOSE_PROJECT_NAME` for each run.
 
 PostgreSQL OML layer:
 

@@ -1,9 +1,7 @@
 {
   "default_generate_summary": true,
   "source_defaults": {
-    "ignore": [
-      ".DS_Store"
-    ]
+    "ignore": [".DS_Store"]
   },
   "sources": [
     {
@@ -12,12 +10,7 @@
       "ref": "main",
       "checkout_subdir": "docs/usage",
       "local_path": "../../dev/wparse/wp-motor/docs/usage",
-      "ignore": [
-        "README.md",
-        "01-cli",
-        "01-cli/*",
-        "01-cli/**"
-      ],
+      "ignore": ["README.md", "01-cli", "01-cli/*", "01-cli/**"],
       "mappings": [
         {
           "from": "zh",
@@ -31,6 +24,9 @@
     },
     {
       "name": "wp-knowledge-docs",
+      "repo": "https://github.com/wp-labs/wp-knowledge.git",
+      "ref": "main",
+      "checkout_subdir": "docs",
       "local_path": "../../dev/wparse/wp-knowledge/docs",
       "strip_language_switch_headers": true,
       "files": [
@@ -95,13 +91,12 @@
     },
     {
       "name": "warp-parse-use",
+      "repo": "https://github.com/wp-labs/warp-parse.git",
+      "ref": "main",
+      "checkout_subdir": "docs/use",
       "local_path": "../../dev/wparse/warp-parse/docs/use",
       "rewrite_cross_language_links": true,
-      "ignore": [
-        "tools",
-        "tools/*",
-        "tools/**"
-      ],
+      "ignore": ["tools", "tools/*", "tools/**"],
       "replace_text": {
         "zh": [
           {
@@ -132,7 +127,7 @@
     {
       "name": "wp-monitor-usage",
       "repo": "https://github.com/wp-labs/wp-monitor.git",
-      "ref": "main",
+      "ref": "beta",
       "checkout_subdir": "doc",
       "local_path": "../../developer/wparse/wp-monitor/doc",
       "files": [

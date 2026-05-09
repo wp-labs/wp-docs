@@ -52,7 +52,7 @@ wp-monitor
 
 ### 2. 在 WarpParse 中配置 connector
 
-如果已有对应 connector，可跳过。[连接器教程](../05-connectors//README.md)
+如果已有对应 connector，可跳过。
 
 #### VictoriaMetrics connector
 
@@ -82,27 +82,21 @@ insert_path = "/insert/jsonline"
 
 ### 3. 在 sink_group 中接入监控与 MISS 输出
 
-#### `topology/infra.d/monitor.toml`
+#### `infra.d/monitor.toml`
 
 ```toml
 [[sink_group.sinks]]
 name = "victoriametrics"
 connect = "victoriametrics_sink"
-[sink_group.sinks.params]
-insert_url = "http://127.0.0.1:18429/api/v1/import/prometheus"
 ```
 
-#### `topology/infra.d/miss.toml`
+#### `infra.d/miss.toml`
 
 ```toml
 [[sink_group.sinks]]
 name = "victorialogs_output"
 connect = "victorialogs_sink"
-[sink_group.sinks.params]
-endpoint = "http://127.0.0.1:19429"
-insert_path = "/insert/jsonline"
-flush_interval_secs = 3
-tags = ["wp_stage:miss"]
+params = { endpoint = "http://127.0.0.1:9428", insert_path = "/insert/jsonline", tags = ["wp_stage:miss"] }
 ```
 
 注意：
@@ -110,7 +104,7 @@ tags = ["wp_stage:miss"]
 - `tags` 必须包含 `wp_stage:miss`
 - 否则 Wp-Monitor 无法查询到 MISS 数据
 
-### 4. 启动 WarpParse示例
+### 4. 启动 WarpParse示例（非必须）
 ```bash
 cd wp-monitor/example
 wparse daemon --stat 1

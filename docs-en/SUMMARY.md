@@ -1,6 +1,7 @@
 # Summary
 
 - [Release Notes](00-release/README.md)
+  - [0.24 更新说明](00-release/0.24.md)
   - [0.22 更新说明](00-release/0.22.md)
   - [0.20 Release Notes](00-release/0.20.md)
   - [Wp-Monitor Release Notes](00-release/wp-monitor/release.md)
@@ -8,6 +9,7 @@
 - [User Guide](10-user/README.md)
   - [WarpParse Core Concepts 速查](10-user/00-core-concepts.md)
   - [Getting Started](10-user/01-getting-started.md)
+  - [WarpParse vs Vector](10-user/06-warp-parse-vs-vector.md)
   - [CLI Usage Guide](10-user/01-cli/README.md)
     - [`wpgen` Generator](10-user/01-cli/cli/generator.md)
     - [Warp Parse CLI](10-user/01-cli/cli/index.md)

@@ -9,6 +9,7 @@
 - [使用指南](10-user/README.md)
   - [WarpParse 核心概念速查](10-user/00-core-concepts.md)
   - [快速开始](10-user/01-getting-started.md)
+  - [WarpParse 与 Vector 对比](10-user/06-warp-parse-vs-vector.md)
   - [WPL 学习目标与练习](10-user/07-wpl-learning-objectives.md)
   - [实战教程 (T1-T4)](10-user/08-hands-on-tutorials.md)
   - [CLI 使用手册](10-user/01-cli/README.md)

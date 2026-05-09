@@ -46,10 +46,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-59a6d548.js";
+            window.path_to_searchindex_js = "../searchindex-527e59f8.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-36546536.js"></script>
+        <script src="../toc-6562a10b.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -189,6 +189,73 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="warpparse-024"><a class="header" href="#warpparse-024">WarpParse 0.24</a></h1>
+<p>亲爱的用户们，</p>
+<p>我们很高兴地宣布 WarpParse 0.24 版本发布！本次更新主要聚焦于 <strong>HTTP 接入能力、远端工程组织方式、错误治理体验，以及 OML/SQL 解析细节修复</strong>。</p>
+<h2 id="本次更新亮点"><a class="header" href="#本次更新亮点">本次更新亮点</a></h2>
+<ul>
+<li>新增 HTTP Source，补齐通过 HTTP 接口接收外部数据推送的接入路径。</li>
+<li>远端工程支持双仓库模式，可分别同步 <code>models/</code> 与 <code>infra/</code>。</li>
+<li>错误治理体系升级，CLI 报错更完整、更易读。</li>
+<li>OML <code>take(...)</code> 与 SQL 参数解析行为进一步修正，规则执行更稳定。</li>
+</ul>
+<h2 id="added"><a class="header" href="#added">Added</a></h2>
+<h3 id="http-source"><a class="header" href="#http-source">HTTP Source</a></h3>
+<p>新增通用 <code>HTTP Source</code>，支持通过 HTTP 接口接收外部推送数据。</p>
+<p>当前支持：</p>
+<ul>
+<li><code>json</code> / <code>ndjson</code> 两种输入格式</li>
+<li><code>Content-Type</code> 与 <code>fmt</code> 参数协同指定格式</li>
+<li><code>gzip</code> 压缩请求体</li>
+<li>基于 <code>port</code> + <code>path</code> 的接入配置</li>
+</ul>
+<p>相关文档：</p>
+<ul>
+<li><a href="../10-user/05-connectors/01-sources/05-http_source.html">HTTP 源配置</a></li>
+</ul>
+<h3 id="双仓库远端工程模式"><a class="header" href="#双仓库远端工程模式">双仓库远端工程模式</a></h3>
+<p>远端工程同步能力新增双仓库模式，支持将：</p>
+<ul>
+<li><code>models/</code></li>
+<li><code>infra/</code></li>
+</ul>
+<p>分别从两个独立的 Git 仓库同步。</p>
+<p>这使得规则内容与基础设施配置可以分开维护，适合更正式的团队协作与发布流程。</p>
+<p>相关文档：</p>
+<ul>
+<li><a href="../10-user/01-cli/operations/project-sync.html">远程工程拉取与规则热更新 SOP</a></li>
+</ul>
+<h3 id="postgres-source-兼容性增强"><a class="header" href="#postgres-source-兼容性增强">Postgres Source 兼容性增强</a></h3>
+<p>补充 <code>Postgres Source</code> 的特性继承支持，并增强对低版本场景的兼容性适配。</p>
+<p>这一项更新主要面向已有工程升级时的平滑过渡，减少因配置差异导致的接入调整成本。</p>
+<h2 id="changed"><a class="header" href="#changed">Changed</a></h2>
+<h3 id="错误治理体系升级"><a class="header" href="#错误治理体系升级">错误治理体系升级</a></h3>
+<p>本版本全面升级错误治理体系，<code>orion-error</code> 升级到 <code>0.8</code> 主线。</p>
+<p>这带来的直接变化包括：</p>
+<ul>
+<li>错误信息附带更完整的路径上下文</li>
+<li>CLI 报错信息更集中、更易读</li>
+<li>日常排障时更容易定位具体配置或规则位置</li>
+</ul>
+<h2 id="fixed"><a class="header" href="#fixed">Fixed</a></h2>
+<h3 id="oml-take-行为修复"><a class="header" href="#oml-take-行为修复">OML <code>take(...)</code> 行为修复</a></h3>
+<p>同步上游修复后，<code>take(...)</code> 在目标记录中已生成字段的消费行为更加正确，并修正了同名字段场景下的取值顺序。</p>
+<h3 id="oml--sql-参数解析增强"><a class="header" href="#oml--sql-参数解析增强">OML / SQL 参数解析增强</a></h3>
+<p>同步上游修复，增强以下 SQL 相关场景的解析稳定性：</p>
+<ul>
+<li><code>group_concat(...)</code></li>
+<li><code>string_agg(...)</code></li>
+<li><code>IN (...)</code></li>
+<li><code>take(field)</code></li>
+<li><code>__temp_var</code></li>
+</ul>
+<h3 id="运行时稳定性修复"><a class="header" href="#运行时稳定性修复">运行时稳定性修复</a></h3>
+<p>修复了部分场景下的运行时稳定性问题。</p>
+<h2 id="相关文档"><a class="header" href="#相关文档">相关文档</a></h2>
+<ul>
+<li><a href="../10-user/05-connectors/01-sources/05-http_source.html">HTTP 源配置</a></li>
+<li><a href="../10-user/01-cli/operations/project-sync.html">远程工程拉取与规则热更新 SOP</a></li>
+<li><a href="../10-user/01-cli/README.html">CLI 使用手册</a></li>
+</ul>
 
                     </main>
 

@@ -47,10 +47,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-ea8617e2.js";
+            window.path_to_searchindex_js = "searchindex-b2bd10d1.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-d23d6517.js"></script>
+        <script src="toc-8c420458.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -193,16 +193,85 @@
 <p>This directory contains WarpParse release notes.</p>
 <p>Entries are listed in reverse version order, with the newest release first.</p>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="warpparse-024"><a class="header" href="#warpparse-024">WarpParse 0.24</a></h1>
+<p>Dear users,</p>
+<p>We are pleased to announce the release of WarpParse 0.24. This update focuses on <strong>HTTP ingestion, remote project layout, error-governance improvements, and fixes around OML / SQL parsing details</strong>.</p>
+<h2 id="highlights"><a class="header" href="#highlights">Highlights</a></h2>
+<ul>
+<li>Added HTTP Source to complete the HTTP push-based ingestion path.</li>
+<li>Added dual-repository support for remote projects, allowing <code>models/</code> and <code>infra/</code> to be synced separately.</li>
+<li>Upgraded the error-governance stack to make CLI failures more complete and easier to read.</li>
+<li>Fixed OML <code>take(...)</code> behavior and improved SQL parameter parsing stability.</li>
+</ul>
+<h2 id="added"><a class="header" href="#added">Added</a></h2>
+<h3 id="http-source"><a class="header" href="#http-source">HTTP Source</a></h3>
+<p>Added a general-purpose <code>HTTP Source</code> for receiving externally pushed data over HTTP.</p>
+<p>Current capabilities include:</p>
+<ul>
+<li><code>json</code> and <code>ndjson</code> input formats</li>
+<li>Coordinated format selection through <code>Content-Type</code> and the <code>fmt</code> query parameter</li>
+<li><code>gzip</code>-compressed request bodies</li>
+<li>Ingestion routing based on <code>port</code> + <code>path</code></li>
+</ul>
+<p>Related docs:</p>
+<ul>
+<li><a href="#http-source-configuration">HTTP Source configuration</a></li>
+</ul>
+<h3 id="dual-repository-remote-project-mode"><a class="header" href="#dual-repository-remote-project-mode">Dual-Repository Remote Project Mode</a></h3>
+<p>Remote project sync now supports a dual-repository mode, allowing:</p>
+<ul>
+<li><code>models/</code></li>
+<li><code>infra/</code></li>
+</ul>
+<p>to be synchronized from two separate Git repositories.</p>
+<p>This makes it easier to maintain rule content and infrastructure configuration independently, which fits more formal team workflows and release processes.</p>
+<p>Related docs:</p>
+<ul>
+<li><a href="#remote-project-sync-and-rule-reload-sop">Remote project bootstrap and rule hot-reload SOP</a></li>
+</ul>
+<h3 id="postgres-source-compatibility-enhancements"><a class="header" href="#postgres-source-compatibility-enhancements">Postgres Source Compatibility Enhancements</a></h3>
+<p>Added feature-inheritance support for <code>Postgres Source</code> and improved compatibility handling for lower-version scenarios.</p>
+<p>This change is mainly intended to make upgrades smoother for existing projects and reduce the amount of connector rework caused by configuration differences.</p>
+<h2 id="changed"><a class="header" href="#changed">Changed</a></h2>
+<h3 id="error-governance-upgrade"><a class="header" href="#error-governance-upgrade">Error Governance Upgrade</a></h3>
+<p>This release upgrades the error-governance stack end to end, with <code>orion-error</code> moved to the <code>0.8</code> line.</p>
+<p>The direct improvements include:</p>
+<ul>
+<li>Error messages now carry more complete path context</li>
+<li>CLI error output is more concentrated and easier to read</li>
+<li>Day-to-day troubleshooting is easier because specific config or rule locations are clearer</li>
+</ul>
+<h2 id="fixed"><a class="header" href="#fixed">Fixed</a></h2>
+<h3 id="oml-take-behavior"><a class="header" href="#oml-take-behavior">OML <code>take(...)</code> Behavior</a></h3>
+<p>Synced the upstream fix so that <code>take(...)</code> now consumes fields that were already generated in the target record more correctly, and fixed the value-resolution order in same-name field scenarios.</p>
+<h3 id="oml--sql-parameter-parsing"><a class="header" href="#oml--sql-parameter-parsing">OML / SQL Parameter Parsing</a></h3>
+<p>Synced upstream fixes to improve parsing stability for the following SQL-related cases:</p>
+<ul>
+<li><code>group_concat(...)</code></li>
+<li><code>string_agg(...)</code></li>
+<li><code>IN (...)</code></li>
+<li><code>take(field)</code></li>
+<li><code>__temp_var</code></li>
+</ul>
+<h3 id="runtime-stability"><a class="header" href="#runtime-stability">Runtime Stability</a></h3>
+<p>Fixed runtime stability issues in some scenarios.</p>
+<h2 id="related-docs"><a class="header" href="#related-docs">Related Docs</a></h2>
+<ul>
+<li><a href="#http-source-configuration">HTTP Source configuration</a></li>
+<li><a href="#remote-project-sync-and-rule-reload-sop">Remote project bootstrap and rule hot-reload SOP</a></li>
+<li><a href="10-user/01-cli/README.html">CLI guide</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="warpparse-022"><a class="header" href="#warpparse-022">WarpParse 0.22</a></h1>
 <p>Dear users,</p>
 <p>We are pleased to announce the release of WarpParse 0.22. This update focuses on <strong>runtime operability, remote project synchronization, KnowDB capability enhancements, and better observability and rule authoring workflows</strong>.</p>
-<h2 id="highlights"><a class="header" href="#highlights">Highlights</a></h2>
+<h2 id="highlights-1"><a class="header" href="#highlights-1">Highlights</a></h2>
 <ul>
 <li>Completed the runtime admin surface with standardized status query and reload entry points.</li>
 <li>Further unified the remote project bootstrap, update, and hot-reload workflow.</li>
 <li>Expanded KnowDB, WPL, and monitoring documentation to make the recommended usage path clearer.</li>
 </ul>
-<h2 id="added"><a class="header" href="#added">Added</a></h2>
+<h2 id="added-1"><a class="header" href="#added-1">Added</a></h2>
 <h3 id="runtime-admin-surface"><a class="header" href="#runtime-admin-surface">Runtime Admin Surface</a></h3>
 <p>Added standardized operational entry points for online instances:</p>
 <ul>
@@ -249,7 +318,7 @@ wproj self update --yes
 <ul>
 <li><a href="#wpl-language-reference">WPL language reference</a></li>
 </ul>
-<h2 id="changed"><a class="header" href="#changed">Changed</a></h2>
+<h2 id="changed-1"><a class="header" href="#changed-1">Changed</a></h2>
 <h3 id="cli-manual-structure"><a class="header" href="#cli-manual-structure">CLI Manual Structure</a></h3>
 <p>The product overview, CLI usage, runtime admin surface, and remote sync SOP have been consolidated into a more unified entry point.</p>
 <p>Related docs:</p>
@@ -265,7 +334,7 @@ wproj self update --yes
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="020-release-notes"><a class="header" href="#020-release-notes">0.20 Release Notes</a></h1>
-<h2 id="added-1"><a class="header" href="#added-1">Added</a></h2>
+<h2 id="added-2"><a class="header" href="#added-2">Added</a></h2>
 <h3 id="added-elasticsearch-sink"><a class="header" href="#added-elasticsearch-sink">Added Elasticsearch Sink.</a></h3>
 <p>Supports batch writing parsed records to the Elasticsearch <code>/_bulk</code> API over HTTP/HTTPS, with timeout, retry, and password authentication support.
 Example:</p>
@@ -343,18 +412,18 @@ compression = "none"                       # Whether to enable gzip compression
 <li>Usage doc: <a href="#http-sink">HTTP Sink</a></li>
 <li>Example index: <a href="https://github.com/wp-labs/wp-examples/blob/main/extensions/http/README.md">wp-examples/extensions/http/README.md</a></li>
 </ul>
-<h2 id="changed-1"><a class="header" href="#changed-1">Changed</a></h2>
+<h2 id="changed-2"><a class="header" href="#changed-2">Changed</a></h2>
 <ul>
 <li>Upgraded <code>wp-connector-api</code> to <code>0.8</code> to reduce unnecessary dependencies.</li>
 </ul>
-<h2 id="fixed"><a class="header" href="#fixed">Fixed</a></h2>
+<h2 id="fixed-1"><a class="header" href="#fixed-1">Fixed</a></h2>
 <ul>
 <li>Event ID: synced with the upstream <code>wp-motor</code> fix to unify <code>wp_event_id</code> generation logic and avoid duplicate IDs caused by falling back to an in-process seed after runtime restarts.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="wp-monitor-release-notes"><a class="header" href="#wp-monitor-release-notes">Wp-Monitor Release Notes</a></h1>
 <h2 id="043"><a class="header" href="#043">0.4.3</a></h2>
-<h3 id="added-2"><a class="header" href="#added-2">Added</a></h3>
+<h3 id="added-3"><a class="header" href="#added-3">Added</a></h3>
 <ul>
 <li>Visualization: Unified view of Source, Parse, and Sink processing statistics</li>
 <li>MISS data observation: Identify unmatched data and support export for analysis</li>
@@ -371,6 +440,7 @@ compression = "none"                       # Whether to enable gzip compression
 <ol>
 <li><a href="#getting-started">Getting Started</a> - Quick start guide</li>
 <li><a href="#warpparse-core-concepts-quick-reference">WarpParse Core Concepts Quick Reference</a> - key concepts and terminology</li>
+<li><a href="#warpparse-vs-vector">WarpParse vs Vector</a> - product comparison and selection guidance</li>
 <li><a href="10-user/01-cli/README.html">CLI Usage Guide</a> - full product, CLI, and operations manual</li>
 <li><a href="10-user/02-config/README.html">Configuration</a> - Basic configuration</li>
 <li><a href="10-user/03-wpl/README.html">WPL Language</a> - WPL rule language</li>
@@ -385,6 +455,7 @@ compression = "none"                       # Whether to enable gzip compression
 <tbody>
 <tr><td><a href="#getting-started">Getting Started</a></td><td>First-run walkthrough</td></tr>
 <tr><td><a href="#warpparse-core-concepts-quick-reference">Core Concepts</a></td><td>Warp Parse concepts and terminology</td></tr>
+<tr><td><a href="#warpparse-vs-vector">WarpParse vs Vector</a></td><td>Comparison and selection guidance</td></tr>
 <tr><td><a href="10-user/01-cli/README.html">CLI Usage Guide</a></td><td>Synced upstream usage and operations docs</td></tr>
 <tr><td><a href="10-user/02-config/README.html">Configuration</a></td><td>Configuration files and options</td></tr>
 <tr><td><a href="10-user/03-wpl/README.html">WPL Language</a></td><td>Warp Parse Language guide</td></tr>
@@ -657,6 +728,197 @@ wproj data stat
 <li>For language details: read <a href="10-user/03-wpl/README.html">WPL Rule Language</a> and <a href="10-user/04-oml/README.html">OML Object Model Language</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="warpparse-vs-vector"><a class="header" href="#warpparse-vs-vector">WarpParse vs Vector</a></h1>
+<p>This page is for users evaluating tooling choices or planning a replacement. It helps answer three practical questions:</p>
+<ul>
+<li>When WarpParse is the better fit</li>
+<li>When Vector may still be a reasonable option</li>
+<li>Where the two differ in parsing model, performance, maintainability, and product completeness</li>
+</ul>
+<h2 id="short-conclusion"><a class="header" href="#short-conclusion">Short Conclusion</a></h2>
+<ul>
+<li>If your core goal is <strong>high-throughput log parsing, complex field extraction, and long-term rule engineering</strong>, WarpParse is the stronger fit.</li>
+<li>If your core goal is <strong>general-purpose data collection and broad off-the-shelf pipeline components</strong>, Vector can still be an option.</li>
+</ul>
+<p>Both can process logs, but their product centers are different:</p>
+<ul>
+<li><strong>WarpParse</strong> is centered on a high-performance parsing engine plus a rule-engineering workflow</li>
+<li><strong>Vector</strong> is centered on a general observability data pipeline</li>
+</ul>
+<h2 id="core-positioning"><a class="header" href="#core-positioning">Core Positioning</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Dimension</th><th>WarpParse</th><th>Vector</th></tr>
+</thead>
+<tbody>
+<tr><td>Product position</td><td>An ETL engine focused on log parsing and security-data processing</td><td>A general data pipeline for logs, metrics, and traces</td></tr>
+<tr><td>Main strengths</td><td>High-performance parsing, complex text extraction, rule governance</td><td>Broad connector ecosystem, general collection and forwarding, strong community reach</td></tr>
+<tr><td>Main modeling approach</td><td>WPL + OML</td><td>TOML + VRL / built-in transforms</td></tr>
+<tr><td>Typical scenarios</td><td>Security log normalization, heterogeneous log parsing, rule-platform workflows</td><td>Unified collection, routing, and observability-pipeline integration</td></tr>
+<tr><td>Main concerns</td><td>Parsing accuracy, rule expressiveness, throughput, latency</td><td>Breadth of integrations, deployment convenience, ecosystem compatibility</td></tr>
+<tr><td>Xinchuang support</td><td>More targeted, stronger compatibility</td><td>Not a primary strength</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="parsing-model-differences"><a class="header" href="#parsing-model-differences">Parsing Model Differences</a></h2>
+<h3 id="warpparse"><a class="header" href="#warpparse">WarpParse</a></h3>
+<p>WarpParse separates processing into two main stages:</p>
+<ul>
+<li><strong>WPL</strong> for raw log parsing and field extraction</li>
+<li><strong>OML</strong> for object assembly, field mapping, transformation, and output shaping</li>
+</ul>
+<p>The practical benefits are:</p>
+<ul>
+<li>Parsing rules and output modeling are clearly separated</li>
+<li>Complex log formats remain easier to maintain</li>
+<li>Teams can split work between parsing-rule ownership and output-model ownership</li>
+</ul>
+<h3 id="vector"><a class="header" href="#vector">Vector</a></h3>
+<p>Vector usually uses:</p>
+<ul>
+<li>sources for input</li>
+<li>transforms for processing</li>
+<li>VRL or built-in transforms for extraction, routing, and mutation</li>
+<li>sinks for output</li>
+</ul>
+<p>The upside is:</p>
+<ul>
+<li>fast to start</li>
+<li>a unified pipeline model</li>
+<li>convenient for collection, transformation, and forwarding in one config</li>
+</ul>
+<p>The tradeoff is that once parsing logic becomes complex, rules tend to collapse into large regex blocks plus transformation scripts, which raises maintenance cost over time.</p>
+<h2 id="rule-maintenance"><a class="header" href="#rule-maintenance">Rule Maintenance</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Dimension</th><th>WarpParse</th><th>Vector</th></tr>
+</thead>
+<tbody>
+<tr><td>Parse vs transform responsibilities</td><td>Clearly separated</td><td>Often completed along the same event-processing chain</td></tr>
+<tr><td>Complex text logs</td><td>Better fit</td><td>Possible, but rules tend to bloat</td></tr>
+<tr><td>Rule reuse</td><td>Better suited to rule engineering and governance</td><td>Better suited to pipeline-level config reuse</td></tr>
+<tr><td>Debugging focus</td><td>Which WPL rule matched and how OML mapped it</td><td>How the event changes across the transform chain</td></tr>
+</tbody>
+</table>
+</div>
+<p>WarpParse becomes more advantageous when:</p>
+<ul>
+<li>log formats are numerous and change often</li>
+<li>you need stable extraction from unstructured text</li>
+<li>parsing rules are maintained by a dedicated team</li>
+<li>throughput, accuracy, and rule testability all matter</li>
+</ul>
+<p>Vector remains easier when:</p>
+<ul>
+<li>the main goal is collection and forwarding, not deep parsing</li>
+<li>you already depend heavily on the Vector ecosystem</li>
+<li>log formats are relatively stable and parsing is simple</li>
+<li>you need quick access to many ready-made components</li>
+</ul>
+<h2 id="performance"><a class="header" href="#performance">Performance</a></h2>
+<p>Based on the benchmark data already included in this repository, WarpParse is usually much faster than Vector in parsing-heavy scenarios, especially for:</p>
+<ul>
+<li>small-message high-concurrency logs</li>
+<li>long-text or large-field logs</li>
+<li>workloads that still need field transformation after parsing</li>
+<li>end-to-end paths such as TCP input to file output</li>
+</ul>
+<p>For example, in the <code>Mac M4 Mini</code> benchmark:</p>
+<ul>
+<li>Nginx <code>File -&gt; BlackHole</code>: WarpParse <code>2,789,800 EPS</code>, Vector-VRL <code>572,076 EPS</code></li>
+<li>APT <code>File -&gt; BlackHole</code>: WarpParse <code>328,000 EPS</code>, Vector-VRL <code>37,777 EPS</code></li>
+</ul>
+<p>See the detailed benchmark pages for full data:</p>
+<ul>
+<li><a href="#benchmark-report">Benchmark Report</a></li>
+<li><a href="20-report/report_mac.html">Performance Benchmark Report</a></li>
+</ul>
+<p>These numbers should not be blindly generalized to every production environment. Actual results still depend on log structure, I/O topology, rule complexity, and downstream sink behavior.</p>
+<h2 id="ecosystem-and-integration"><a class="header" href="#ecosystem-and-integration">Ecosystem and Integration</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Dimension</th><th>WarpParse</th><th>Vector</th></tr>
+</thead>
+<tbody>
+<tr><td>Source / Sink coverage</td><td>Under the current Chinese-doc inventory: <code>5</code> sources and <code>15</code> sinks</td><td>Broader and more mature</td></tr>
+<tr><td>Community ecosystem</td><td>More product- and project-practice-oriented</td><td>Larger open-source ecosystem</td></tr>
+<tr><td>Observability scenarios</td><td>Supported, but not the only center of gravity</td><td>Covers logs / metrics / traces</td></tr>
+<tr><td>Security log engineering</td><td>Stronger fit</td><td>Possible, but usually not the best expression model</td></tr>
+<tr><td>Xinchuang compatibility</td><td>Stronger; better aligned with domestic deployment requirements</td><td>Not a primary selling point</td></tr>
+</tbody>
+</table>
+</div>
+<p>Under the current documented inventory, WarpParse has:</p>
+<ul>
+<li><code>Source 5</code>: <code>file</code>, <code>kafka</code>, <code>syslog</code>, <code>http</code>, <code>tcp</code></li>
+<li><code>Sink 15</code>: <code>file</code>, <code>syslog</code>, <code>prometheus</code>, <code>tcp</code>, <code>victorialogs</code>, <code>doris</code>, <code>kafka</code>, <code>mysql</code>, <code>arrow-ipc</code>, <code>elasticsearch</code>, <code>arrow-file</code>, <code>clickhouse</code>, <code>http</code>, <code>postgresql</code>, <code>dmdb</code></li>
+</ul>
+<p>That means WarpParse community edition is not just a parsing engine. It already has a standalone connector layer that can support real deployment.</p>
+<h2 id="xinchuang-support"><a class="header" href="#xinchuang-support">Xinchuang Support</a></h2>
+<p>For many public-sector, enterprise, and security-focused projects, the ability to land cleanly on domestic infrastructure is a separate decision factor.</p>
+<p>WarpParse has a clearer advantage here:</p>
+<ul>
+<li>more targeted support for Xinchuang environments</li>
+<li>stronger compatibility in domestic deployment scenarios</li>
+<li>a better fit when performance, parsing capability, and domestic-platform adaptation all matter</li>
+</ul>
+<p>If your project explicitly requires:</p>
+<ul>
+<li>compatibility with domestic operating systems</li>
+<li>adaptation to domestic hardware and software stacks</li>
+<li>stable rollout in Xinchuang environments</li>
+</ul>
+<p>then this is a concrete advantage of WarpParse over Vector.</p>
+<h2 id="community-edition-completeness"><a class="header" href="#community-edition-completeness">Community Edition Completeness</a></h2>
+<p>Here, “completeness” means whether a user can independently download, learn, try, develop rules, and observe runtime behavior using the community edition.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Dimension</th><th>WarpParse Community Edition</th><th>Vector Community Edition</th></tr>
+</thead>
+<tbody>
+<tr><td>Program</td><td>Can directly run the core parsing pipeline</td><td>Can directly run a full data pipeline</td></tr>
+<tr><td>Documentation</td><td>Documentation is already fairly complete, covering product usage, rules, configuration, connectors, tutorials, and benchmark reports</td><td>Mature documentation covering general pipeline usage and ecosystem integration</td></tr>
+<tr><td>Examples</td><td>Has a dedicated <code>wp-example</code> project that can be downloaded and run directly</td><td>Spread across official docs, repositories, and community content</td></tr>
+<tr><td>Rule editor</td><td>Provides a dedicated <code>wp-editor</code></td><td>No equivalent official rule editor</td></tr>
+<tr><td>Processing monitor</td><td>Provides a dedicated <code>wp-monitor</code></td><td>Mostly depends on third-party tooling</td></tr>
+<tr><td>Compatibility</td><td>Mainstream platforms plus stronger Xinchuang compatibility</td><td>Mainstream platforms</td></tr>
+</tbody>
+</table>
+</div>
+<p>From a community-edition completeness perspective, WarpParse has a more direct advantage:</p>
+<ul>
+<li>a complete runnable program</li>
+<li>a structured documentation system</li>
+<li><code>wp-example</code> for direct hands-on use</li>
+<li><code>wp-editor</code> for rule development</li>
+<li><code>wp-monitor</code> for runtime observation</li>
+<li>stronger Xinchuang compatibility</li>
+</ul>
+<p>So for the question “can a user independently learn, try, build rules, and observe processing with the community edition”, the conclusion is:</p>
+<ul>
+<li><strong>WarpParse is clearly more complete than Vector</strong></li>
+</ul>
+<h2 id="common-judgment"><a class="header" href="#common-judgment">Common Judgment</a></h2>
+<h3 id="we-already-use-vector-do-we-need-to-migrate"><a class="header" href="#we-already-use-vector-do-we-need-to-migrate">We already use Vector. Do we need to migrate?</a></h3>
+<p>If your main pain points are:</p>
+<ul>
+<li>VRL rules are getting longer and harder to maintain</li>
+<li>regex-based parsing is becoming fragile</li>
+<li>parsing throughput is insufficient</li>
+<li>security-log normalization is expensive</li>
+</ul>
+<p>then it is worth evaluating a migration of the parsing-intensive parts first, rather than replacing everything at once.</p>
+<h2 id="next-steps-2"><a class="header" href="#next-steps-2">Next Steps</a></h2>
+<ul>
+<li>Want the basic concepts first: see <a href="#warpparse-core-concepts-quick-reference">WarpParse Core Concepts Quick Reference</a></li>
+<li>Want to run a local example quickly: see <a href="#getting-started">Getting Started</a></li>
+<li>Want the full benchmark data: see <a href="#benchmark-report">Benchmark Report</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="cli-usage-guide"><a class="header" href="#cli-usage-guide">CLI Usage Guide</a></h1>
 <p>This directory contains operator-facing and integration-facing documentation.</p>
 <h2 id="documents"><a class="header" href="#documents">Documents</a></h2>
@@ -709,7 +971,7 @@ wpgen conf check --work-root .
 <h2 id="clean-generated-data"><a class="header" href="#clean-generated-data">Clean Generated Data</a></h2>
 <pre><code class="language-bash">wpgen data clean --work-root . -c wpgen.toml
 </code></pre>
-<h2 id="related-docs"><a class="header" href="#related-docs">Related Docs</a></h2>
+<h2 id="related-docs-1"><a class="header" href="#related-docs-1">Related Docs</a></h2>
 <ul>
 <li>CLI usage guide: <a href="#warp-parse-cli-usage-guide">index.md</a></li>
 <li>Runtime usage: <a href="#wparse-runtime-usage">runtime.md</a></li>
@@ -820,7 +1082,7 @@ wproj rescue stat --work-root . --detail
 <pre><code class="language-bash">wproj self check
 wproj self update --yes
 </code></pre>
-<h2 id="related-docs-1"><a class="header" href="#related-docs-1">Related Docs</a></h2>
+<h2 id="related-docs-2"><a class="header" href="#related-docs-2">Related Docs</a></h2>
 <ul>
 <li>CLI usage guide: <a href="#warp-parse-cli-usage-guide">index.md</a></li>
 <li>Runtime admin usage: <a href="#warp-parse-runtime-admin-usage">../operations/admin.md</a></li>
@@ -847,7 +1109,7 @@ wprescue batch --work-root .
 wproj rescue stat --work-root . --detail
 wproj rescue stat --work-root . --json
 </code></pre>
-<h2 id="related-docs-2"><a class="header" href="#related-docs-2">Related Docs</a></h2>
+<h2 id="related-docs-3"><a class="header" href="#related-docs-3">Related Docs</a></h2>
 <ul>
 <li>CLI usage guide: <a href="#warp-parse-cli-usage-guide">index.md</a></li>
 <li>Project tool usage: <a href="#wproj-project-tool-usage">project.md</a></li>
@@ -909,7 +1171,7 @@ wproj rescue stat --work-root . --json
 <li><code>batch</code> is for offline workflows, not online reload</li>
 <li>there is no separate <code>work</code> subcommand at the moment</li>
 </ul>
-<h2 id="related-docs-3"><a class="header" href="#related-docs-3">Related Docs</a></h2>
+<h2 id="related-docs-4"><a class="header" href="#related-docs-4">Related Docs</a></h2>
 <ul>
 <li>CLI usage guide: <a href="#warp-parse-cli-usage-guide">index.md</a></li>
 <li>Runtime admin usage: <a href="#warp-parse-runtime-admin-usage">../operations/admin.md</a></li>
@@ -1420,7 +1682,7 @@ wpgen --help
 wproj --help
 wprescue --help
 </code></pre>
-<h2 id="related-docs-4"><a class="header" href="#related-docs-4">Related Docs</a></h2>
+<h2 id="related-docs-5"><a class="header" href="#related-docs-5">Related Docs</a></h2>
 <ul>
 <li>Runtime admin usage: <a href="#warp-parse-runtime-admin-usage">../operations/admin.md</a></li>
 <li>Chinese counterpart: <a href="../docs-zh/10-user/01-cli/overview/product.html">../zh/overview/product.md</a></li>
@@ -1489,6 +1751,7 @@ sinks   = "./topology/sinks"
 rate_limit_rps = 10000        # Rate limit (records/second)
 parse_workers  = 2            # Number of concurrent parsing workers
 reload_timeout_ms = 10000     # Reload fallback timeout in milliseconds; shared by graceful drain and old-processing tail cleanup
+fetch_timeout_ms = 300 # Blocking source fetch timeout in milliseconds for each picker round
 
 [rescue]
 path = "./data/rescue"
@@ -1520,6 +1783,7 @@ target = "*"
 <li><code>semantic_dict.toml</code> is loaded from <code>${models.knowledge}/semantic_dict.toml</code> by default</li>
 <li><code>knowdb.toml</code> is loaded from <code>${models.knowledge}/knowdb.toml</code> by default</li>
 <li><code>reload_timeout_ms</code> defaults to <code>10000</code>; CLI <code>--reload-timeout-ms</code> overrides the config value</li>
+<li><code>fetch_timeout_ms</code> defaults to <code>300</code>; it controls how long a realtime picker waits for one blocking fetch round</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="sources-configuration"><a class="header" href="#sources-configuration">Sources Configuration</a></h1>
@@ -13208,7 +13472,7 @@ cargo test --manifest-path ../wp-motor/Cargo.toml -p wp-oml \
 <p>Each upstream repo can add a lightweight workflow that emits <code>repository_dispatch</code> when its docs path changes. The resulting chain becomes:</p>
 <p><code>upstream docs change -&gt; notify wp-docs -&gt; wp-docs pulls latest docs -&gt; automated PR</code></p>
 <p>This is preferable to pushing directly into the aggregation repo because the sync logic stays centralized and every aggregated change remains reviewable.</p>
-<h2 id="next-steps-2"><a class="header" href="#next-steps-2">Next Steps</a></h2>
+<h2 id="next-steps-3"><a class="header" href="#next-steps-3">Next Steps</a></h2>
 <p>As the number of sources grows, the next practical improvements are:</p>
 <ol>
 <li>Add explicit <code>delete = true/false</code> behavior per source.</li>

@@ -46,10 +46,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-59a6d548.js";
+            window.path_to_searchindex_js = "../../searchindex-527e59f8.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-36546536.js"></script>
+        <script src="../../toc-6562a10b.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -206,6 +206,7 @@ sinks   = "./topology/sinks"
 rate_limit_rps = 10000        # 限速（records/second）
 parse_workers  = 2            # 解析并发 worker 数
 reload_timeout_ms = 10000     # reload 兜底超时（毫秒）；覆盖 graceful drain 与旧 processing 尾部清理
+fetch_timeout_ms = 300 # realtime picker 每轮阻塞拉取的超时（毫秒）
 
 [rescue]
 path = "./data/rescue"        
@@ -237,6 +238,7 @@ target = "*"
 <li><code>semantic_dict.toml</code> 默认读取 <code>${models.knowledge}/semantic_dict.toml</code></li>
 <li><code>knowdb.toml</code> 默认读取 <code>${models.knowledge}/knowdb.toml</code>
 &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</li>
+<li><code>fetch_timeout_ms</code> 默认 <code>300</code>；用于控制 realtime picker 单轮阻塞拉取的最长等待时间</li>
 <li><code>reload_timeout_ms</code> 默认 <code>10000</code>；CLI <code>--reload-timeout-ms</code> 优先于配置文件
 =======</li>
 </ul>

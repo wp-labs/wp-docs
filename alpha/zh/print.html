@@ -47,10 +47,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-59a6d548.js";
+            window.path_to_searchindex_js = "searchindex-527e59f8.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-36546536.js"></script>
+        <script src="toc-6562a10b.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -194,17 +194,84 @@
 <p>版本列表按时间与版本号倒排，优先阅读最新版本。</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="warpparse-024"><a class="header" href="#warpparse-024">WarpParse 0.24</a></h1>
+<p>亲爱的用户们，</p>
+<p>我们很高兴地宣布 WarpParse 0.24 版本发布！本次更新主要聚焦于 <strong>HTTP 接入能力、远端工程组织方式、错误治理体验，以及 OML/SQL 解析细节修复</strong>。</p>
+<h2 id="本次更新亮点"><a class="header" href="#本次更新亮点">本次更新亮点</a></h2>
+<ul>
+<li>新增 HTTP Source，补齐通过 HTTP 接口接收外部数据推送的接入路径。</li>
+<li>远端工程支持双仓库模式，可分别同步 <code>models/</code> 与 <code>infra/</code>。</li>
+<li>错误治理体系升级，CLI 报错更完整、更易读。</li>
+<li>OML <code>take(...)</code> 与 SQL 参数解析行为进一步修正，规则执行更稳定。</li>
+</ul>
+<h2 id="added"><a class="header" href="#added">Added</a></h2>
+<h3 id="http-source"><a class="header" href="#http-source">HTTP Source</a></h3>
+<p>新增通用 <code>HTTP Source</code>，支持通过 HTTP 接口接收外部推送数据。</p>
+<p>当前支持：</p>
+<ul>
+<li><code>json</code> / <code>ndjson</code> 两种输入格式</li>
+<li><code>Content-Type</code> 与 <code>fmt</code> 参数协同指定格式</li>
+<li><code>gzip</code> 压缩请求体</li>
+<li>基于 <code>port</code> + <code>path</code> 的接入配置</li>
+</ul>
+<p>相关文档：</p>
+<ul>
+<li><a href="#http-源配置">HTTP 源配置</a></li>
+</ul>
+<h3 id="双仓库远端工程模式"><a class="header" href="#双仓库远端工程模式">双仓库远端工程模式</a></h3>
+<p>远端工程同步能力新增双仓库模式，支持将：</p>
+<ul>
+<li><code>models/</code></li>
+<li><code>infra/</code></li>
+</ul>
+<p>分别从两个独立的 Git 仓库同步。</p>
+<p>这使得规则内容与基础设施配置可以分开维护，适合更正式的团队协作与发布流程。</p>
+<p>相关文档：</p>
+<ul>
+<li><a href="#远程工程拉取与规则热更新-sop">远程工程拉取与规则热更新 SOP</a></li>
+</ul>
+<h3 id="postgres-source-兼容性增强"><a class="header" href="#postgres-source-兼容性增强">Postgres Source 兼容性增强</a></h3>
+<p>补充 <code>Postgres Source</code> 的特性继承支持，并增强对低版本场景的兼容性适配。</p>
+<p>这一项更新主要面向已有工程升级时的平滑过渡，减少因配置差异导致的接入调整成本。</p>
+<h2 id="changed"><a class="header" href="#changed">Changed</a></h2>
+<h3 id="错误治理体系升级"><a class="header" href="#错误治理体系升级">错误治理体系升级</a></h3>
+<p>本版本全面升级错误治理体系，<code>orion-error</code> 升级到 <code>0.8</code> 主线。</p>
+<p>这带来的直接变化包括：</p>
+<ul>
+<li>错误信息附带更完整的路径上下文</li>
+<li>CLI 报错信息更集中、更易读</li>
+<li>日常排障时更容易定位具体配置或规则位置</li>
+</ul>
+<h2 id="fixed"><a class="header" href="#fixed">Fixed</a></h2>
+<h3 id="oml-take-行为修复"><a class="header" href="#oml-take-行为修复">OML <code>take(...)</code> 行为修复</a></h3>
+<p>同步上游修复后，<code>take(...)</code> 在目标记录中已生成字段的消费行为更加正确，并修正了同名字段场景下的取值顺序。</p>
+<h3 id="oml--sql-参数解析增强"><a class="header" href="#oml--sql-参数解析增强">OML / SQL 参数解析增强</a></h3>
+<p>同步上游修复，增强以下 SQL 相关场景的解析稳定性：</p>
+<ul>
+<li><code>group_concat(...)</code></li>
+<li><code>string_agg(...)</code></li>
+<li><code>IN (...)</code></li>
+<li><code>take(field)</code></li>
+<li><code>__temp_var</code></li>
+</ul>
+<h3 id="运行时稳定性修复"><a class="header" href="#运行时稳定性修复">运行时稳定性修复</a></h3>
+<p>修复了部分场景下的运行时稳定性问题。</p>
+<h2 id="相关文档"><a class="header" href="#相关文档">相关文档</a></h2>
+<ul>
+<li><a href="#http-源配置">HTTP 源配置</a></li>
+<li><a href="#远程工程拉取与规则热更新-sop">远程工程拉取与规则热更新 SOP</a></li>
+<li><a href="10-user/01-cli/README.html">CLI 使用手册</a></li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="warpparse-022"><a class="header" href="#warpparse-022">WarpParse 0.22</a></h1>
 <p>亲爱的用户们，</p>
 <p>我们很高兴地宣布 WarpParse 0.22 版本发布！本次更新主要聚焦于 <strong>运行时可运维性、远端工程同步、知识库能力补强，以及监控与规则体验增强</strong>。</p>
-<h2 id="本次更新亮点"><a class="header" href="#本次更新亮点">本次更新亮点</a></h2>
+<h2 id="本次更新亮点-1"><a class="header" href="#本次更新亮点-1">本次更新亮点</a></h2>
 <ul>
 <li>运行时管理面能力补齐，支持标准化状态查询与重载。</li>
 <li>远端工程初始化、更新、热重载路径进一步统一。</li>
 <li>知识库、WPL 与监控链路文档更加完整，正式使用路径更清晰。</li>
 </ul>
-<h2 id="added"><a class="header" href="#added">Added</a></h2>
+<h2 id="added-1"><a class="header" href="#added-1">Added</a></h2>
 <h3 id="运行时管理面"><a class="header" href="#运行时管理面">运行时管理面</a></h3>
 <p>新增围绕在线实例的标准化运维入口：</p>
 <ul>
@@ -251,7 +318,7 @@ wproj self update --yes
 <ul>
 <li><a href="#wpl-语言参考">WPL 语言参考</a></li>
 </ul>
-<h2 id="changed"><a class="header" href="#changed">Changed</a></h2>
+<h2 id="changed-1"><a class="header" href="#changed-1">Changed</a></h2>
 <h3 id="cli-手册结构收敛"><a class="header" href="#cli-手册结构收敛">CLI 手册结构收敛</a></h3>
 <p>产品概览、CLI 使用、运行时管理面、远端同步 SOP 已收拢到统一入口。
 相关文档：</p>
@@ -269,7 +336,7 @@ wproj self update --yes
 <h1 id="warpparse-020"><a class="header" href="#warpparse-020">WarpParse 0.20</a></h1>
 <p>亲爱的用户们，</p>
 <p>我们很高兴地宣布 WarpParse 0.20-beta 版本发布！本次更新主要聚焦于 <strong>数据集成能力的全面增强</strong>，引入了多项全新的 Sink 连接器，旨在为您提供更灵活、更高效的数据处理体验。无论您是需要将数据写入 ElasticSearch 进行实时分析，还是导入 Doris、ClickHouse 进行大数据处理，亦或是通过 HTTP/HTTPS 与各类服务进行集成，0.20 版本都能满足您的需求。</p>
-<h2 id="本次更新亮点-1"><a class="header" href="#本次更新亮点-1">本次更新亮点</a></h2>
+<h2 id="本次更新亮点-2"><a class="header" href="#本次更新亮点-2">本次更新亮点</a></h2>
 <h3 id="新增多款高性能数据-sink"><a class="header" href="#新增多款高性能数据-sink">新增多款高性能数据 Sink</a></h3>
 <p>为了更好地支持多样化的数据存储和分析场景，0.20 版本新增了以下强大的数据 Sink：</p>
 <ul>
@@ -315,7 +382,7 @@ batch_size = 1_0000    # 单批次写入记录数
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="wp-monitor-发布说明"><a class="header" href="#wp-monitor-发布说明">Wp-Monitor 发布说明</a></h1>
 <h2 id="043"><a class="header" href="#043">0.4.3</a></h2>
-<h3 id="added-1"><a class="header" href="#added-1">Added</a></h3>
+<h3 id="added-2"><a class="header" href="#added-2">Added</a></h3>
 <ul>
 <li>可视化：统一查看 Source、Parse、Sink 处理统计数据</li>
 <li>MISS 数据观察：识别未命中规则的数据，并支持导出分析。</li>
@@ -329,6 +396,7 @@ batch_size = 1_0000    # 单批次写入记录数
 <ol>
 <li><a href="#快速开始">快速开始</a></li>
 <li><a href="#warpparse-核心概念速查">WarpParse 核心概念速查</a></li>
+<li><a href="#warpparse-与-vector-对比">WarpParse 与 Vector 对比</a></li>
 <li><a href="10-user/01-cli/README.html">CLI 使用手册</a></li>
 <li>再按需进入 WPL、OML、配置和连接器文档</li>
 </ol>
@@ -336,6 +404,7 @@ batch_size = 1_0000    # 单批次写入记录数
 <ul>
 <li><a href="#快速开始">快速开始</a></li>
 <li><a href="#warpparse-核心概念速查">WarpParse 核心概念速查</a></li>
+<li><a href="#warpparse-与-vector-对比">WarpParse 与 Vector 对比</a></li>
 <li><a href="10-user/01-cli/README.html">CLI 使用手册</a></li>
 <li><a href="10-user/02-config/README.html">配置指南</a></li>
 <li><a href="10-user/03-wpl/README.html">WPL 规则语言</a></li>
@@ -533,7 +602,7 @@ batch_size = 1_0000    # 单批次写入记录数
 <li><strong><a href="10-user/04-oml/README.html">OML 语言基础</a></strong>：学习数据组装规则</li>
 </ol>
 <hr>
-<h2 id="相关文档"><a class="header" href="#相关文档">相关文档</a></h2>
+<h2 id="相关文档-1"><a class="header" href="#相关文档-1">相关文档</a></h2>
 <ul>
 <li><a href="#快速开始">快速开始</a></li>
 <li><a href="10-user/01-cli/README.html">CLI 使用手册</a></li>
@@ -594,6 +663,186 @@ wproj data stat
 <li>想先建立产品与术语认知：看 <a href="#warpparse-核心概念速查">WarpParse 核心概念速查</a></li>
 <li>想看完整 CLI、运行时和运维手册：看 <a href="10-user/01-cli/README.html">CLI 使用手册</a></li>
 <li>想深入语言与规则：看 <a href="10-user/03-wpl/README.html">WPL 规则语言</a> 和 <a href="10-user/04-oml/README.html">OML 对象模型语言</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="warpparse-与-vector-对比"><a class="header" href="#warpparse-与-vector-对比">WarpParse 与 Vector 对比</a></h1>
+<p>这篇文档面向正在选型或替换方案的用户，帮助你快速判断：</p>
+<ul>
+<li>什么时候更适合选择 WarpParse</li>
+<li>什么时候继续使用 Vector 更合适</li>
+<li>两者在解析模型、性能和维护方式上的核心差异</li>
+</ul>
+<h2 id="一句话结论"><a class="header" href="#一句话结论">一句话结论</a></h2>
+<ul>
+<li>如果你的核心目标是 <strong>高吞吐日志解析、复杂字段提取、规则工程化维护</strong>，WarpParse 更合适。</li>
+<li>如果你的核心目标是 <strong>通用数据采集、生态连接器覆盖、快速拼装观测链路</strong>，Vector 更合适。</li>
+</ul>
+<p>两者都能做日志处理，但产品重心不同：</p>
+<ul>
+<li><strong>WarpParse</strong> 更偏向“高性能解析引擎 + 规则工程体系”</li>
+<li><strong>Vector</strong> 更偏向“通用可观测性数据管道”</li>
+</ul>
+<h2 id="核心定位对比"><a class="header" href="#核心定位对比">核心定位对比</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>维度</th><th>WarpParse</th><th>Vector</th></tr>
+</thead>
+<tbody>
+<tr><td>产品定位</td><td>面向日志解析与安全数据处理的 ETL 引擎</td><td>面向日志、指标、追踪的通用数据管道</td></tr>
+<tr><td>强项</td><td>高性能解析、复杂文本结构提取、规则治理</td><td>连接器生态、通用采集转发、社区成熟度</td></tr>
+<tr><td>主要建模方式</td><td>WPL + OML</td><td>TOML + VRL / 内建 transform</td></tr>
+<tr><td>典型使用场景</td><td>安全日志标准化、复杂异构日志解析、解析规则平台化</td><td>统一采集、路由转发、可观测性链路接入</td></tr>
+<tr><td>更关注的问题</td><td>解析精度、规则表达力、吞吐与延迟</td><td>数据接入广度、部署便捷性、生态兼容性</td></tr>
+<tr><td>国产信创支持</td><td>更有针对性，兼容性更强</td><td>不是主要优势方向</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="解析模型差异"><a class="header" href="#解析模型差异">解析模型差异</a></h2>
+<h3 id="warpparse"><a class="header" href="#warpparse">WarpParse</a></h3>
+<p>WarpParse 把处理过程拆成两个主要阶段：</p>
+<ul>
+<li><strong>WPL</strong>：负责原始日志解析与字段提取</li>
+<li><strong>OML</strong>：负责对象组装、字段映射、转换与输出模型整理</li>
+</ul>
+<p>这种拆分的好处是：</p>
+<ul>
+<li>解析规则和对象建模职责分离</li>
+<li>复杂日志的可维护性更好</li>
+<li>团队可以按“解析规则”和“输出模型”分工协作</li>
+</ul>
+<h3 id="vector"><a class="header" href="#vector">Vector</a></h3>
+<ul>
+<li>VRL 或内建 transform 负责字段提取、变换、路由</li>
+</ul>
+<h2 id="规则维护方式对比"><a class="header" href="#规则维护方式对比">规则维护方式对比</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>维度</th><th>WarpParse</th><th>Vector</th></tr>
+</thead>
+<tbody>
+<tr><td>解析与转换职责</td><td>拆分明确</td><td>常在同一条处理链上完成</td></tr>
+<tr><td>复杂文本日志</td><td>更适合</td><td>可以做，但规则容易膨胀</td></tr>
+<tr><td>规则复用</td><td>更适合做规则工程化管理</td><td></td></tr>
+<tr><td>调试关注点</td><td>命中哪条 WPL、如何映射 OML</td><td></td></tr>
+</tbody>
+</table>
+</div>
+<p>如果你的场景里有下面这些特征，WarpParse 的优势会更明显：</p>
+<ul>
+<li>日志格式很多，而且经常变化</li>
+<li>需要从非结构化文本中稳定提取大量字段</li>
+<li>需要把解析规则交给专门团队长期维护</li>
+<li>需要同时兼顾吞吐、精度和规则可测试性</li>
+</ul>
+<p>如果你的场景更接近下面这些情况，Vector 往往更顺手：</p>
+<ul>
+<li>主要目标是采集并转发，而不是深度解析</li>
+<li>已经大量使用 Vector 生态或周边模板</li>
+<li>日志格式相对稳定，解析逻辑不复杂</li>
+<li>需要快速接入多种 source / sink</li>
+</ul>
+<h2 id="性能差异"><a class="header" href="#性能差异">性能差异</a></h2>
+<p>从当前仓库内的基准测试结果看，WarpParse 在“解析为主”的场景下，整体吞吐通常明显高于 Vector，尤其在以下场景更明显：</p>
+<ul>
+<li>小包高并发日志</li>
+<li>大字段、长文本日志</li>
+<li>解析后还需要继续做字段转换</li>
+<li>TCP 输入到文件输出这类端到端路径</li>
+</ul>
+<p>例如在 <code>Mac M4 Mini</code> 基准中：</p>
+<ul>
+<li>Nginx <code>File -&gt; BlackHole</code>，WarpParse 为 <code>2,789,800 EPS</code>，Vector-VRL 为 <code>572,076 EPS</code></li>
+<li>APT <code>File -&gt; BlackHole</code>，WarpParse 为 <code>328,000 EPS</code>，Vector-VRL 为 <code>37,777 EPS</code></li>
+</ul>
+<p>详细数据可参考：</p>
+<ul>
+<li><a href="#benchmark-report">BenchMark Report</a></li>
+<li><a href="#性能基准测试报告">性能基准测试报告</a></li>
+</ul>
+<p>不建议把一组基准数字直接外推到所有生产环境，实际结果仍会受日志结构、I/O 拓扑、规则复杂度和下游 sink 影响。</p>
+<h2 id="生态与接入方式对比"><a class="header" href="#生态与接入方式对比">生态与接入方式对比</a></h2>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>维度</th><th>WarpParse</th><th>Vector</th></tr>
+</thead>
+<tbody>
+<tr><td>Source / Sink 覆盖</td><td>当前Source <code>5</code> 个、Sink <code>15</code> 个</td><td>更广，更成熟</td></tr>
+<tr><td>社区生态</td><td>偏产品与项目工程实践</td><td>开源生态更大</td></tr>
+<tr><td>可观测性场景</td><td>可承接，但不是唯一重心</td><td>覆盖日志/指标/追踪</td></tr>
+<tr><td>安全日志工程</td><td>更强</td><td>可以做，但通常不是最佳表达方式</td></tr>
+<tr><td>国产信创兼容性</td><td>更强，适合国产化环境落地</td><td>不是主要卖点</td></tr>
+</tbody>
+</table>
+</div>
+<p>按当前中文文档入口统计，WarpParse 已文档化的连接器数量为：</p>
+<ul>
+<li><code>Source 5</code> 个：<code>file</code>、<code>kafka</code>、<code>syslog</code>、<code>http</code>、<code>tcp</code></li>
+<li><code>Sink 15</code> 个：<code>file</code>、<code>syslog</code>、<code>prometheus</code>、<code>tcp</code>、<code>victorialogs</code>、<code>doris</code>、<code>kafka</code>、<code>mysql</code>、<code>arrow-ipc</code>、<code>elasticsearch</code>、<code>arrow-file</code>、<code>clickhouse</code>、<code>http</code>、<code>postgresql</code>、<code>dmdb</code></li>
+</ul>
+<p>这说明 WarpParse 在社区版里并不只是“解析引擎”，而是已经具备一套可独立落地的连接器能力。</p>
+<h2 id="国产信创支持"><a class="header" href="#国产信创支持">国产信创支持</a></h2>
+<p>对很多政企和安全场景来说，是否能更顺利地落地在国产化基础设施上，是一个单独的重要维度。</p>
+<p>在这一点上，WarpParse 的优势可以单独拎出来看：</p>
+<ul>
+<li>对国产信创环境支持更有针对性</li>
+<li>在国产化部署场景下兼容性更强</li>
+<li>更适合作为需要兼顾性能、解析能力和国产化适配的方案</li>
+</ul>
+<p>如果你的项目明确要求：</p>
+<ul>
+<li>国产操作系统兼容</li>
+<li>国产软硬件环境适配</li>
+<li>信创场景下的稳定部署与交付</li>
+</ul>
+<p>那么这会是 WarpParse 相比 Vector 的一个明确优势。</p>
+<h2 id="社区版完整度对比"><a class="header" href="#社区版完整度对比">社区版完整度对比</a></h2>
+<p>这里的“完整度”主要是指：用户拿到社区版后，能否较完整地完成下载、阅读、学习、试用、规则编写、运行观察等工作。</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>维度</th><th>WarpParse 社区版</th><th>Vector 社区版</th></tr>
+</thead>
+<tbody>
+<tr><td>程序</td><td>可直接运行核心解析链路</td><td>可直接运行完整数据管道</td></tr>
+<tr><td>文档</td><td>文档体系已经较完整，覆盖产品、规则、配置、连接器、教程与基准报告</td><td>文档成熟，覆盖通用 pipeline 与生态集成</td></tr>
+<tr><td>示例</td><td>有专门的 <code>wp-example</code> 项目，下载后即可运行</td><td>分散在官方文档、仓库和社区内容中</td></tr>
+<tr><td>规则编辑器</td><td>提供专门的 <code>wp-editor</code></td><td>无</td></tr>
+<tr><td>处理监视器</td><td>提供专门的 <code>wp-monitor</code></td><td>第三方</td></tr>
+<tr><td>兼容性</td><td>主流系统平台+国产信创，兼容性更强</td><td>主流系统平台</td></tr>
+</tbody>
+</table>
+</div>
+<p>如果从社区版完整度来判断，WarpParse 的优势更直接：</p>
+<ul>
+<li>有完整程序可运行</li>
+<li>有成体系文档可阅读</li>
+<li>有 <code>wp-example</code> 可直接下载试用</li>
+<li>有 <code>wp-editor</code> 支撑规则开发</li>
+<li>有 <code>wp-monitor</code> 支撑处理监视与观察</li>
+<li>有更强的国产信创兼容性</li>
+</ul>
+<p>因此在“拿到社区版后，是否能独立完成学习、试用、规则开发和运行观察”这个维度上：</p>
+<ul>
+<li><strong>WarpParse 的完整度明显优于 Vector</strong></li>
+</ul>
+<h2 id="常见判断"><a class="header" href="#常见判断">常见判断</a></h2>
+<h3 id="我已经在用-vector是否需要迁移到-warpparse"><a class="header" href="#我已经在用-vector是否需要迁移到-warpparse">我已经在用 Vector，是否需要迁移到 WarpParse？</a></h3>
+<p>如果你当前主要痛点是：</p>
+<ul>
+<li>VRL 规则越来越长</li>
+<li>正则难维护</li>
+<li>解析吞吐不足</li>
+<li>安全日志标准化成本高</li>
+</ul>
+<p>那么值得评估迁移一部分“解析密集型链路”到 WarpParse，而不是一开始就全量替换。</p>
+<h2 id="下一步-2"><a class="header" href="#下一步-2">下一步</a></h2>
+<ul>
+<li>想快速理解 WarpParse 基础概念：看 <a href="#warpparse-核心概念速查">WarpParse 核心概念速查</a></li>
+<li>想直接跑通本地示例：看 <a href="#快速开始">快速开始</a></li>
+<li>想看更详细性能数据：看 <a href="#benchmark-report">BenchMark Report</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="wpl-学习目标与练习"><a class="header" href="#wpl-学习目标与练习">WPL 学习目标与练习</a></h1>
@@ -703,7 +952,7 @@ wproj data stat
 <li>执行 <code>wpgen rule</code> 或 <code>wpgen sample</code></li>
 <li>用 <code>wparse batch</code> 或 <code>wproj</code> 相关命令验证结果</li>
 </ol>
-<h2 id="相关文档-1"><a class="header" href="#相关文档-1">相关文档</a></h2>
+<h2 id="相关文档-2"><a class="header" href="#相关文档-2">相关文档</a></h2>
 <ul>
 <li>功能与 CLI 使用指南: <a href="#warp-parse-功能与-cli-使用指南">index.md</a></li>
 <li><code>wparse</code> 运行时使用指南: <a href="#wparse-运行时使用指南">runtime.md</a></li>
@@ -767,7 +1016,7 @@ wprescue --help
 <li><code>wproj rule</code> 目前实际暴露的是 <code>parse</code> 能力，尚不是完整的规则工作台</li>
 <li>更细的配置字段说明，仍应以对应配置文件和专项文档为准</li>
 </ul>
-<h2 id="相关文档-2"><a class="header" href="#相关文档-2">相关文档</a></h2>
+<h2 id="相关文档-3"><a class="header" href="#相关文档-3">相关文档</a></h2>
 <ul>
 <li>产品概览: <a href="#warp-parse-产品概览">../overview/product.md</a></li>
 <li>运行时管理面使用说明: <a href="#warp-parse-运行时管理面使用说明">../operations/admin.md</a></li>
@@ -945,7 +1194,7 @@ wprescue --help
 <li><code>wproj rule</code> 目前实际暴露的是 <code>parse</code> 能力，尚不是完整的规则工作台</li>
 <li>更细的配置字段语义仍应以专项文档和对应配置说明为准</li>
 </ul>
-<h2 id="相关文档-3"><a class="header" href="#相关文档-3">相关文档</a></h2>
+<h2 id="相关文档-4"><a class="header" href="#相关文档-4">相关文档</a></h2>
 <ul>
 <li>功能与 CLI 使用指南: <a href="#warp-parse-功能与-cli-使用指南">index.md</a></li>
 <li>运行时管理面使用说明: <a href="#warp-parse-运行时管理面使用说明">../operations/admin.md</a></li>
@@ -1011,7 +1260,7 @@ wprescue --help
 <li>需要看单文件分布时，加 <code>--detail</code></li>
 <li>真正要处理 rescue 数据时，再执行 <code>wprescue batch</code></li>
 </ol>
-<h2 id="相关文档-4"><a class="header" href="#相关文档-4">相关文档</a></h2>
+<h2 id="相关文档-5"><a class="header" href="#相关文档-5">相关文档</a></h2>
 <ul>
 <li>功能与 CLI 使用指南: <a href="#warp-parse-功能与-cli-使用指南">index.md</a></li>
 <li>项目工具使用指南: <a href="#wproj-项目工具使用指南">project.md</a></li>
@@ -1086,7 +1335,7 @@ wprescue --help
 <li>使用 <code>wproj engine status</code> 检查状态</li>
 <li>需要变更模型时，使用 <code>wproj engine reload</code></li>
 </ol>
-<h2 id="相关文档-5"><a class="header" href="#相关文档-5">相关文档</a></h2>
+<h2 id="相关文档-6"><a class="header" href="#相关文档-6">相关文档</a></h2>
 <ul>
 <li>功能与 CLI 使用指南: <a href="#warp-parse-功能与-cli-使用指南">index.md</a></li>
 <li>运行时管理面使用说明: <a href="#warp-parse-运行时管理面使用说明">../operations/admin.md</a></li>
@@ -1191,7 +1440,7 @@ chmod 600 "${HOME}/.warp_parse/admin_api.token"
   --token-file /path/to/admin_api.token \
   --insecure
 </code></pre>
-<h2 id="相关文档-6"><a class="header" href="#相关文档-6">相关文档</a></h2>
+<h2 id="相关文档-7"><a class="header" href="#相关文档-7">相关文档</a></h2>
 <ul>
 <li>远程工程拉取与规则热更新 SOP: <a href="#远程工程拉取与规则热更新-sop">project-sync.md</a></li>
 <li>对应英文版: <a href="../docs-en/10-user/01-cli/operations/admin.html">../../en/operations/admin.md</a></li>
@@ -1272,7 +1521,7 @@ wproj engine reload \
   --admin-url http://127.0.0.1:19090 \
   --token-file "${HOME}/.warp_parse/admin_api.token"
 </code></pre>
-<h2 id="相关文档-7"><a class="header" href="#相关文档-7">相关文档</a></h2>
+<h2 id="相关文档-8"><a class="header" href="#相关文档-8">相关文档</a></h2>
 <ul>
 <li>运行时管理面使用说明: <a href="#warp-parse-运行时管理面使用说明">admin.md</a></li>
 <li>对应英文版: <a href="../docs-en/10-user/01-cli/operations/project-sync.html">../../en/operations/project-sync.md</a></li>
@@ -1324,7 +1573,7 @@ wpgen --help
 wproj --help
 wprescue --help
 </code></pre>
-<h2 id="相关文档-8"><a class="header" href="#相关文档-8">相关文档</a></h2>
+<h2 id="相关文档-9"><a class="header" href="#相关文档-9">相关文档</a></h2>
 <ul>
 <li>运行时管理面使用说明: <a href="#warp-parse-运行时管理面使用说明">../operations/admin.md</a></li>
 <li>远程工程拉取与规则热更新 SOP: <a href="#远程工程拉取与规则热更新-sop">../operations/project-sync.md</a></li>
@@ -1395,6 +1644,7 @@ sinks   = "./topology/sinks"
 rate_limit_rps = 10000        # 限速（records/second）
 parse_workers  = 2            # 解析并发 worker 数
 reload_timeout_ms = 10000     # reload 兜底超时（毫秒）；覆盖 graceful drain 与旧 processing 尾部清理
+fetch_timeout_ms = 300 # realtime picker 每轮阻塞拉取的超时（毫秒）
 
 [rescue]
 path = "./data/rescue"        
@@ -1426,6 +1676,7 @@ target = "*"
 <li><code>semantic_dict.toml</code> 默认读取 <code>${models.knowledge}/semantic_dict.toml</code></li>
 <li><code>knowdb.toml</code> 默认读取 <code>${models.knowledge}/knowdb.toml</code>
 &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</li>
+<li><code>fetch_timeout_ms</code> 默认 <code>300</code>；用于控制 realtime picker 单轮阻塞拉取的最长等待时间</li>
 <li><code>reload_timeout_ms</code> 默认 <code>10000</code>；CLI <code>--reload-timeout-ms</code> 优先于配置文件
 =======</li>
 </ul>
@@ -2272,7 +2523,7 @@ grep "version" ${models.knowledge}/semantic_dict.toml
 </tbody>
 </table>
 </div>
-<h2 id="相关文档-9"><a class="header" href="#相关文档-9">相关文档</a></h2>
+<h2 id="相关文档-10"><a class="header" href="#相关文档-10">相关文档</a></h2>
 <ul>
 <li><a href="#extract_main_word-pipefun-使用指南">extract_main_word 使用指南</a></li>
 <li><a href="#extract_subject_object-pipefun-使用指南">extract_subject_object 使用指南</a></li>
@@ -3089,7 +3340,7 @@ digit\,, ip\;, chars\s
 规则：(digit, ip, chars)\,
 </code></pre>
 <hr>
-<h2 id="下一步-2"><a class="header" href="#下一步-2">下一步</a></h2>
+<h2 id="下一步-3"><a class="header" href="#下一步-3">下一步</a></h2>
 <h3 id="理解概念"><a class="header" href="#理解概念">理解概念</a></h3>
 <p>→ <a href="#wpl-核心概念">02-core-concepts.md</a> - 理解 WPL 的设计理念</p>
 <p><strong>你将学到：</strong></p>
@@ -3977,7 +4228,7 @@ kvarr                     # 自动解析 KV
 alt(ip:addr, digit:id)    # 择一分组
 </code></pre>
 <hr>
-<h2 id="下一步-3"><a class="header" href="#下一步-3">下一步</a></h2>
+<h2 id="下一步-4"><a class="header" href="#下一步-4">下一步</a></h2>
 <h3 id="实战应用"><a class="header" href="#实战应用">实战应用</a></h3>
 <p>→ <a href="#wpl-实战指南">03-practical-guide.md</a> - 按任务查找解决方案</p>
 <p><strong>你将学到：</strong></p>
@@ -5472,7 +5723,7 @@ some_of(ip, digit, kvarr)
 # 逐步确定哪个分组导致失败
 </code></pre>
 <hr>
-<h2 id="下一步-4"><a class="header" href="#下一步-4">下一步</a></h2>
+<h2 id="下一步-5"><a class="header" href="#下一步-5">下一步</a></h2>
 <h3 id="查阅参考-1"><a class="header" href="#查阅参考-1">查阅参考</a></h3>
 <p>→ <a href="#wpl-语言参考">04-language-reference.md</a> - 完整类型和语法
 → <a href="#wpl-函数参考对齐-srcparserwpl_funrs-与-srcevalbuiltins">05-functions-reference.md</a> - 所有函数详解</p>
@@ -6073,7 +6324,7 @@ rule decode_with_take {
 }
 </code></pre>
 <hr>
-<h2 id="相关文档-10"><a class="header" href="#相关文档-10">相关文档</a></h2>
+<h2 id="相关文档-11"><a class="header" href="#相关文档-11">相关文档</a></h2>
 <ul>
 <li>语法定义：<a href="#wpl-语法参考对齐-srcparser">WPL 语法（EBNF）</a></li>
 <li>实现代码：<code>src/parser/wpl_fun.rs</code></li>
@@ -6426,7 +6677,7 @@ kvarr(digit@port)      # KV 字段
 @path/to/field         # 嵌套路径
 </code></pre>
 <hr>
-<h2 id="相关文档-11"><a class="header" href="#相关文档-11">相关文档</a></h2>
+<h2 id="相关文档-12"><a class="header" href="#相关文档-12">相关文档</a></h2>
 <ul>
 <li>快速入门：<a href="#wpl-快速入门">01-quickstart.md</a></li>
 <li>核心概念：<a href="#wpl-核心概念">02-core-concepts.md</a></li>
@@ -10019,7 +10270,7 @@ wp-motor --debug rule.wpl &lt; test.log
 # 目标字段函数（更简洁）
 | f_digit_has(status, 200)
 </code></pre>
-<h2 id="相关文档-12"><a class="header" href="#相关文档-12">相关文档</a></h2>
+<h2 id="相关文档-13"><a class="header" href="#相关文档-13">相关文档</a></h2>
 <ul>
 <li><strong>开发指南</strong>: <a href="10-user/guide/wpl_field_func_development_guide.html">WPL Field Function 开发指南</a></li>
 <li><strong>字段引用</strong>: <a href="#wpl-字段引用使用指南">Field Reference</a></li>
@@ -10389,7 +10640,7 @@ not(chars:status)                        # ❌ 错误（这是组级）
 </ul>
 </li>
 </ul>
-<h2 id="相关文档-13"><a class="header" href="#相关文档-13">相关文档</a></h2>
+<h2 id="相关文档-14"><a class="header" href="#相关文档-14">相关文档</a></h2>
 <ul>
 <li><a href="#字段存在性检查-field-existence">字段存在性检查函数</a></li>
 <li><a href="#字符串匹配函数-string-matching">字符串匹配函数</a></li>
@@ -12525,7 +12776,7 @@ cpu_metrics = collect read(keys:[cpu_*]) ;
 # 避免：过于宽泛的通配符
 all = collect read(keys:[*]) ;  # 可能包含不需要的字段
 </code></pre>
-<h2 id="下一步-5"><a class="header" href="#下一步-5">下一步</a></h2>
+<h2 id="下一步-6"><a class="header" href="#下一步-6">下一步</a></h2>
 <ul>
 <li><a href="#oml-实战指南">实战指南</a> - 按任务查找解决方案</li>
 <li><a href="#oml-函数参考">函数参考</a> - 查阅所有可用函数</li>
@@ -13155,7 +13406,7 @@ metrics : obj = object {
 </code></pre>
 <hr>
 <hr>
-<h2 id="下一步-6"><a class="header" href="#下一步-6">下一步</a></h2>
+<h2 id="下一步-7"><a class="header" href="#下一步-7">下一步</a></h2>
 <ul>
 <li><strong><a href="#oml-完整功能示例">🌟 完整功能示例</a></strong> - 查看所有 OML 功能的完整演示</li>
 <li><a href="#oml-函数参考">函数参考</a> - 查阅所有可用函数</li>
@@ -13438,7 +13689,7 @@ local_s = read(event_time) | Time::to_ts_zone(8, s) ;
 <pre><code class="language-oml">summary = read(message) | extract_subject_object ;
 </code></pre>
 <hr>
-<h2 id="相关文档-14"><a class="header" href="#相关文档-14">相关文档</a></h2>
+<h2 id="相关文档-15"><a class="header" href="#相关文档-15">相关文档</a></h2>
 <ul>
 <li><a href="#oml-语法参考">06-grammar-reference.md</a></li>
 <li><a href="#oml-函数与专题索引">functions/function_index.md</a></li>
@@ -13993,7 +14244,7 @@ user_id = read(user_id) { _ : chars(unknown) } ;
 <li>查看错误日志</li>
 </ol>
 <hr>
-<h2 id="下一步-7"><a class="header" href="#下一步-7">下一步</a></h2>
+<h2 id="下一步-8"><a class="header" href="#下一步-8">下一步</a></h2>
 <ul>
 <li><a href="#oml-实战指南">实战指南</a> - 查看 OML 转换示例</li>
 <li><a href="#oml-函数参考">函数参考</a> - 查阅可用函数</li>
@@ -14834,7 +15085,7 @@ wildcard_items : array = collect take(keys:[details[*]/process_name]);
 <li>✅ 对象与数组：聚合、收集</li>
 </ul>
 <hr>
-<h2 id="下一步-8"><a class="header" href="#下一步-8">下一步</a></h2>
+<h2 id="下一步-9"><a class="header" href="#下一步-9">下一步</a></h2>
 <ul>
 <li><a href="#oml-快速入门">快速入门</a> - 学习基础语法</li>
 <li><a href="#oml-核心概念">核心概念</a> - 理解设计理念</li>
@@ -16586,7 +16837,7 @@ tier = match read(city) {
 };
 </code></pre>
 <p><strong>特点</strong>: 基于模式或条件匹配</p>
-<h2 id="相关文档-15"><a class="header" href="#相关文档-15">相关文档</a></h2>
+<h2 id="相关文档-16"><a class="header" href="#相关文档-16">相关文档</a></h2>
 <ul>
 <li><a href="#oml-函数与专题索引">OML Pipe Functions 索引</a> - Pipe 函数完整列表</li>
 <li><a href="#starts_with-函数使用指南-1">starts_with Pipe 函数</a> - Pipe 版本的 starts_with 详细说明</li>
@@ -17042,7 +17293,7 @@ addr = "127.0.0.1"    # 安全的默认地址
 port = 1514           # 非特权端口
 protocol = "tcp"      # 可靠的协议
 </code></pre>
-<h2 id="相关文档-16"><a class="header" href="#相关文档-16">相关文档</a></h2>
+<h2 id="相关文档-17"><a class="header" href="#相关文档-17">相关文档</a></h2>
 <ul>
 <li><a href="#source-基础">源配置基础</a></li>
 <li><a href="#file-source">文件源配置</a></li>
@@ -17084,7 +17335,7 @@ protocol = "tcp"      # 可靠的协议
 </tbody>
 </table>
 </div>
-<h2 id="相关文档-17"><a class="header" href="#相关文档-17">相关文档</a></h2>
+<h2 id="相关文档-18"><a class="header" href="#相关文档-18">相关文档</a></h2>
 <ul>
 <li><a href="10-user/05-connectors/README.html">连接器管理</a></li>
 <li><a href="10-user/05-connectors/02-sinks/README.html">Sinks 配置指南</a></li>
@@ -17192,7 +17443,7 @@ addr = "127.0.0.1"
 port = 1514
 protocol = "tcp"
 </code></pre>
-<h2 id="相关文档-18"><a class="header" href="#相关文档-18">相关文档</a></h2>
+<h2 id="相关文档-19"><a class="header" href="#相关文档-19">相关文档</a></h2>
 <ul>
 <li><a href="10-user/05-connectors/README.html">连接器管理</a></li>
 <li><a href="#file-source">文件源配置</a></li>
@@ -17337,7 +17588,7 @@ encode = "hex"
   }
 }
 </code></pre>
-<h2 id="相关文档-19"><a class="header" href="#相关文档-19">相关文档</a></h2>
+<h2 id="相关文档-20"><a class="header" href="#相关文档-20">相关文档</a></h2>
 <ul>
 <li><a href="#source-基础">源配置基础</a></li>
 <li><a href="10-user/05-connectors/README.html">连接器管理</a></li>
@@ -17518,7 +17769,7 @@ config = [
     "max_poll_interval_ms=600000"
 ]
 </code></pre>
-<h2 id="相关文档-20"><a class="header" href="#相关文档-20">相关文档</a></h2>
+<h2 id="相关文档-21"><a class="header" href="#相关文档-21">相关文档</a></h2>
 <ul>
 <li><a href="#source-基础">源配置基础</a></li>
 <li><a href="10-user/05-connectors/README.html">连接器管理</a></li>
@@ -17682,7 +17933,7 @@ fast_strip = true             # 启用快速剥离
 # 分析场景：
 header_mode = "parse"         # 解析并注入协议相关元信息
 </code></pre>
-<h2 id="相关文档-21"><a class="header" href="#相关文档-21">相关文档</a></h2>
+<h2 id="相关文档-22"><a class="header" href="#相关文档-22">相关文档</a></h2>
 <ul>
 <li><a href="#source-基础">源配置基础</a></li>
 <li><a href="10-user/05-connectors/README.html">连接器管理</a></li>
@@ -17805,7 +18056,7 @@ OK
 
 parse body failed: invalid ndjson line 2
 </code></pre>
-<h2 id="相关文档-22"><a class="header" href="#相关文档-22">相关文档</a></h2>
+<h2 id="相关文档-23"><a class="header" href="#相关文档-23">相关文档</a></h2>
 <ul>
 <li><a href="#source-基础">源配置基础</a></li>
 <li><a href="10-user/05-connectors/02-sinks/06-http_sink.html">HTTP Sink 配置</a></li>
@@ -17912,7 +18163,7 @@ framing = "line"  # 或 "len"
 <li>多行/二进制：<code>framing="len"</code>（或 <code>auto</code> 默认）</li>
 <li>快速联调：<code>framing="line"</code>，配合 <code>nc -lk &lt;port&gt;</code></li>
 </ul>
-<h2 id="相关文档-23"><a class="header" href="#相关文档-23">相关文档</a></h2>
+<h2 id="相关文档-24"><a class="header" href="#相关文档-24">相关文档</a></h2>
 <ul>
 <li><a href="#source-基础">源配置基础</a></li>
 <li><a href="#tcp-sink">TCP Sink 配置</a></li>
@@ -19966,7 +20217,7 @@ cd wp-monitor/example
 <h2 id="日志解析测试"><a class="header" href="#日志解析测试">日志解析测试</a></h2>
 <h3 id="mac-m4-mini"><a class="header" href="#mac-m4-mini">Mac M4 Mini</a></h3>
 <h4 id="nginx239b"><a class="header" href="#nginx239b">Nginx（239B）</a></h4>
-<h5 id="warpparse"><a class="header" href="#warpparse">WarpParse</a></h5>
+<h5 id="warpparse-1"><a class="header" href="#warpparse-1">WarpParse</a></h5>
 <h6 id="wpl"><a class="header" href="#wpl">WPL</a></h6>
 <pre><code class="language-bash">package /nginx/ {
    rule nginx {
@@ -19988,7 +20239,7 @@ cd wp-monitor/example
 	"wp_src_ip": "127.0.0.1"
 }
 </code></pre>
-<h5 id="vector"><a class="header" href="#vector">Vector</a></h5>
+<h5 id="vector-1"><a class="header" href="#vector-1">Vector</a></h5>
 <h6 id="vrl"><a class="header" href="#vrl">VRL</a></h6>
 <pre><code class="language- bash">source = '''
   parsed = parse_regex!(.message, r'^(?P&lt;client&gt;\S+) \S+ \S+ \[(?P&lt;time&gt;[^\]]+)\] "(?P&lt;request&gt;[^"]*)" (?P&lt;status&gt;\d{3}) (?P&lt;size&gt;\d+) "(?P&lt;referer&gt;[^"]*)" "(?P&lt;agent&gt;[^"]*)" "(?P&lt;extra&gt;[^"]*)"')
@@ -20035,7 +20286,7 @@ cd wp-monitor/example
 <p>https://github.com/vectordotdev/vector/issues/20739?utm_source=chatgpt.com</p>
 </blockquote>
 <h4 id="aws411b"><a class="header" href="#aws411b">AWS（411B)</a></h4>
-<h5 id="warpparse-1"><a class="header" href="#warpparse-1">WarpParse</a></h5>
+<h5 id="warpparse-1-1"><a class="header" href="#warpparse-1-1">WarpParse</a></h5>
 <h6 id="wpl-1"><a class="header" href="#wpl-1">WPL</a></h6>
 <pre><code class="language-bash">package /aws/ {
    rule aws {
@@ -20113,7 +20364,7 @@ cd wp-monitor/example
 	"wp_src_ip": "127.0.0.1"
 }
 </code></pre>
-<h5 id="vector-1"><a class="header" href="#vector-1">Vector</a></h5>
+<h5 id="vector-1-1"><a class="header" href="#vector-1-1">Vector</a></h5>
 <h6 id="vrl-1"><a class="header" href="#vrl-1">VRL</a></h6>
 <pre><code class="language-bash">source = '''
   parsed = parse_regex!(.message, r'^(?P&lt;type&gt;\S+) (?P&lt;timestamp&gt;\S+) (?P&lt;elb&gt;\S+) (?P&lt;client_host&gt;\S+) (?P&lt;target_host&gt;\S+) (?P&lt;request_processing_time&gt;[-\d\.]+) (?P&lt;target_processing_time&gt;[-\d\.]+) (?P&lt;response_processing_time&gt;[-\d\.]+) (?P&lt;elb_status_code&gt;\S+) (?P&lt;target_status_code&gt;\S+) (?P&lt;received_bytes&gt;\d+) (?P&lt;sent_bytes&gt;\d+) "(?P&lt;request_method&gt;\S+) (?P&lt;request_url&gt;[^ ]+) (?P&lt;request_protocol&gt;[^"]+)" "(?P&lt;user_agent&gt;[^"]*)" "(?P&lt;ssl_cipher&gt;[^"]*)" "(?P&lt;ssl_protocol&gt;[^"]*)" (?P&lt;target_group_arn&gt;\S+) "(?P&lt;trace_id&gt;[^"]*)" "(?P&lt;domain_name&gt;[^"]*)" "(?P&lt;chosen_cert_arn&gt;[^"]*)" (?P&lt;matched_rule_priority&gt;\S+) (?P&lt;request_creation_time&gt;\S+) "(?P&lt;actions_executed&gt;[^"]*)" "(?P&lt;redirect_url&gt;[^"]*)" "(?P&lt;error_reason&gt;[^"]*)" "(?P&lt;target_port_list&gt;[^"]*)" "(?P&lt;target_status_code_list&gt;[^"]*)" "(?P&lt;classification&gt;[^"]*)" "(?P&lt;classification_reason&gt;[^"]*)" (?P&lt;traceability_id&gt;\S+)$')

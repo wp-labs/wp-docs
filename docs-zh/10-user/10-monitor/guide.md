@@ -52,7 +52,7 @@ wp-monitor
 
 ### 2. 在 WarpParse 中配置 connector
 
-如果已有对应 connector，可跳过。
+如果已有对应 connector，可跳过。[连接器教程](../05-connectors//README.md)
 
 #### VictoriaMetrics connector
 
@@ -60,11 +60,11 @@ wp-monitor
 [[connectors]]
 id = "victoriametrics_sink"
 type = "victoriametrics"
-allow_override = ["insert_url", "flush_interval_secs"]
-
+allow_override = ["endpoint", "api_path", "timeout_secs","batch_size"]
 [connectors.params]
-insert_url = "http://127.0.0.1:8428/api/v1/import/prometheus"
-flush_interval_secs = 1
+endpoint = "http://victoria-metrics:8428"
+api_path = "/api/v1/import/prometheus"
+timeout_secs = 3
 ```
 
 #### VictoriaLogs connector
@@ -73,30 +73,36 @@ flush_interval_secs = 1
 [[connectors]]
 id = "victorialogs_sink"
 type = "victorialogs"
-allow_override = ["endpoint", "insert_path", "flush_interval_secs", "create_time_field", "tags"]
-
+allow_override = ["endpoint", "api_path", "flush_interval_secs", "create_time_field","batch_size","tags"]
 [connectors.params]
 endpoint = "http://127.0.0.1:9428"
-insert_path = "/insert/jsonline"
+api_path = "/insert/jsonline"
+flush_interval_secs = 3
 ```
 
 ### 3. 在 sink_group 中接入监控与 MISS 输出
 
-#### `infra.d/monitor.toml`
+#### `topology/infra.d/monitor.toml`
 
 ```toml
 [[sink_group.sinks]]
-name = "victoriametrics"
+name = "metrics_vmetrics_sink"
 connect = "victoriametrics_sink"
+[sink_group.sinks.params]
+endpoint = "http://localhost:18429"
+api_path = "/api/v1/import/prometheus"
 ```
 
-#### `infra.d/miss.toml`
+#### `topology/infra.d/miss.toml`
 
 ```toml
 [[sink_group.sinks]]
 name = "victorialogs_output"
 connect = "victorialogs_sink"
-params = { endpoint = "http://127.0.0.1:9428", insert_path = "/insert/jsonline", tags = ["wp_stage:miss"] }
+[sink_group.sinks.params]
+endpoint = "http://localhost:19429"
+api_path = "/insert/jsonline?_msg_field=content,log"
+tags = ["wp_stage:miss"]
 ```
 
 注意：
@@ -104,7 +110,7 @@ params = { endpoint = "http://127.0.0.1:9428", insert_path = "/insert/jsonline",
 - `tags` 必须包含 `wp_stage:miss`
 - 否则 Wp-Monitor 无法查询到 MISS 数据
 
-### 4. 启动 WarpParse示例（非必须）
+### 4. 启动 WarpParse示例
 ```bash
 cd wp-monitor/example
 wparse daemon --stat 1

@@ -46,7 +46,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../../searchindex-4bf0fb9a.js";
+            window.path_to_searchindex_js = "../../searchindex-27df20e9.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-7f03924c.js"></script>
@@ -229,45 +229,51 @@
         └── app.toml
 </code></pre>
 <h3 id="2-在-warpparse-中配置-connector"><a class="header" href="#2-在-warpparse-中配置-connector">2. 在 WarpParse 中配置 connector</a></h3>
-<p>如果已有对应 connector，可跳过。</p>
+<p>如果已有对应 connector，可跳过。<a href="../05-connectors//README.html">连接器教程</a></p>
 <h4 id="victoriametrics-connector"><a class="header" href="#victoriametrics-connector">VictoriaMetrics connector</a></h4>
 <pre><code class="language-toml">[[connectors]]
 id = "victoriametrics_sink"
 type = "victoriametrics"
-allow_override = ["insert_url", "flush_interval_secs"]
-
+allow_override = ["endpoint", "api_path", "timeout_secs","batch_size"]
 [connectors.params]
-insert_url = "http://127.0.0.1:8428/api/v1/import/prometheus"
-flush_interval_secs = 1
+endpoint = "http://victoria-metrics:8428"
+api_path = "/api/v1/import/prometheus"
+timeout_secs = 3
 </code></pre>
 <h4 id="victorialogs-connector"><a class="header" href="#victorialogs-connector">VictoriaLogs connector</a></h4>
 <pre><code class="language-toml">[[connectors]]
 id = "victorialogs_sink"
 type = "victorialogs"
-allow_override = ["endpoint", "insert_path", "flush_interval_secs", "create_time_field", "tags"]
-
+allow_override = ["endpoint", "api_path", "flush_interval_secs", "create_time_field","batch_size","tags"]
 [connectors.params]
 endpoint = "http://127.0.0.1:9428"
-insert_path = "/insert/jsonline"
+api_path = "/insert/jsonline"
+flush_interval_secs = 3
 </code></pre>
 <h3 id="3-在-sink_group-中接入监控与-miss-输出"><a class="header" href="#3-在-sink_group-中接入监控与-miss-输出">3. 在 sink_group 中接入监控与 MISS 输出</a></h3>
-<h4 id="infradmonitortoml"><a class="header" href="#infradmonitortoml"><code>infra.d/monitor.toml</code></a></h4>
+<h4 id="topologyinfradmonitortoml"><a class="header" href="#topologyinfradmonitortoml"><code>topology/infra.d/monitor.toml</code></a></h4>
 <pre><code class="language-toml">[[sink_group.sinks]]
-name = "victoriametrics"
+name = "metrics_vmetrics_sink"
 connect = "victoriametrics_sink"
+[sink_group.sinks.params]
+endpoint = "http://localhost:18429"
+api_path = "/api/v1/import/prometheus"
 </code></pre>
-<h4 id="infradmisstoml"><a class="header" href="#infradmisstoml"><code>infra.d/miss.toml</code></a></h4>
+<h4 id="topologyinfradmisstoml"><a class="header" href="#topologyinfradmisstoml"><code>topology/infra.d/miss.toml</code></a></h4>
 <pre><code class="language-toml">[[sink_group.sinks]]
 name = "victorialogs_output"
 connect = "victorialogs_sink"
-params = { endpoint = "http://127.0.0.1:9428", insert_path = "/insert/jsonline", tags = ["wp_stage:miss"] }
+[sink_group.sinks.params]
+endpoint = "http://localhost:19429"
+api_path = "/insert/jsonline?_msg_field=content,log"
+tags = ["wp_stage:miss"]
 </code></pre>
 <p>注意：</p>
 <ul>
 <li><code>tags</code> 必须包含 <code>wp_stage:miss</code></li>
 <li>否则 Wp-Monitor 无法查询到 MISS 数据</li>
 </ul>
-<h3 id="4-启动-warpparse示例非必须"><a class="header" href="#4-启动-warpparse示例非必须">4. 启动 WarpParse示例（非必须）</a></h3>
+<h3 id="4-启动-warpparse示例"><a class="header" href="#4-启动-warpparse示例">4. 启动 WarpParse示例</a></h3>
 <pre><code class="language-bash">cd wp-monitor/example
 wparse daemon --stat 1
 # 开一个新终端，执行

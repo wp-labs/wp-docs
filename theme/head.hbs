@@ -1,0 +1,10 @@
+<script>
+(() => {
+    try {
+        const savedWidth = localStorage.getItem('wp-docs-sidebar-width');
+        if (savedWidth && /^\d+px$/.test(savedWidth)) {
+            document.documentElement.style.setProperty('--sidebar-target-width', savedWidth);
+        }
+    } catch (_) {}
+})();
+</script>

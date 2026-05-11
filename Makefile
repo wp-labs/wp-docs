@@ -1,6 +1,9 @@
 # Makefile for mdbook documentation management
 
-.PHONY: help build serve install clean summary summary-simple validate build-zh build-en build-all serve-zh serve-en sync sync-dry-run copy-theme-zh copy-theme-en
+.PHONY: help build serve install clean summary summary-simple validate build-zh build-en build-all serve-zh serve-en sync sync-dry-run copy-theme copy-theme-zh copy-theme-en
+
+MDBOOK_VERSION := 0.5.2
+THEME_ASSET_VERSION := v20260507-1
 
 # Default target
 help:
@@ -24,7 +27,7 @@ help:
 install:
 	@echo "Installing mdbook..."
 	@if ! command -v mdbook &> /dev/null; then \
-		curl -L https://github.com/rust-lang/mdBook/releases/download/v0.4.21/mdbook-v0.4.21-x86_64-apple-darwin.tar.gz | tar xz -C /usr/local/bin; \
+		curl -L https://github.com/rust-lang/mdBook/releases/download/v$(MDBOOK_VERSION)/mdbook-v$(MDBOOK_VERSION)-x86_64-apple-darwin.tar.gz | tar xz -C /usr/local/bin; \
 	fi
 	@echo "Installing mdbook-auto-summary..."
 	@if ! command -v mdbook-auto-summary &> /dev/null; then \
@@ -36,7 +39,7 @@ install:
 	fi
 
 # Build all language versions
-build: build-zh build-en copy-assets
+build: copy-theme build-zh build-en copy-assets
 	@echo "All documentation built successfully!"
 
 # Build Chinese version
@@ -44,10 +47,17 @@ build-zh: copy-theme-zh
 	@echo "Building Chinese documentation..."
 	cd docs-zh && mdbook build
 
+copy-theme: copy-theme-zh copy-theme-en
+
 copy-theme-zh:
 	@mkdir -p docs-zh/theme
 	@cp theme/*.css docs-zh/theme/
 	@cp theme/*.js docs-zh/theme/
+	@rm -f docs-zh/theme/*.hbs
+	@cp theme/*.hbs docs-zh/theme/
+	@rm -f docs-zh/theme/site.$(THEME_ASSET_VERSION).css docs-zh/theme/site.$(THEME_ASSET_VERSION).js
+	@ln -s site.css docs-zh/theme/site.$(THEME_ASSET_VERSION).css
+	@ln -s site.js docs-zh/theme/site.$(THEME_ASSET_VERSION).js
 
 # Build English version
 build-en: copy-theme-en
@@ -58,6 +68,11 @@ copy-theme-en:
 	@mkdir -p docs-en/theme
 	@cp theme/*.css docs-en/theme/
 	@cp theme/*.js docs-en/theme/
+	@rm -f docs-en/theme/*.hbs
+	@cp theme/*.hbs docs-en/theme/
+	@rm -f docs-en/theme/site.$(THEME_ASSET_VERSION).css docs-en/theme/site.$(THEME_ASSET_VERSION).js
+	@ln -s site.css docs-en/theme/site.$(THEME_ASSET_VERSION).css
+	@ln -s site.js docs-en/theme/site.$(THEME_ASSET_VERSION).js
 
 # Copy index.html and assets
 copy-assets:
@@ -66,7 +81,7 @@ copy-assets:
 	@cp index.html book/
 
 # Serve documentation locally (Chinese, default port 3000)
-serve: serve-zh
+serve: copy-theme serve-zh
 
 # Serve Chinese version
 serve-zh: copy-theme-zh

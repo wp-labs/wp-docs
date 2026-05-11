@@ -11,6 +11,7 @@
       "Bash(git mv:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
+      "Bash(cat:*)",
       "Bash(xargs:*)",
       "Bash(chmod:*)",
       "Bash(bash:*)",

@@ -58,11 +58,11 @@ wp-monitor
 [[connectors]]
 id = "victoriametrics_sink"
 type = "victoriametrics"
-allow_override = ["insert_url", "flush_interval_secs"]
-
+allow_override = ["endpoint", "api_path", "timeout_secs","batch_size"]
 [connectors.params]
-insert_url = "http://127.0.0.1:8428/api/v1/import/prometheus"
-flush_interval_secs = 1
+endpoint = "http://victoria-metrics:8428"
+api_path = "/api/v1/import/prometheus"
+timeout_secs = 3
 ```
 
 #### VictoriaLogs connector
@@ -71,11 +71,11 @@ flush_interval_secs = 1
 [[connectors]]
 id = "victorialogs_sink"
 type = "victorialogs"
-allow_override = ["endpoint", "insert_path", "flush_interval_secs", "create_time_field", "tags"]
-
+allow_override = ["endpoint", "api_path", "flush_interval_secs", "create_time_field","batch_size","tags"]
 [connectors.params]
 endpoint = "http://127.0.0.1:9428"
-insert_path = "/insert/jsonline"
+api_path = "/insert/jsonline"
+flush_interval_secs = 3
 ```
 
 ### 3. 在 sink_group 中接入监控与 MISS 输出
@@ -84,10 +84,11 @@ insert_path = "/insert/jsonline"
 
 ```toml
 [[sink_group.sinks]]
-name = "victoriametrics"
+name = "metrics_vmetrics_sink"
 connect = "victoriametrics_sink"
 [sink_group.sinks.params]
-insert_url = "http://127.0.0.1:18429/api/v1/import/prometheus"
+endpoint = "http://localhost:18429"
+api_path = "/api/v1/import/prometheus"
 ```
 
 #### `topology/infra.d/miss.toml`
@@ -97,9 +98,8 @@ insert_url = "http://127.0.0.1:18429/api/v1/import/prometheus"
 name = "victorialogs_output"
 connect = "victorialogs_sink"
 [sink_group.sinks.params]
-endpoint = "http://127.0.0.1:19429"
-insert_path = "/insert/jsonline"
-flush_interval_secs = 3
+endpoint = "http://localhost:19429"
+api_path = "/insert/jsonline?_msg_field=content,log"
 tags = ["wp_stage:miss"]
 ```
 
